@@ -7,7 +7,7 @@ Usage: python search.py "<query>" [--domain <domain>] [--stack <stack>] [--max-r
        python search.py "<query>" --design-system --persist [-p "Project Name"] [--page "dashboard"]
 
 Domains: style, prompt, color, chart, landing, product, ux, typography
-Stacks: html-tailwind, react, nextjs
+Stacks: discovered from data/stacks/*.csv
 
 Persistence (Master + Overrides pattern):
   --persist    Save design system to design-system/MASTER.md
@@ -55,11 +55,12 @@ def format_output(result):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="UI Pro Max Search")
-    parser.add_argument("query", help="Search query")
+    parser.add_argument("query", nargs="?", help="Search query")
     parser.add_argument("--domain", "-d", choices=list(CSV_CONFIG.keys()), help="Search domain")
-    parser.add_argument("--stack", "-s", choices=AVAILABLE_STACKS, help="Stack-specific search (html-tailwind, react, nextjs)")
+    parser.add_argument("--stack", "-s", choices=AVAILABLE_STACKS, metavar="STACK", help="Stack-specific search")
     parser.add_argument("--max-results", "-n", type=int, default=MAX_RESULTS, help="Max results (default: 3)")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
+    parser.add_argument("--list-stacks", action="store_true", help="List available stacks and exit")
     # Design system generation
     parser.add_argument("--design-system", "-ds", action="store_true", help="Generate complete design system recommendation")
     parser.add_argument("--project-name", "-p", type=str, default=None, help="Project name for design system output")
@@ -70,6 +71,13 @@ if __name__ == "__main__":
     parser.add_argument("--output-dir", "-o", type=str, default=None, help="Output directory for persisted files (default: current directory)")
 
     args = parser.parse_args()
+
+    if args.list_stacks:
+        print("\n".join(AVAILABLE_STACKS))
+        sys.exit(0)
+
+    if not args.query:
+        parser.error("the following arguments are required: query")
 
     # Design system takes priority
     if args.design_system:

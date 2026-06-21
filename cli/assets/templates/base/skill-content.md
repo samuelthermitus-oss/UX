@@ -53,7 +53,7 @@ Extract key information from user request:
 - **Product type**: Entertainment (social, video, music, gaming), Tool (scanner, editor, converter), Productivity (task manager, notes, calendar), or hybrid
 - **Target audience**: C-end consumer users; consider age group, usage context (commute, leisure, work)
 - **Style keywords**: playful, vibrant, minimal, dark mode, content-first, immersive, etc.
-- **Stack**: React Native (this project's only tech stack)
+- **Stack**: Choose the stack for the current project. If unclear, generate the design system first, then query the closest installed stack guidelines.
 
 ### Step 2: Generate Design System (REQUIRED)
 
@@ -131,12 +131,18 @@ python3 skills/ui-ux-pro-max/scripts/search.py "<keyword>" --domain <domain> [-n
 | App interface a11y | `web` | `--domain web "accessibilityLabel touch safe-areas"` |
 | AI prompt / CSS keywords | `prompt` | `--domain prompt "minimalism"` |
 
-### Step 4: Stack Guidelines (React Native)
+### Step 4: Stack Guidelines
 
-Get React Native implementation-specific best practices:
+Get implementation-specific best practices for the detected stack:
 
 ```bash
-python3 skills/ui-ux-pro-max/scripts/search.py "<keyword>" --stack react-native
+python3 skills/ui-ux-pro-max/scripts/search.py "<keyword>" --stack <stack>
+```
+
+To list available stack names:
+
+```bash
+python3 skills/ui-ux-pro-max/scripts/search.py --list-stacks
 ```
 
 ---
@@ -162,7 +168,22 @@ python3 skills/ui-ux-pro-max/scripts/search.py "<keyword>" --stack react-native
 
 | Stack | Focus |
 |-------|-------|
-| `react-native` | Components, Navigation, Lists |
+| `angular` | Angular components, routing, forms, performance |
+| `astro` | Astro islands, content sites, partial hydration |
+| `flutter` | Flutter widgets, layout, navigation, performance |
+| `html-tailwind` | Static HTML and Tailwind CSS implementation |
+| `jetpack-compose` | Android Jetpack Compose UI patterns |
+| `laravel` | Laravel Blade, Livewire, and full-stack UI |
+| `nextjs` | Next.js routing, rendering, performance |
+| `nuxt-ui` | Nuxt UI components and theming |
+| `nuxtjs` | Nuxt.js architecture and rendering |
+| `react` | React components, hooks, rendering, performance |
+| `react-native` | React Native components, navigation, lists |
+| `shadcn` | shadcn/ui composition and theming |
+| `svelte` | Svelte components and reactivity |
+| `swiftui` | SwiftUI views, navigation, platform patterns |
+| `threejs` | Three.js scenes, rendering, interaction |
+| `vue` | Vue components, composition API, performance |
 
 ---
 
@@ -174,7 +195,7 @@ python3 skills/ui-ux-pro-max/scripts/search.py "<keyword>" --stack react-native
 - Product type: Tool (AI search engine)
 - Target audience: C-end users looking for fast, intelligent search
 - Style keywords: modern, minimal, content-first, dark mode
-- Stack: React Native
+- Stack: chosen for the current project
 
 ### Step 2: Generate Design System (REQUIRED)
 
@@ -197,7 +218,7 @@ python3 skills/ui-ux-pro-max/scripts/search.py "search loading animation" --doma
 ### Step 4: Stack Guidelines
 
 ```bash
-python3 skills/ui-ux-pro-max/scripts/search.py "list performance navigation" --stack react-native
+python3 skills/ui-ux-pro-max/scripts/search.py "list performance navigation" --stack react
 ```
 
 **Then:** Synthesize design system + detailed searches and implement the design.
@@ -225,7 +246,7 @@ python3 skills/ui-ux-pro-max/scripts/search.py "fintech crypto" --design-system 
 - Use **multi-dimensional keywords** — combine product + industry + tone + density: `"entertainment social vibrant content-dense"` not just `"app"`
 - Try different keywords for the same need: `"playful neon"` → `"vibrant dark"` → `"content-first minimal"`
 - Use `--design-system` first for full recommendations, then `--domain` to deep-dive any dimension you're unsure about
-- Always add `--stack react-native` for implementation-specific guidance
+- Always add `--stack <stack>` for implementation-specific guidance when the project stack is known
 
 ### Common Sticking Points
 

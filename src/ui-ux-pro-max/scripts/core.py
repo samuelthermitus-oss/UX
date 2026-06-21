@@ -9,6 +9,7 @@ import re
 from pathlib import Path
 from math import log
 from collections import defaultdict
+from typing import Dict
 
 # ============ CONFIGURATION ============
 DATA_DIR = Path(__file__).parent.parent / "data"
@@ -72,24 +73,35 @@ CSV_CONFIG = {
     }
 }
 
-STACK_CONFIG = {
-    "react":            {"file": "stacks/react.csv"},
-    "nextjs":           {"file": "stacks/nextjs.csv"},
-    "vue":              {"file": "stacks/vue.csv"},
-    "svelte":           {"file": "stacks/svelte.csv"},
-    "astro":            {"file": "stacks/astro.csv"},
-    "swiftui":          {"file": "stacks/swiftui.csv"},
-    "react-native":     {"file": "stacks/react-native.csv"},
-    "flutter":          {"file": "stacks/flutter.csv"},
-    "nuxtjs":           {"file": "stacks/nuxtjs.csv"},
-    "nuxt-ui":          {"file": "stacks/nuxt-ui.csv"},
-    "html-tailwind":    {"file": "stacks/html-tailwind.csv"},
-    "shadcn":           {"file": "stacks/shadcn.csv"},
-    "jetpack-compose":  {"file": "stacks/jetpack-compose.csv"},
-    "threejs":          {"file": "stacks/threejs.csv"},
-    "angular":          {"file": "stacks/angular.csv"},
-    "laravel":          {"file": "stacks/laravel.csv"},
-}
+def _discover_stack_config() -> Dict[str, Dict[str, str]]:
+    """
+    Business Logic（为什么需要这个函数）:
+        Skill 发布包中的 stack CSV 是可扩展数据源，用户需要所有随包发布的技术栈都自动可搜索，避免手写配置遗漏导致安装后只能查询部分 stack。
+
+    Code Logic（这个函数做什么）:
+        扫描 data/stacks 目录下的 CSV 文件，以文件名 stem 作为 stack 名称，生成 search_stack 使用的配置字典。
+    """
+    stack_dir = DATA_DIR / "stacks"
+    if not stack_dir.is_dir():
+        raise RuntimeError(
+            f"Stack data directory not found: {stack_dir}. "
+            "Reinstall the skill or rebuild packaged assets."
+        )
+
+    stack_files = sorted(stack_dir.glob("*.csv"))
+    if not stack_files:
+        raise RuntimeError(
+            f"No stack CSV files found in: {stack_dir}. "
+            "Reinstall the skill or rebuild packaged assets."
+        )
+
+    return {
+        stack_file.stem: {"file": f"stacks/{stack_file.name}"}
+        for stack_file in stack_files
+    }
+
+
+STACK_CONFIG = _discover_stack_config()
 
 # Common columns for all stacks
 _STACK_COLS = {
