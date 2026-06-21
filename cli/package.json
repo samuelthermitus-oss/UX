@@ -13,7 +13,9 @@
   "scripts": {
     "build": "bun build src/index.ts --outdir dist --target node",
     "dev": "bun run src/index.ts",
-    "prepublishOnly": "bun run build"
+    "sync-assets": "node scripts/sync-assets.js",
+    "prepack": "npm run sync-assets && bun run build",
+    "prepublishOnly": "npm run sync-assets && bun run build"
   },
   "keywords": [
     "ui",
