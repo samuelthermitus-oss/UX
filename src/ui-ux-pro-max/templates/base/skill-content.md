@@ -358,3 +358,25 @@ Scope notice: This checklist is for App UI (iOS/Android/React Native/Flutter).
 - [ ] Color is not the only indicator
 - [ ] Reduced motion and dynamic text size are supported without layout breakage
 - [ ] Accessibility traits/roles/states (selected, disabled, expanded) are announced correctly
+
+---
+
+## Verb Commands (recommended workflow)
+
+For one-shot ergonomics, prefer the `uipro` verb commands over crafting raw `--domain` queries. Each verb composes the right engine queries for its intent and returns a structured checklist Claude can execute against.
+
+| Verb | When to use | What you get |
+|------|-------------|--------------|
+| `uipro audit <path>` | Pre-merge UX/quality check | Accessibility, performance, and interaction failures sorted by severity |
+| `uipro polish <path>` | Final pass before shipping | Spacing, hierarchy, focus states, typography refinements |
+| `uipro critique <topic>` | Design review | Visual hierarchy, emotional tone, structural clarity feedback |
+| `uipro redesign <topic>` | Full re-design pass | New style + palette + type system proposal |
+| `uipro harden <path>` | Production hardening | Error/empty/loading states, i18n, edge cases |
+| `uipro lint <path>` | CI-friendly anti-pattern scan | Deterministic regex checks against the rules CSV — no LLM, no API key, exits non-zero on Critical/High |
+| `uipro generate hero --prompt "..."` | Hero product still | Higgsfield-rendered PNG to `public/assets/generated/hero.png` |
+| `uipro generate mobile --prompt "..."` | Mobile concept | Higgsfield-rendered conceptual product image |
+| `uipro brandkit --prompt "..."` | 3-image brand pack | Logo concept + palette swatch + type specimen |
+
+**Pattern:** call the verb first, then drill in with `--domain` queries if you need more detail on a specific finding. Verbs are the front door; the engine is the depth behind them.
+
+**CI usage:** `uipro lint <path> --severity High` exits with code 1 on Critical/High findings. Wire it into pre-commit or CI to enforce design quality programmatically.

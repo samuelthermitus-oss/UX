@@ -8,6 +8,7 @@ import { initCommand } from './commands/init.js';
 import { versionsCommand } from './commands/versions.js';
 import { updateCommand } from './commands/update.js';
 import { uninstallCommand } from './commands/uninstall.js';
+import { runVerb, VERB_REGISTRY, type VerbName } from './commands/verbs.js';
 import type { AIType } from './types/index.js';
 import { AI_TYPES } from './types/index.js';
 
@@ -78,6 +79,65 @@ program
       ai: options.ai as AIType | undefined,
       global: options.global,
     });
+  });
+
+// ============ Verb commands ============
+// Each verb is a top-level uipro subcommand that shells to the Python
+// dispatcher. Verbs turn the CSV/BM25 engine into ergonomics:
+//   uipro audit <path>     — UX/quality audit
+//   uipro polish <path>    — final-pass polish
+//   uipro critique <topic> — design review
+//   uipro redesign <topic> — full redesign pass
+//   uipro harden <path>    — production hardening
+//   uipro lint <path>      — deterministic anti-pattern scan
+//   uipro generate <mode>  — Higgsfield-backed image gen (hero/mobile/...)
+//   uipro brandkit         — 3-image brand kit pack via Higgsfield
+
+for (const [name, spec] of Object.entries(VERB_REGISTRY)) {
+  const cmd = program.command(`${name} [subject]`).description(spec.summary);
+  if (spec.takesSeverity) {
+    cmd.option(
+      '-s, --severity <level>',
+      'Minimum severity: Low | Medium | High | Critical',
+      'Medium'
+    );
+  }
+  cmd.option('--json', 'Emit JSON output (where supported)');
+  cmd.action(async (subject: string | undefined, options: { severity?: string; json?: boolean }) => {
+    const code = await runVerb(name as VerbName, {
+      subject,
+      severity: options.severity as 'Low' | 'Medium' | 'High' | 'Critical' | undefined,
+      json: options.json,
+    });
+    if (code !== 0) process.exit(code);
+  });
+}
+
+program
+  .command('generate <mode>')
+  .description('Higgsfield-backed image gen: hero | mobile | lifestyle | hand')
+  .requiredOption('-p, --prompt <text>', 'Prompt for the asset')
+  .option('-o, --output <path>', 'Output path (default: public/assets/generated/<mode>.png)')
+  .action(async (mode: string, options: { prompt: string; output?: string }) => {
+    const code = await runVerb('generate', {
+      subject: mode,
+      prompt: options.prompt,
+      output: options.output,
+    });
+    if (code !== 0) process.exit(code);
+  });
+
+program
+  .command('brandkit')
+  .description('Generate a 3-image brand kit (logo concept + palette + type specimen) via Higgsfield')
+  .requiredOption('-p, --prompt <text>', 'Brand description prompt')
+  .option('-o, --output <dir>', 'Output directory (default: public/assets/generated/brandkit)')
+  .action(async (options: { prompt: string; output?: string }) => {
+    const code = await runVerb('brandkit', {
+      prompt: options.prompt,
+      output: options.output,
+    });
+    if (code !== 0) process.exit(code);
   });
 
 program.parse();

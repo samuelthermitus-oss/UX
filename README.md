@@ -15,7 +15,110 @@
   <a href="https://paypal.me/uiuxpromax"><img src="https://img.shields.io/badge/PayPal-Support%20Development-00457C?style=flat-square&logo=paypal&logoColor=white" alt="PayPal"></a>
 </p>
 
-An AI skill that provides design intelligence for building professional UI/UX across multiple platforms and frameworks.
+## The UI quality layer for AI coding agents.
+
+**Stop shipping AI-looking pages. Start shipping the bar.**
+
+UI/UX Pro Max is the execution layer agents call when they need to understand a product's visual system, generate better UI, critique existing UI, enforce quality rules, and produce assets — across every major coding environment (Claude Code, Cursor, Copilot, Codex, Gemini CLI, Cline, Continue, Droid, KiloCode, Kiro, OpenCode, Qoder, RooCode, Trae, Warp, Windsurf, Augment).
+
+```bash
+npx uipro-cli init      # install the skill into your project
+uipro audit src/        # UX/quality audit
+uipro lint src/         # deterministic anti-pattern scan (CI-friendly)
+uipro polish landing    # final-pass polish
+uipro generate hero --prompt "matte black headphones, studio rim-lit"
+uipro brandkit --prompt "premium dark fintech, slate + electric red"
+```
+
+### Verb interface — one command per intent
+
+| Verb | Use it for |
+|------|------------|
+| `uipro audit <path>` | UX/quality audit (accessibility, performance, interactions) |
+| `uipro polish <path>` | Final pass — spacing, hierarchy, focus states, typography |
+| `uipro critique <topic>` | Design review — visual hierarchy, emotional tone, structural clarity |
+| `uipro redesign <topic>` | Full redesign — propose new style + palette + type system |
+| `uipro harden <path>` | Production hardening — error/empty/loading states, i18n, edges |
+| `uipro lint <path>` | **Deterministic anti-pattern scanner** — regex-based, no LLM, exits non-zero on Critical/High (CI-friendly) |
+| `uipro generate <mode>` | Higgsfield-backed image gen — `hero`, `mobile`, `lifestyle`, `hand` |
+| `uipro brandkit` | 3-image brand kit (logo + palette + type specimen) via Higgsfield |
+
+The verbs are a thin ergonomic layer over a **BM25-searchable knowledge base** of 50+ styles, 161 color palettes, 57 type pairings, 161 product types, 99 UX rules, 25 chart types, and stack-specific guidelines for 12 frameworks. When you need the raw engine, `--domain <domain>` queries are still there underneath.
+
+### Live demo — real output
+
+Three verbs against a working Next.js landing page. Output below is **real CLI output**, not a screenshot.
+
+#### `uipro lint <path>` — deterministic anti-pattern scan
+
+```
+$ uipro lint src/
+
+# uipro lint — `src/`
+**2 finding(s) across 7 files.**
+
+## High (1)
+- `src/app/page.tsx:121` — Emoji used as icon (L001)
+  - >✓<
+  - 🛠 Replace with a vector icon (lucide-react, @heroicons/react, react-icons).
+
+## Medium (1)
+- `src/components/HeroCanvas.tsx:13` — Raw hex color in JSX className (L004)
+  - className="h-full w-full bg-gradient-to-br from-[#1e293b] via-[#0a0a0a]..."
+  - 🛠 Use a CSS variable (var(--accent)) or a Tailwind color class.
+```
+
+Exit code: `1` (Critical/High present). Wire into pre-commit or CI to enforce design quality programmatically. **No LLM, no API key, no network.**
+
+#### `uipro audit landing` — engine-backed UX rules
+
+```
+$ uipro audit landing
+
+# uipro audit for `landing`
+_Identify accessibility, performance, and interaction failures._
+
+### Ux · accessibility contrast focus keyboard
+- [High] Focus States — Keyboard users need visible focus indicators
+  ✅ Use visible focus rings on interactive elements
+  ❌ Remove focus outline without replacement
+- [High] Keyboard Navigation — All functionality accessible via keyboard
+  ✅ Tab order matches visual order
+  ❌ Keyboard traps or illogical tab order
+- [High] Color Contrast — Text must be readable against background
+  ✅ Minimum 4.5:1 ratio for normal text
+  ❌ Low contrast text
+
+### Ux · touch target loading error feedback
+- [High] Touch Target Size — Min 44x44px touch targets
+- [High] Loading Feedback — Show progress for async operations
+- [High] Error Recovery — Clear error messages near problem field
+
+### Ux · performance image lazy bundle
+- [High] Image Optimization — WebP/AVIF, responsive srcset
+- [High] Lazy Loading — Defer below-fold media
+```
+
+#### `uipro polish hero` — surgical refinement checklist
+
+```
+$ uipro polish hero
+
+# uipro polish for `hero`
+_Tighten spacing, hierarchy, typography, focus + hover states._
+
+### Ux · spacing hierarchy typography line-height
+- [Medium] Line Height — 1.5-1.75 for body text
+- [Medium] Line Length — 65-75 characters per line
+- [Medium] Font Size Scale — Consistent modular scale
+
+### Ux · hover focus disabled state
+- [High] Focus States — Keyboard users need visible focus indicators
+- [High] Hover vs Tap — Use click/tap for primary interactions
+- [Medium] Disabled States — Reduce opacity + change cursor
+```
+
+**Before → after**: The two `uipro lint` findings above were caught in this project's own scaffolded landing page. The fix took 6 lines — replace the `>✓<` emoji with a Lucide `<Check />` import, and swap the raw `#1e293b` / `#0a0a0a` hex for `var(--primary)` / `var(--background)`. Lint pass now exits 0. That's the loop: agent generates → `uipro lint` catches → agent fixes → ship.
 
 <p align="center">
   <a href="https://uupm.cc">
