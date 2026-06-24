@@ -1,5 +1,5 @@
 import { rm, stat } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import { homedir } from 'node:os';
 import chalk from 'chalk';
 import ora from 'ora';
@@ -8,6 +8,7 @@ import type { AIType } from '../types/index.js';
 import { AI_TYPES, AI_FOLDERS } from '../types/index.js';
 import { detectAIType, getAITypeDescription } from '../utils/detect.js';
 import { logger } from '../utils/logger.js';
+import { loadPlatformConfig } from '../utils/template.js';
 
 interface UninstallOptions {
   ai?: AIType;
@@ -15,18 +16,46 @@ interface UninstallOptions {
 }
 
 /**
+ * Get all known install directories for a given AI type.
+ * This covers both template-generated installs and older shared-folder layouts.
+ */
+async function getCandidateSkillDirs(
+  baseDir: string,
+  aiType: Exclude<AIType, 'all'>
+): Promise<string[]> {
+  const candidates = new Set<string>();
+
+  try {
+    const config = await loadPlatformConfig(aiType);
+    candidates.add(join(baseDir, config.folderStructure.root, config.folderStructure.skillPath));
+  } catch {
+    // Skip template path lookup if this platform has no config.
+  }
+
+  for (const folder of AI_FOLDERS[aiType]) {
+    if (folder === '.shared') {
+      candidates.add(join(baseDir, folder, 'ui-ux-pro-max'));
+      continue;
+    }
+
+    candidates.add(join(baseDir, folder, 'skills', 'ui-ux-pro-max'));
+  }
+
+  return Array.from(candidates);
+}
+
+/**
  * Remove skill directory for a given AI type
  */
 async function removeSkillDir(baseDir: string, aiType: Exclude<AIType, 'all'>): Promise<string[]> {
-  const folders = AI_FOLDERS[aiType];
+  const skillDirs = await getCandidateSkillDirs(baseDir, aiType);
   const removed: string[] = [];
 
-  for (const folder of folders) {
-    const skillDir = join(baseDir, folder, 'skills', 'ui-ux-pro-max');
+  for (const skillDir of skillDirs) {
     try {
       await stat(skillDir);
       await rm(skillDir, { recursive: true, force: true });
-      removed.push(`${folder}/skills/ui-ux-pro-max`);
+      removed.push(relative(baseDir, skillDir));
     } catch (err: unknown) {
       // Skip non-existent dirs; re-throw permission or other errors
       if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
