@@ -51,13 +51,15 @@ cli/                              # CLI installer (uipro-cli on npm)
     ├── scripts/                  # Copy of src/ui-ux-pro-max/scripts/
     └── templates/                # Copy of src/ui-ux-pro-max/templates/
 
-.claude/skills/ui-ux-pro-max/     # Claude Code skill (symlinks to src/)
-.factory/skills/ui-ux-pro-max/   # Droid (Factory) skill (symlinks to src/)
-.shared/ui-ux-pro-max/            # Symlink to src/ui-ux-pro-max/
+.claude/skills/ui-ux-pro-max/     # Claude Code skill (real file copies of src/data + src/scripts)
+.factory/skills/ui-ux-pro-max/   # Droid (Factory) skill (real file copies of src/data + src/scripts)
+.shared/ui-ux-pro-max/            # Real file copies of src/ui-ux-pro-max/
 .claude-plugin/                   # Claude Marketplace publishing
 ```
 
 The search engine uses BM25 ranking combined with regex matching. Domain auto-detection is available when `--domain` is omitted.
+
+> **Why copies, not symlinks?** Symlinks under `.claude/skills/ui-ux-pro-max/` used to point at `src/ui-ux-pro-max/`. On Windows clones (and any environment where `git config core.symlinks` is `false`) git materialises symlinks as plain text files containing the target path, which breaks the skill at runtime. Shipping real copies keeps the plugin install zero-friction across platforms; the trade-off is that maintainers must run the sync script (below) after editing the source of truth.
 
 ## Sync Rules
 
@@ -65,10 +67,16 @@ The search engine uses BM25 ranking combined with regex matching. Domain auto-de
 
 When modifying files:
 
-1. **Data & Scripts** - Edit in `src/ui-ux-pro-max/`:
+1. **Data & Scripts** - Edit in `src/ui-ux-pro-max/`, then sync into the skill folder:
    - `data/*.csv` and `data/stacks/*.csv`
    - `scripts/*.py`
-   - Changes automatically available via symlinks in `.claude/`, `.factory/`, `.shared/`
+   - Run before commit:
+     ```bash
+     bash scripts/sync-skill-assets.sh           # macOS / Linux / Git Bash
+     # or
+     pwsh scripts/sync-skill-assets.ps1          # Windows PowerShell / pwsh
+     ```
+   - The script wipes and re-copies `data/` and `scripts/` under `.claude/skills/ui-ux-pro-max/`.
 
 2. **Templates** - Edit in `src/ui-ux-pro-max/templates/`:
    - `base/skill-content.md` - Common SKILL.md content

@@ -1,0 +1,92 @@
+name: Check asset sync
+
+on:
+  pull_request:
+    paths:
+      - "src/ui-ux-pro-max/**"
+      - ".claude/skills/ui-ux-pro-max/**"
+      - "cli/assets/**"
+      - "scripts/sync-skill-assets.*"
+      - ".github/workflows/check-asset-sync.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/ui-ux-pro-max/**"
+      - ".claude/skills/ui-ux-pro-max/**"
+      - "cli/assets/**"
+
+jobs:
+  diff:
+    name: src/ must match every copy target
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Diff src/ against .claude/skills/ui-ux-pro-max/
+        id: skill_diff
+        run: |
+          set -e
+          status=0
+          for sub in data scripts; do
+            src="src/ui-ux-pro-max/$sub"
+            dst=".claude/skills/ui-ux-pro-max/$sub"
+            if [ ! -d "$dst" ]; then
+              echo "::error file=$dst::missing — expected copy of $src"
+              status=1
+              continue
+            fi
+            if ! diff -rq --exclude='__pycache__' "$src" "$dst" > /tmp/skill_$sub.diff 2>&1; then
+              echo "::error file=$dst::drift detected vs $src"
+              cat /tmp/skill_$sub.diff
+              status=1
+            fi
+          done
+          exit $status
+
+      # cli/assets/ is intentionally soft-fail until #330 (cli re-sync) lands;
+      # flip continue-on-error to false once main is clean so drift hard-fails.
+      - name: Diff src/ against cli/assets/
+        id: cli_diff
+        if: always()
+        continue-on-error: true
+        run: |
+          set -e
+          status=0
+          for sub in data scripts templates; do
+            src="src/ui-ux-pro-max/$sub"
+            dst="cli/assets/$sub"
+            if [ ! -d "$dst" ]; then
+              echo "::error file=$dst::missing — expected copy of $src"
+              status=1
+              continue
+            fi
+            if ! diff -rq --exclude='__pycache__' "$src" "$dst" > /tmp/cli_$sub.diff 2>&1; then
+              echo "::error file=$dst::drift detected vs $src"
+              cat /tmp/cli_$sub.diff
+              status=1
+            fi
+          done
+          exit $status
+
+      - name: How to fix
+        if: failure()
+        run: |
+          cat <<'EOF'
+          Drift detected between src/ui-ux-pro-max/ (source of truth) and one or
+          both copy targets. Re-sync, then commit the result:
+
+            # .claude/skills/ui-ux-pro-max/  (Claude Code skill, ships in plugin)
+            bash scripts/sync-skill-assets.sh
+            # or, on Windows:
+            #   pwsh scripts/sync-skill-assets.ps1
+
+            # cli/assets/  (bundled with uipro-cli on npm)
+            cp -r src/ui-ux-pro-max/data/*      cli/assets/data/
+            cp -r src/ui-ux-pro-max/scripts/*   cli/assets/scripts/
+            cp -r src/ui-ux-pro-max/templates/* cli/assets/templates/
+
+            git add .claude/skills/ui-ux-pro-max/ cli/assets/
+            git commit -m "chore: re-sync derived assets with src/"
+          EOF
+          exit 1
