@@ -293,6 +293,18 @@ uipro init --ai augment     # Augment
 uipro init --ai all         # All assistants
 ```
 
+### Direct Codex Skill Install
+
+For Codex clients that install skills from GitHub URLs, use the self-contained
+Codex skill path:
+
+```text
+https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/tree/main/.codex/skills/ui-ux-pro-max
+```
+
+This package includes `SKILL.md`, `data/`, and `scripts/` directly so Codex can
+install it without resolving repository symlinks.
+
 ### Global Install (Available for All Projects)
 
 ```bash
