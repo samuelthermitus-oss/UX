@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memphis Design - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #FFF5E6;
+  --text-color: #2A2A2A;
+  --hot-pink: #FF71CE;
+  --yellow: #FFCE5C;
+  --teal: #86CCCA;
+  --blue-purple: #6A7BB4;
+  --black: #2A2A2A;
+  --white: #FFFFFF;
+  --red: #FF6B6B;
+  --font-primary: system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: var(--font-primary);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Memphis decorative shapes */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(5deg); }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.memphis-shape {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+}
+.shape-triangle {
+  width: 0; height: 0;
+  border-left: 30px solid transparent;
+  border-right: 30px solid transparent;
+  border-bottom: 52px solid var(--hot-pink);
+  animation: float 4s ease-in-out infinite;
+}
+.shape-circle {
+  width: 40px; height: 40px;
+  border: 4px solid var(--yellow);
+  border-radius: 50%;
+  animation: float 3s ease-in-out infinite 0.5s;
+}
+.shape-zigzag {
+  width: 60px; height: 20px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--teal) 0px, var(--teal) 10px,
+    transparent 10px, transparent 15px
+  );
+  animation: float 3.5s ease-in-out infinite 1s;
+}
+.shape-dots {
+  width: 40px; height: 40px;
+  background: radial-gradient(circle, var(--blue-purple) 3px, transparent 3px);
+  background-size: 10px 10px;
+  animation: spin 12s linear infinite;
+}
+.shape-cross {
+  width: 30px; height: 30px;
+  position: relative;
+  animation: float 5s ease-in-out infinite 0.3s;
+}
+.shape-cross::before, .shape-cross::after {
+  content: '';
+  position: absolute;
+  background: var(--red);
+}
+.shape-cross::before { width: 100%; height: 6px; top: 50%; transform: translateY(-50%); }
+.shape-cross::after { width: 6px; height: 100%; left: 50%; transform: translateX(-50%); }
+
+/* Hero Section */
+.hero {
+  background: var(--page-bg);
+  padding: 120px 0 80px;
+  border-bottom: 4px solid var(--black);
+  position: relative;
+  overflow: hidden;
+ text-align: center;}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(255,113,206,0.12) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(134,204,202,0.12) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(255,206,92,0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero h1 {
+  font-size: clamp(42px, 8vw, 96px);
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+  color: var(--black);
+}
+.hero h1 span {
+  display: inline-block;
+  transform: rotate(-2deg);
+}
+.hero .subtitle {
+  font-size: 18px;
+  color: var(--text-color);
+  max-width: 560px;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+  font-weight: 500;
+ margin-left: auto; margin-right: auto;}
+.hero .accent-bar {
+  display: flex;
+  gap: 8px;
+  margin-top: 24px;
+  position: relative;
+  z-index: 1;
+}
+.hero .accent-bar span {
+  width: 40px; height: 8px;
+  display: block;
+}
+
+/* Navigation */
+.demo-nav {
+  background: var(--hot-pink);
+  color: var(--black);
+  padding: 16px 0;
+  border-bottom: 4px solid var(--black);
+}
+.demo-nav .container {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+ justify-content: center;}
+.demo-nav a {
+  color: var(--white);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+.demo-nav a:hover {
+  color: var(--yellow);
+  transform: rotate(-2deg);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 3px solid var(--black);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--font-primary);
+  position: relative;
+}
+.btn-primary {
+  background: var(--yellow);
+  color: var(--black);
+}
+.btn-primary:hover {
+  background: var(--hot-pink);
+  color: var(--white);
+  transform: rotate(-2deg) translateY(-2px);
+  box-shadow: 4px 4px 0 var(--black);
+}
+.btn-secondary {
+  background: var(--teal);
+  color: var(--black);
+}
+.btn-secondary:hover {
+  background: var(--blue-purple);
+  color: var(--white);
+  transform: rotate(2deg) translateY(-2px);
+  box-shadow: 4px 4px 0 var(--black);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--black);
+  border-color: transparent;
+  border: 3px solid transparent;
+}
+.btn-ghost:hover {
+  background: var(--white);
+  border-color: var(--black);
+  transform: translateY(-2px);
+}
+.btn-disabled {
+  background: #DDD;
+  color: #AAA;
+  border-color: #CCC;
+  cursor: not-allowed;
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 20px;
+}
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  color: var(--black);
+}
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 15px;
+  font-family: var(--font-primary);
+  border: 3px solid var(--black);
+  background: var(--white);
+  color: var(--black);
+  border-radius: 0;
+  outline: none;
+  transition: all 0.15s;
+  font-weight: 600;
+}
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  border-color: var(--hot-pink);
+  box-shadow: 6px 6px 0 var(--yellow);
+}
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232A2A2A' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+.form-checkbox,
+.form-radio {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--hot-pink);
+  cursor: pointer;
+}
+.form-row {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.form-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Cards */
+.card {
+  border: 3px solid var(--black);
+  padding: 28px;
+  background: var(--white);
+  transition: all 0.2s;
+  position: relative;
+}
+.card:hover {
+  transform: rotate(-1deg) translateY(-4px);
+  box-shadow: 6px 6px 0 var(--black);
+}
+.card-title {
+  font-size: 18px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.card-text {
+  font-size: 14px;
+  color: var(--text-color);
+  line-height: 1.6;
+}
+.card-pink { background: var(--hot-pink); color: var(--white); }
+.card-yellow { background: var(--yellow); }
+.card-teal { background: var(--teal); }
+
+/* Typography */
+.typo-h1 { font-size: 48px; font-weight: 900; line-height: 1; margin-bottom: 20px; }
+.typo-h2 { font-size: 36px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; }
+.typo-h3 { font-size: 28px; font-weight: 800; line-height: 1.2; margin-bottom: 20px; }
+.typo-h4 { font-size: 22px; font-weight: 800; line-height: 1.3; margin-bottom: 20px; }
+.typo-h5 { font-size: 18px; font-weight: 800; line-height: 1.4; margin-bottom: 20px; text-transform: uppercase; }
+.typo-h6 { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+.typo-body { font-size: 16px; line-height: 1.6; margin-bottom: 16px; font-weight: 500; }
+.typo-caption { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+
+/* Modal */
+.modal-content {
+  background: var(--white);
+  border: 4px solid var(--black);
+  padding: 40px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: 8px 8px 0 var(--black);
+}
+.modal-content h3 {
+  font-size: 24px;
+  font-weight: 900;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+.modal-content p {
+  font-size: 15px;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+.modal-content .btn { width: 100%; }
+
+/* Color Palette */
+.palette-card {
+  background: var(--white);
+  padding: 32px;
+  border: 3px solid var(--black);
+}
+
+/* Style Info */
+.style-info {
+  border: 3px solid var(--black);
+  border-radius: 0;
+  background: var(--white);
+  box-shadow: 4px 4px 0 var(--black);
+ text-align: center;}
+.style-info h3 { color: var(--hot-pink); }
+</style>
+</head>
+<body>
+<!-- Viewport Switcher Bar -->
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+
+<div class="vp-frame">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="memphis-shape shape-triangle" style="top: 60px; left: 8%;"></div>
+    <div class="memphis-shape shape-circle" style="top: 100px; right: 12%;"></div>
+    <div class="memphis-shape shape-zigzag" style="bottom: 40px; left: 15%;"></div>
+    <div class="memphis-shape shape-dots" style="top: 180px; right: 30%;"></div>
+    <div class="memphis-shape shape-cross" style="bottom: 60px; right: 8%;"></div>
+    <div class="container" style="position: relative; z-index: 1;">
+      <span class="tag tag-era">1980s Postmodern</span>
+      <span class="tag tag-complexity-medium">Complexity: Medium</span>
+      <h1><span>M</span>EMPH<span>I</span>S</h1>
+      <p class="subtitle">Bold geometric shapes, clashing colors, and playful postmodern rebellion. Inspired by the Memphis Group of the 1980s.</p>
+      <div class="accent-bar">
+        <span style="background: var(--hot-pink);"></span>
+        <span style="background: var(--yellow);"></span>
+        <span style="background: var(--teal);"></span>
+        <span style="background: var(--blue-purple);"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation Demo -->
+  <nav class="demo-nav">
+    <div class="container">
+      <a href="#">Play</a>
+      <a href="#">Create</a>
+      <a href="#">Discover</a>
+      <a href="#">Party</a>
+      <a href="#">About</a>
+    </div>
+  </nav>
+
+  <!-- Buttons Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Buttons</h2>
+      <div class="flex-gap">
+        <button class="btn btn-primary">Let's Go!</button>
+        <button class="btn btn-secondary">Maybe</button>
+        <button class="btn btn-ghost">Nah</button>
+        <button class="btn btn-disabled" disabled>Can't Touch This</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Forms Section -->
+  <section class="section" style="background: var(--white); border-top: 4px solid var(--black); border-bottom: 4px solid var(--black);">
+    <div class="container">
+      <h2 class="section-title">Form Elements</h2>
+      <div style="max-width: 600px; margin: 0 auto;">
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input type="text" class="form-input" placeholder="What's your name?">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-textarea" placeholder="Say something radical..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Vibe</label>
+          <select class="form-select">
+            <option>Pick a vibe</option>
+            <option>Radical</option>
+            <option>Tubular</option>
+            <option> Gnarly</option>
+            <option>Fresh</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label><input type="checkbox" class="form-checkbox"> I'm in!</label>
+          <label><input type="radio" name="plan" class="form-radio"> Free</label>
+          <label><input type="radio" name="plan" class="form-radio"> VIP</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cards Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Cards</h2>
+      <div class="grid-3">
+        <div class="card card-pink">
+          <div class="card-title">Geometric Party</div>
+          <p class="card-text">Triangles, circles, and squiggles oh my! Memphis is all about bold shapes and even bolder colors.</p>
+        </div>
+        <div class="card card-yellow">
+          <div class="card-title">Postmodern Fun</div>
+          <p class="card-text">Breaking the rules of "good taste" since 1981. Form follows fun, not function.</p>
+        </div>
+        <div class="card card-teal">
+          <div class="card-title">Pattern Power</div>
+          <p class="card-text">Repeating patterns, clashing prints, and visual noise that somehow just works.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typography Section -->
+  <section class="section" style="background: var(--white); border-top: 4px solid var(--black); border-bottom: 4px solid var(--black);">
+    <div class="container">
+      <h2 class="section-title">Typography</h2>
+      <div class="typo-h1">Heading 1 — BOOM!</div>
+      <div class="typo-h2">Heading 2 — ZAP!</div>
+      <div class="typo-h3">Heading 3 — POW!</div>
+      <div class="typo-h4">Heading 4 — WHAM!</div>
+      <div class="typo-h5">Heading 5 — BANG!</div>
+      <div class="typo-h6">Heading 6 — POP!</div>
+      <p class="typo-body">Bold, unapologetic typography that demands attention. Memphis fonts are loud, proud, and refuse to be ignored. Every letter is a statement.</p>
+      <p class="typo-caption">Caption — totally radical metadata</p>
+    </div>
+  </section>
+
+  <!-- Color Palette -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Color Palette</h2>
+      <div class="swatch-row">
+        <div class="swatch" style="background: #FF71CE;" data-hex="#FF71CE"></div>
+        <div class="swatch" style="background: #FFCE5C;" data-hex="#FFCE5C"></div>
+        <div class="swatch" style="background: #86CCCA;" data-hex="#86CCCA"></div>
+        <div class="swatch" style="background: #6A7BB4;" data-hex="#6A7BB4"></div>
+        <div class="swatch" style="background: #FF6B6B;" data-hex="#FF6B6B"></div>
+        <div class="swatch" style="background: #2A2A2A;" data-hex="#2A2A2A"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal Demo -->
+  <div id="demo-modal" class="modal-overlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
+    <div class="modal-content">
+      <h3>Party Time!</h3>
+      <p>This modal is 100% radical. Bold borders, offset shadows, and zero apologies for being loud. That's the Memphis way!</p>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Close</button>
+    </div>
+  </div>
+  <section class="section" style="background: var(--white); border-top: 4px solid var(--black);">
+    <div class="container">
+      <h2 class="section-title">Modal Dialog</h2>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button>
+    </div>
+  </section>
+
+  <!-- Style Info Panel -->
+  <section class="section">
+    <div class="container">
+      <div class="style-info">
+        <h3>Style Information</h3>
+        <div class="style-info-grid">
+          <div class="style-info-item">
+            <div class="label">Era/Origin</div>
+            <div class="value">1980s Memphis Postmodern</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Best For</div>
+            <div class="value">Creative agencies, music sites, youth brands, event promotion</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Avoid For</div>
+            <div class="value">Legal, healthcare, banking, enterprise</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Complexity</div>
+            <div class="value">Medium — relies on transforms and clip-paths</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">CSS Keywords</div>
+            <div class="value">transform:rotate(), clip-path:polygon(), mix-blend-mode, bold borders, offset shadows</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Design Variables</div>
+            <div class="value">--hot-pink:#FF71CE, --yellow:#FFCE5C, --teal:#86CCCA, --blue-purple:#6A7BB4</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="shared.js"></script>
+</body>
+</html>

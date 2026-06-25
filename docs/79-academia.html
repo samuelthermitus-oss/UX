@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academia - Mobile Style Showcase</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    :root {
+      --page-bg: #E8DFD4;
+      --text-color: #1C1714;
+      --mahogany: #1C1714;
+      --oak: #251E19;
+      --parchment: #E8DFD4;
+      --brass: #C9A962;
+      --crimson: #8B2635;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--parchment);
+      color: var(--mahogany);
+      font-family: 'Georgia', 'Palatino', 'Times New Roman', serif;
+      line-height: 1.4;
+    }
+
+    /* === VIGNETTE OVERLAY === */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(28,23,20,0.15) 100%);
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    /* === HERO (Arch-Top) === */
+    .academia-hero {
+      min-height: 480px;
+      background: var(--mahogany);
+      color: var(--parchment);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 40px 24px 50px;
+      position: relative;
+      border-radius: 0 0 100px 100px;
+      overflow: hidden;
+    }
+    .academia-hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 30% 30%, rgba(201,169,98,0.15) 0%, transparent 60%);
+    }
+    .academia-hero .hero-emblem {
+      width: 56px; height: 56px;
+      border: 2px solid var(--brass);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .academia-hero h1 {
+      font-size: 38px;
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .academia-hero h1 .brass { color: var(--brass); }
+    .academia-hero .hero-rule {
+      width: 60px;
+      height: 2px;
+      background: var(--brass);
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .academia-hero p {
+      font-size: 14px;
+      color: rgba(232,223,212,0.6);
+      position: relative;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    /* === MOBILE NAV (Bottom Tabs) === */
+    .mobile-nav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: var(--mahogany);
+      border-top: 1px solid rgba(201,169,98,0.3);
+      padding: 10px 0 14px;
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+    }
+    .mobile-nav .tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--parchment);
+      font-size: 10px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-decoration: none;
+      cursor: pointer;
+      opacity: 0.4;
+    }
+    .mobile-nav .tab.active { opacity: 1; color: var(--brass); }
+    .mobile-nav .tab .tab-icon { font-size: 18px; }
+
+    /* === SECTIONS === */
+    .section {
+      padding: 40px 20px;
+      border-bottom: 1px solid rgba(28,23,20,0.15);
+    }
+    .section-title {
+      font-size: 10px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      color: var(--brass);
+      margin-bottom: 24px;
+    }
+
+    /* === BUTTONS === */
+    .academia-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .academia-btn {
+      display: block;
+      width: 100%;
+      padding: 16px 24px;
+      font-family: 'Georgia', serif;
+      font-size: 14px;
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: 1px;
+      border: 1px solid var(--mahogany);
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: all 400ms;
+    }
+    .academia-btn:active { transform: scale(0.98); }
+    .academia-btn.primary {
+      background: var(--crimson);
+      color: var(--parchment);
+      border-color: var(--crimson);
+    }
+    .academia-btn.secondary {
+      background: var(--mahogany);
+      color: var(--parchment);
+    }
+    .academia-btn.ghost {
+      background: transparent;
+      color: var(--mahogany);
+    }
+    .academia-btn.disabled {
+      background: #D5C9BC;
+      color: #A89A8C;
+      border-color: #C5B9AC;
+      cursor: not-allowed;
+    }
+
+    /* === FORMS === */
+    .academia-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .academia-field label {
+      display: block;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 6px;
+      color: var(--brass);
+    }
+    .academia-field input,
+    .academia-field textarea,
+    .academia-field select {
+      width: 100%;
+      padding: 14px 16px;
+      font-family: 'Georgia', serif;
+      font-size: 15px;
+      border: 1px solid rgba(28,23,20,0.3);
+      border-radius: 4px;
+      background: rgba(255,255,255,0.3);
+      color: var(--mahogany);
+      outline: none;
+      -webkit-appearance: none;
+      transition: border-color 400ms;
+    }
+    .academia-field input:focus,
+    .academia-field textarea:focus,
+    .academia-field select:focus {
+      border-color: var(--brass);
+    }
+    .academia-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-style: italic;
+    }
+    .academia-checkbox input[type="checkbox"],
+    .academia-checkbox input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--crimson);
+      cursor: pointer;
+    }
+
+    /* === CARDS === */
+    .academia-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .academia-card {
+      background: rgba(255,255,255,0.3);
+      border: 1px solid rgba(28,23,20,0.15);
+      border-radius: 4px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .academia-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--crimson);
+    }
+    .academia-card .card-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+    .academia-card h3 {
+      font-size: 20px;
+      font-style: italic;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+    .academia-card p {
+      font-size: 13px;
+      line-height: 1.6;
+      opacity: 0.7;
+    }
+    .academia-card .card-tag {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 4px 10px;
+      border: 1px solid var(--brass);
+      color: var(--brass);
+      border-radius: 4px;
+    }
+
+    /* === TYPOGRAPHY === */
+    .academia-type {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .academia-type .type-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(28,23,20,0.15);
+    }
+    .academia-type .type-label {
+      font-family: system-ui, sans-serif;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--brass);
+      min-width: 28px;
+      flex-shrink: 0;
+    }
+    .academia-type h1 { font-size: 40px; font-weight: 400; font-style: italic; line-height: 1; }
+    .academia-type h2 { font-size: 32px; font-weight: 400; font-style: italic; line-height: 1; }
+    .academia-type h3 { font-size: 24px; font-weight: 400; line-height: 1; }
+    .academia-type h4 { font-size: 20px; font-weight: 400; line-height: 1; }
+    .academia-type h5 { font-size: 16px; font-weight: 700; line-height: 1; }
+    .academia-type h6 { font-family: system-ui, sans-serif; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; line-height: 1; color: var(--brass); }
+
+    /* === COLOR SWATCHES === */
+    .academia-swatches {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .academia-swatch {
+      border: 1px solid rgba(28,23,20,0.2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .academia-swatch .swatch-color { height: 56px; }
+    .academia-swatch .swatch-info { padding: 8px 10px; }
+    .academia-swatch .swatch-name { font-size: 12px; font-style: italic; }
+    .academia-swatch .swatch-hex { font-family: system-ui, sans-serif; font-size: 10px; opacity: 0.5; }
+
+    /* === MODAL === */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(28,23,20,0.85);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-box {
+      background: var(--parchment);
+      border: 1px solid rgba(28,23,20,0.2);
+      border-radius: 4px;
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 360px;
+      position: relative;
+    }
+    .modal-box h3 {
+      font-size: 24px;
+      font-style: italic;
+      font-weight: 400;
+      margin-bottom: 12px;
+    }
+    .modal-box p {
+      font-size: 14px;
+      line-height: 1.7;
+      opacity: 0.7;
+      margin-bottom: 24px;
+    }
+    .modal-close {
+      background: var(--crimson);
+      color: var(--parchment);
+      border: none;
+      padding: 14px 24px;
+      border-radius: 4px;
+      font-family: 'Georgia', serif;
+      font-size: 14px;
+      font-style: italic;
+      cursor: pointer;
+      width: 100%;
+      transition: opacity 400ms;
+    }
+
+    /* === STYLE INFO === */
+    .style-info {
+      background: var(--mahogany);
+      color: var(--parchment);
+      padding: 32px 20px;
+     text-align: center;}
+    .style-info h3 {
+      font-size: 18px;
+      font-style: italic;
+      margin-bottom: 16px;
+    }
+    .style-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .style-info-item {
+      border: 1px solid rgba(201,169,98,0.2);
+      padding: 12px;
+      border-radius: 4px;
+    }
+    .style-info-item .info-label {
+      font-family: system-ui, sans-serif;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--brass);
+      margin-bottom: 4px;
+    }
+    .style-info-item .info-value {
+      font-size: 13px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="vp-bar">
+    <span class="vp-label">Viewpoint:</span>
+    <button class="vp-btn" data-size="1920">1920</button>
+    <button class="vp-btn" data-size="1440">1440</button>
+    <button class="vp-btn" data-size="1024">1024</button>
+    <button class="vp-btn" data-size="768">768</button>
+    <button class="vp-btn" data-size="375">375</button>
+    <button class="vp-btn" data-size="320">320</button>
+    <span id="vp-width" class="vp-width">Full</span>
+    <a href="index.html" class="vp-back">← Back to All Styles</a>
+  </div>
+
+  <div class="vp-frame">
+    <!-- Hero -->
+    <section class="academia-hero">
+      <div class="hero-emblem">&#128218;</div>
+      <h1>The <span class="brass">Scholarly</span><br>Mobile</h1>
+      <div class="hero-rule"></div>
+      <p>Rich mahogany, parchment warmth, brass accents. A timeless scholarly aesthetic.</p>
+    </section>
+
+    <!-- Bottom Nav -->
+    <nav class="mobile-nav">
+      <a class="tab active"><span class="tab-icon">&#128218;</span><span>Library</span></a>
+      <a class="tab"><span class="tab-icon">&#128221;</span><span>Notes</span></a>
+      <a class="tab"><span class="tab-icon">&#128214;</span><span>Read</span></a>
+      <a class="tab"><span class="tab-icon">&#9776;</span><span>More</span></a>
+    </nav>
+
+    <!-- Buttons -->
+    <section class="section">
+      <div class="section-title">Buttons</div>
+      <div class="academia-btns">
+        <button class="academia-btn primary">Begin Reading</button>
+        <button class="academia-btn secondary">Bookmark</button>
+        <button class="academia-btn ghost">View Notes</button>
+        <button class="academia-btn disabled" disabled>Closed</button>
+      </div>
+    </section>
+
+    <!-- Forms -->
+    <section class="section">
+      <div class="section-title">Forms</div>
+      <div class="academia-form">
+        <div class="academia-field">
+          <label>Author</label>
+          <input type="text" placeholder="Your name">
+        </div>
+        <div class="academia-field">
+          <label>Subject</label>
+          <input type="text" placeholder="Research topic">
+        </div>
+        <div class="academia-field">
+          <label>Department</label>
+          <select>
+            <option>Literature</option>
+            <option>Philosophy</option>
+            <option>History</option>
+          </select>
+        </div>
+        <div class="academia-field">
+          <label>Abstract</label>
+          <textarea rows="3" placeholder="Write your abstract"></textarea>
+        </div>
+        <div class="academia-checkbox"><input type="checkbox" id="ck1"><label for="ck1">Peer reviewed</label></div>
+        <div class="academia-checkbox"><input type="radio" name="r1" id="r1"><label for="r1">Draft</label></div>
+        <div class="academia-checkbox"><input type="radio" name="r1" id="r2"><label for="r2">Published</label></div>
+      </div>
+    </section>
+
+    <!-- Cards -->
+    <section class="section">
+      <div class="section-title">Cards</div>
+      <div class="academia-cards">
+        <div class="academia-card">
+          <div class="card-icon">&#127963;</div>
+          <h3>Arch-Top Hero</h3>
+          <p>The arch-top shape evokes classical architecture. A doorway to knowledge on your mobile screen.</p>
+          <span class="card-tag">Architecture</span>
+        </div>
+        <div class="academia-card">
+          <div class="card-icon">&#128196;</div>
+          <h3>Parchment Surfaces</h3>
+          <p>Warm, aged paper textures. Sepia-tinted with vignette overlays for depth and atmosphere.</p>
+          <span class="card-tag">Texture</span>
+        </div>
+        <div class="academia-card">
+          <div class="card-icon">&#9881;</div>
+          <h3>Brass Accents</h3>
+          <p>Gold-toned highlights and slow, deliberate timing. Every interaction feels considered.</p>
+          <span class="card-tag">Motion</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Typography -->
+    <section class="section">
+      <div class="section-title">Typography</div>
+      <div class="academia-type">
+        <div class="type-row"><span class="type-label">H1</span><h1>Aa</h1></div>
+        <div class="type-row"><span class="type-label">H2</span><h2>Aa</h2></div>
+        <div class="type-row"><span class="type-label">H3</span><h3>Aa</h3></div>
+        <div class="type-row"><span class="type-label">H4</span><h4>Aa</h4></div>
+        <div class="type-row"><span class="type-label">H5</span><h5>Aa</h5></div>
+        <div class="type-row"><span class="type-label">H6</span><h6>Aa</h6></div>
+      </div>
+    </section>
+
+    <!-- Color Swatches -->
+    <section class="section">
+      <div class="section-title">Colors</div>
+      <div class="academia-swatches">
+        <div class="academia-swatch"><div class="swatch-color" style="background:#1C1714"></div><div class="swatch-info"><div class="swatch-name">Mahogany</div><div class="swatch-hex">#1C1714</div></div></div>
+        <div class="academia-swatch"><div class="swatch-color" style="background:#E8DFD4"></div><div class="swatch-info"><div class="swatch-name">Parchment</div><div class="swatch-hex">#E8DFD4</div></div></div>
+        <div class="academia-swatch"><div class="swatch-color" style="background:#C9A962"></div><div class="swatch-info"><div class="swatch-name">Brass</div><div class="swatch-hex">#C9A962</div></div></div>
+        <div class="academia-swatch"><div class="swatch-color" style="background:#8B2635"></div><div class="swatch-info"><div class="swatch-name">Crimson</div><div class="swatch-hex">#8B2635</div></div></div>
+      </div>
+    </section>
+
+    <!-- Style Info -->
+    <section class="style-info">
+      <h3>Style Info</h3>
+      <div class="style-info-grid">
+        <div class="style-info-item"><div class="info-label">Era</div><div class="info-value">Timeless Scholarly</div></div>
+        <div class="style-info-item"><div class="info-label">Complexity</div><div class="info-value">High</div></div>
+        <div class="style-info-item"><div class="info-label">Radius</div><div class="info-value">4px / 100px arch</div></div>
+        <div class="style-info-item"><div class="info-label">Effects</div><div class="info-value">Vignette / Sepia</div></div>
+      </div>
+    </section>
+
+    <!-- Modal -->
+    <button class="academia-btn primary" style="margin:24px 20px;" onclick="toggleModal('demo-modal')">Open Modal</button>
+  </div>
+
+  <div id="demo-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Scholarly Modal</h3>
+      <p>Rich mahogany and brass. A doorway to knowledge, framed in classical form.</p>
+      <button class="modal-close" onclick="toggleModal('demo-modal')">Close</button>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+</body>
+</html>

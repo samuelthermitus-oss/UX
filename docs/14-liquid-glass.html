@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liquid Glass - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #0A0A1A;
+  --text-color: #E8E8F0;
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --accent-1: #7B61FF;
+  --accent-2: #FF6B9D;
+  --accent-3: #00D4FF;
+  --accent-4: #FFB800;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Fluid background */
+.fluid-bg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.fluid-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  animation: morphBlob 12s ease-in-out infinite alternate;
+}
+
+.blob-1 {
+  width: 500px; height: 500px;
+  background: linear-gradient(135deg, #7B61FF, #FF6B9D);
+  top: -10%; left: -10%;
+  animation-delay: 0s;
+}
+
+.blob-2 {
+  width: 400px; height: 400px;
+  background: linear-gradient(135deg, #00D4FF, #7B61FF);
+  top: 50%; right: -5%;
+  animation-delay: -4s;
+}
+
+.blob-3 {
+  width: 350px; height: 350px;
+  background: linear-gradient(135deg, #FFB800, #FF6B9D);
+  bottom: -5%; left: 30%;
+  animation-delay: -8s;
+}
+
+@keyframes morphBlob {
+  0% { border-radius: 40% 60% 60% 40% / 60% 30% 70% 40%; transform: translate(0, 0) scale(1); }
+  33% { border-radius: 60% 40% 30% 70% / 40% 60% 40% 60%; }
+  66% { border-radius: 30% 70% 70% 30% / 50% 40% 60% 50%; }
+  100% { border-radius: 50% 50% 40% 60% / 60% 50% 50% 40%; transform: translate(30px, -20px) scale(1.05); }
+}
+
+/* Glass effect base */
+.glass {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 28px;
+}
+
+/* Hero */
+.liquid-hero {
+  min-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 20px;
+  position: relative;
+}
+
+.liquid-hero .hero-glass {
+  padding: 60px;
+  max-width: 700px;
+  width: 90%;
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-hero .hero-glass::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: conic-gradient(from 0deg, transparent, rgba(123,97,255,0.1), transparent, rgba(255,107,157,0.1), transparent);
+  animation: rotateGlow 8s linear infinite;
+}
+
+@keyframes rotateGlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.liquid-hero h1 {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  position: relative;
+  background: linear-gradient(135deg, #7B61FF, #00D4FF, #FF6B9D, #FFB800);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 6s ease infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.liquid-hero .subtitle {
+  font-size: 1.2rem;
+  color: rgba(255,255,255,0.7);
+  position: relative;
+  max-width: 500px;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+/* Navigation */
+.liquid-nav {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10, 10, 26, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  flex-wrap: wrap;
+}
+
+.liquid-nav a {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+
+.liquid-nav a:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.08);
+}
+
+.liquid-nav a.active {
+  color: #fff;
+  background: rgba(123,97,255,0.2);
+  border: 1px solid rgba(123,97,255,0.3);
+}
+
+/* Buttons */
+.liquid-buttons {
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.liquid-buttons h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  background: linear-gradient(135deg, #7B61FF, #00D4FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.btn-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.liquid-btn {
+  font-family: system-ui;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 14px 32px;
+  border-radius: 16px;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.15);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left 0.5s;
+}
+
+.liquid-btn:hover::before { left: 100%; }
+
+.liquid-btn.btn-glass {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  color: #fff;
+}
+
+.liquid-btn.btn-glass:hover {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.liquid-btn.btn-gradient {
+  background: linear-gradient(135deg, #7B61FF, #FF6B9D);
+  color: #fff;
+  border: none;
+}
+
+.liquid-btn.btn-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(123,97,255,0.4);
+}
+
+.liquid-btn.btn-cyan {
+  background: linear-gradient(135deg, #00D4FF, #7B61FF);
+  color: #fff;
+  border: none;
+}
+
+.liquid-btn.btn-cyan:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,212,255,0.4);
+}
+
+.liquid-btn.btn-outline {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.25);
+}
+
+.liquid-btn.btn-outline:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.5);
+  transform: translateY(-2px);
+}
+
+/* Forms */
+.liquid-forms {
+  padding: 64px 20px;
+  max-width: 550px;
+  margin: 0 auto;
+}
+
+.liquid-forms h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+  background: linear-gradient(135deg, #7B61FF, #00D4FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.liquid-input {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 1rem;
+  font-family: system-ui;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  color: #fff;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  outline: none;
+  transition: all 0.3s;
+}
+
+.liquid-input:focus {
+  border-color: rgba(123,97,255,0.5);
+  box-shadow: 0 0 0 3px rgba(123,97,255,0.15);
+  background: rgba(255,255,255,0.08);
+}
+
+.liquid-input::placeholder {
+  color: rgba(255,255,255,0.3);
+}
+
+textarea.liquid-input {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Cards */
+.liquid-cards {
+  padding: 64px 20px;
+}
+
+.liquid-cards h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+  background: linear-gradient(135deg, #7B61FF, #00D4FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.liquid-card {
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.liquid-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, rgba(123,97,255,0.05), rgba(255,107,157,0.05));
+  opacity: 0;
+  transition: opacity 0.3s;
+  border-radius: 24px;
+}
+
+.liquid-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,0.25);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+}
+
+.liquid-card:hover::after { opacity: 1; }
+
+.liquid-card .card-icon {
+  font-size: 2rem;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.liquid-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.liquid-card p {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.7;
+  position: relative;
+}
+
+/* Typography */
+.liquid-typography {
+  padding: 64px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.liquid-typography h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+  background: linear-gradient(135deg, #7B61FF, #00D4FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.type-sample {
+  margin-bottom: 24px;
+  padding: 24px;
+  border-radius: 20px;
+}
+
+.type-sample .label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: rgba(123,97,255,0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 10px;
+}
+
+.type-sample h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #7B61FF, #00D4FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.type-sample h2 { font-size: 1.8rem; font-weight: 700; color: #fff; }
+.type-sample h3 { font-size: 1.3rem; font-weight: 600; color: rgba(255,255,255,0.8); }
+.type-sample p { font-size: 1rem; color: rgba(255,255,255,0.6); line-height: 1.8; }
+
+/* Color Palette */
+.liquid-palette {
+  padding: 64px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.liquid-palette h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+  background: linear-gradient(135deg, #7B61FF, #00D4FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 14px;
+}
+
+.swatch {
+  aspect-ratio: 1;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px;
+  transition: all 0.3s;
+  border: 1px solid rgba(255,255,255,0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.swatch::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  border-radius: 18px;
+}
+
+.swatch:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+
+.swatch .swatch-label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  background: rgba(0,0,0,0.3);
+  padding: 4px 8px;
+  border-radius: 8px;
+  color: #fff;
+  position: relative;
+  z-index: 1;
+}
+
+/* Modal */
+.liquid-modal-section {
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.liquid-modal-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  background: linear-gradient(135deg, #7B61FF, #00D4FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.modal-trigger {
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #7B61FF, #FF6B9D);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.4s;
+  font-family: system-ui;
+}
+
+.modal-trigger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(123,97,255,0.4);
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(10,10,26,0.7);
+  backdrop-filter: blur(10px);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.active { display: flex; }
+
+.liquid-modal {
+  padding: 40px;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 28px;
+}
+
+.liquid-modal h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.liquid-modal p {
+  color: rgba(255,255,255,0.6);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.liquid-modal .modal-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.liquid-modal .modal-close:hover {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+}
+
+/* Style Info */
+.liquid-info {
+  padding: 64px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.liquid-info h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+  background: linear-gradient(135deg, #7B61FF, #00D4FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.info-item {
+  padding: 20px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+}
+
+.info-item .info-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: rgba(123,97,255,0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+
+.info-item .info-value {
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+}
+
+@media (max-width: 768px) {
+  .liquid-hero h1 { font-size: 2rem; }
+  .liquid-hero .hero-glass { padding: 48px 20px; }
+  .card-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="fluid-bg">
+  <div class="fluid-blob blob-1"></div>
+  <div class="fluid-blob blob-2"></div>
+  <div class="fluid-blob blob-3"></div>
+</div>
+
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+<div class="vp-frame">
+
+<!-- Hero -->
+<section class="liquid-hero">
+  <div class="hero-glass glass-strong">
+    <h1>Liquid Glass</h1>
+    <p class="subtitle">Fluid, iridescent, and endlessly morphing. A design language that flows like water and shimmers like prismatic light.</p>
+  </div>
+</section>
+
+<!-- Navigation -->
+<nav class="liquid-nav">
+  <a href="#" class="active">Home</a>
+  <a href="#">Products</a>
+  <a href="#">Studio</a>
+  <a href="#">Community</a>
+  <a href="#">Pricing</a>
+</nav>
+
+<!-- Buttons -->
+<section class="liquid-buttons">
+  <h2>Interactive Elements</h2>
+  <div class="btn-grid">
+    <button class="liquid-btn btn-glass">Glass</button>
+    <button class="liquid-btn btn-gradient">Gradient</button>
+    <button class="liquid-btn btn-cyan">Cyan Flow</button>
+    <button class="liquid-btn btn-outline">Outline</button>
+  </div>
+</section>
+
+<!-- Forms -->
+<section class="liquid-forms">
+  <h2>Connect</h2>
+  <div class="form-group">
+    <label>Full Name</label>
+    <input type="text" class="liquid-input" placeholder="Enter your name...">
+  </div>
+  <div class="form-group">
+    <label>Email</label>
+    <input type="email" class="liquid-input" placeholder="you@example.com">
+  </div>
+  <div class="form-group">
+    <label>Message</label>
+    <textarea class="liquid-input" placeholder="Share your thoughts..."></textarea>
+  </div>
+  <button class="liquid-btn btn-gradient" style="width:100%;padding:14px;">Send Message</button>
+</section>
+
+<!-- Cards -->
+<section class="liquid-cards">
+  <h2>Features</h2>
+  <div class="card-grid">
+    <div class="liquid-card glass">
+      <div class="card-icon">&#128300;</div>
+      <h3>Iridescent UI</h3>
+      <p>Dynamic color-shifting surfaces that respond to light angles, creating a living, breathing interface.</p>
+    </div>
+    <div class="liquid-card glass">
+      <div class="card-icon">&#127752;</div>
+      <h3>Fluid Motion</h3>
+      <p>Smooth morphing animations with 400-600ms transitions that feel organic and natural.</p>
+    </div>
+    <div class="liquid-card glass">
+      <div class="card-icon">&#10024;</div>
+      <h3>Chromatic Depth</h3>
+      <p>Layered glass effects with dynamic blur create a sense of depth and dimensionality.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Typography -->
+<section class="liquid-typography">
+  <h2>Typography</h2>
+  <div class="type-sample glass">
+    <div class="label">Display</div>
+    <h1>Fluid Beauty</h1>
+  </div>
+  <div class="type-sample glass">
+    <div class="label">Heading</div>
+    <h2>Shifting Spectrums</h2>
+  </div>
+  <div class="type-sample glass">
+    <div class="label">Subheading</div>
+    <h3>Where Light Meets Liquid</h3>
+  </div>
+  <div class="type-sample glass">
+    <div class="label">Body</div>
+    <p>Liquid glass design captures the ethereal beauty of light passing through water and crystal. Every element shimmers with subtle iridescence, morphs with fluid grace, and glows with inner luminescence.</p>
+  </div>
+</section>
+
+<!-- Color Palette -->
+<section class="liquid-palette">
+  <h2>Iridescent Palette</h2>
+  <div class="palette-grid">
+    <div class="swatch" style="background:linear-gradient(135deg,#7B61FF,#FF6B9D);"><span class="swatch-label">#7B61FF</span></div>
+    <div class="swatch" style="background:linear-gradient(135deg,#FF6B9D,#FFB800);"><span class="swatch-label">#FF6B9D</span></div>
+    <div class="swatch" style="background:linear-gradient(135deg,#00D4FF,#7B61FF);"><span class="swatch-label">#00D4FF</span></div>
+    <div class="swatch" style="background:linear-gradient(135deg,#FFB800,#FF6B9D);"><span class="swatch-label">#FFB800</span></div>
+    <div class="swatch" style="background:linear-gradient(135deg,#0A0A1A,#1A1A3A);"><span class="swatch-label">#0A0A1A</span></div>
+    <div class="swatch" style="background:linear-gradient(135deg,rgba(255,255,255,0.1),rgba(255,255,255,0.05));"><span class="swatch-label">Glass</span></div>
+  </div>
+</section>
+
+<!-- Modal -->
+<section class="liquid-modal-section">
+  <h2>Glass Modal</h2>
+  <button class="modal-trigger" onclick="document.getElementById('liquid-modal').classList.add('active')">Open Modal</button>
+  <div id="liquid-modal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('active')">
+    <div class="liquid-modal">
+      <button class="modal-close" onclick="document.getElementById('liquid-modal').classList.remove('active')">&times;</button>
+      <h3>Prismatic Dialog</h3>
+      <p>This modal floats in a sea of liquid glass, with dynamic blur and iridescent edges that shift as you move your gaze.</p>
+      <button class="liquid-btn btn-gradient" onclick="document.getElementById('liquid-modal').classList.remove('active')">Continue</button>
+    </div>
+  </div>
+</section>
+
+<!-- Style Info -->
+<section class="liquid-info">
+  <h2>Style Information</h2>
+  <div class="info-grid">
+    <div class="info-item">
+      <div class="info-label">Era</div>
+      <div class="info-value">2020s Modern</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Complexity</div>
+      <div class="info-value">High</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Best For</div>
+      <div class="info-value">Premium SaaS, E-commerce, Creative</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Font</div>
+      <div class="info-value">System-UI</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Border Radius</div>
+      <div class="info-value">24-32px</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Effects</div>
+      <div class="info-value">Morphing, Fluid Animations, Blur, Chromatic</div>
+    </div>
+  </div>
+</section>
+
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

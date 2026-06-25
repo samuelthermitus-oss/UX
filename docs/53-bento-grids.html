@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bento Grids - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #F5F5F7;
+  --text-color: #1D1D1F;
+  --accent-blue: #0071E3;
+  --clean-white: #FFFFFF;
+  --grey-text: #86868B;
+  --border-color: #D2D2D7;
+  --green: #34C759;
+  --red: #FF3B30;
+  --card-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --card-shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--page-bg);
+  color: var(--text-color);
+  -webkit-font-smoothing: antialiased;
+}
+
+.vp-bar { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--clean-white); border-bottom: 1px solid var(--border-color); flex-wrap: wrap; }
+.vp-label { font-size: 13px; color: var(--grey-text); margin-right: 4px; }
+.vp-btn { padding: 4px 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--clean-white); color: var(--text-color); font-size: 12px; cursor: pointer; transition: all 0.2s; }
+.vp-btn:hover { background: var(--page-bg); }
+.vp-btn.active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+.vp-width { font-size: 12px; color: var(--accent-blue); font-weight: 600; margin-left: auto; }
+.vp-back { font-size: 12px; color: var(--accent-blue); text-decoration: none; margin-left: 12px; }
+.vp-back:hover { text-decoration: underline; }
+
+.vp-frame {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 40px 48px;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Section Styles */
+.section {
+  margin-bottom: 72px;
+}
+.section-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--grey-text);
+  margin-bottom: 32px;
+  padding-left: 4px;
+}
+
+/* ========== HERO BENTO GRID ========== */
+.bento-hero-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto auto;
+  gap: 16px;
+}
+
+.bento-card {
+  background: var(--clean-white);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.bento-card:hover {
+  transform: scale(1.02);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.bento-hero-main {
+  grid-column: 1 / -1;
+  padding: 56px 48px;
+  text-align: center;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F5F5F7 100%);
+}
+
+.bento-hero-main h1 {
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 20px 0;
+  color: var(--text-color);
+  line-height: 1.1;
+}
+
+.bento-hero-main p {
+  font-size: 18px;
+  color: var(--grey-text);
+  margin: 0;
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+.bento-hero-main .hero-badge {
+  display: inline-block;
+  background: rgba(0, 113, 227, 0.08);
+  color: var(--accent-blue);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 980px;
+  margin-bottom: 20px;
+  letter-spacing: 0.3px;
+}
+
+.bento-stat-card {
+  text-align: left;
+}
+
+.bento-stat-card .stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.bento-stat-card .stat-icon.blue { background: rgba(0, 113, 227, 0.1); }
+.bento-stat-card .stat-icon.green { background: rgba(52, 199, 89, 0.1); }
+.bento-stat-card .stat-icon.red { background: rgba(255, 59, 48, 0.1); }
+
+.bento-stat-card h3 {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 4px 0;
+  color: var(--text-color);
+}
+
+.bento-stat-card .stat-label {
+  font-size: 14px;
+  color: var(--grey-text);
+  margin: 0;
+}
+
+.bento-feature-card {
+  grid-column: span 2;
+}
+
+.bento-feature-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.01em;
+}
+
+.bento-feature-card p {
+  font-size: 14px;
+  color: var(--grey-text);
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+
+.bento-feature-card .feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bento-feature-card .feature-list li {
+  font-size: 13px;
+  color: var(--text-color);
+  padding: 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bento-feature-card .feature-list li::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  flex-shrink: 0;
+}
+
+/* ========== NAVIGATION ========== */
+.bento-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--clean-white);
+  padding: 6px;
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+  max-width: 600px;
+}
+
+.bento-nav-item {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--grey-text);
+  text-decoration: none;
+  border-radius: 12px;
+  transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
+  cursor: pointer;
+}
+
+.bento-nav-item:hover {
+  color: var(--text-color);
+  background: var(--page-bg);
+}
+
+.bento-nav-item.active {
+  color: var(--text-color);
+  background: var(--page-bg);
+  font-weight: 600;
+}
+
+/* ========== BUTTONS ========== */
+.btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+ justify-content: center;}
+
+.bento-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: system-ui, -apple-system, sans-serif;
+  border-radius: 980px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  letter-spacing: -0.01em;
+}
+
+.bento-btn:hover {
+  transform: scale(1.04);
+}
+
+.bento-btn:active {
+  transform: scale(0.98);
+}
+
+.bento-btn-primary {
+  background: var(--accent-blue);
+  color: #FFFFFF;
+}
+
+.bento-btn-primary:hover {
+  background: #0077ED;
+  box-shadow: 0 4px 16px rgba(0, 113, 227, 0.3);
+}
+
+.bento-btn-secondary {
+  background: var(--text-color);
+  color: #FFFFFF;
+}
+
+.bento-btn-secondary:hover {
+  background: #333336;
+  box-shadow: 0 4px 16px rgba(29, 29, 31, 0.2);
+}
+
+.bento-btn-ghost {
+  background: transparent;
+  color: var(--text-color);
+  border: 1.5px solid var(--border-color);
+}
+
+.bento-btn-ghost:hover {
+  background: var(--page-bg);
+  border-color: var(--grey-text);
+}
+
+.bento-btn-disabled {
+  background: var(--grey-text);
+  color: #FFFFFF;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.bento-btn-disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* ========== FORMS ========== */
+.bento-form {
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.bento-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bento-form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-color);
+  letter-spacing: -0.01em;
+}
+
+.bento-form-group input,
+.bento-form-group textarea,
+.bento-form-group select {
+  padding: 12px 16px;
+  font-size: 15px;
+  font-family: system-ui, -apple-system, sans-serif;
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--clean-white);
+  color: var(--text-color);
+  outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bento-form-group input:focus,
+.bento-form-group textarea:focus,
+.bento-form-group select:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+}
+
+.bento-form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.bento-form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.bento-form-row .bento-form-group {
+  flex: 1;
+}
+
+.bento-checkbox-group,
+.bento-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bento-checkbox-item,
+.bento-radio-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.bento-checkbox-item input[type="checkbox"],
+.bento-radio-item input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-blue);
+  cursor: pointer;
+  border: none;
+  padding: 0;
+}
+
+/* ========== CARDS ========== */
+.bento-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.bento-showcase-card {
+  background: var(--clean-white);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.bento-showcase-card:hover {
+  transform: scale(1.02);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.bento-showcase-card .card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.bento-showcase-card .card-icon.blue { background: rgba(0, 113, 227, 0.1); }
+.bento-showcase-card .card-icon.green { background: rgba(52, 199, 89, 0.1); }
+.bento-showcase-card .card-icon.purple { background: rgba(175, 82, 222, 0.1); }
+
+.bento-showcase-card h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.01em;
+}
+
+.bento-showcase-card p {
+  font-size: 14px;
+  color: var(--grey-text);
+  margin: 0 0 20px 0;
+  line-height: 1.6;
+}
+
+.bento-showcase-card .card-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.bento-showcase-card .card-stat .stat-value {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text-color);
+}
+
+.bento-showcase-card .card-stat .stat-unit {
+  font-size: 14px;
+  color: var(--grey-text);
+  font-weight: 500;
+}
+
+/* ========== TYPOGRAPHY ========== */
+.bento-typo-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--clean-white);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: var(--card-shadow);
+}
+
+.bento-typo-item {
+  display: flex;
+  align-items: baseline;
+  gap: 24px;
+  padding: 8px 0;
+}
+
+.bento-typo-item + .bento-typo-item {
+  border-top: 1px solid var(--page-bg);
+}
+
+.bento-typo-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--grey-text);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-width: 32px;
+  flex-shrink: 0;
+  padding-top: 4px;
+}
+
+.bento-typo-item h1 { margin: 0; font-size: 48px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+.bento-typo-item h2 { margin: 0; font-size: 36px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.15; }
+.bento-typo-item h3 { margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+.bento-typo-item h4 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.25; }
+.bento-typo-item h5 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3; }
+.bento-typo-item h6 { margin: 0; font-size: 14px; font-weight: 500; letter-spacing: -0.005em; line-height: 1.4; color: var(--grey-text); }
+
+/* ========== COLOR SWATCHES ========== */
+.bento-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+}
+
+.bento-swatch {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  background: var(--clean-white);
+}
+
+.bento-swatch:hover {
+  transform: scale(1.02);
+}
+
+.bento-swatch-color {
+  height: 100px;
+}
+
+.bento-swatch-info {
+  padding: 14px 16px;
+}
+
+.bento-swatch-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 2px;
+}
+
+.bento-swatch-hex {
+  font-size: 12px;
+  color: var(--grey-text);
+  font-family: 'SF Mono', SFMono-Regular, Menlo, monospace;
+}
+
+/* ========== MODAL ========== */
+.bento-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.bento-modal-overlay.show {
+  display: flex;
+  opacity: 1;
+}
+
+.bento-modal {
+  background: var(--clean-white);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 480px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
+  transform: translateY(20px) scale(0.96);
+  transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.bento-modal-overlay.show .bento-modal {
+  transform: translateY(0) scale(1);
+}
+
+.bento-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--page-bg);
+  color: var(--grey-text);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.bento-modal-close:hover {
+  background: var(--border-color);
+  color: var(--text-color);
+}
+
+.bento-modal h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.02em;
+}
+
+.bento-modal p {
+  font-size: 15px;
+  color: var(--grey-text);
+  line-height: 1.6;
+  margin: 0 0 24px 0;
+}
+
+.bento-modal .modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+/* ========== STYLE INFO PANEL ========== */
+.bento-info-panel {
+  background: var(--clean-white);
+  border-radius: 20px;
+  padding: 36px;
+  box-shadow: var(--card-shadow);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 24px;
+}
+
+.bento-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bento-info-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--grey-text);
+}
+
+.bento-info-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-color);
+  letter-spacing: -0.01em;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1024px) {
+  .vp-frame { padding: 32px 24px; }
+  .bento-hero-grid { grid-template-columns: repeat(2, 1fr); }
+  .bento-hero-main h1 { font-size: 40px; }
+  .bento-cards-grid { grid-template-columns: repeat(2, 1fr); }
+  .bento-feature-card { grid-column: span 2; }
+}
+
+@media (max-width: 768px) {
+  .vp-frame { padding: 24px 16px; }
+  .bento-hero-grid { grid-template-columns: 1fr; }
+  .bento-hero-main { padding: 40px 24px; }
+  .bento-hero-main h1 { font-size: 32px; }
+  .bento-hero-main p { font-size: 16px; }
+  .bento-cards-grid { grid-template-columns: 1fr; }
+  .bento-feature-card { grid-column: span 1; }
+  .bento-form-row { flex-direction: column; gap: 20px; }
+  .bento-typo-item { flex-direction: column; gap: 4px; }
+  .bento-typo-item h1 { font-size: 36px; }
+  .bento-typo-item h2 { font-size: 28px; }
+  .bento-nav { flex-wrap: wrap; }
+  .bento-info-panel { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Viewport Bar -->
+<div class="vp-bar">
+  <span class="vp-label">&#x1F4D0; Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">&larr; Back to All Styles</a>
+</div>
+
+<div class="vp-frame">
+
+  <!-- ==================== HERO ==================== -->
+  <div class="section">
+    <div class="section-title">Hero</div>
+    <div class="bento-hero-grid">
+
+      <div class="bento-card bento-hero-main">
+        <span class="hero-badge">Apple / Linear Aesthetic</span>
+        <h1>Bento Grids</h1>
+        <p>Modular layouts inspired by Apple product pages and Linear.app dashboards. Clean, minimal, and premium.</p>
+      </div>
+
+      <div class="bento-card bento-stat-card">
+        <div class="stat-icon blue">&#9670;</div>
+        <h3>48</h3>
+        <p class="stat-label">Design System</p>
+      </div>
+
+      <div class="bento-card bento-stat-card">
+        <div class="stat-icon green">&#9651;</div>
+        <h3>120+</h3>
+        <p class="stat-label">Components</p>
+      </div>
+
+      <div class="bento-card bento-stat-card">
+        <div class="stat-icon red">&#9679;</div>
+        <h3>99%</h3>
+        <p class="stat-label">Analytics Score</p>
+      </div>
+
+      <div class="bento-card bento-feature-card">
+        <h3>Templates</h3>
+        <p>Ready-made layouts for any project, from marketing pages to SaaS dashboards.</p>
+        <ul class="feature-list">
+          <li>Landing pages</li>
+          <li>Dashboard views</li>
+          <li>Portfolio grids</li>
+          <li>Documentation</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== NAVIGATION ==================== -->
+  <div class="section">
+    <div class="section-title">Navigation</div>
+    <div class="bento-nav">
+      <a class="bento-nav-item active" href="#">Overview</a>
+      <a class="bento-nav-item" href="#">Features</a>
+      <a class="bento-nav-item" href="#">Pricing</a>
+      <a class="bento-nav-item" href="#">Docs</a>
+      <a class="bento-nav-item" href="#">Changelog</a>
+    </div>
+  </div>
+
+  <!-- ==================== BUTTONS ==================== -->
+  <div class="section">
+    <div class="section-title">Buttons</div>
+    <div class="btn-group">
+      <button class="bento-btn bento-btn-primary">Primary</button>
+      <button class="bento-btn bento-btn-secondary">Secondary</button>
+      <button class="bento-btn bento-btn-ghost">Ghost</button>
+      <button class="bento-btn bento-btn-disabled" disabled>Disabled</button>
+    </div>
+  </div>
+
+  <!-- ==================== FORMS ==================== -->
+  <div class="section">
+    <div class="section-title">Forms</div>
+    <div class="bento-form">
+      <div class="bento-form-group">
+        <label for="bento-name">Name</label>
+        <input type="text" id="bento-name" placeholder="Enter your name">
+      </div>
+      <div class="bento-form-row">
+        <div class="bento-form-group">
+          <label for="bento-email">Email</label>
+          <input type="email" id="bento-email" placeholder="you@example.com">
+        </div>
+        <div class="bento-form-group">
+          <label for="bento-role">Role</label>
+          <select id="bento-role">
+            <option>Select role</option>
+            <option>Designer</option>
+            <option>Developer</option>
+            <option>Product Manager</option>
+          </select>
+        </div>
+      </div>
+      <div class="bento-form-group">
+        <label for="bento-message">Message</label>
+        <textarea id="bento-message" placeholder="Write something..."></textarea>
+      </div>
+      <div class="bento-form-row">
+        <div class="bento-form-group">
+          <label>Preferences</label>
+          <div class="bento-checkbox-group">
+            <label class="bento-checkbox-item">
+              <input type="checkbox" checked> Email notifications
+            </label>
+            <label class="bento-checkbox-item">
+              <input type="checkbox"> Marketing updates
+            </label>
+          </div>
+        </div>
+        <div class="bento-form-group">
+          <label>Plan</label>
+          <div class="bento-radio-group">
+            <label class="bento-radio-item">
+              <input type="radio" name="plan" checked> Free
+            </label>
+            <label class="bento-radio-item">
+              <input type="radio" name="plan"> Pro
+            </label>
+            <label class="bento-radio-item">
+              <input type="radio" name="plan"> Enterprise
+            </label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <button class="bento-btn bento-btn-primary" style="width: 100%;">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CARDS ==================== -->
+  <div class="section">
+    <div class="section-title">Cards</div>
+    <div class="bento-cards-grid">
+
+      <div class="bento-showcase-card">
+        <div class="card-icon blue">&#9881;</div>
+        <h3>Features</h3>
+        <p>Crafted with precision and attention to detail. Every component serves a purpose in your design system.</p>
+        <div class="card-stat">
+          <span class="stat-value">24</span>
+          <span class="stat-unit">components</span>
+        </div>
+      </div>
+
+      <div class="bento-showcase-card">
+        <div class="card-icon green">&#9889;</div>
+        <h3>Performance</h3>
+        <p>Lightning fast load times and buttery smooth interactions. Built for the modern web experience.</p>
+        <div class="card-stat">
+          <span class="stat-value">98</span>
+          <span class="stat-unit">Lighthouse score</span>
+        </div>
+      </div>
+
+      <div class="bento-showcase-card">
+        <div class="card-icon purple">&#9741;</div>
+        <h3>Integration</h3>
+        <p>Seamlessly connects with your favorite tools. Designed to fit into any workflow or tech stack.</p>
+        <div class="card-stat">
+          <span class="stat-value">50+</span>
+          <span class="stat-unit">integrations</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== TYPOGRAPHY ==================== -->
+  <div class="section">
+    <div class="section-title">Typography</div>
+    <div class="bento-typo-stack">
+      <div class="bento-typo-item">
+        <span class="bento-typo-label">H1</span>
+        <h1>Design with intention</h1>
+      </div>
+      <div class="bento-typo-item">
+        <span class="bento-typo-label">H2</span>
+        <h2>Clarity over complexity</h2>
+      </div>
+      <div class="bento-typo-item">
+        <span class="bento-typo-label">H3</span>
+        <h3>Every pixel matters</h3>
+      </div>
+      <div class="bento-typo-item">
+        <span class="bento-typo-label">H4</span>
+        <h4>Precision meets beauty</h4>
+      </div>
+      <div class="bento-typo-item">
+        <span class="bento-typo-label">H5</span>
+        <h5>Thoughtful details</h5>
+      </div>
+      <div class="bento-typo-item">
+        <span class="bento-typo-label">H6</span>
+        <h6>Subtle supporting text</h6>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== COLOR SWATCHES ==================== -->
+  <div class="section">
+    <div class="section-title">Color Swatches</div>
+    <div class="bento-swatches">
+
+      <div class="bento-swatch">
+        <div class="bento-swatch-color" style="background: #F5F5F7;"></div>
+        <div class="bento-swatch-info">
+          <div class="bento-swatch-name">Off White</div>
+          <div class="bento-swatch-hex">#F5F5F7</div>
+        </div>
+      </div>
+
+      <div class="bento-swatch">
+        <div class="bento-swatch-color" style="background: #FFFFFF; border-bottom: 1px solid #F0F0F0;"></div>
+        <div class="bento-swatch-info">
+          <div class="bento-swatch-name">Clean White</div>
+          <div class="bento-swatch-hex">#FFFFFF</div>
+        </div>
+      </div>
+
+      <div class="bento-swatch">
+        <div class="bento-swatch-color" style="background: #1D1D1F;"></div>
+        <div class="bento-swatch-info">
+          <div class="bento-swatch-name">Text</div>
+          <div class="bento-swatch-hex">#1D1D1F</div>
+        </div>
+      </div>
+
+      <div class="bento-swatch">
+        <div class="bento-swatch-color" style="background: #0071E3;"></div>
+        <div class="bento-swatch-info">
+          <div class="bento-swatch-name">Accent Blue</div>
+          <div class="bento-swatch-hex">#0071E3</div>
+        </div>
+      </div>
+
+      <div class="bento-swatch">
+        <div class="bento-swatch-color" style="background: #86868B;"></div>
+        <div class="bento-swatch-info">
+          <div class="bento-swatch-name">Grey</div>
+          <div class="bento-swatch-hex">#86868B</div>
+        </div>
+      </div>
+
+      <div class="bento-swatch">
+        <div class="bento-swatch-color" style="background: #34C759;"></div>
+        <div class="bento-swatch-info">
+          <div class="bento-swatch-name">Green</div>
+          <div class="bento-swatch-hex">#34C759</div>
+        </div>
+      </div>
+
+      <div class="bento-swatch">
+        <div class="bento-swatch-color" style="background: #FF3B30;"></div>
+        <div class="bento-swatch-info">
+          <div class="bento-swatch-name">Red</div>
+          <div class="bento-swatch-hex">#FF3B30</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== MODAL ==================== -->
+  <div class="section">
+    <div class="section-title">Modal</div>
+    <button class="bento-btn bento-btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button>
+
+    <div class="bento-modal-overlay" id="demo-modal">
+      <div class="bento-modal">
+        <button class="bento-modal-close" onclick="toggleModal('demo-modal')">&times;</button>
+        <h2>Quick Action</h2>
+        <p>Perform an action from this clean, minimal modal. Built with backdrop blur and smooth transitions for a premium feel.</p>
+        <div class="modal-actions">
+          <button class="bento-btn bento-btn-ghost" onclick="toggleModal('demo-modal')">Cancel</button>
+          <button class="bento-btn bento-btn-primary" onclick="toggleModal('demo-modal')">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== STYLE INFO PANEL ==================== -->
+  <div class="section">
+    <div class="section-title">Style Info</div>
+    <div class="bento-info-panel">
+      <div class="bento-info-item">
+        <span class="bento-info-label">Era</span>
+        <span class="bento-info-value">2020s Apple/Linear</span>
+      </div>
+      <div class="bento-info-item">
+        <span class="bento-info-label">Complexity</span>
+        <span class="bento-info-value">Low</span>
+      </div>
+      <div class="bento-info-item">
+        <span class="bento-info-label">Best For</span>
+        <span class="bento-info-value">Product features, dashboards, personal sites</span>
+      </div>
+      <div class="bento-info-item">
+        <span class="bento-info-label">Font</span>
+        <span class="bento-info-value">system-ui</span>
+      </div>
+      <div class="bento-info-item">
+        <span class="bento-info-label">Effects</span>
+        <span class="bento-info-value">Hover scale, shadow expansion</span>
+      </div>
+      <div class="bento-info-item">
+        <span class="bento-info-label">Layout</span>
+        <span class="bento-info-value">CSS Grid bento cells</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="shared.js"></script>
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hero-Centric Design - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --bg: #09090B;
+  --surface: #18181B;
+  --surface-2: #27272A;
+  --text: #FAFAFA;
+  --text-dim: #A1A1AA;
+  --primary: #818CF8;
+  --primary-bright: #A5B4FC;
+  --accent: #F472B6;
+  --accent-alt: #FBBF24;
+  --radius: 16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;line-height:1.6}
+
+/* ══ SPLIT HERO ══ */
+.split-hero{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;gap:0}
+.hero-left{display:flex;flex-direction:column;justify-content:center;padding:80px 64px}
+.hero-right{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1E1B4B,#312E81);position:relative;overflow:hidden}
+.hero-right::before{content:'';position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(244,114,182,.2),transparent 60%);top:-100px;right:-100px;border-radius:50%}
+.hero-right::after{content:'';position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(129,140,248,.15),transparent 60%);bottom:-80px;left:-60px;border-radius:50%}
+
+.hero-overline{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.2em;color:var(--primary-bright);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.hero-overline::before{content:'';width:24px;height:1px;background:var(--primary)}
+
+.hero-left h1{font-size:clamp(2.4rem,5vw,3.8rem);font-weight:800;line-height:1.08;letter-spacing:-.03em;margin-bottom:20px}
+.hero-left h1 em{font-style:normal;color:var(--accent)}
+
+.hero-subtitle{font-size:1.05rem;color:var(--text-dim);max-width:440px;line-height:1.7;margin-bottom:32px}
+
+.hero-actions{display:flex;gap:12px;margin-bottom:48px}
+.hero-btn{padding:14px 32px;font-size:.95rem;font-weight:700;border-radius:10px;cursor:pointer;border:none;font-family:inherit;transition:all .25s}
+.hero-btn.primary{background:var(--primary);color:#fff;box-shadow:0 4px 24px rgba(129,140,248,.3)}
+.hero-btn.primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(129,140,248,.4)}
+.hero-btn.ghost{background:var(--surface);color:var(--text-dim);border:1px solid var(--surface-2)}
+.hero-btn.ghost:hover{border-color:var(--text-dim);color:var(--text)}
+
+/* Social proof strip */
+.social-proof{display:flex;gap:32px;align-items:center;padding-top:32px;border-top:1px solid var(--surface-2)}
+.proof-item{text-align:center}
+.proof-num{font-size:1.5rem;font-weight:800;color:var(--accent-alt)}
+.proof-label{font-size:.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-top:2px}
+
+/* Hero right visual */
+.hero-visual{position:relative;z-index:1;text-align:center}
+.hero-visual .big-number{font-size:8rem;font-weight:900;line-height:1;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-visual .visual-label{font-size:1rem;color:rgba(255,255,255,.5);margin-top:8px}
+
+/* ══ FEATURES: ASYMMETRIC ══ */
+.features{padding:120px 64px}
+.features-header{text-align:center;margin-bottom:64px}
+.features-header h2{font-size:2.2rem;font-weight:800;margin-bottom:8px}
+.features-header p{color:var(--text-dim);max-width:400px;margin:0 auto}
+
+.feature-asym{display:grid;grid-template-columns:1.2fr 1fr;gap:20px;max-width:1100px;margin:0 auto}
+.feature-asym .card{background:var(--surface);border:1px solid var(--surface-2);border-radius:var(--radius);padding:36px;transition:all .3s}
+.feature-asym .card:hover{border-color:var(--primary);transform:translateY(-4px)}
+.feature-asym .card.large{grid-row:span 2;display:flex;flex-direction:column;justify-content:space-between}
+.feature-asym .card .icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:16px}
+.feature-asym .card h3{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+.feature-asym .card p{font-size:.88rem;color:var(--text-dim);line-height:1.7}
+.feature-asym .card .card-tag{display:inline-block;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--primary);background:rgba(129,140,248,.1);padding:4px 10px;border-radius:6px;margin-top:16px}
+
+/* ══ TESTIMONIAL MARQUEE ══ */
+.marquee-section{padding:80px 0;overflow:hidden;border-top:1px solid var(--surface-2);border-bottom:1px solid var(--surface-2)}
+.marquee-track{display:flex;gap:24px;animation:scroll 30s linear infinite;width:max-content}
+@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.marquee-card{flex-shrink:0;width:340px;background:var(--surface);border:1px solid var(--surface-2);border-radius:var(--radius);padding:28px}
+.marquee-card .stars{color:var(--accent-alt);font-size:.8rem;margin-bottom:10px}
+.marquee-card .quote{font-size:.9rem;color:var(--text-dim);line-height:1.7;margin-bottom:16px;font-style:italic}
+.marquee-card .author{display:flex;align-items:center;gap:10px}
+.marquee-card .avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff}
+.marquee-card .name{font-size:.85rem;font-weight:600}
+.marquee-card .role{font-size:.75rem;color:var(--text-dim)}
+
+/* ══ CTA FULL WIDTH ══ */
+.cta-full{padding:120px 64px;text-align:center;background:linear-gradient(135deg,#1E1B4B,#312E81);position:relative;overflow:hidden}
+.cta-full::before{content:'';position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(244,114,182,.1),transparent 60%);top:-200px;left:50%;transform:translateX(-50%);border-radius:50%}
+.cta-full h2{font-size:clamp(2rem,4vw,3rem);font-weight:800;margin-bottom:16px;position:relative}
+.cta-full p{color:rgba(255,255,255,.6);max-width:440px;margin:0 auto 32px;position:relative}
+.cta-full .hero-btn{position:relative}
+
+/* ══ BUTTONS ══ */
+.btn-section{padding:100px 64px}
+.btn-section h2{font-size:1.8rem;font-weight:800;margin-bottom:32px;text-align:center}
+.btn-showcase{display:inline-flex;align-items:center;padding:12px 24px;font-size:.9rem;font-weight:600;border-radius:10px;cursor:pointer;border:none;font-family:inherit;transition:all .2s}
+.btn-showcase.s1{background:var(--primary);color:#fff}
+.btn-showcase.s2{background:var(--accent);color:#fff}
+.btn-showcase.s3{background:transparent;color:var(--primary-bright);border:1px solid var(--primary)}
+.btn-showcase.s4{background:transparent;color:var(--text-dim)}
+
+/* ══ FORMS ══ */
+.forms{padding:100px 64px;max-width:480px;margin:0 auto}
+.forms h2{font-size:1.8rem;font-weight:800;margin-bottom:24px;text-align:center}
+.fg{margin-bottom:18px}
+.fg label{display:block;font-size:.78rem;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.fi{width:100%;padding:12px 16px;font-size:.95rem;font-family:inherit;border:1px solid var(--surface-2);border-radius:10px;color:var(--text);background:var(--surface);outline:none;transition:border .2s}
+.fi:focus{border-color:var(--primary)}
+.fi::placeholder{color:var(--text-dim);opacity:.5}
+textarea.fi{min-height:90px;resize:vertical}
+
+/* ══ TYPOGRAPHY ══ */
+.typo{padding:100px 64px;max-width:700px;margin:0 auto}
+.typo h2{font-size:1.8rem;font-weight:800;margin-bottom:32px;text-align:center}
+.ts{margin-bottom:16px;padding:20px;background:var(--surface);border-radius:12px;border-left:3px solid var(--primary)}
+.ts .lbl{font-size:.65rem;font-weight:600;color:var(--primary-bright);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.ts h1{font-size:2rem;font-weight:900}
+.ts h2{font-size:1.5rem;font-weight:800}
+.ts h3{font-size:1.15rem;font-weight:700}
+.ts p{font-size:.95rem;color:var(--text-dim);line-height:1.8}
+
+/* ══ PALETTE ══ */
+.palette{padding:100px 64px;max-width:700px;margin:0 auto}
+.palette h2{font-size:1.8rem;font-weight:800;margin-bottom:28px;text-align:center}
+.pal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:12px}
+.sw{aspect-ratio:1;border-radius:12px;display:flex;align-items:flex-end;justify-content:center;padding:8px;transition:all .3s;border:1px solid var(--surface-2)}
+.sw:hover{transform:translateY(-3px)}
+.sw span{font-size:.6rem;font-weight:600;background:rgba(0,0,0,.5);padding:2px 6px;border-radius:4px;color:#fff}
+
+/* ══ MODAL ══ */
+.modal-sec{padding:100px 64px;text-align:center}
+.modal-sec h2{font-size:1.8rem;font-weight:800;margin-bottom:24px}
+.modal-trigger{padding:12px 28px;background:var(--primary);color:#fff;font-size:.95rem;font-weight:600;border:none;border-radius:10px;cursor:pointer;font-family:inherit;transition:all .2s}
+.modal-trigger:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(129,140,248,.3)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:2000;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal-box{background:var(--surface);border:1px solid var(--surface-2);border-radius:var(--radius);padding:36px;max-width:420px;width:90%;position:relative;box-shadow:0 24px 64px rgba(0,0,0,.5)}
+.modal-box h3{font-size:1.2rem;font-weight:800;margin-bottom:10px}
+.modal-box p{color:var(--text-dim);font-size:.9rem;line-height:1.7;margin-bottom:24px}
+.modal-close{position:absolute;top:14px;right:16px;background:var(--surface-2);border:none;width:28px;height:28px;border-radius:6px;color:var(--text-dim);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
+
+/* ══ INFO ══ */
+.info{padding:100px 64px;max-width:800px;margin:0 auto}
+.info h2{font-size:1.8rem;font-weight:800;margin-bottom:28px;text-align:center}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.info-item{padding:18px;border:1px solid var(--surface-2);border-radius:12px;background:var(--surface)}
+.info-item .il{font-size:.65rem;font-weight:600;color:var(--primary-bright);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.info-item .iv{font-weight:600;font-size:.9rem}
+
+@media(max-width:768px){
+  .split-hero{grid-template-columns:1fr}
+  .hero-right{min-height:300px}
+  .feature-asym,.info-grid{grid-template-columns:1fr}
+  .feature-asym .card.large{grid-row:auto}
+}
+</style>
+</head>
+<body>
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+<div class="vp-frame">
+
+<!-- SPLIT HERO -->
+<section class="split-hero">
+  <div class="hero-left">
+    <span class="hero-overline">Introducing Hero v2.0</span>
+    <h1>Build Something<br><em>Extraordinary</em></h1>
+    <p class="hero-subtitle">The complete platform for modern teams. Ship faster, collaborate smarter, and scale with confidence.</p>
+    <div class="hero-actions">
+      <button class="hero-btn primary">Start Free Trial</button>
+      <button class="hero-btn ghost">Watch Demo</button>
+    </div>
+    <div class="social-proof">
+      <div class="proof-item"><div class="proof-num">10K+</div><div class="proof-label">Teams</div></div>
+      <div class="proof-item"><div class="proof-num">99.9%</div><div class="proof-label">Uptime</div></div>
+      <div class="proof-item"><div class="proof-num">50M+</div><div class="proof-label">Tasks</div></div>
+      <div class="proof-item"><div class="proof-num">4.9★</div><div class="proof-label">Rating</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-visual">
+      <div class="big-number">∞</div>
+      <div class="visual-label">Unlimited Potential</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES: ASYMMETRIC -->
+<section class="features">
+  <div class="features-header">
+    <h2>Why Teams Choose Hero</h2>
+    <p>Everything you need to build, ship, and scale — all in one place.</p>
+  </div>
+  <div class="feature-asym">
+    <article class="card large">
+      <div>
+        <div class="icon" style="background:rgba(129,140,248,.12);color:var(--primary)">⚡</div>
+        <h3>Lightning Fast</h3>
+        <p>Optimized from the ground up. Pages load in under 200ms, every single time. No compromises on performance.</p>
+        <span class="card-tag">Core Feature</span>
+      </div>
+    </article>
+    <article class="card">
+      <div class="icon" style="background:rgba(244,114,182,.12);color:var(--accent)">📊</div>
+      <h3>Real-time Analytics</h3>
+      <p>See what matters instantly with live dashboards and actionable insights that drive decisions.</p>
+    </article>
+    <article class="card">
+      <div class="icon" style="background:rgba(251,191,36,.12);color:var(--accent-alt)">🔒</div>
+      <h3>Enterprise Security</h3>
+      <p>SOC 2 Type II certified. Your data is encrypted at rest and in transit.</p>
+    </article>
+  </div>
+</section>
+
+<!-- TESTIMONIAL MARQUEE -->
+<section class="marquee-section">
+  <div class="marquee-track">
+    <div class="marquee-card"><div class="stars">★★★★★</div><div class="quote">"Hero transformed how our team ships products. We went from monthly releases to daily deploys."</div><div class="author"><div class="avatar" style="background:var(--primary)">SK</div><div><div class="name">Sarah Kim</div><div class="role">CTO, TechFlow</div></div></div></div>
+    <div class="marquee-card"><div class="stars">★★★★★</div><div class="quote">"The analytics alone are worth the price. We finally understand our users."</div><div class="author"><div class="avatar" style="background:var(--accent)">MR</div><div><div class="name">Marcus Rivera</div><div class="role">PM, GrowthBase</div></div></div></div>
+    <div class="marquee-card"><div class="stars">★★★★★</div><div class="quote">"Best onboarding experience I have ever seen. Our team was productive within an hour."</div><div class="author"><div class="avatar" style="background:var(--accent-alt)">AL</div><div><div class="name">Anna Lee</div><div class="role">CEO, DesignStudio</div></div></div></div>
+    <div class="marquee-card"><div class="stars">★★★★★</div><div class="quote">"We cut meeting time by 40% and shipped 3x faster. Hero is a game-changer."</div><div class="author"><div class="avatar" style="background:#10B981">JW</div><div><div class="name">James Wu</div><div class="role">Eng Lead, NexGen</div></div></div></div>
+    <div class="marquee-card"><div class="stars">★★★★★</div><div class="quote">"Hero transformed how our team ships products. We went from monthly releases to daily deploys."</div><div class="author"><div class="avatar" style="background:var(--primary)">SK</div><div><div class="name">Sarah Kim</div><div class="role">CTO, TechFlow</div></div></div></div>
+    <div class="marquee-card"><div class="stars">★★★★★</div><div class="quote">"The analytics alone are worth the price. We finally understand our users."</div><div class="author"><div class="avatar" style="background:var(--accent)">MR</div><div><div class="name">Marcus Rivera</div><div class="role">PM, GrowthBase</div></div></div></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-full">
+  <h2>Ready to Get Started?</h2>
+  <p>Join 10,000+ teams already building with Hero. No credit card required.</p>
+  <button class="hero-btn primary">Start Free Trial</button>
+</section>
+
+<!-- BUTTONS -->
+<section class="btn-section">
+  <h2>Button Styles</h2>
+  <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center">
+    <button class="btn-showcase s1">Primary</button>
+    <button class="btn-showcase s2">Accent</button>
+    <button class="btn-showcase s3">Outline</button>
+    <button class="btn-showcase s4">Ghost</button>
+  </div>
+</section>
+
+<!-- FORMS -->
+<section class="forms">
+  <h2>Get Started</h2>
+  <div class="fg"><label>Work Email</label><input type="email" class="fi" placeholder="you@company.com"></div>
+  <div class="fg"><label>Full Name</label><input type="text" class="fi" placeholder="Jane Smith"></div>
+  <div class="fg"><label>Company</label><input type="text" class="fi" placeholder="Acme Inc."></div>
+  <div class="fg"><label>Message</label><textarea class="fi" placeholder="Tell us about your team..."></textarea></div>
+  <button class="btn-showcase s1" style="width:100%;justify-content:center;padding:14px">Create Account</button>
+</section>
+
+<!-- TYPOGRAPHY -->
+<section class="typo">
+  <h2>Typography</h2>
+  <div class="ts"><div class="lbl">Display</div><h1>Lead with Impact</h1></div>
+  <div class="ts"><div class="lbl">Heading</div><h2>Scale with Confidence</h2></div>
+  <div class="ts"><div class="lbl">Subheading</div><h3>Built for Modern Teams</h3></div>
+  <div class="ts"><div class="lbl">Body</div><p>Hero-centric design puts the most important message front and center. A full-viewport hero with a compelling headline drives conversions from the first pixel.</p></div>
+</section>
+
+<!-- PALETTE -->
+<section class="palette">
+  <h2>Brand Palette</h2>
+  <div class="pal-grid">
+    <div class="sw" style="background:#818CF8"><span>#818CF8</span></div>
+    <div class="sw" style="background:#F472B6"><span>#F472B6</span></div>
+    <div class="sw" style="background:#FBBF24"><span>#FBBF24</span></div>
+    <div class="sw" style="background:#09090B"><span>#09090B</span></div>
+    <div class="sw" style="background:#18181B"><span>#18181B</span></div>
+    <div class="sw" style="background:#27272A"><span>#27272A</span></div>
+  </div>
+</section>
+
+<!-- MODAL -->
+<section class="modal-sec">
+  <h2>Quick Dialog</h2>
+  <button class="modal-trigger" onclick="document.getElementById('hm').classList.add('active')">Open Dialog</button>
+  <div id="hm" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('active')">
+    <div class="modal-box">
+      <button class="modal-close" onclick="document.getElementById('hm').classList.remove('active')">&times;</button>
+      <h3>Welcome to Hero</h3>
+      <p>Clean, focused, designed to guide you to a single action.</p>
+      <button class="btn-showcase s1" style="width:100%;justify-content:center" onclick="document.getElementById('hm').classList.remove('active')">Get Started</button>
+    </div>
+  </div>
+</section>
+
+<!-- INFO -->
+<section class="info">
+  <h2>Style Information</h2>
+  <div class="info-grid">
+    <div class="info-item"><div class="il">Era</div><div class="iv">2020s Modern</div></div>
+    <div class="info-item"><div class="il">Complexity</div><div class="iv">Medium (Landing Page)</div></div>
+    <div class="info-item"><div class="il">Best For</div><div class="iv">SaaS, Product Launches</div></div>
+    <div class="info-item"><div class="il">Font</div><div class="iv">System-UI</div></div>
+    <div class="info-item"><div class="il">Border Radius</div><div class="iv">10-16px</div></div>
+    <div class="info-item"><div class="il">Effects</div><div class="iv">Split Layout, Marquee, Gradient</div></div>
+  </div>
+</section>
+
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kinetic Brutalism - Mobile Style Showcase</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    :root {
+      --page-bg: #FAFAFA;
+      --text-color: #09090B;
+      --acid: #DFE104;
+      --black: #09090B;
+      --white: #FAFAFA;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--white);
+      color: var(--black);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-weight: 800;
+      line-height: 1.05;
+    }
+
+    /* === MARQUEE === */
+    .marquee-row {
+      overflow: hidden;
+      background: var(--black);
+      padding: 10px 0;
+      white-space: nowrap;
+    }
+    .marquee-inner {
+      display: inline-flex;
+      animation: marqueeScroll 12s linear infinite;
+    }
+    .marquee-inner span {
+      font-size: 14px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--acid);
+      padding: 0 24px;
+    }
+    .marquee-inner span.white-text { color: var(--white); }
+    @keyframes marqueeScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* === HERO === */
+    .brutal-hero {
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 20px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .brutal-hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 48%,
+        rgba(9,9,11,0.03) 48%,
+        rgba(9,9,11,0.03) 52%
+      );
+    }
+    .brutal-hero h1 {
+      font-size: 64px;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 0.9;
+      letter-spacing: -3px;
+      position: relative;
+      margin-bottom: 20px;
+    }
+    .brutal-hero h1 .acid-text {
+      color: var(--acid);
+      background: var(--black);
+      display: inline;
+      padding: 0 4px;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+    .brutal-hero .hero-sub {
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin-top: 24px;
+      position: relative;
+      border-top: 2px solid var(--black);
+      border-bottom: 2px solid var(--black);
+      padding: 12px 0;
+      display: inline-block;
+    }
+
+    /* === STICKY HEADER === */
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--black);
+      color: var(--white);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .sticky-header .logo {
+      font-size: 16px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .sticky-header .logo .acid { color: var(--acid); }
+    .sticky-header .menu-icon {
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* === MOBILE NAV (Bottom Tabs) === */
+    .mobile-nav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: var(--black);
+      padding: 10px 0 14px;
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+      border-top: 2px solid var(--acid);
+    }
+    .mobile-nav .tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-decoration: none;
+      cursor: pointer;
+      opacity: 0.5;
+    }
+    .mobile-nav .tab.active { opacity: 1; color: var(--acid); }
+    .mobile-nav .tab .tab-icon {
+      font-size: 18px;
+    }
+
+    /* === SECTIONS === */
+    .section {
+      padding: 40px 20px;
+      border-bottom: 2px solid var(--black);
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin-bottom: 24px;
+      background: var(--acid);
+      color: var(--black);
+      display: inline-block;
+      padding: 6px 12px;
+    }
+
+    /* === BUTTONS === */
+    .brutal-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .brutal-btn {
+      display: block;
+      width: 100%;
+      padding: 16px 24px;
+      font-family: system-ui, sans-serif;
+      font-size: 15px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border: 2px solid var(--black);
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 0;
+      transition: none;
+    }
+    .brutal-btn:active {
+      transform: translate(2px, 2px);
+    }
+    .brutal-btn.primary {
+      background: var(--acid);
+      color: var(--black);
+    }
+    .brutal-btn.secondary {
+      background: var(--black);
+      color: var(--white);
+    }
+    .brutal-btn.ghost {
+      background: transparent;
+      color: var(--black);
+    }
+    .brutal-btn.disabled {
+      background: #ddd;
+      color: #999;
+      border-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    /* === FORMS === */
+    .brutal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .brutal-field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+    .brutal-field input,
+    .brutal-field textarea,
+    .brutal-field select {
+      width: 100%;
+      padding: 14px 16px;
+      font-family: system-ui, sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      border: 2px solid var(--black);
+      border-radius: 0;
+      background: var(--white);
+      color: var(--black);
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .brutal-field input:focus,
+    .brutal-field textarea:focus,
+    .brutal-field select:focus {
+      background: var(--acid);
+    }
+    .brutal-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .brutal-checkbox input[type="checkbox"],
+    .brutal-checkbox input[type="radio"] {
+      width: 22px;
+      height: 22px;
+      accent-color: var(--black);
+      cursor: pointer;
+    }
+
+    /* === CARDS === */
+    .brutal-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .brutal-card {
+      border: 2px solid var(--black);
+      padding: 24px;
+      position: relative;
+      transition: none;
+    }
+    .brutal-card:nth-child(2) { transform: rotate(-1deg); }
+    .brutal-card:nth-child(3) { transform: rotate(1.5deg); }
+    .brutal-card::before {
+      content: '';
+      position: absolute;
+      top: 6px; left: 6px;
+      right: -6px; bottom: -6px;
+      background: var(--acid);
+      z-index: -1;
+    }
+    .brutal-card h3 {
+      font-size: 22px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .brutal-card p {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.4;
+      opacity: 0.7;
+    }
+    .brutal-card .card-tag {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 4px 10px;
+      border: 2px solid var(--black);
+      background: var(--acid);
+    }
+
+    /* === TYPOGRAPHY === */
+    .brutal-type {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .brutal-type .type-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 2px solid var(--black);
+    }
+    .brutal-type .type-label {
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: var(--black);
+      color: var(--white);
+      padding: 3px 8px;
+      min-width: 28px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .brutal-type h1 { font-size: 52px; font-weight: 900; text-transform: uppercase; letter-spacing: -2px; line-height: 0.9; }
+    .brutal-type h2 { font-size: 40px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; line-height: 0.95; }
+    .brutal-type h3 { font-size: 30px; font-weight: 900; text-transform: uppercase; line-height: 1; }
+    .brutal-type h4 { font-size: 24px; font-weight: 900; text-transform: uppercase; line-height: 1; }
+    .brutal-type h5 { font-size: 18px; font-weight: 900; text-transform: uppercase; line-height: 1; }
+    .brutal-type h6 { font-size: 14px; font-weight: 900; text-transform: uppercase; line-height: 1; }
+
+    /* === COLOR SWATCHES === */
+    .brutal-swatches {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .brutal-swatch {
+      border: 2px solid var(--black);
+    }
+    .brutal-swatch .swatch-color { height: 70px; }
+    .brutal-swatch .swatch-info { padding: 8px 10px; }
+    .brutal-swatch .swatch-name { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+    .brutal-swatch .swatch-hex { font-size: 11px; font-weight: 700; opacity: 0.5; }
+
+    /* === MODAL === */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(9,9,11,0.9);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-box {
+      background: var(--white);
+      border: 2px solid var(--black);
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 360px;
+      position: relative;
+    }
+    .modal-box::before {
+      content: '';
+      position: absolute;
+      top: 6px; left: 6px;
+      right: -6px; bottom: -6px;
+      background: var(--acid);
+      z-index: -1;
+    }
+    .modal-box h3 {
+      font-size: 24px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .modal-box p {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.5;
+      opacity: 0.7;
+      margin-bottom: 20px;
+    }
+    .modal-close {
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      padding: 14px 24px;
+      font-family: system-ui, sans-serif;
+      font-size: 14px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    /* === STYLE INFO === */
+    .style-info {
+      background: var(--black);
+      color: var(--white);
+      padding: 32px 20px;
+     text-align: center;}
+    .style-info h3 {
+      font-size: 16px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .style-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .style-info-item {
+      border: 2px solid rgba(255,255,255,0.15);
+      padding: 12px;
+    }
+    .style-info-item .info-label {
+      font-size: 9px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--acid);
+      margin-bottom: 4px;
+    }
+    .style-info-item .info-value {
+      font-size: 13px;
+      font-weight: 900;
+    }
+  </style>
+</head>
+<body>
+  <div class="vp-bar">
+    <span class="vp-label">Viewpoint:</span>
+    <button class="vp-btn" data-size="1920">1920</button>
+    <button class="vp-btn" data-size="1440">1440</button>
+    <button class="vp-btn" data-size="1024">1024</button>
+    <button class="vp-btn" data-size="768">768</button>
+    <button class="vp-btn" data-size="375">375</button>
+    <button class="vp-btn" data-size="320">320</button>
+    <span id="vp-width" class="vp-width">Full</span>
+    <a href="index.html" class="vp-back">← Back to All Styles</a>
+  </div>
+
+  <div class="vp-frame">
+    <!-- Top Marquee -->
+    <div class="marquee-row">
+      <div class="marquee-inner">
+        <span>KINETIC</span><span class="white-text">BRUTALISM</span><span>ACID</span><span class="white-text">ZERO</span><span>RADIUS</span><span class="white-text">OVERSIZED</span>
+        <span>KINETIC</span><span class="white-text">BRUTALISM</span><span>ACID</span><span class="white-text">ZERO</span><span>RADIUS</span><span class="white-text">OVERSIZED</span>
+      </div>
+    </div>
+
+    <!-- Sticky Header -->
+    <div class="sticky-header">
+      <div class="logo"><span class="acid">K</span>BRUTAL</div>
+      <div class="menu-icon">&#9776;</div>
+    </div>
+
+    <!-- Hero -->
+    <section class="brutal-hero">
+      <h1>NO<br><span class="acid-text">COMPROMISE</span><br>DESIGN</h1>
+      <div class="hero-sub">Kinetic Mobile Brutalism</div>
+    </section>
+
+    <!-- Bottom Marquee -->
+    <div class="marquee-row">
+      <div class="marquee-inner" style="animation-direction:reverse;">
+        <span class="white-text">AGGRESSIVE</span><span>TYPOGRAPHY</span><span class="white-text">FLOOD</span><span>INVERSION</span><span class="white-text">MARQUEE</span><span>SCROLL</span>
+        <span class="white-text">AGGRESSIVE</span><span>TYPOGRAPHY</span><span class="white-text">FLOOD</span><span>INVERSION</span><span class="white-text">MARQUEE</span><span>SCROLL</span>
+      </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="mobile-nav">
+      <a class="tab active"><span class="tab-icon">&#9654;</span><span>Feed</span></a>
+      <a class="tab"><span class="tab-icon">&#9632;</span><span>Grid</span></a>
+      <a class="tab"><span class="tab-icon">&#9650;</span><span>Top</span></a>
+      <a class="tab"><span class="tab-icon">&#9776;</span><span>More</span></a>
+    </nav>
+
+    <!-- Buttons -->
+    <section class="section">
+      <div class="section-title">Buttons</div>
+      <div class="brutal-btns">
+        <button class="brutal-btn primary">Primary Flood</button>
+        <button class="brutal-btn secondary">Secondary</button>
+        <button class="brutal-btn ghost">Ghost</button>
+        <button class="brutal-btn disabled" disabled>Disabled</button>
+      </div>
+    </section>
+
+    <!-- Forms -->
+    <section class="section">
+      <div class="section-title">Forms</div>
+      <div class="brutal-form">
+        <div class="brutal-field">
+          <label>Name</label>
+          <input type="text" placeholder="Your name">
+        </div>
+        <div class="brutal-field">
+          <label>Email</label>
+          <input type="email" placeholder="you@email.com">
+        </div>
+        <div class="brutal-field">
+          <label>Category</label>
+          <select>
+            <option>Brutalist</option>
+            <option>Kinetic</option>
+            <option>Aggressive</option>
+          </select>
+        </div>
+        <div class="brutal-field">
+          <label>Message</label>
+          <textarea rows="3" placeholder="Say something bold"></textarea>
+        </div>
+        <div class="brutal-checkbox"><input type="checkbox" id="ck1"><label for="ck1">I agree boldly</label></div>
+        <div class="brutal-checkbox"><input type="radio" name="r1" id="r1"><label for="r1">Acid</label></div>
+        <div class="brutal-checkbox"><input type="radio" name="r1" id="r2"><label for="r2">Black</label></div>
+      </div>
+    </section>
+
+    <!-- Cards -->
+    <section class="section">
+      <div class="section-title">Cards</div>
+      <div class="brutal-cards">
+        <div class="brutal-card">
+          <h3>Marquee</h3>
+          <p>Infinite scroll text. Aggressive, unavoidable, kinetic energy in every pixel.</p>
+          <span class="card-tag">Motion</span>
+        </div>
+        <div class="brutal-card">
+          <h3>Flood</h3>
+          <p>Press the card. The color floods in. Inversion is the new interaction.</p>
+          <span class="card-tag">Interaction</span>
+        </div>
+        <div class="brutal-card">
+          <h3>Oversize</h3>
+          <p>Typography so large it breaks the container. 0px radius. 2px borders. Pure brutalism.</p>
+          <span class="card-tag">Scale</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Typography -->
+    <section class="section">
+      <div class="section-title">Typography</div>
+      <div class="brutal-type">
+        <div class="type-row"><span class="type-label">H1</span><h1>Aa</h1></div>
+        <div class="type-row"><span class="type-label">H2</span><h2>Aa</h2></div>
+        <div class="type-row"><span class="type-label">H3</span><h3>Aa</h3></div>
+        <div class="type-row"><span class="type-label">H4</span><h4>Aa</h4></div>
+        <div class="type-row"><span class="type-label">H5</span><h5>Aa</h5></div>
+        <div class="type-row"><span class="type-label">H6</span><h6>Aa</h6></div>
+      </div>
+    </section>
+
+    <!-- Color Swatches -->
+    <section class="section">
+      <div class="section-title">Colors</div>
+      <div class="brutal-swatches">
+        <div class="brutal-swatch"><div class="swatch-color" style="background:#DFE104"></div><div class="swatch-info"><div class="swatch-name">Acid Yellow</div><div class="swatch-hex">#DFE104</div></div></div>
+        <div class="brutal-swatch"><div class="swatch-color" style="background:#09090B"></div><div class="swatch-info"><div class="swatch-name">Rich Black</div><div class="swatch-hex">#09090B</div></div></div>
+        <div class="brutal-swatch"><div class="swatch-color" style="background:#FAFAFA;border:2px solid #09090B"></div><div class="swatch-info"><div class="swatch-name">Off-white</div><div class="swatch-hex">#FAFAFA</div></div></div>
+      </div>
+    </section>
+
+    <!-- Style Info -->
+    <section class="style-info">
+      <h3>Style Info</h3>
+      <div class="style-info-grid">
+        <div class="style-info-item"><div class="info-label">Era</div><div class="info-value">2020s Brutalism</div></div>
+        <div class="style-info-item"><div class="info-label">Complexity</div><div class="info-value">High</div></div>
+        <div class="style-info-item"><div class="info-label">Radius</div><div class="info-value">0px / 2px</div></div>
+        <div class="style-info-item"><div class="info-label">Motion</div><div class="info-value">Marquee + Parallax</div></div>
+      </div>
+    </section>
+
+    <!-- Modal -->
+    <button class="brutal-btn primary" style="margin:24px 20px;" onclick="toggleModal('demo-modal')">Open Modal</button>
+  </div>
+
+  <div id="demo-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Brutal Modal</h3>
+      <p>Acid yellow accents. Hard shadows. Zero compromise. The kinetic mobile brutalism experience.</p>
+      <button class="modal-close" onclick="toggleModal('demo-modal')">Close</button>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+</body>
+</html>

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinetic Typography - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #0A0A0F;
+  --text-color: #FFFFFF;
+  --accent-1: #FF6B35;
+  --accent-2: #4ECDC4;
+  --accent-3: #FFE66D;
+  --accent-4: #FF6B6B;
+  --accent-5: #A78BFA;
+  --white: #FFFFFF;
+  --grey: #888888;
+  --dark: #1A1A2E;
+  --font-primary: system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: var(--font-primary);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Animations */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes colorCycle {
+  0% { color: var(--accent-1); }
+  25% { color: var(--accent-2); }
+  50% { color: var(--accent-3); }
+  75% { color: var(--accent-4); }
+  100% { color: var(--accent-1); }
+}
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes textPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+@keyframes rotateText {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Hero Section */
+.hero {
+  background: var(--page-bg);
+  padding: 120px 0 80px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+.hero::before {
+  content: 'TYPE TYPE TYPE TYPE TYPE';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 120px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.02);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.hero h1 {
+  font-size: clamp(40px, 8vw, 80px);
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2), var(--accent-3), var(--accent-4));
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 6s ease infinite;
+}
+.hero .subtitle {
+  font-size: 18px;
+  color: var(--grey);
+  max-width: 560px;
+  margin: 0 auto 24px;
+  line-height: 1.7;
+}
+.hero .animated-line {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+}
+.hero .animated-line span {
+  display: inline-block;
+  animation: slideIn 0.6s ease forwards;
+  opacity: 0;
+}
+.hero .animated-line span:nth-child(1) { animation-delay: 0.1s; color: var(--accent-1); }
+.hero .animated-line span:nth-child(2) { animation-delay: 0.2s; color: var(--accent-2); }
+.hero .animated-line span:nth-child(3) { animation-delay: 0.3s; color: var(--accent-3); }
+.hero .animated-line span:nth-child(4) { animation-delay: 0.4s; color: var(--accent-4); }
+.hero .animated-line span:nth-child(5) { animation-delay: 0.5s; color: var(--accent-5); }
+
+/* Navigation */
+.demo-nav {
+  background: var(--dark);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 16px 0;
+}
+.demo-nav .container {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+ justify-content: center;}
+.demo-nav a {
+  color: var(--grey);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+.demo-nav a:hover { color: var(--accent-2); }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s;
+  font-family: var(--font-primary);
+  border-radius: 8px;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-4));
+  color: var(--white);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255,107,53,0.3);
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--accent-2);
+  border: 1px solid var(--accent-2);
+}
+.btn-secondary:hover {
+  background: rgba(78,205,196,0.1);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--grey);
+}
+.btn-ghost:hover { color: var(--white); }
+.btn-disabled {
+  background: rgba(255,255,255,0.05);
+  color: #444;
+  cursor: not-allowed;
+}
+
+/* Forms */
+.form-group { margin-bottom: 20px; }
+.form-label {
+  display: block; font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 2px;
+  margin-bottom: 8px; color: var(--accent-2);
+}
+.form-input, .form-textarea, .form-select {
+  width: 100%; padding: 14px 18px;
+  font-size: 15px; font-family: var(--font-primary);
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.03);
+  color: var(--white); border-radius: 8px;
+  outline: none; transition: all 0.2s;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  border-color: var(--accent-1);
+  box-shadow: 0 0 0 3px rgba(255,107,53,0.1);
+}
+.form-input::placeholder { color: #555; }
+.form-textarea { resize: vertical; min-height: 120px; }
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234ECDC4' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+.form-checkbox, .form-radio {
+  width: 18px; height: 18px;
+  accent-color: var(--accent-1); cursor: pointer;
+}
+.form-row { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+.form-row label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; cursor: pointer; color: var(--grey);
+}
+
+/* Cards */
+.card {
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 28px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+.card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,107,53,0.3);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+}
+.card-title {
+  font-size: 20px; font-weight: 800;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.card-text { font-size: 14px; color: var(--grey); line-height: 1.7; }
+.card-gradient {
+  background: linear-gradient(135deg, rgba(255,107,53,0.1), rgba(78,205,196,0.1));
+  border-color: rgba(255,107,53,0.2);
+}
+
+/* Typography */
+.typo-h1 { font-size: 48px; font-weight: 900; line-height: 1; margin-bottom: 20px; animation: colorCycle 8s infinite; }
+.typo-h2 { font-size: 36px; font-weight: 800; line-height: 1.1; margin-bottom: 20px; color: var(--accent-2); }
+.typo-h3 { font-size: 28px; font-weight: 700; line-height: 1.2; margin-bottom: 20px; color: var(--accent-3); }
+.typo-h4 { font-size: 22px; font-weight: 700; line-height: 1.3; margin-bottom: 20px; color: var(--accent-4); }
+.typo-h5 { font-size: 18px; font-weight: 600; line-height: 1.4; margin-bottom: 20px; color: var(--accent-5); }
+.typo-h6 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 12px; color: var(--grey); }
+.typo-body { font-size: 16px; line-height: 1.6; margin-bottom: 16px; color: var(--grey); }
+.typo-caption { font-size: 11px; color: #444; text-transform: uppercase; letter-spacing: 2px; }
+
+/* Modal */
+.modal-content {
+  background: var(--dark);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 40px;
+  max-width: 480px;
+  width: 90%;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+}
+.modal-content h3 {
+  font-size: 24px; font-weight: 800;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.modal-content p {
+  font-size: 15px; color: var(--grey);
+  margin-bottom: 24px; line-height: 1.7;
+}
+.modal-content .btn { width: 100%; }
+
+/* Color Palette */
+.palette-card {
+  background: rgba(255,255,255,0.03);
+  padding: 32px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Style Info */
+.style-info {
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+ text-align: center;}
+.style-info h3 {
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+</style>
+</head>
+<body>
+<!-- Viewport Switcher Bar -->
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+
+<div class="vp-frame">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <span class="tag tag-era" style="background: rgba(255,107,53,0.15); color: var(--accent-1);">2020s Modern</span>
+      <span class="tag tag-complexity-high" style="background: rgba(255,107,107,0.15); color: var(--accent-4);">Complexity: High</span>
+      <h1>MOTION</h1>
+      <p class="subtitle">Text that moves, transforms, and breathes. Kinetic typography uses animation as its primary design language.</p>
+      <div class="animated-line">
+        <span>Move</span>
+        <span>Transform</span>
+        <span>Breathe</span>
+        <span>Flow</span>
+        <span>Dance</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation Demo -->
+  <nav class="demo-nav">
+    <div class="container">
+      <a href="#">Animate</a>
+      <a href="#">Create</a>
+      <a href="#">Motion</a>
+      <a href="#">Type</a>
+      <a href="#">Gallery</a>
+    </div>
+  </nav>
+
+  <!-- Buttons Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title" style="color: var(--accent-2);">Buttons</h2>
+      <div class="flex-gap">
+        <button class="btn btn-primary">Animate</button>
+        <button class="btn btn-secondary">Preview</button>
+        <button class="btn btn-ghost">Save</button>
+        <button class="btn btn-disabled" disabled>Rendering...</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Forms Section -->
+  <section class="section" style="background: var(--dark); border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06);">
+    <div class="container">
+      <h2 class="section-title" style="color: var(--accent-3);">Form Elements</h2>
+      <div style="max-width: 600px; margin: 0 auto;">
+        <div class="form-group">
+          <label class="form-label">Text</label>
+          <input type="text" class="form-input" placeholder="Type something to animate...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Script</label>
+          <textarea class="form-textarea" placeholder="Write your animation script..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Font</label>
+          <select class="form-select">
+            <option>Select font</option>
+            <option>Inter</option>
+            <option>Space Grotesk</option>
+            <option>Syne</option>
+            <option>Clash Display</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label><input type="checkbox" class="form-checkbox"> Loop</label>
+          <label><input type="radio" name="ease" class="form-radio"> Linear</label>
+          <label><input type="radio" name="ease" class="form-radio"> Bounce</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cards Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title" style="color: var(--accent-4);">Cards</h2>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">Scroll Trigger</div>
+          <p class="card-text">Text animates as it enters the viewport. Each element triggers on scroll position for cinematic reveals.</p>
+        </div>
+        <div class="card card-gradient">
+          <div class="card-title">Gradient Fill</div>
+          <p class="card-text">background-clip:text with animated gradient positions creates mesmerizing text color flows.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Variable Fonts</div>
+          <p class="card-text">Animate font-weight, width, and slant in real-time. Variable fonts enable fluid typographic motion.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typography Section -->
+  <section class="section" style="background: var(--dark); border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06);">
+    <div class="container">
+      <h2 class="section-title" style="color: var(--accent-5);">Typography</h2>
+      <div class="typo-h1">Animate</div>
+      <div class="typo-h2">Every Letter</div>
+      <div class="typo-h3">Has Potential</div>
+      <div class="typo-h4">For Movement</div>
+      <div class="typo-h5">And Expression</div>
+      <div class="typo-h6">Kinetic Type System</div>
+      <p class="typo-body">Typography becomes a living, breathing element. Each word, each letter can move independently, creating a dynamic visual experience that static design cannot achieve.</p>
+      <p class="typo-caption">Motion is meaning — every animation tells a story</p>
+    </div>
+  </section>
+
+  <!-- Color Palette -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title" style="color: var(--accent-1);">Color Palette</h2>
+      <div class="swatch-row">
+        <div class="swatch" style="background: #FF6B35;" data-hex="#FF6B35"></div>
+        <div class="swatch" style="background: #4ECDC4;" data-hex="#4ECDC4"></div>
+        <div class="swatch" style="background: #FFE66D;" data-hex="#FFE66D"></div>
+        <div class="swatch" style="background: #FF6B6B;" data-hex="#FF6B6B"></div>
+        <div class="swatch" style="background: #A78BFA;" data-hex="#A78BFA"></div>
+        <div class="swatch" style="background: #0A0A0F;" data-hex="#0A0A0F"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal Demo -->
+  <div id="demo-modal" class="modal-overlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.7); align-items:center; justify-content:center;">
+    <div class="modal-content">
+      <h3>Motion Design</h3>
+      <p>Every element in this modal is designed to move. Animation isn't decoration — it's communication. It guides attention and creates meaning.</p>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Close</button>
+    </div>
+  </div>
+  <section class="section" style="background: var(--dark); border-top: 1px solid rgba(255,255,255,0.06);">
+    <div class="container">
+      <h2 class="section-title" style="color: var(--accent-2);">Modal Dialog</h2>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button>
+    </div>
+  </section>
+
+  <!-- Style Info Panel -->
+  <section class="section">
+    <div class="container">
+      <div class="style-info">
+        <h3>Style Information</h3>
+        <div class="style-info-grid">
+          <div class="style-info-item">
+            <div class="label">Era/Origin</div>
+            <div class="value">2020s Modern / Motion Design</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Best For</div>
+            <div class="value">Hero sections, marketing sites, video platforms, storytelling</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Avoid For</div>
+            <div class="value">Dense data UIs, accessibility-critical, performance-sensitive</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Complexity</div>
+            <div class="value">High — relies on keyframes, scroll triggers, variable fonts</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">CSS Keywords</div>
+            <div class="value">@keyframes, background-clip:text, scroll-triggered, variable fonts, transform animations</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Design Variables</div>
+            <div class="value">Multi-accent palette, gradient text, animation timing functions</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="shared.js"></script>
+</body>
+</html>

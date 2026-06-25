@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Product Preview - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #F5F5F5;
+  --text-color: #1A1A1A;
+  --accent: #2563EB;
+  --accent-hover: #1D4ED8;
+  --surface: #FFFFFF;
+  --surface-alt: #F0F0F0;
+  --border-color: #E5E5E5;
+  --text-muted: #737373;
+  --product-shadow: 0 20px 60px rgba(0,0,0,0.12);
+  --font-primary: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: var(--font-primary);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(180deg, #FFFFFF 0%, #E8E8E8 100%);
+  padding: 100px 0 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero h1 {
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+.hero .subtitle {
+  font-size: 18px;
+  color: var(--text-muted);
+  max-width: 480px;
+  margin: 0 auto 24px;
+}
+
+/* 3D Product Display */
+.product-3d-stage {
+  width: 100%;
+  max-width: 500px;
+  height: 400px;
+  margin: 0 auto;
+  background: linear-gradient(145deg, #F8F8F8, #E8E8E8);
+  border-radius: 24px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 20px rgba(0,0,0,0.05);
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+}
+.product-3d-stage:active { cursor: grabbing; }
+
+.product-3d-object {
+  width: 200px;
+  height: 200px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out;
+}
+.product-face {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(135deg, var(--accent), #60A5FA);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: white;
+  backface-visibility: visible;
+  box-shadow: 0 4px 24px rgba(37, 99, 235, 0.3);
+}
+.product-face.front  { transform: rotateY(0deg) translateZ(100px); }
+.product-face.back   { transform: rotateY(180deg) translateZ(100px); }
+.product-face.right  { transform: rotateY(90deg) translateZ(100px); }
+.product-face.left   { transform: rotateY(-90deg) translateZ(100px); }
+.product-face.top    { transform: rotateX(90deg) translateZ(100px); }
+.product-face.bottom { transform: rotateX(-90deg) translateZ(100px); }
+
+/* Stage floor */
+.product-3d-stage::after {
+  content: '';
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 250px;
+  height: 30px;
+  background: radial-gradient(ellipse, rgba(0,0,0,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+/* Rotation Controls */
+.rotation-controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 24px;
+}
+.rotation-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border-color);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 18px;
+  color: var(--text-color);
+}
+.rotation-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
+}
+.rotation-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* Material Switcher */
+.material-switcher {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+}
+.material-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.material-btn.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent);
+}
+.material-btn.mat-blue { background: linear-gradient(135deg, #2563EB, #60A5FA); }
+.material-btn.mat-green { background: linear-gradient(135deg, #059669, #34D399); }
+.material-btn.mat-red { background: linear-gradient(135deg, #DC2626, #F87171); }
+.material-btn.mat-gold { background: linear-gradient(135deg, #D97706, #FCD34D); }
+
+/* Spin Animation */
+.auto-spin {
+  animation: spin3d 8s linear infinite;
+}
+@keyframes spin3d {
+  from { transform: rotateY(0deg) rotateX(15deg); }
+  to { transform: rotateY(360deg) rotateX(15deg); }
+}
+
+/* Navigation */
+.demo-nav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 0;
+}
+.demo-nav .container {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+ justify-content: center;}
+.demo-nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.demo-nav a:hover { color: var(--text-color); }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-primary);
+}
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+.btn-primary:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+  transform: translateY(-1px);
+}
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text-color);
+  border: 1.5px solid var(--border-color);
+}
+.btn-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1.5px solid transparent;
+}
+.btn-ghost:hover {
+  background: var(--surface-alt);
+  color: var(--text-color);
+}
+.btn-disabled {
+  background: #E5E5E5;
+  color: #AAA;
+  cursor: not-allowed;
+}
+
+/* Forms */
+.form-group { margin-bottom: 20px; }
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+}
+.form-input, .form-textarea, .form-select {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-family: var(--font-primary);
+  border: 1.5px solid var(--border-color);
+  background: var(--surface);
+  color: var(--text-color);
+  border-radius: 10px;
+  outline: none;
+  transition: all 0.2s;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+.form-textarea { resize: vertical; min-height: 120px; }
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23737373' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+.form-checkbox, .form-radio {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+.form-row {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+.form-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 28px;
+  transition: all 0.3s;
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+.card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(37, 99, 235, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 16px;
+  color: var(--accent);
+}
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.card-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Typography */
+.typo-h1 { font-size: 48px; font-weight: 800; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
+.typo-h2 { font-size: 36px; font-weight: 700; line-height: 1.2; margin-bottom: 20px; }
+.typo-h3 { font-size: 28px; font-weight: 600; line-height: 1.3; margin-bottom: 20px; }
+.typo-h4 { font-size: 22px; font-weight: 600; line-height: 1.3; margin-bottom: 20px; }
+.typo-h5 { font-size: 18px; font-weight: 600; line-height: 1.4; margin-bottom: 20px; }
+.typo-h6 { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; color: var(--accent); }
+.typo-body { font-size: 16px; line-height: 1.6; margin-bottom: 16px; color: var(--text-muted); }
+.typo-caption { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+/* Modal */
+.modal-overlay {
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(8px);
+}
+.modal-content {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.15);
+}
+.modal-content h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.modal-content p {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+.modal-content .btn { width: 100%; }
+
+.section-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+
+/* Drag hint */
+.drag-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+</style>
+</head>
+<body>
+<!-- Viewport Switcher Bar -->
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+
+<div class="vp-frame">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <span class="tag tag-era">2025+ E-commerce 3D</span>
+      <span class="tag tag-complexity-high">Complexity: High</span>
+      <h1>3D Product Preview</h1>
+      <p class="subtitle">Drag to rotate, pinch to zoom. Interactive 3D product visualization for e-commerce and configurators.</p>
+
+      <!-- 3D Stage -->
+      <div class="product-3d-stage" id="productStage">
+        <div class="product-3d-object auto-spin" id="product3d">
+          <div class="product-face front" id="productFace">&#128247;</div>
+          <div class="product-face back">&#128248;</div>
+          <div class="product-face right">&#128249;</div>
+          <div class="product-face left">&#128250;</div>
+          <div class="product-face top">&#128251;</div>
+          <div class="product-face bottom">&#128252;</div>
+        </div>
+      </div>
+      <div class="drag-hint">&#8592; Drag to rotate &middot; Click controls below</div>
+
+      <!-- Rotation Controls -->
+      <div class="rotation-controls">
+        <button class="rotation-btn" id="rotLeft" title="Rotate Left">&#8634;</button>
+        <button class="rotation-btn active" id="rotAuto" title="Auto Spin">&#9654;</button>
+        <button class="rotation-btn" id="rotRight" title="Rotate Right">&#8635;</button>
+        <button class="rotation-btn" id="rotReset" title="Reset">&#8633;</button>
+      </div>
+
+      <!-- Material Switcher -->
+      <div class="material-switcher">
+        <div class="material-btn mat-blue active" data-color="#2563EB" title="Blue"></div>
+        <div class="material-btn mat-green" data-color="#059669" title="Green"></div>
+        <div class="material-btn mat-red" data-color="#DC2626" title="Red"></div>
+        <div class="material-btn mat-gold" data-color="#D97706" title="Gold"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation -->
+  <nav class="demo-nav">
+    <div class="container">
+      <a href="#">Catalog</a>
+      <a href="#">Configurator</a>
+      <a href="#">AR View</a>
+      <a href="#">Reviews</a>
+      <a href="#">Support</a>
+    </div>
+  </nav>
+
+  <!-- Buttons Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Buttons</h2>
+      <div class="flex-gap">
+        <button class="btn btn-primary">Add to Cart</button>
+        <button class="btn btn-secondary">Compare</button>
+        <button class="btn btn-ghost">Wishlist</button>
+        <button class="btn btn-disabled" disabled>Sold Out</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Forms Section -->
+  <section class="section" style="background: var(--surface-alt);">
+    <div class="container">
+      <h2 class="section-title">Form Elements</h2>
+      <div style="max-width: 600px; margin: 0 auto;">
+        <div class="form-group">
+          <label class="form-label">Product Name</label>
+          <input type="text" class="form-input" placeholder="Enter product name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" placeholder="Describe your product..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select">
+            <option>Select category</option>
+            <option>Electronics</option>
+            <option>Furniture</option>
+            <option>Fashion</option>
+            <option>Automotive</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label><input type="checkbox" class="form-checkbox"> Enable 3D preview</label>
+          <label><input type="radio" name="view" class="form-radio"> Single view</label>
+          <label><input type="radio" name="view" class="form-radio"> 360 view</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cards Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Cards</h2>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">&#128260;</div>
+          <div class="card-title">Drag to Rotate</div>
+          <p class="card-text">Click and drag to freely rotate the 3D model. Smooth 60fps rendering with proper lighting.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background: rgba(5, 150, 105, 0.08); color: #059669;">&#128269;</div>
+          <div class="card-title">Pinch to Zoom</div>
+          <p class="card-text">Zoom into fine details with pinch gestures or scroll wheel. Smooth interpolation between zoom levels.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background: rgba(217, 119, 6, 0.08); color: #D97706;">&#127912;</div>
+          <div class="card-title">Material Switcher</div>
+          <p class="card-text">Real-time material and color switching. Preview different finishes, textures, and configurations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typography Section -->
+  <section class="section" style="background: var(--surface-alt);">
+    <div class="container">
+      <h2 class="section-title">Typography</h2>
+      <div class="typo-h1">Heading 1 — Product View</div>
+      <div class="typo-h2">Heading 2 — 3D Preview</div>
+      <div class="typo-h3">Heading 3 — Interactive Display</div>
+      <div class="typo-h4">Heading 4 — Visual Commerce</div>
+      <div class="typo-h5">Heading 5 — Material Design</div>
+      <div class="typo-h6">Heading 6 — Configurator</div>
+      <p class="typo-body">3D product previews transform e-commerce by letting customers explore products from every angle. Interactive rotation, zoom, and material switching build confidence and reduce return rates. Clean typography and minimal chrome keep the focus on the product itself.</p>
+      <p class="typo-caption">Caption text — product metadata</p>
+    </div>
+  </section>
+
+  <!-- Color Palette -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Color Palette</h2>
+      <div class="swatch-row">
+        <div class="swatch" style="background: #F5F5F5;" data-hex="#F5F5F5"></div>
+        <div class="swatch" style="background: #E8E8E8;" data-hex="#E8E8E8"></div>
+        <div class="swatch" style="background: #FFFFFF;" data-hex="#FFFFFF"></div>
+        <div class="swatch" style="background: #2563EB;" data-hex="#2563EB"></div>
+        <div class="swatch" style="background: #1A1A1A;" data-hex="#1A1A1A"></div>
+        <div class="swatch" style="background: #737373;" data-hex="#737373"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal -->
+  <div id="demo-modal" class="modal-overlay" style="display:none; position:fixed; inset:0; z-index:9999; align-items:center; justify-content:center;">
+    <div class="modal-content">
+      <h3>Product Detail</h3>
+      <p>This modal overlays the 3D preview. In production, the 3D stage would continue rendering in the background for a seamless experience.</p>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Close</button>
+    </div>
+  </div>
+  <section class="section" style="background: var(--surface-alt);">
+    <div class="container">
+      <h2 class="section-title">Modal Dialog</h2>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button>
+    </div>
+  </section>
+
+  <!-- Style Info -->
+  <section class="section">
+    <div class="container">
+      <div class="style-info">
+        <h3>Style Information</h3>
+        <div class="style-info-grid">
+          <div class="style-info-item">
+            <div class="label">Era/Origin</div>
+            <div class="value">2025+ E-commerce 3D Era</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Best For</div>
+            <div class="value">E-commerce, furniture, fashion, automotive, product configurators</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Avoid For</div>
+            <div class="value">Content-heavy sites, low-bandwidth audiences, simple blogs</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Complexity</div>
+            <div class="value">High — Three.js/WebGL for 3D, gesture handling, performance optimization</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">CSS Keywords</div>
+            <div class="value">transform-style:preserve-3d, perspective, transform:rotateY/X, backface-visibility, cursor:grab</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Design Variables</div>
+            <div class="value">--product-shadow, neutral backgrounds #E8E8E8/#F5F5F5, accent blue, clean whitespace</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="shared.js"></script>
+<script>
+(function() {
+  const stage = document.getElementById('productStage');
+  const obj = document.getElementById('product3d');
+  let rotY = 0, rotX = 15;
+  let isDragging = false;
+  let startX, startY;
+  let autoSpin = true;
+
+  // Drag to rotate
+  stage.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    if (autoSpin) {
+      obj.classList.remove('auto-spin');
+    }
+    stage.style.cursor = 'grabbing';
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    rotY += dx * 0.5;
+    rotX -= dy * 0.3;
+    rotX = Math.max(-60, Math.min(60, rotX));
+    obj.style.transform = `rotateY(${rotY}deg) rotateX(${rotX}deg)`;
+    startX = e.clientX;
+    startY = e.clientY;
+  });
+
+  document.addEventListener('mouseup', () => {
+    isDragging = false;
+    stage.style.cursor = 'grab';
+  });
+
+  // Touch support
+  stage.addEventListener('touchstart', (e) => {
+    isDragging = true;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    if (autoSpin) obj.classList.remove('auto-spin');
+  });
+  document.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    const dx = e.touches[0].clientX - startX;
+    const dy = e.touches[0].clientY - startY;
+    rotY += dx * 0.5;
+    rotX -= dy * 0.3;
+    rotX = Math.max(-60, Math.min(60, rotX));
+    obj.style.transform = `rotateY(${rotY}deg) rotateX(${rotX}deg)`;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  });
+  document.addEventListener('touchend', () => { isDragging = false; });
+
+  // Rotation buttons
+  document.getElementById('rotLeft').addEventListener('click', () => {
+    autoSpin = false;
+    obj.classList.remove('auto-spin');
+    rotY -= 45;
+    obj.style.transform = `rotateY(${rotY}deg) rotateX(${rotX}deg)`;
+  });
+  document.getElementById('rotRight').addEventListener('click', () => {
+    autoSpin = false;
+    obj.classList.remove('auto-spin');
+    rotY += 45;
+    obj.style.transform = `rotateY(${rotY}deg) rotateX(${rotX}deg)`;
+  });
+  document.getElementById('rotAuto').addEventListener('click', function() {
+    autoSpin = !autoSpin;
+    if (autoSpin) {
+      obj.classList.add('auto-spin');
+      obj.style.transform = '';
+    } else {
+      obj.classList.remove('auto-spin');
+      obj.style.transform = `rotateY(${rotY}deg) rotateX(${rotX}deg)`;
+    }
+    this.classList.toggle('active', autoSpin);
+  });
+  document.getElementById('rotReset').addEventListener('click', () => {
+    rotY = 0; rotX = 15;
+    autoSpin = false;
+    obj.classList.remove('auto-spin');
+    obj.style.transform = `rotateY(0deg) rotateX(15deg)`;
+    document.getElementById('rotAuto').classList.remove('active');
+  });
+
+  // Material switcher
+  const faces = document.querySelectorAll('.product-face');
+  document.querySelectorAll('.material-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.material-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      const color = this.dataset.color;
+      faces.forEach(face => {
+        face.style.background = `linear-gradient(135deg, ${color}, ${lighten(color)})`;
+      });
+    });
+  });
+
+  function lighten(hex) {
+    const r = parseInt(hex.slice(1,3), 16);
+    const g = parseInt(hex.slice(3,5), 16);
+    const b = parseInt(hex.slice(5,7), 16);
+    const lr = Math.min(255, r + 80);
+    const lg = Math.min(255, g + 80);
+    const lb = Math.min(255, b + 80);
+    return `rgb(${lr},${lg},${lb})`;
+  }
+})();
+</script>
+</body>
+</html>

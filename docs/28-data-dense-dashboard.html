@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data-Dense Dashboard - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #0B0F19;
+  --text-color: #E5E7EB;
+  --data-blue: #3B82F6;
+  --data-green: #22C55E;
+  --data-red: #EF4444;
+  --data-yellow: #EAB308;
+  --data-purple: #8B5CF6;
+  --data-cyan: #06B6D4;
+  --surface: #111827;
+  --surface-light: #1F2937;
+  --border: rgba(255,255,255,0.06);
+  --text-muted: #6B7280;
+  --font-primary: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ===== TOP TOOLBAR ===== */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.toolbar-logo {
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--data-blue);
+  margin-right: 8px;
+  font-family: system-ui;
+}
+.toolbar-nav {
+  display: flex;
+  gap: 4px;
+}
+.toolbar-nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+.toolbar-nav a:hover { color: #fff; background: rgba(255,255,255,0.05); }
+.toolbar-nav a.active { color: var(--data-blue); background: rgba(59,130,246,0.1); }
+.toolbar-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.toolbar-time {
+  font-family: var(--font-primary);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.btn-sm {
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: system-ui;
+  transition: all 0.15s;
+}
+.btn-sm:hover { color: #fff; border-color: rgba(255,255,255,0.15); }
+.btn-sm.primary { background: var(--data-blue); color: #fff; border-color: var(--data-blue); }
+.btn-sm.primary:hover { background: #2563EB; }
+
+/* ===== KPI STRIP ===== */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1px;
+  background: var(--border);
+  margin: 0;
+}
+.kpi-cell {
+  background: var(--surface);
+  padding: 16px 20px;
+  text-align: center;
+  transition: background 0.15s;
+}
+.kpi-cell:hover { background: var(--surface-light); }
+.kpi-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.kpi-value {
+  font-family: var(--font-primary);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.kpi-value.blue { color: var(--data-blue); }
+.kpi-value.green { color: var(--data-green); }
+.kpi-value.red { color: var(--data-red); }
+.kpi-value.yellow { color: var(--data-yellow); }
+.kpi-value.purple { color: var(--data-purple); }
+.kpi-value.cyan { color: var(--data-cyan); }
+.kpi-change {
+  font-size: 10px;
+  font-weight: 600;
+}
+.kpi-change.up { color: var(--data-green); }
+.kpi-change.down { color: var(--data-red); }
+
+/* ===== MAIN LAYOUT: SIDEBAR + CONTENT ===== */
+.main-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: calc(100vh - 120px);
+}
+
+/* ===== SIDEBAR FILTER PANEL ===== */
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 20px 16px;
+  overflow-y: auto;
+}
+.sidebar-section {
+  margin-bottom: 24px;
+}
+.sidebar-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.filter-group {
+  margin-bottom: 14px;
+}
+.filter-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.filter-input, .filter-select {
+  width: 100%;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-family: system-ui;
+  background: var(--page-bg);
+  border: 1px solid var(--border);
+  color: var(--text-color);
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.filter-input:focus, .filter-select:focus { border-color: var(--data-blue); }
+.filter-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%236B7280' d='M5 7L0 2h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 24px;
+}
+.filter-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+  cursor: pointer;
+  margin-bottom: 6px;
+}
+.filter-check input { width: 12px; height: 12px; accent-color: var(--data-blue); }
+.btn-apply {
+  width: 100%;
+  padding: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--data-blue);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: system-ui;
+  margin-top: 8px;
+}
+.btn-apply:hover { background: #2563EB; }
+
+/* Color swatch strip */
+.swatch-strip {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+}
+.swatch-mini {
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.swatch-mini:hover { transform: scale(1.2); }
+
+/* ===== CONTENT AREA ===== */
+.content {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Section headers */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.section-header h2 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-header h2::before {
+  content: '';
+  width: 3px;
+  height: 14px;
+  background: var(--data-blue);
+  border-radius: 2px;
+}
+.section-header .link {
+  font-size: 11px;
+  color: var(--data-blue);
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* Chart widgets */
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.chart-widget {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+}
+.chart-widget .chart-title {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.chart-widget .chart-title .filter { font-size: 10px; color: var(--data-blue); font-weight: 500; cursor: pointer; }
+
+/* Mini bar chart */
+.mini-bars { display: flex; align-items: flex-end; gap: 2px; height: 64px; padding: 4px 0; }
+.mini-bar { flex: 1; border-radius: 1px 1px 0 0; transition: opacity 0.15s; min-width: 4px; }
+.mini-bar:hover { opacity: 0.7; }
+
+/* Data Table */
+.data-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.data-table th {
+  background: var(--surface-light);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  position: sticky;
+  top: 0;
+}
+.data-table td {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-primary);
+}
+.data-table tr:hover td { background: rgba(59,130,246,0.03); }
+.data-table .num { text-align: right; font-weight: 600; }
+.data-table .positive { color: var(--data-green); }
+.data-table .negative { color: var(--data-red); }
+
+/* Cards as metric cards */
+.metric-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.metric-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px;
+}
+.metric-card-title {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.metric-card-value {
+  font-family: var(--font-primary);
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.metric-card-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* Typography showcase as density comparison */
+.density-demo {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.density-row {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.density-row:last-child { border-bottom: none; }
+.density-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  width: 60px;
+  flex-shrink: 0;
+}
+.density-text { color: var(--text-color); }
+
+/* Style Info */
+.style-info {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+}
+.style-info h3 {
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.style-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.style-info-item .label {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+.style-info-item .value { color: var(--text-color); font-size: 11px; }
+</style>
+</head>
+<body>
+<!-- Viewport Switcher Bar -->
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+
+<div class="vp-frame">
+  <!-- Tags -->
+  <div style="background:var(--surface);padding:8px 24px;border-bottom:1px solid var(--border);display:flex;gap:8px;justify-content:center;">
+    <span class="tag tag-era">2020s Modern</span>
+    <span class="tag tag-complexity-medium">Complexity: Medium</span>
+    <span class="tag tag-type">BI/Analytics</span>
+  </div>
+
+  <!-- Top Toolbar -->
+  <div class="toolbar">
+    <span class="toolbar-logo">◆ AnalyticsHub</span>
+    <div class="toolbar-nav">
+      <a href="#" class="active">Dashboard</a>
+      <a href="#">Reports</a>
+      <a href="#">Segments</a>
+      <a href="#">Funnels</a>
+      <a href="#">Settings</a>
+    </div>
+    <div class="toolbar-actions">
+      <span class="toolbar-time">Last updated: Jun 21, 2026 14:32 UTC</span>
+      <button class="btn-sm">Refresh</button>
+      <button class="btn-sm primary">Export</button>
+    </div>
+  </div>
+
+  <!-- KPI Strip -->
+  <div class="kpi-strip">
+    <div class="kpi-cell">
+      <div class="kpi-label">Total Revenue</div>
+      <div class="kpi-value blue">$2.4M</div>
+      <div class="kpi-change up">▲ 12.5% vs last month</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Active Users</div>
+      <div class="kpi-value green">18,429</div>
+      <div class="kpi-change up">▲ 8.3%</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Conversion Rate</div>
+      <div class="kpi-value red">3.24%</div>
+      <div class="kpi-change down">▼ 0.3%</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Avg Order Value</div>
+      <div class="kpi-value purple">$127</div>
+      <div class="kpi-change up">▲ 5.1%</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Churn Rate</div>
+      <div class="kpi-value yellow">1.8%</div>
+      <div class="kpi-change down">▼ 0.2%</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">NPS Score</div>
+      <div class="kpi-value cyan">72</div>
+      <div class="kpi-change up">▲ 4pts</div>
+    </div>
+  </div>
+
+  <!-- Main Layout: Sidebar + Content -->
+  <div class="main-layout">
+    <!-- Sidebar Filter Panel -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title">Filters</div>
+        <div class="filter-group">
+          <label class="filter-label">Date Range</label>
+          <select class="filter-select">
+            <option>Last 30 days</option>
+            <option>Last 7 days</option>
+            <option>Last 90 days</option>
+            <option>Custom range</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Region</label>
+          <select class="filter-select">
+            <option>All Regions</option>
+            <option>North America</option>
+            <option>Europe</option>
+            <option>Asia Pacific</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Segment</label>
+          <select class="filter-select">
+            <option>All Users</option>
+            <option>Enterprise</option>
+            <option>Mid-Market</option>
+            <option>SMB</option>
+          </select>
+        </div>
+        <label class="filter-check"><input type="checkbox" checked> Include archived</label>
+        <label class="filter-check"><input type="checkbox"> Show projections</label>
+        <button class="btn-apply">Apply Filters</button>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title">Quick Actions</div>
+        <button class="btn-sm" style="width:100%;margin-bottom:6px;">Create Report</button>
+        <button class="btn-sm" style="width:100%;margin-bottom:6px;">Schedule Alert</button>
+        <button class="btn-sm" style="width:100%;">Share Dashboard</button>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title">Color Palette</div>
+        <div class="swatch-strip">
+          <div class="swatch-mini" style="background:#3B82F6;" data-hex="#3B82F6"></div>
+          <div class="swatch-mini" style="background:#22C55E;" data-hex="#22C55E"></div>
+          <div class="swatch-mini" style="background:#EF4444;" data-hex="#EF4444"></div>
+          <div class="swatch-mini" style="background:#EAB308;" data-hex="#EAB308"></div>
+          <div class="swatch-mini" style="background:#8B5CF6;" data-hex="#8B5CF6"></div>
+          <div class="swatch-mini" style="background:#06B6D4;" data-hex="#06B6D4"></div>
+          <div class="swatch-mini" style="background:#E5E7EB;" data-hex="#E5E7EB"></div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title">Display Density</div>
+        <label class="filter-check"><input type="radio" name="density" checked> Compact</label>
+        <label class="filter-check"><input type="radio" name="density"> Comfortable</label>
+        <label class="filter-check"><input type="radio" name="density"> Spacious</label>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content">
+      <!-- Charts Grid -->
+      <div class="section-header">
+        <h2>Performance Metrics</h2>
+        <a class="link">Last 30 days ▾</a>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-widget">
+          <div class="chart-title">Revenue Trend <span class="filter">Daily ▾</span></div>
+          <div class="mini-bars">
+            <div class="mini-bar" style="height:45%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:52%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:48%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:61%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:55%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:67%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:58%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:72%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:69%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:78%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:74%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:82%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:76%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:85%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:90%;background:var(--data-blue);"></div>
+          </div>
+        </div>
+        <div class="chart-widget">
+          <div class="chart-title">User Growth <span class="filter">Daily ▾</span></div>
+          <div class="mini-bars">
+            <div class="mini-bar" style="height:30%;background:var(--data-green);"></div>
+            <div class="mini-bar" style="height:35%;background:var(--data-green);"></div>
+            <div class="mini-bar" style="height:32%;background:var(--data-green);"></div>
+            <div class="mini-bar" style="height:42%;background:var(--data-green);"></div>
+            <div class="mini-bar" style="height:48%;background:var(--data-green);"></div>
+            <div class="mini-bar" style="height:44%;background:var(--data-green);"></div>
+            <div class="mini-bar" style="height:52%;background:var(--data-green);"></div>
+            <div class="mini-bar" style="height:56%;background:var(--data-green);"></div>
+            <div class="mini-bar" style="height:60%;background:var(--data-green);"></div>
+            <div class="mini-bar" style="height:64%;background:var(--data-green);"></div>
+            <div class="mini-bar" style="height:58%;background:var(--data-green);"></div>
+            <div class="mini-bar" style="height:70%;background:var(--data-green);"></div>
+            <div class="mini-bar" style="height:68%;background:var(--data-green);"></div>
+            <div class="mini-bar" style="height:75%;background:var(--data-green);"></div>
+            <div class="mini-bar" style="height:80%;background:var(--data-green);"></div>
+          </div>
+        </div>
+        <div class="chart-widget">
+          <div class="chart-title">Conversion Funnel <span class="filter">All time ▾</span></div>
+          <div class="mini-bars">
+            <div class="mini-bar" style="height:100%;background:var(--data-cyan);"></div>
+            <div class="mini-bar" style="height:78%;background:var(--data-cyan);"></div>
+            <div class="mini-bar" style="height:56%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:38%;background:var(--data-purple);"></div>
+            <div class="mini-bar" style="height:24%;background:var(--data-green);"></div>
+          </div>
+        </div>
+        <div class="chart-widget">
+          <div class="chart-title">Revenue by Region <span class="filter">Q2 2026 ▾</span></div>
+          <div class="mini-bars">
+            <div class="mini-bar" style="height:90%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:60%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:42%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:18%;background:var(--data-blue);"></div>
+            <div class="mini-bar" style="height:10%;background:var(--data-blue);"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metric Cards Row -->
+      <div class="section-header">
+        <h2>Key Insights</h2>
+        <a class="link">View All ▾</a>
+      </div>
+      <div class="metric-row">
+        <div class="metric-card">
+          <div class="metric-card-title">Cohort Analysis</div>
+          <div class="metric-card-value" style="color:var(--data-green);">+18%</div>
+          <div class="metric-card-sub">Month-1 retention improved</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-card-title">Funnel Builder</div>
+          <div class="metric-card-value" style="color:var(--data-blue);">5 steps</div>
+          <div class="metric-card-sub">Purchase funnel configured</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-card-title">Segment Explorer</div>
+          <div class="metric-card-value" style="color:var(--data-purple);">12</div>
+          <div class="metric-card-sub">Active user segments</div>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="section-header">
+        <h2>Regional Performance</h2>
+        <a class="link">Export CSV ▾</a>
+      </div>
+      <div class="chart-widget" style="margin-bottom:24px;overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>Region</th><th class="num">Revenue</th><th class="num">Users</th><th class="num">Conv. Rate</th><th class="num">AOV</th><th class="num">Change</th></tr></thead>
+          <tbody>
+            <tr><td>North America</td><td class="num">$982,400</td><td class="num">7,234</td><td class="num">3.8%</td><td class="num">$142</td><td class="num positive">+14.2%</td></tr>
+            <tr><td>Europe</td><td class="num">$654,200</td><td class="num">5,128</td><td class="num">3.1%</td><td class="num">$128</td><td class="num positive">+8.7%</td></tr>
+            <tr><td>Asia Pacific</td><td class="num">$445,800</td><td class="num">4,291</td><td class="num">2.9%</td><td class="num">$104</td><td class="num positive">+22.1%</td></tr>
+            <tr><td>Latin America</td><td class="num">$198,600</td><td class="num">1,432</td><td class="num">2.4%</td><td class="num">$139</td><td class="num negative">-3.2%</td></tr>
+            <tr><td>Middle East</td><td class="num">$112,300</td><td class="num">344</td><td class="num">4.1%</td><td class="num">$165</td><td class="num positive">+31.5%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Typography as Density Demo -->
+      <div class="section-header">
+        <h2>Data Density Scale</h2>
+      </div>
+      <div class="density-demo">
+        <div class="density-row">
+          <span class="density-label">H1</span>
+          <span class="density-text" style="font-size:28px;font-weight:800;">Dashboard Title</span>
+        </div>
+        <div class="density-row">
+          <span class="density-label">H2</span>
+          <span class="density-text" style="font-size:22px;font-weight:700;">Section Header</span>
+        </div>
+        <div class="density-row">
+          <span class="density-label">H3</span>
+          <span class="density-text" style="font-size:18px;font-weight:700;">Widget Title</span>
+        </div>
+        <div class="density-row">
+          <span class="density-label">H4</span>
+          <span class="density-text" style="font-size:15px;font-weight:600;">Subsection</span>
+        </div>
+        <div class="density-row">
+          <span class="density-label">Body</span>
+          <span class="density-text" style="font-size:13px;">Data-dense dashboards use compact typography. Every pixel counts — information density is the priority.</span>
+        </div>
+        <div class="density-row">
+          <span class="density-label">Caption</span>
+          <span class="density-text" style="font-size:11px;color:var(--text-muted);">Caption — timestamp and data source reference</span>
+        </div>
+      </div>
+
+      <!-- Style Info -->
+      <div class="style-info">
+        <h3>Style Information</h3>
+        <div class="style-info-grid">
+          <div class="style-info-item"><div class="label">Era/Origin</div><div class="value">2020s Modern, Medium, BI/Analytics</div></div>
+          <div class="style-info-item"><div class="label">Best For</div><div class="value">BI dashboards, financial analytics, enterprise reporting</div></div>
+          <div class="style-info-item"><div class="label">Avoid For</div><div class="value">Consumer apps, marketing pages, simple tools</div></div>
+          <div class="style-info-item"><div class="label">Complexity</div><div class="value">Medium — dense grid, chart widgets, data tables</div></div>
+          <div class="style-info-item"><div class="label">CSS Keywords</div><div class="value">hover tooltips, chart zoom, row highlighting, compact spacing, monospace numbers</div></div>
+          <div class="style-info-item"><div class="label">Design Variables</div><div class="value">--page-bg:#0B0F19, --data-blue, --data-green, --data-red, font-family:monospace</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

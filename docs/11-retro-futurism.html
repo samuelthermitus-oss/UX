@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retro-Futurism - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #1A1A2E;
+  --text-color: #C0C0C0;
+  --neon-blue: #0080FF;
+  --hot-pink: #FF006E;
+  --cyan: #00FFFF;
+  --deep-black: #1A1A2E;
+  --purple: #5D34D0;
+  --metallic-silver: #C0C0C0;
+  --gold: #FFD700;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: monospace, system-ui;
+  min-height: 100vh;
+}
+
+.vp-frame {
+  position: relative;
+  overflow: hidden;
+}
+
+/* CRT Scanline Overlay */
+.vp-frame::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.15) 2px,
+    rgba(0, 0, 0, 0.15) 4px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Flicker effect */
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.8; }
+  94% { opacity: 1; }
+  96% { opacity: 0.9; }
+  97% { opacity: 1; }
+}
+
+/* Glitch effect */
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+@keyframes neonPulse {
+  0%, 100% { text-shadow: 0 0 7px var(--cyan), 0 0 10px var(--cyan), 0 0 21px var(--cyan), 0 0 42px var(--neon-blue); }
+  50% { text-shadow: 0 0 4px var(--cyan), 0 0 7px var(--cyan), 0 0 15px var(--cyan), 0 0 30px var(--neon-blue); }
+}
+
+@keyframes borderGlow {
+  0%, 100% { box-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue), inset 0 0 5px rgba(0, 128, 255, 0.1); }
+  50% { box-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue), 0 0 40px var(--neon-blue), inset 0 0 10px rgba(0, 128, 255, 0.1); }
+}
+
+@keyframes scanMove {
+  0% { top: -5%; }
+  100% { top: 105%; }
+}
+
+/* Hero Section */
+.retro-hero {
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 20px;
+  background: linear-gradient(180deg, #0D0D1A 0%, #1A1A2E 40%, #16213E 100%);
+  animation: flicker 8s infinite;
+  overflow: hidden;
+}
+
+.retro-hero::after {
+  content: '';
+  position: absolute;
+  top: -5%;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  animation: scanMove 6s linear infinite;
+  z-index: 5;
+}
+
+.retro-hero h1 {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  text-shadow: 0 0 7px var(--cyan), 0 0 10px var(--cyan), 0 0 21px var(--cyan), 0 0 42px var(--neon-blue), 0 0 82px var(--neon-blue);
+  animation: neonPulse 3s ease-in-out infinite;
+  margin-bottom: 20px;
+}
+
+.retro-hero .subtitle {
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  color: var(--hot-pink);
+  text-shadow: 0 0 5px var(--hot-pink), 0 0 10px var(--hot-pink);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.retro-hero .tagline {
+  font-size: 1rem;
+  color: var(--metallic-silver);
+  max-width: 600px;
+  line-height: 1.8;
+}
+
+/* Grid lines background */
+.grid-bg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40%;
+  background:
+    linear-gradient(90deg, rgba(0, 128, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(0, 128, 255, 0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+  transform: perspective(500px) rotateX(60deg);
+  transform-origin: bottom;
+}
+
+/* Navigation */
+.retro-nav {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  background: #0D0D1A;
+  border-top: 2px solid var(--neon-blue);
+  border-bottom: 2px solid var(--neon-blue);
+  box-shadow: 0 0 10px rgba(0, 128, 255, 0.3);
+  flex-wrap: wrap;
+}
+
+.retro-nav a {
+  color: var(--metallic-silver);
+  text-decoration: none;
+  padding: 8px 16px;
+  font-family: monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+
+.retro-nav a:hover {
+  color: var(--cyan);
+  border-color: var(--cyan);
+  text-shadow: 0 0 5px var(--cyan);
+  box-shadow: 0 0 5px rgba(0, 255, 255, 0.3), inset 0 0 5px rgba(0, 255, 255, 0.1);
+}
+
+/* Buttons */
+.retro-buttons {
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.retro-buttons h2 {
+  font-size: 1.5rem;
+  color: var(--gold);
+  text-shadow: 0 0 5px var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 32px;
+}
+
+.button-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  max-width: 900px;
+  margin: 0 auto;
+ justify-content: center;}
+
+.retro-btn {
+  font-family: monospace;
+  font-size: 0.9rem;
+  padding: 12px 28px;
+  border: 2px solid;
+  border-radius: 2px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  transition: all 0.2s;
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.retro-btn.primary {
+  color: var(--cyan);
+  border-color: var(--cyan);
+  text-shadow: 0 0 3px var(--cyan);
+}
+
+.retro-btn.primary:hover {
+  background: var(--cyan);
+  color: var(--deep-black);
+  text-shadow: none;
+  box-shadow: 0 0 15px var(--cyan), 0 0 30px var(--cyan);
+}
+
+.retro-btn.secondary {
+  color: var(--hot-pink);
+  border-color: var(--hot-pink);
+  text-shadow: 0 0 3px var(--hot-pink);
+}
+
+.retro-btn.secondary:hover {
+  background: var(--hot-pink);
+  color: var(--deep-black);
+  text-shadow: none;
+  box-shadow: 0 0 15px var(--hot-pink), 0 0 30px var(--hot-pink);
+}
+
+.retro-btn.gold {
+  color: var(--gold);
+  border-color: var(--gold);
+  text-shadow: 0 0 3px var(--gold);
+}
+
+.retro-btn.gold:hover {
+  background: var(--gold);
+  color: var(--deep-black);
+  text-shadow: none;
+  box-shadow: 0 0 15px var(--gold), 0 0 30px var(--gold);
+}
+
+.retro-btn.purple {
+  color: var(--purple);
+  border-color: var(--purple);
+  text-shadow: 0 0 3px var(--purple);
+}
+
+.retro-btn.purple:hover {
+  background: var(--purple);
+  color: #fff;
+  text-shadow: none;
+  box-shadow: 0 0 15px var(--purple), 0 0 30px var(--purple);
+}
+
+.retro-btn.filled {
+  background: var(--neon-blue);
+  color: #fff;
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 5px var(--neon-blue);
+}
+
+.retro-btn.filled:hover {
+  box-shadow: 0 0 20px var(--neon-blue), 0 0 40px var(--neon-blue);
+}
+
+/* Forms */
+.retro-forms {
+  padding: 64px 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.retro-forms h2 {
+  font-size: 1.5rem;
+  color: var(--gold);
+  text-shadow: 0 0 5px var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  color: var(--cyan);
+  text-shadow: 0 0 3px var(--cyan);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.retro-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(0, 128, 255, 0.05);
+  border: 1px solid var(--neon-blue);
+  border-radius: 2px;
+  color: var(--metallic-silver);
+  font-family: monospace;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.retro-input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3), inset 0 0 10px rgba(0, 255, 255, 0.05);
+}
+
+.retro-input::placeholder {
+  color: rgba(192, 192, 192, 0.4);
+}
+
+textarea.retro-input {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Cards */
+.retro-cards {
+  padding: 64px 20px;
+}
+
+.retro-cards h2 {
+  font-size: 1.5rem;
+  color: var(--gold);
+  text-shadow: 0 0 5px var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.retro-card {
+  background: linear-gradient(145deg, rgba(26, 26, 46, 0.9), rgba(13, 13, 26, 0.95));
+  border: 1px solid var(--neon-blue);
+  border-radius: 2px;
+  padding: 30px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.retro-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  transition: left 0.5s;
+}
+
+.retro-card:hover {
+  box-shadow: 0 0 15px rgba(0, 128, 255, 0.4), inset 0 0 15px rgba(0, 128, 255, 0.05);
+  border-color: var(--cyan);
+}
+
+.retro-card:hover::before {
+  left: 100%;
+}
+
+.retro-card .card-icon {
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+.retro-card h3 {
+  color: var(--cyan);
+  text-shadow: 0 0 5px var(--cyan);
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.retro-card p {
+  color: var(--metallic-silver);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.retro-card .card-tag {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 4px 12px;
+  font-size: 0.7rem;
+  border: 1px solid var(--hot-pink);
+  color: var(--hot-pink);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: 2px;
+}
+
+/* Typography */
+.retro-typography {
+  padding: 64px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.retro-typography h2 {
+  font-size: 1.5rem;
+  color: var(--gold);
+  text-shadow: 0 0 5px var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.type-sample {
+  margin-bottom: 24px;
+  padding: 20px;
+  border-left: 3px solid var(--neon-blue);
+  background: rgba(0, 128, 255, 0.03);
+}
+
+.type-sample .label {
+  font-size: 0.7rem;
+  color: var(--hot-pink);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 8px;
+}
+
+.type-sample h1, .type-sample h2, .type-sample h3, .type-sample p {
+  color: var(--metallic-silver);
+}
+
+.type-sample h1 {
+  font-size: 2.5rem;
+  color: var(--cyan);
+  text-shadow: 0 0 5px var(--cyan);
+}
+
+.type-sample h2 {
+  font-size: 1.8rem;
+  color: var(--neon-blue);
+}
+
+.type-sample h3 {
+  font-size: 1.3rem;
+  color: var(--purple);
+}
+
+.type-sample p {
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+/* Color Palette */
+.retro-palette {
+  padding: 64px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.retro-palette h2 {
+  font-size: 1.5rem;
+  color: var(--gold);
+  text-shadow: 0 0 5px var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+}
+
+.swatch {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  border: 1px solid rgba(192, 192, 192, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.swatch:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 128, 255, 0.5);
+}
+
+.swatch .swatch-label {
+  font-family: monospace;
+  font-size: 0.65rem;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 4px 8px;
+  border-radius: 2px;
+  color: var(--metallic-silver);
+}
+
+/* Modal */
+.retro-modal-section {
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.retro-modal-section h2 {
+  font-size: 1.5rem;
+  color: var(--gold);
+  text-shadow: 0 0 5px var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 32px;
+}
+
+.modal-demo-btn {
+  font-family: monospace;
+  padding: 14px 32px;
+  background: transparent;
+  border: 2px solid var(--cyan);
+  color: var(--cyan);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+
+.modal-demo-btn:hover {
+  background: var(--cyan);
+  color: var(--deep-black);
+  box-shadow: 0 0 15px var(--cyan);
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(13, 13, 26, 0.9);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.retro-modal {
+  background: #0D0D1A;
+  border: 2px solid var(--neon-blue);
+  border-radius: 2px;
+  padding: 40px;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  animation: borderGlow 2s ease-in-out infinite;
+}
+
+.retro-modal h3 {
+  color: var(--cyan);
+  text-shadow: 0 0 5px var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+}
+
+.retro-modal p {
+  color: var(--metallic-silver);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.retro-modal .modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--hot-pink);
+  font-size: 1.5rem;
+  cursor: pointer;
+  font-family: monospace;
+  text-shadow: 0 0 3px var(--hot-pink);
+}
+
+/* Style Info */
+.retro-info {
+  padding: 64px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.retro-info h2 {
+  font-size: 1.5rem;
+  color: var(--gold);
+  text-shadow: 0 0 5px var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.info-item {
+  padding: 20px;
+  border: 1px solid rgba(0, 128, 255, 0.3);
+  border-radius: 2px;
+  background: rgba(0, 128, 255, 0.03);
+}
+
+.info-item .info-label {
+  font-size: 0.7rem;
+  color: var(--hot-pink);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 8px;
+}
+
+.info-item .info-value {
+  color: var(--cyan);
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .retro-hero h1 { font-size: 2rem; }
+  .retro-hero .subtitle { font-size: 0.9rem; letter-spacing: 0.15em; }
+  .card-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+<div class="vp-frame">
+
+<!-- Hero -->
+<section class="retro-hero">
+  <div class="grid-bg"></div>
+  <h1>Retro-Futurism</h1>
+  <p class="subtitle">/// Neon Dreams &amp; Digital Frontiers ///</p>
+  <p class="tagline">Where 1980s nostalgia meets cyberpunk vision. Glowing neon lines, CRT scanlines, and electric aesthetics define this bold design language born from the golden age of arcade machines and sci-fi cinema.</p>
+</section>
+
+<!-- Navigation -->
+<nav class="retro-nav">
+  <a href="#">Home</a>
+  <a href="#">Systems</a>
+  <a href="#">Archive</a>
+  <a href="#">Network</a>
+  <a href="#">Contact</a>
+</nav>
+
+<!-- Buttons -->
+<section class="retro-buttons">
+  <h2>// Controls //</h2>
+  <div class="button-grid">
+    <button class="retro-btn primary">Initialize</button>
+    <button class="retro-btn secondary">Terminate</button>
+    <button class="retro-btn gold">Upgrade</button>
+    <button class="retro-btn purple">Decrypt</button>
+    <button class="retro-btn filled">Execute</button>
+  </div>
+</section>
+
+<!-- Forms -->
+<section class="retro-forms">
+  <h2>// Access Terminal //</h2>
+  <div class="form-group">
+    <label for="user-id">User ID</label>
+    <input type="text" id="user-id" class="retro-input" placeholder="Enter your access code...">
+  </div>
+  <div class="form-group">
+    <label for="pass-key">Passkey</label>
+    <input type="password" id="pass-key" class="retro-input" placeholder="Enter passkey...">
+  </div>
+  <div class="form-group">
+    <label for="message">Transmission</label>
+    <textarea id="message" class="retro-input" placeholder="Type your transmission..."></textarea>
+  </div>
+  <button class="retro-btn primary" style="margin-top:10px;">Transmit</button>
+</section>
+
+<!-- Cards -->
+<section class="retro-cards">
+  <h2>// System Modules //</h2>
+  <div class="card-grid">
+    <div class="retro-card">
+      <div class="card-icon">&#9889;</div>
+      <h3>Neural Link</h3>
+      <p>High-bandwidth neural interface for seamless human-machine integration. Compatible with all known cyberdecks.</p>
+      <span class="card-tag">Active</span>
+    </div>
+    <div class="retro-card">
+      <div class="card-icon">&#128752;</div>
+      <h3>Holo Display</h3>
+      <p>3D holographic projection system with 8K resolution per eye. Supports full spectrum chromatic output.</p>
+      <span class="card-tag">Beta</span>
+    </div>
+    <div class="retro-card">
+      <div class="card-icon">&#128187;</div>
+      <h3>Cyber Deck</h3>
+      <p>Portable hacking and computing unit. 256TB quantum storage with neural-co-processor acceleration.</p>
+      <span class="card-tag">Legacy</span>
+    </div>
+  </div>
+</section>
+
+<!-- Typography -->
+<section class="retro-typography">
+  <h2>// Font Matrix //</h2>
+  <div class="type-sample">
+    <div class="label">Display / Hero</div>
+    <h1>The Future Is Now</h1>
+  </div>
+  <div class="type-sample">
+    <div class="label">Heading / Section</div>
+    <h2>Neon-Soaked Horizons</h2>
+  </div>
+  <div class="type-sample">
+    <div class="label">Subheading</div>
+    <h3>Digital Frontier Protocol</h3>
+  </div>
+  <div class="type-sample">
+    <div class="label">Body / Paragraph</div>
+    <p>In the electric glow of a thousand CRT monitors, the data streams flow like rivers of light through the information superhighway. Every pixel tells a story, every byte carries a dream from the analog past into the digital future.</p>
+  </div>
+</section>
+
+<!-- Color Palette -->
+<section class="retro-palette">
+  <h2>// Chromatic Array //</h2>
+  <div class="palette-grid">
+    <div class="swatch" style="background:#0080FF;"><span class="swatch-label">#0080FF</span></div>
+    <div class="swatch" style="background:#FF006E;"><span class="swatch-label">#FF006E</span></div>
+    <div class="swatch" style="background:#00FFFF;"><span class="swatch-label">#00FFFF</span></div>
+    <div class="swatch" style="background:#1A1A2E;"><span class="swatch-label">#1A1A2E</span></div>
+    <div class="swatch" style="background:#5D34D0;"><span class="swatch-label">#5D34D0</span></div>
+    <div class="swatch" style="background:#C0C0C0;"><span class="swatch-label">#C0C0C0</span></div>
+    <div class="swatch" style="background:#FFD700;"><span class="swatch-label">#FFD700</span></div>
+  </div>
+</section>
+
+<!-- Modal -->
+<section class="retro-modal-section">
+  <h2>// System Alert //</h2>
+  <button class="modal-demo-btn" onclick="document.getElementById('retro-modal').classList.add('active')">Trigger Alert</button>
+  <div id="retro-modal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('active')">
+    <div class="retro-modal">
+      <button class="modal-close" onclick="document.getElementById('retro-modal').classList.remove('active')">&times;</button>
+      <h3>System Warning</h3>
+      <p>Intrusion detected in sector 7-G. All cyberdecks have been alerted. Please verify your identity credentials and await further instructions from central command.</p>
+      <button class="retro-btn primary" onclick="document.getElementById('retro-modal').classList.remove('active')">Acknowledge</button>
+    </div>
+  </div>
+</section>
+
+<!-- Style Info -->
+<section class="retro-info">
+  <h2>// Style Data //</h2>
+  <div class="info-grid">
+    <div class="info-item">
+      <div class="info-label">Era</div>
+      <div class="info-value">1980s Retro</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Complexity</div>
+      <div class="info-value">Medium</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Best For</div>
+      <div class="info-value">Gaming, Entertainment, Music, Cyberpunk</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Font</div>
+      <div class="info-value">Monospace, System-UI</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Border Radius</div>
+      <div class="info-value">0-4px</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Effects</div>
+      <div class="info-value">CRT Scanlines, Neon Glow, Glitch</div>
+    </div>
+  </div>
+</section>
+
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Material You - Mobile Style Showcase</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    :root {
+      --page-bg: #FFFBFE;
+      --text-color: #1C1B1F;
+      --primary: #6750A4;
+      --secondary: #E8DEF8;
+      --surface: #FFFBFE;
+      --on-surface: #1C1B1F;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--surface);
+      color: var(--on-surface);
+      font-family: system-ui, -apple-system, sans-serif;
+      line-height: 1.4;
+    }
+
+    /* === HERO === */
+    .md3-hero {
+      min-height: 420px;
+      background: var(--primary);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 40px 24px 50px;
+      position: relative;
+      overflow: hidden;
+    }
+    .md3-hero .hero-shape {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.15;
+    }
+    .md3-hero .shape-1 { width: 200px; height: 200px; background: #fff; top: -40px; right: -40px; }
+    .md3-hero .shape-2 { width: 140px; height: 140px; background: #fff; bottom: 60px; left: -30px; }
+    .md3-hero h1 {
+      font-size: 40px;
+      font-weight: 400;
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .md3-hero .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #fff;
+      margin-bottom: 16px;
+      width: fit-content;
+      position: relative;
+    }
+    .md3-hero p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+      position: relative;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    /* === MOBILE NAV (Pill Tabs) === */
+    .mobile-nav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: var(--secondary);
+      padding: 8px 12px 12px;
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+    }
+    .mobile-nav .tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--on-surface);
+      font-size: 10px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      opacity: 0.6;
+    }
+    .mobile-nav .tab.active { opacity: 1; }
+    .mobile-nav .tab .tab-icon {
+      width: 56px; height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      border-radius: 999px;
+      background: transparent;
+      transition: background 200ms;
+    }
+    .mobile-nav .tab.active .tab-icon {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* === SECTIONS === */
+    .section {
+      padding: 40px 20px;
+      border-bottom: 1px solid rgba(28,27,31,0.08);
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--primary);
+      margin-bottom: 24px;
+    }
+
+    /* === BUTTONS === */
+    .md3-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .md3-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px 24px;
+      font-family: system-ui, sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      text-align: center;
+      transition: transform 200ms cubic-bezier(0.2, 0, 0, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .md3-btn::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: currentColor;
+      opacity: 0;
+      transition: opacity 150ms;
+    }
+    .md3-btn:active::after { opacity: 0.12; }
+    .md3-btn:active { transform: scale(0.97); }
+    .md3-btn.primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .md3-btn.secondary {
+      background: var(--secondary);
+      color: var(--primary);
+    }
+    .md3-btn.outline {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid rgba(103,80,164,0.5);
+    }
+    .md3-btn.disabled {
+      background: rgba(28,27,31,0.12);
+      color: rgba(28,27,31,0.38);
+      cursor: not-allowed;
+    }
+
+    /* === FORMS (Floating Label) === */
+    .md3-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .md3-field {
+      position: relative;
+    }
+    .md3-field input,
+    .md3-field textarea,
+    .md3-field select {
+      width: 100%;
+      padding: 20px 16px 8px;
+      font-family: system-ui, sans-serif;
+      font-size: 16px;
+      border: 1px solid rgba(28,27,31,0.38);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--on-surface);
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .md3-field label {
+      position: absolute;
+      top: 50%; left: 16px;
+      transform: translateY(-50%);
+      font-size: 16px;
+      color: rgba(28,27,31,0.6);
+      pointer-events: none;
+      transition: all 200ms cubic-bezier(0.2, 0, 0, 1);
+      transform-origin: left top;
+    }
+    .md3-field input:focus ~ label,
+    .md3-field input:not(:placeholder-shown) ~ label {
+      top: 10px;
+      transform: translateY(0);
+      font-size: 11px;
+      color: var(--primary);
+    }
+    .md3-field textarea ~ label {
+      top: 20px;
+    }
+    .md3-field textarea:focus ~ label,
+    .md3-field textarea:not(:placeholder-shown) ~ label {
+      top: 8px;
+    }
+    .md3-field input:focus,
+    .md3-field textarea:focus,
+    .md3-field select:focus {
+      border-color: var(--primary);
+      border-width: 2px;
+    }
+    .md3-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+    .md3-checkbox input[type="checkbox"],
+    .md3-checkbox input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* === CARDS (Tonal Elevation) === */
+    .md3-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .md3-card {
+      background: var(--secondary);
+      border-radius: 16px;
+      padding: 20px;
+    }
+    .md3-card .card-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 14px;
+    }
+    .md3-card h3 {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .md3-card p {
+      font-size: 13px;
+      color: rgba(28,27,31,0.6);
+      line-height: 1.5;
+    }
+    .md3-card .card-tag {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 12px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 999px;
+    }
+
+    /* === TYPOGRAPHY === */
+    .md3-type {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .md3-type .type-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(28,27,31,0.08);
+    }
+    .md3-type .type-label {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--primary);
+      min-width: 28px;
+      flex-shrink: 0;
+    }
+    .md3-type h1 { font-size: 42px; font-weight: 400; line-height: 1; }
+    .md3-type h2 { font-size: 32px; font-weight: 400; line-height: 1; }
+    .md3-type h3 { font-size: 24px; font-weight: 500; line-height: 1; }
+    .md3-type h4 { font-size: 20px; font-weight: 500; line-height: 1; }
+    .md3-type h5 { font-size: 16px; font-weight: 500; line-height: 1; }
+    .md3-type h6 { font-size: 13px; font-weight: 500; line-height: 1; color: rgba(28,27,31,0.6); }
+
+    /* === COLOR SWATCHES === */
+    .md3-swatches {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .md3-swatch {
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--secondary);
+    }
+    .md3-swatch .swatch-color { height: 56px; }
+    .md3-swatch .swatch-info { padding: 10px 12px; }
+    .md3-swatch .swatch-name { font-size: 12px; font-weight: 500; }
+    .md3-swatch .swatch-hex { font-size: 11px; color: rgba(28,27,31,0.5); font-family: monospace; }
+
+    /* === MODAL === */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(28,27,31,0.4);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-box {
+      background: var(--surface);
+      border-radius: 28px;
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 8px 32px rgba(28,27,31,0.15);
+      animation: md3Spring 400ms cubic-bezier(0.2, 0, 0, 1);
+    }
+    @keyframes md3Spring {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .modal-box h3 {
+      font-size: 24px;
+      font-weight: 400;
+      margin-bottom: 12px;
+    }
+    .modal-box p {
+      font-size: 14px;
+      color: rgba(28,27,31,0.6);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .modal-close {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 999px;
+      font-family: system-ui, sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      width: 100%;
+      transition: transform 200ms;
+    }
+    .modal-close:active { transform: scale(0.97); }
+
+    /* === STYLE INFO === */
+    .style-info {
+      background: var(--secondary);
+      padding: 32px 20px;
+     text-align: center;}
+    .style-info h3 {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+    .style-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .style-info-item {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .style-info-item .info-label {
+      font-size: 9px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .style-info-item .info-value {
+      font-size: 13px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="vp-bar">
+    <span class="vp-label">Viewpoint:</span>
+    <button class="vp-btn" data-size="1920">1920</button>
+    <button class="vp-btn" data-size="1440">1440</button>
+    <button class="vp-btn" data-size="1024">1024</button>
+    <button class="vp-btn" data-size="768">768</button>
+    <button class="vp-btn" data-size="375">375</button>
+    <button class="vp-btn" data-size="320">320</button>
+    <span id="vp-width" class="vp-width">Full</span>
+    <a href="index.html" class="vp-back">← Back to All Styles</a>
+  </div>
+
+  <div class="vp-frame">
+    <!-- Hero -->
+    <section class="md3-hero">
+      <div class="hero-shape shape-1"></div>
+      <div class="hero-shape shape-2"></div>
+      <div class="hero-badge">&#9679; Material Design 3</div>
+      <h1>Material<br>You</h1>
+      <p>Personalized, adaptive surfaces with tonal elevation and pill-shaped interactions.</p>
+    </section>
+
+    <!-- Bottom Nav -->
+    <nav class="mobile-nav">
+      <a class="tab active"><span class="tab-icon">&#9750;</span><span>Home</span></a>
+      <a class="tab"><span class="tab-icon">&#128269;</span><span>Search</span></a>
+      <a class="tab"><span class="tab-icon">&#9881;</span><span>Settings</span></a>
+      <a class="tab"><span class="tab-icon">&#9786;</span><span>Profile</span></a>
+    </nav>
+
+    <!-- Buttons -->
+    <section class="section">
+      <div class="section-title">Buttons</div>
+      <div class="md3-btns">
+        <button class="md3-btn primary">Filled</button>
+        <button class="md3-btn secondary">Tonal</button>
+        <button class="md3-btn outline">Outlined</button>
+        <button class="md3-btn disabled" disabled>Disabled</button>
+      </div>
+    </section>
+
+    <!-- Forms -->
+    <section class="section">
+      <div class="section-title">Forms</div>
+      <div class="md3-form">
+        <div class="md3-field">
+          <input type="text" placeholder=" " value="Jane Doe">
+          <label>Full Name</label>
+        </div>
+        <div class="md3-field">
+          <input type="email" placeholder=" ">
+          <label>Email Address</label>
+        </div>
+        <div class="md3-field">
+          <select>
+            <option>Designer</option>
+            <option>Developer</option>
+            <option>Manager</option>
+          </select>
+          <label>Role</label>
+        </div>
+        <div class="md3-field">
+          <textarea rows="3" placeholder=" "></textarea>
+          <label>Bio</label>
+        </div>
+        <div class="md3-checkbox"><input type="checkbox" id="ck1"><label for="ck1">I agree to terms</label></div>
+        <div class="md3-checkbox"><input type="radio" name="r1" id="r1"><label for="r1">Option A</label></div>
+        <div class="md3-checkbox"><input type="radio" name="r1" id="r2"><label for="r2">Option B</label></div>
+      </div>
+    </section>
+
+    <!-- Cards -->
+    <section class="section">
+      <div class="section-title">Cards</div>
+      <div class="md3-cards">
+        <div class="md3-card">
+          <div class="card-icon">&#127912;</div>
+          <h3>Tonal Elevation</h3>
+          <p>Surfaces gain depth through color toning, not shadows. Purple secondary surfaces.</p>
+          <span class="card-tag">Surface</span>
+        </div>
+        <div class="md3-card">
+          <div class="card-icon">&#128241;</div>
+          <h3>Pill Shapes</h3>
+          <p>Border-radius 999 on buttons, tabs, and badges. The signature MD3 silhouette.</p>
+          <span class="card-tag">Shape</span>
+        </div>
+        <div class="md3-card">
+          <div class="card-icon">&#9889;</div>
+          <h3>State Layers</h3>
+          <p>Hover, press, and focus states with opacity overlays. Emphasized easing transitions.</p>
+          <span class="card-tag">Motion</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Typography -->
+    <section class="section">
+      <div class="section-title">Typography</div>
+      <div class="md3-type">
+        <div class="type-row"><span class="type-label">H1</span><h1>Aa</h1></div>
+        <div class="type-row"><span class="type-label">H2</span><h2>Aa</h2></div>
+        <div class="type-row"><span class="type-label">H3</span><h3>Aa</h3></div>
+        <div class="type-row"><span class="type-label">H4</span><h4>Aa</h4></div>
+        <div class="type-row"><span class="type-label">H5</span><h5>Aa</h5></div>
+        <div class="type-row"><span class="type-label">H6</span><h6>Aa</h6></div>
+      </div>
+    </section>
+
+    <!-- Color Swatches -->
+    <section class="section">
+      <div class="section-title">Colors</div>
+      <div class="md3-swatches">
+        <div class="md3-swatch"><div class="swatch-color" style="background:#6750A4"></div><div class="swatch-info"><div class="swatch-name">Primary</div><div class="swatch-hex">#6750A4</div></div></div>
+        <div class="md3-swatch"><div class="swatch-color" style="background:#E8DEF8"></div><div class="swatch-info"><div class="swatch-name">Secondary</div><div class="swatch-hex">#E8DEF8</div></div></div>
+        <div class="md3-swatch"><div class="swatch-color" style="background:#FFFBFE;border:1px solid #eee"></div><div class="swatch-info"><div class="swatch-name">Surface</div><div class="swatch-hex">#FFFBFE</div></div></div>
+        <div class="md3-swatch"><div class="swatch-color" style="background:#1C1B1F"></div><div class="swatch-info"><div class="swatch-name">On Surface</div><div class="swatch-hex">#1C1B1F</div></div></div>
+      </div>
+    </section>
+
+    <!-- Style Info -->
+    <section class="style-info">
+      <h3>Style Info</h3>
+      <div class="style-info-grid">
+        <div class="style-info-item"><div class="info-label">Era</div><div class="info-value">Material Design 3</div></div>
+        <div class="style-info-item"><div class="info-label">Complexity</div><div class="info-value">Medium</div></div>
+        <div class="style-info-item"><div class="info-label">Radius</div><div class="info-value">999 / 16-28</div></div>
+        <div class="style-info-item"><div class="info-label">Easing</div><div class="info-value">Emphasized</div></div>
+      </div>
+    </section>
+
+    <!-- Modal -->
+    <button class="md3-btn primary" style="margin:24px 20px;" onclick="toggleModal('demo-modal')">Open Modal</button>
+  </div>
+
+  <div id="demo-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Material You</h3>
+      <p>Tonal surfaces, pill buttons, and floating labels. The personalized MD3 mobile experience.</p>
+      <button class="modal-close" onclick="toggleModal('demo-modal')">Close</button>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+</body>
+</html>

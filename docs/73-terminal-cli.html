@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terminal CLI - Mobile Style Showcase</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    :root {
+      --page-bg: #050505;
+      --text-color: #33FF00;
+      --green: #33FF00;
+      --amber: #FFB000;
+      --red: #FF3333;
+      --black: #050505;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--black);
+      color: var(--green);
+      font-family: 'Courier New', 'Consolas', monospace;
+      line-height: 1.4;
+      position: relative;
+    }
+    /* Scanline overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.15) 2px,
+        rgba(0,0,0,0.15) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* === HERO === */
+    .terminal-hero {
+      min-height: 440px;
+      padding: 40px 20px;
+      position: relative;
+      border: 2px solid var(--green);
+      margin: 12px;
+    }
+    .terminal-hero .boot-line {
+      font-size: 11px;
+      opacity: 0.5;
+      margin-bottom: 4px;
+      animation: bootType 0.1s steps(20) forwards;
+    }
+    .terminal-hero .boot-line:nth-child(2) { animation-delay: 0.3s; opacity: 0; }
+    .terminal-hero .boot-line:nth-child(3) { animation-delay: 0.6s; opacity: 0; }
+    .terminal-hero .boot-line:nth-child(4) { animation-delay: 0.9s; opacity: 0; }
+    .terminal-hero .boot-line:nth-child(5) { animation-delay: 1.2s; opacity: 0; }
+    @keyframes bootType {
+      0% { opacity: 0; }
+      100% { opacity: 0.5; }
+    }
+    .terminal-hero h1 {
+      font-size: 36px;
+      font-weight: 400;
+      color: var(--green);
+      margin-top: 20px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+    .terminal-hero .cursor {
+      display: inline-block;
+      width: 12px;
+      height: 20px;
+      background: var(--green);
+      animation: blink 500ms step-end infinite;
+      vertical-align: text-bottom;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    .terminal-hero .ascii-border {
+      font-size: 10px;
+      color: var(--green);
+      opacity: 0.4;
+      margin-top: 16px;
+      white-space: pre;
+      line-height: 1.2;
+    }
+    .terminal-hero .prompt {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    .terminal-hero .prompt .path { color: var(--amber); }
+    .terminal-hero .prompt .cmd { color: var(--green); }
+
+    /* === MOBILE NAV (Bottom Tabs) === */
+    .mobile-nav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: #0a0a0a;
+      border-top: 2px solid var(--green);
+      padding: 10px 0 14px;
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+    }
+    .mobile-nav .tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 400;
+      text-decoration: none;
+      cursor: pointer;
+      opacity: 0.4;
+    }
+    .mobile-nav .tab.active { opacity: 1; }
+    .mobile-nav .tab .tab-icon {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    /* === SECTIONS === */
+    .section {
+      padding: 40px 20px;
+      border-bottom: 2px solid var(--green);
+      margin: 0 12px;
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      color: var(--amber);
+      margin-bottom: 24px;
+    }
+
+    /* === BUTTONS === */
+    .terminal-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .terminal-btn {
+      display: block;
+      width: 100%;
+      padding: 14px 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border: 2px solid var(--green);
+      background: transparent;
+      color: var(--green);
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: none;
+    }
+    .terminal-btn:active {
+      background: var(--green);
+      color: var(--black);
+    }
+    .terminal-btn.primary {
+      background: var(--green);
+      color: var(--black);
+    }
+    .terminal-btn.primary:active {
+      background: transparent;
+      color: var(--green);
+    }
+    .terminal-btn.secondary {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+    .terminal-btn.ghost {
+      border-color: transparent;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+    .terminal-btn.disabled {
+      border-color: #333;
+      color: #333;
+      cursor: not-allowed;
+    }
+
+    /* === FORMS === */
+    .terminal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .terminal-field label {
+      display: block;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--amber);
+      margin-bottom: 6px;
+    }
+    .terminal-field input,
+    .terminal-field textarea,
+    .terminal-field select {
+      width: 100%;
+      padding: 12px 14px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      border: 2px solid var(--green);
+      border-radius: 0;
+      background: transparent;
+      color: var(--green);
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .terminal-field input::placeholder,
+    .terminal-field textarea::placeholder {
+      color: #333;
+    }
+    .terminal-field input:focus,
+    .terminal-field textarea:focus {
+      border-color: var(--amber);
+    }
+    .terminal-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+    }
+    .terminal-checkbox input[type="checkbox"],
+    .terminal-checkbox input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--green);
+      cursor: pointer;
+    }
+
+    /* === CARDS === */
+    .terminal-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .terminal-card {
+      border: 2px solid var(--green);
+      padding: 20px;
+      position: relative;
+    }
+    .terminal-card::before {
+      content: '[ ';
+      position: absolute;
+      top: -1px; left: 8px;
+      background: var(--black);
+      padding: 0 4px;
+      font-size: 10px;
+      color: var(--amber);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .terminal-card h3 {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--green);
+      margin-bottom: 8px;
+      margin-top: 8px;
+    }
+    .terminal-card p {
+      font-size: 12px;
+      color: #33FF00;
+      opacity: 0.6;
+      line-height: 1.5;
+    }
+    .terminal-card .ascii-art {
+      font-size: 9px;
+      line-height: 1.1;
+      margin-top: 12px;
+      opacity: 0.4;
+      white-space: pre;
+    }
+
+    /* === TYPOGRAPHY === */
+    .terminal-type {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .terminal-type .type-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(51,255,0,0.2);
+    }
+    .terminal-type .type-label {
+      font-size: 10px;
+      color: var(--amber);
+      min-width: 28px;
+      flex-shrink: 0;
+    }
+    .terminal-type h1 { font-size: 38px; font-weight: 400; color: var(--green); text-transform: uppercase; line-height: 1; }
+    .terminal-type h2 { font-size: 30px; font-weight: 400; color: var(--green); text-transform: uppercase; line-height: 1; }
+    .terminal-type h3 { font-size: 22px; font-weight: 400; color: var(--green); text-transform: uppercase; line-height: 1; }
+    .terminal-type h4 { font-size: 18px; font-weight: 400; color: var(--green); text-transform: uppercase; line-height: 1; }
+    .terminal-type h5 { font-size: 14px; font-weight: 400; color: var(--green); line-height: 1; }
+    .terminal-type h6 { font-size: 11px; font-weight: 400; color: var(--amber); line-height: 1; letter-spacing: 2px; text-transform: uppercase; }
+
+    /* === COLOR SWATCHES === */
+    .terminal-swatches {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .terminal-swatch {
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid var(--green);
+      min-height: 50px;
+    }
+    .terminal-swatch .swatch-color {
+      width: 50px;
+      height: 50px;
+      flex-shrink: 0;
+      border-right: 2px solid var(--green);
+    }
+    .terminal-swatch .swatch-info {
+      padding: 0 14px;
+    }
+    .terminal-swatch .swatch-name { font-size: 13px; }
+    .terminal-swatch .swatch-hex { font-size: 11px; opacity: 0.5; }
+
+    /* === MODAL === */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(5,5,5,0.95);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-box {
+      border: 2px solid var(--green);
+      padding: 24px;
+      width: 100%;
+      max-width: 360px;
+      position: relative;
+    }
+    .modal-box::before {
+      content: '[ MODAL ]';
+      position: absolute;
+      top: -10px; left: 12px;
+      background: var(--black);
+      padding: 0 8px;
+      font-size: 11px;
+      color: var(--amber);
+      letter-spacing: 2px;
+    }
+    .modal-box h3 {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--green);
+      margin-bottom: 12px;
+      margin-top: 8px;
+    }
+    .modal-box p {
+      font-size: 13px;
+      color: var(--green);
+      opacity: 0.6;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .modal-close {
+      background: transparent;
+      color: var(--green);
+      border: 2px solid var(--green);
+      padding: 12px 24px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .modal-close:active {
+      background: var(--green);
+      color: var(--black);
+    }
+
+    /* === STYLE INFO === */
+    .style-info {
+      border-top: 2px solid var(--green);
+      padding: 32px 20px;
+      margin: 0 12px;
+     text-align: center;}
+    .style-info h3 {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--amber);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 16px;
+    }
+    .style-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .style-info-item {
+      border: 1px solid rgba(51,255,0,0.2);
+      padding: 10px;
+    }
+    .style-info-item .info-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--amber);
+      margin-bottom: 4px;
+    }
+    .style-info-item .info-value {
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="vp-bar">
+    <span class="vp-label">Viewpoint:</span>
+    <button class="vp-btn" data-size="1920">1920</button>
+    <button class="vp-btn" data-size="1440">1440</button>
+    <button class="vp-btn" data-size="1024">1024</button>
+    <button class="vp-btn" data-size="768">768</button>
+    <button class="vp-btn" data-size="375">375</button>
+    <button class="vp-btn" data-size="320">320</button>
+    <span id="vp-width" class="vp-width">Full</span>
+    <a href="index.html" class="vp-back">← Back to All Styles</a>
+  </div>
+
+  <div class="vp-frame">
+    <!-- Hero -->
+    <section class="terminal-hero">
+      <div class="boot-line">BIOS v2.4.1 ... OK</div>
+      <div class="boot-line">MEMORY TEST: 640K ... OK</div>
+      <div class="boot-line">LOADING SYSTEM ... OK</div>
+      <div class="boot-line">MOUNTING /dev/mobile ... OK</div>
+      <div class="boot-line">READY.</div>
+      <h1>Terminal<br>Mobile<span class="cursor"></span></h1>
+      <div class="ascii-border">+------------------------------------------+
+|  RETRO-FUTURE MOBILE EXPERIENCE         |
++------------------------------------------+</div>
+      <div class="prompt">
+        <span class="path">~/mobile$</span> <span class="cmd">./launch.sh</span><span class="cursor"></span>
+      </div>
+    </section>
+
+    <!-- Bottom Nav -->
+    <nav class="mobile-nav">
+      <a class="tab active"><span class="tab-icon">></span><span>Shell</span></a>
+      <a class="tab"><span class="tab-icon">~</span><span>Home</span></a>
+      <a class="tab"><span class="tab-icon">#</span><span>Root</span></a>
+      <a class="tab"><span class="tab-icon">$</span><span>Sys</span></a>
+    </nav>
+
+    <!-- Buttons -->
+    <section class="section">
+      <div class="section-title">> buttons --list</div>
+      <div class="terminal-btns">
+        <button class="terminal-btn primary">$ EXECUTE</button>
+        <button class="terminal-btn secondary">$ RUN ALT</button>
+        <button class="terminal-btn ghost">man --help</button>
+        <button class="terminal-btn disabled" disabled>$ DISABLED</button>
+      </div>
+    </section>
+
+    <!-- Forms -->
+    <section class="section">
+      <div class="section-title">> form --input</div>
+      <div class="terminal-form">
+        <div class="terminal-field">
+          <label>USERNAME</label>
+          <input type="text" placeholder="root@mobile">
+        </div>
+        <div class="terminal-field">
+          <label>COMMAND</label>
+          <input type="text" placeholder="enter command...">
+        </div>
+        <div class="terminal-field">
+          <label>SHELL</label>
+          <select>
+            <option>/bin/bash</option>
+            <option>/bin/zsh</option>
+            <option>/bin/fish</option>
+          </select>
+        </div>
+        <div class="terminal-field">
+          <label>LOG</label>
+          <textarea rows="3" placeholder="output log..."></textarea>
+        </div>
+        <div class="terminal-checkbox"><input type="checkbox" id="ck1"><label for="ck1">--verbose</label></div>
+        <div class="terminal-checkbox"><input type="radio" name="r1" id="r1"><label for="r1">-v (verbose)</label></div>
+        <div class="terminal-checkbox"><input type="radio" name="r1" id="r2"><label for="r2">-q (quiet)</label></div>
+      </div>
+    </section>
+
+    <!-- Cards -->
+    <section class="section">
+      <div class="section-title">> cat /proc/modules</div>
+      <div class="terminal-cards">
+        <div class="terminal-card">
+          <h3>BLINK CURSOR</h3>
+          <p>The terminal heartbeat. 500ms on/off. A pulse of digital life.</p>
+          <div class="ascii-art">  _____
+ /     \
+| O   O |
+|  ___  |
+ \_____/
+
+  [OK]</div>
+        </div>
+        <div class="terminal-card">
+          <h3>SCANLINES</h3>
+          <p>CRT phosphor overlay. Every pixel seen through the glass of time.</p>
+          <div class="ascii-art">||||||||||||||||||||||||
+||||||||||||||||||||||||
+||||||||||||||||||||||||</div>
+        </div>
+        <div class="terminal-card">
+          <h3>TYPEWRITER</h3>
+          <p>Characters arrive one by one. Each letter a deliberate keystroke.</p>
+          <div class="ascii-art">> echo "Hello, World"
+Hello, World
+_</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Typography -->
+    <section class="section">
+      <div class="section-title">> font --showcase</div>
+      <div class="terminal-type">
+        <div class="type-row"><span class="type-label">H1</span><h1>Aa</h1></div>
+        <div class="type-row"><span class="type-label">H2</span><h2>Aa</h2></div>
+        <div class="type-row"><span class="type-label">H3</span><h3>Aa</h3></div>
+        <div class="type-row"><span class="type-label">H4</span><h4>Aa</h4></div>
+        <div class="type-row"><span class="type-label">H5</span><h5>Aa</h5></div>
+        <div class="type-row"><span class="type-label">H6</span><h6>Aa</h6></div>
+      </div>
+    </section>
+
+    <!-- Color Swatches -->
+    <section class="section">
+      <div class="section-title">> color --palette</div>
+      <div class="terminal-swatches">
+        <div class="terminal-swatch"><div class="swatch-color" style="background:#33FF00"></div><div class="swatch-info"><div class="swatch-name">Matrix Green</div><div class="swatch-hex">#33FF00</div></div></div>
+        <div class="terminal-swatch"><div class="swatch-color" style="background:#050505;border:2px solid #33FF00"></div><div class="swatch-info"><div class="swatch-name">OLED Black</div><div class="swatch-hex">#050505</div></div></div>
+        <div class="terminal-swatch"><div class="swatch-color" style="background:#FFB000"></div><div class="swatch-info"><div class="swatch-name">Amber</div><div class="swatch-hex">#FFB000</div></div></div>
+        <div class="terminal-swatch"><div class="swatch-color" style="background:#FF3333"></div><div class="swatch-info"><div class="swatch-name">Error Red</div><div class="swatch-hex">#FF3333</div></div></div>
+      </div>
+    </section>
+
+    <!-- Style Info -->
+    <section class="style-info">
+      <h3>> info --style</h3>
+      <div class="style-info-grid">
+        <div class="style-info-item"><div class="info-label">ERA</div><div class="info-value">Retro-Future</div></div>
+        <div class="style-info-item"><div class="info-label">COMPLEXITY</div><div class="info-value">Medium</div></div>
+        <div class="style-info-item"><div class="info-label">RADIUS</div><div class="info-value">0px All</div></div>
+        <div class="style-info-item"><div class="info-label">CURSOR</div><div class="info-value">500ms Blink</div></div>
+      </div>
+    </section>
+
+    <!-- Modal -->
+    <button class="terminal-btn primary" style="margin:24px 12px;" onclick="toggleModal('demo-modal')">$ ./modal.sh</button>
+  </div>
+
+  <div id="demo-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>TERMINAL MODAL</h3>
+      <p>Green on black. ASCII borders. The retro-future mobile experience straight from the command line.</p>
+      <button class="modal-close" onclick="toggleModal('demo-modal')">EXIT</button>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+</body>
+</html>

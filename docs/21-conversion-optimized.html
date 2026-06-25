@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conversion-Optimized - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root{--bg:#FFFCF9;--surface:#FFF7ED;--surface2:#FEF3C7;--text:#1C1917;--text-dim:#A8A29E;--brand:#EA580C;--brand-dark:#C2410C;--urgency:#DC2626;--trust:#15803D;--radius:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;line-height:1.6}
+
+/* ══ URGENCY HERO ══ */
+.urgency-hero{background:linear-gradient(135deg,#FEF3C7 0%,#FFFCF9 60%,#FFF7ED 100%);padding:80px 24px 60px;text-align:center;position:relative}
+.urgency-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(234,88,12,.08),transparent 70%);border-radius:50%}
+
+.badge-urgency{display:inline-flex;align-items:center;gap:6px;background:var(--urgency);color:#fff;font-size:.75rem;font-weight:700;padding:5px 14px;border-radius:99px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px;animation:badgePulse 2s ease-in-out infinite}
+@keyframes badgePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+.badge-urgency .dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:dotBlink 1s ease-in-out infinite}
+@keyframes dotBlink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.urgency-hero h1{font-size:clamp(2.5rem,6vw,4rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;margin-bottom:14px}
+.urgency-hero h1 em{font-style:normal;color:var(--brand)}
+
+.urgency-hero .sub{font-size:1.1rem;color:var(--text-dim);max-width:480px;margin:0 auto 24px}
+
+/* Countdown */
+.countdown{display:flex;gap:8px;justify-content:center;margin-top:20px}
+.cd-unit{background:var(--urgency);color:#fff;padding:8px 14px;border-radius:8px;font-family:'Courier New',monospace;font-size:1.2rem;font-weight:700;min-width:52px;text-align:center}
+.cd-sep{font-weight:700;color:var(--urgency);align-self:center;font-size:1.2rem}
+
+.cta-group{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:14px 32px;font-size:1rem;font-weight:700;border:2px solid transparent;cursor:pointer;border-radius:var(--radius);font-family:inherit;transition:all .2s}
+.btn-primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btn-primary:hover{background:var(--brand-dark);transform:translateY(-2px);box-shadow:0 6px 24px rgba(234,88,12,.35)}
+.btn-secondary{background:transparent;color:var(--brand);border-color:var(--brand)}
+.btn-secondary:hover{background:var(--brand);color:#fff}
+.btn-ghost{background:transparent;color:var(--text-dim);border-color:transparent}
+.btn-ghost:hover{background:rgba(0,0,0,.04);color:var(--text)}
+.btn-sm{padding:10px 20px;font-size:.875rem}
+.btn-lg{padding:18px 40px;font-size:1.1rem;border-radius:14px}
+.btn-disabled{background:#E7E5E4;color:#A8A29E;border-color:#E7E5E4;cursor:not-allowed;opacity:.6}
+.btn-spinner{display:inline-block;width:16px;height:16px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-right:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ══ TRUST STRIP ══ */
+.trust-strip{background:#fff;border-top:1px solid #E7E5E4;border-bottom:1px solid #E7E5E4;padding:14px 0}
+.trust-strip .container{display:flex;gap:28px;justify-content:center;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:600;color:var(--text-dim)}
+
+/* ══ NAV ══ */
+.demo-nav{background:#fff;border-bottom:1px solid #E7E5E4;padding:12px 0}
+.demo-nav .container{display:flex;gap:24px;align-items:center;justify-content:center}
+.demo-nav a{color:var(--text);text-decoration:none;font-size:.875rem;font-weight:500}
+.demo-nav a:hover{color:var(--brand)}
+.demo-nav .nav-cta{margin-left:auto;background:var(--brand);color:#fff!important;padding:8px 18px;border-radius:8px;font-weight:600}
+
+/* ══ TWO COL CTA SECTION ══ */
+.cta-section{display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:420px}
+.cta-left{background:#fff;padding:64px;display:flex;flex-direction:column;justify-content:center}
+.cta-right{background:linear-gradient(135deg,#EA580C,#C2410C);padding:64px;display:flex;flex-direction:column;justify-content:center;color:#fff}
+.cta-left h2{font-size:1.8rem;font-weight:800;margin-bottom:12px}
+.cta-left p{color:var(--text-dim);margin-bottom:24px;max-width:400px}
+.cta-right h3{font-size:1.3rem;font-weight:700;margin-bottom:8px}
+.cta-right p{color:rgba(255,255,255,.7);margin-bottom:24px;font-size:.95rem}
+.cta-right .btn{background:#fff;color:var(--brand);border-color:#fff}
+.cta-right .btn:hover{background:transparent;color:#fff}
+
+/* ══ FEATURES: PAIN/SOLUTION ══ */
+.pain-solution{padding:80px 24px}
+.ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:1000px;margin:0 auto}
+.ps-col h3{font-size:1.1rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.ps-item{display:flex;gap:12px;margin-bottom:16px;padding:14px;border-radius:10px;transition:background .2s}
+.ps-item:hover{background:var(--surface)}
+.ps-item .icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.ps-item .text h4{font-size:.9rem;font-weight:600;margin-bottom:2px}
+.ps-item .text p{font-size:.8rem;color:var(--text-dim);line-height:1.5}
+
+/* ══ SOCIAL PROOF STATS ══ */
+.stats-section{background:var(--surface);padding:64px 24px;text-align:center}
+.stats-row{display:flex;gap:48px;justify-content:center;flex-wrap:wrap}
+.stat{text-align:center}
+.stat .num{font-size:2.5rem;font-weight:900;color:var(--brand)}
+.stat .lbl{font-size:.75rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
+
+/* ══ TESTIMONIAL CARDS ══ */
+.testimonials{padding:80px 24px}
+.testimonials h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:40px}
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1000px;margin:0 auto}
+.test-card{background:#fff;border:1px solid #E7E5E4;border-radius:var(--radius);padding:24px;transition:all .25s}
+.test-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.06)}
+.test-card .stars{color:#F59E0B;font-size:.8rem;margin-bottom:10px}
+.test-card .quote{font-size:.88rem;color:var(--text);line-height:1.7;margin-bottom:14px;font-style:italic}
+.test-card .author{display:flex;align-items:center;gap:10px}
+.test-card .avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff}
+.test-card .name{font-size:.85rem;font-weight:600}
+.test-card .role{font-size:.75rem;color:var(--text-dim)}
+
+/* ══ FAQ ══ */
+.faq{padding:80px 24px;max-width:640px;margin:0 auto}
+.faq h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:32px}
+.faq-item{border-bottom:1px solid #E7E5E4;padding:16px 0}
+.faq-q{font-weight:600;font-size:.95rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.faq-q::after{content:'+';font-size:1.2rem;color:var(--brand)}
+.faq-item.open .faq-q::after{content:'−'}
+.faq-a{display:none;font-size:.88rem;color:var(--text-dim);line-height:1.7;margin-top:10px;padding-right:20px}
+.faq-item.open .faq-a{display:block}
+
+/* ══ FORMS ══ */
+.forms{padding:80px 24px;max-width:480px;margin:0 auto}
+.forms h2{font-size:1.8rem;font-weight:800;margin-bottom:8px;text-align:center}
+.forms .sub{color:var(--text-dim);text-align:center;margin-bottom:28px}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:.78rem;font-weight:600;margin-bottom:5px}
+.fg label .req{color:var(--urgency)}
+.fi{width:100%;padding:11px 14px;font-size:.95rem;font-family:inherit;border:2px solid #E7E5E4;border-radius:8px;background:#fff;color:var(--text);outline:none;transition:border .2s}
+.fi:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(234,88,12,.1)}
+select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath fill='%23A8A29E' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+textarea.fi{resize:vertical;min-height:100px}
+.form-help{font-size:.72rem;color:var(--text-dim);margin-top:3px}
+.form-row{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.form-row label{display:flex;align-items:center;gap:6px;font-size:.82rem;cursor:pointer}
+.form-row input[type=checkbox],.form-row input[type=radio]{width:16px;height:16px;accent-color:var(--brand)}
+
+/* ══ CARDS ══ */
+.cards{padding:80px 24px}
+.cards h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:32px}
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1000px;margin:0 auto}
+.card{border:1px solid #E7E5E4;border-radius:var(--radius);padding:24px;background:#fff;transition:all .25s}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.06);border-color:var(--brand)}
+.card .icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:14px}
+.card h3{font-size:1rem;font-weight:700;margin-bottom:6px}
+.card p{font-size:.85rem;color:var(--text-dim);line-height:1.6}
+.mini-test{background:var(--surface);border-radius:8px;padding:12px;margin-top:12px;font-size:.78rem;color:var(--text-dim);font-style:italic}
+.mini-test .stars{color:#F59E0B;font-style:normal}
+
+/* ══ TYPOGRAPHY ══ */
+.typo{padding:80px 24px;max-width:700px;margin:0 auto;background:var(--surface)}
+.typo h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:28px}
+.ts{margin-bottom:14px;padding:18px;background:#fff;border-radius:10px;border-left:3px solid var(--brand)}
+.ts .lbl{font-size:.65rem;font-weight:600;color:var(--brand);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.ts h1{font-size:2rem;font-weight:900}
+.ts h2{font-size:1.5rem;font-weight:700}
+.ts h3{font-size:1.1rem;font-weight:700}
+.ts p{font-size:.95rem;color:var(--text-dim);line-height:1.8}
+
+/* ══ PALETTE ══ */
+.palette{padding:80px 24px;max-width:700px;margin:0 auto}
+.palette h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:24px}
+.pal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:10px}
+.sw{aspect-ratio:1;border-radius:10px;display:flex;align-items:flex-end;justify-content:center;padding:6px;transition:all .3s;border:1px solid rgba(0,0,0,.08)}
+.sw:hover{transform:translateY(-2px)}
+.sw span{font-size:.58rem;font-weight:600;background:rgba(0,0,0,.5);padding:2px 6px;border-radius:4px;color:#fff}
+
+/* ══ MODAL ══ */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal-box{background:#fff;border-radius:16px;padding:36px;max-width:440px;width:90%;box-shadow:0 24px 64px rgba(0,0,0,.2);text-align:center}
+.modal-box h3{font-size:1.3rem;font-weight:800;margin-bottom:10px}
+.modal-box p{font-size:.88rem;color:var(--text-dim);margin-bottom:20px;line-height:1.6}
+.modal-sec{padding:80px 24px;text-align:center}
+.modal-sec h2{font-size:1.8rem;font-weight:800;margin-bottom:20px}
+
+/* ══ STYLE INFO ══ */
+.info{padding:80px 24px;background:var(--surface)}
+.info-box{max-width:900px;margin:0 auto;border:1px solid #E7E5E4;border-radius:var(--radius);padding:28px;background:#fff;text-align:center}
+.info-box h3{font-size:1rem;font-weight:700;margin-bottom:16px}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;text-align:left}
+.info-item{font-size:.82rem}
+.info-item .il{font-weight:600;margin-bottom:3px;opacity:.6;font-size:.7rem;text-transform:uppercase;letter-spacing:.04em}
+
+@media(max-width:768px){.cta-section,.ps-grid,.test-grid,.card-grid{grid-template-columns:1fr}.stats-row{gap:24px}}
+</style>
+</head>
+<body>
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+<div class="vp-frame">
+
+<!-- URGENCY HERO -->
+<section class="urgency-hero">
+  <span class="badge-urgency"><span class="dot"></span>Limited Time — 40% Off</span>
+  <span class="tag tag-era">2020s Modern</span>
+  <span class="tag tag-complexity-medium">Complexity: Medium</span>
+  <span class="tag tag-type">Landing Page</span>
+  <h1>Grow Your Business<br><em>10x Faster</em></h1>
+  <p class="sub">The all-in-one platform trusted by 12,000+ companies. No credit card required.</p>
+  <div class="countdown">
+    <span class="cd-unit">02</span><span class="cd-sep">:</span>
+    <span class="cd-unit">14</span><span class="cd-sep">:</span>
+    <span class="cd-unit">37</span>
+  </div>
+  <div class="cta-group">
+    <button class="btn btn-primary btn-lg">Start Free Trial →</button>
+    <button class="btn btn-ghost btn-lg">Watch Demo</button>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="container">
+    <div class="trust-item">🔒 SOC 2 Certified</div>
+    <div class="trust-item">⚡ 99.99% Uptime</div>
+    <div class="trust-item">🏆 G2 Leader 2024</div>
+    <div class="trust-item">💳 No Credit Card Required</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="demo-nav">
+  <div class="container">
+    <a href="#">Features</a><a href="#">Pricing</a><a href="#">Testimonials</a><a href="#">Resources</a>
+    <a href="#" class="nav-cta">Get Started Free</a>
+  </div>
+</nav>
+
+<!-- TWO COL CTA -->
+<section class="cta-section">
+  <div class="cta-left">
+    <h2>Stop Losing Customers</h2>
+    <p>Every day without the right tools costs you revenue. Our platform helps you convert more leads, close deals faster, and retain customers longer.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary">Start Free Trial</button>
+      <button class="btn btn-secondary">See Pricing</button>
+    </div>
+  </div>
+  <div class="cta-right">
+    <h3>What you get free:</h3>
+    <p>✓ 14-day full access &nbsp; ✓ No credit card &nbsp; ✓ Cancel anytime &nbsp; ✓ Live chat support</p>
+    <button class="btn">Claim Your Trial →</button>
+  </div>
+</section>
+
+<!-- PAIN/SOLUTION -->
+<section class="pain-solution">
+  <div class="ps-grid">
+    <div class="ps-col">
+      <h3>😤 Without Our Platform</h3>
+      <div class="ps-item"><div class="icon" style="background:#FEE2E2;color:#DC2626">✕</div><div class="text"><h4>Manual data entry</h4><p>Waste hours copying data between spreadsheets and tools.</p></div></div>
+      <div class="ps-item"><div class="icon" style="background:#FEE2E2;color:#DC2626">✕</div><div class="text"><h4>Missed follow-ups</h4><p>Leads fall through the cracks without automated reminders.</p></div></div>
+      <div class="ps-item"><div class="icon" style="background:#FEE2E2;color:#DC2626">✕</div><div class="text"><h4>Fragmented analytics</h4><p>No single source of truth for your business metrics.</p></div></div>
+    </div>
+    <div class="ps-col">
+      <h3>🚀 With Our Platform</h3>
+      <div class="ps-item"><div class="icon" style="background:#DCFCE7;color:#16A34A">✓</div><div class="text"><h4>Automated workflows</h4><p>Set it and forget it. Repetitive tasks handled automatically.</p></div></div>
+      <div class="ps-item"><div class="icon" style="background:#DCFCE7;color:#16A34A">✓</div><div class="text"><h4>Smart follow-ups</h4><p>AI-powered reminders ensure no lead is ever forgotten.</p></div></div>
+      <div class="ps-item"><div class="icon" style="background:#DCFCE7;color:#16A34A">✓</div><div class="text"><h4>Unified dashboard</h4><p>Every metric in one beautiful, real-time view.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section">
+  <div class="stats-row">
+    <div class="stat"><div class="num">12,000+</div><div class="lbl">Companies</div></div>
+    <div class="stat"><div class="num">340%</div><div class="lbl">Avg ROI</div></div>
+    <div class="stat"><div class="num">2.1M</div><div class="lbl">Deals Closed</div></div>
+    <div class="stat"><div class="num">4.9/5</div><div class="lbl">Customer Rating</div></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <h2>What Our Customers Say</h2>
+  <div class="test-grid">
+    <div class="test-card">
+      <div class="stars">★★★★★</div>
+      <div class="quote">"We increased conversions by 47% in the first month. The ROI was immediate and undeniable."</div>
+      <div class="author"><div class="avatar" style="background:var(--brand)">SK</div><div><div class="name">Sarah Kim</div><div class="role">VP Sales, TechFlow</div></div></div>
+    </div>
+    <div class="test-card">
+      <div class="stars">★★★★★</div>
+      <div class="quote">"Finally, a tool that actually delivers on its promises. Our team saved 20 hours per week."</div>
+      <div class="author"><div class="avatar" style="background:var(--trust)">MR</div><div><div class="name">Marcus Rivera</div><div class="role">CEO, GrowthBase</div></div></div>
+    </div>
+    <div class="test-card">
+      <div class="stars">★★★★★</div>
+      <div class="quote">"The onboarding was seamless. We were up and running in under 5 minutes."</div>
+      <div class="author"><div class="avatar" style="background:#7C3AED">AL</div><div><div class="name">Anna Lee</div><div class="role">PM, ScaleUp</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq-item open"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')">How does the free trial work?</div><div class="faq-a">You get full access to all features for 14 days. No credit card required. Cancel anytime.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Can I switch plans later?</div><div class="faq-a">Yes, you can upgrade or downgrade at any time. Changes take effect immediately.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Is my data secure?</div><div class="faq-a">Absolutely. We're SOC 2 Type II certified with 256-bit AES encryption at rest.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do you offer refunds?</div><div class="faq-a">Yes, we offer a 30-day money-back guarantee on all paid plans.</div></div>
+</section>
+
+<!-- FORMS -->
+<section class="forms">
+  <h2>Get Started Now</h2>
+  <p class="sub">Create your free account in 30 seconds.</p>
+  <div class="fg"><label>Full Name <span class="req">*</span></label><input type="text" class="fi" placeholder="Your name"></div>
+  <div class="fg"><label>Work Email <span class="req">*</span></label><input type="email" class="fi" placeholder="you@company.com"><div class="form-help">We'll never share your email.</div></div>
+  <div class="fg"><label>Company Size</label><select class="fi"><option>Select...</option><option>1-10</option><option>11-50</option><option>51-200</option><option>201+</option></select></div>
+  <div class="fg"><label>Message</label><textarea class="fi" placeholder="Tell us about your needs..."></textarea></div>
+  <div class="form-row" style="margin-bottom:16px"><label><input type="checkbox"> I agree to Terms & Privacy</label></div>
+  <button class="btn btn-primary" style="width:100%">Start Free Trial →</button>
+</section>
+
+<!-- CARDS -->
+<section class="cards">
+  <h2>Why Choose Us</h2>
+  <div class="card-grid">
+    <div class="card"><div class="icon" style="background:#FFF7ED;color:var(--brand)">🚀</div><h3>Lightning Setup</h3><p>Get running in under 5 minutes. Guided onboarding makes it effortless.</p><div class="mini-test"><span class="stars">★★★★★</span> "Set up our team in 3 minutes." — Sarah K.</div></div>
+    <div class="card"><div class="icon" style="background:#EFF6FF;color:#1D4ED8">🔒</div><h3>Enterprise Security</h3><p>SOC 2 certified, GDPR compliant, trusted by Fortune 500.</p><div class="mini-test"><span class="stars">★★★★★</span> "Finally, security we can trust." — Mark T.</div></div>
+    <div class="card"><div class="icon" style="background:#F0FDF4;color:#16A34A">📊</div><h3>Real-Time Analytics</h3><p>Beautiful dashboards that drive decisions. Track every metric.</p><div class="mini-test"><span class="stars">★★★★★</span> "Analytics that make sense." — Lisa R.</div></div>
+  </div>
+</section>
+
+<!-- TYPOGRAPHY -->
+<section class="typo">
+  <h2>Typography</h2>
+  <div class="ts"><div class="lbl">H1</div><h1>Conversion Power</h1></div>
+  <div class="ts"><div class="lbl">H2</div><h2>Value Proposition</h2></div>
+  <div class="ts"><div class="lbl">H3</div><h3>Feature Benefit</h3></div>
+  <div class="ts"><div class="lbl">Body</div><p>Every word serves a purpose. Clear, persuasive, action-oriented copy drives results.</p></div>
+</section>
+
+<!-- PALETTE -->
+<section class="palette">
+  <h2>Color Palette</h2>
+  <div class="pal-grid">
+    <div class="sw" style="background:#EA580C"><span>#EA580C</span></div>
+    <div class="sw" style="background:#C2410C"><span>#C2410C</span></div>
+    <div class="sw" style="background:#DC2626"><span>#DC2626</span></div>
+    <div class="sw" style="background:#15803D"><span>#15803D</span></div>
+    <div class="sw" style="background:#FEF3C7"><span>#FEF3C7</span></div>
+    <div class="sw" style="background:#1C1917"><span>#1C1917</span></div>
+  </div>
+</section>
+
+<!-- MODAL -->
+<section class="modal-sec">
+  <h2>Modal Dialog</h2>
+  <button class="btn btn-primary" onclick="document.getElementById('cm').classList.add('active')">Open Modal</button>
+  <div id="cm" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('active')">
+    <div class="modal-box">
+      <h3>Claim Your Free Trial</h3>
+      <p>Join 12,000+ companies growing with our platform. 14 days free.</p>
+      <button class="btn btn-primary" style="width:100%" onclick="document.getElementById('cm').classList.remove('active')">Start Free Trial →</button>
+    </div>
+  </div>
+</section>
+
+<!-- INFO -->
+<section class="info">
+  <div class="info-box">
+    <h3>Style Information</h3>
+    <div class="info-grid">
+      <div class="info-item"><div class="il">Era</div><div class="iv">2020s Modern, Medium</div></div>
+      <div class="info-item"><div class="il">Best For</div><div class="iv">E-commerce, SaaS pricing, Lead gen</div></div>
+      <div class="info-item"><div class="il">Avoid For</div><div class="iv">Internal tools, Documentation</div></div>
+      <div class="info-item"><div class="il">Layout</div><div class="iv">Pain/Solution, Countdown, FAQ</div></div>
+      <div class="info-item"><div class="il">CSS Keywords</div><div class="iv">urgency badge, countdown, trust strip, pain/solution grid</div></div>
+      <div class="info-item"><div class="il">Variables</div><div class="iv">--brand:#EA580C, --urgency:#DC2626, --trust:#15803D</div></div>
+    </div>
+  </div>
+</section>
+
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

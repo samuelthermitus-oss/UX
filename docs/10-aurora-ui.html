@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurora UI - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #0A0A1A;
+  --text-color: #FFFFFF;
+  --electric-blue: #0080FF;
+  --magenta: #FF1493;
+  --cyan: #00FFFF;
+  --purple: #8B5CF6;
+  --orange: #FF6B35;
+  --font-primary: system-ui, -apple-system, sans-serif;
+  --border-radius: 20px;
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: var(--font-primary);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Aurora Gradient Background */
+.aurora-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora-layer {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+  animation: aurora-flow 10s ease-in-out infinite;
+}
+.aurora-1 {
+  width: 600px;
+  height: 600px;
+  background: var(--electric-blue);
+  top: -20%;
+  left: -10%;
+  animation-delay: 0s;
+}
+.aurora-2 {
+  width: 500px;
+  height: 500px;
+  background: var(--magenta);
+  top: 20%;
+  right: -10%;
+  animation-delay: -3s;
+}
+.aurora-3 {
+  width: 400px;
+  height: 400px;
+  background: var(--cyan);
+  bottom: -10%;
+  left: 30%;
+  animation-delay: -6s;
+}
+.aurora-4 {
+  width: 350px;
+  height: 350px;
+  background: var(--purple);
+  top: 40%;
+  left: 20%;
+  animation-delay: -9s;
+}
+@keyframes aurora-flow {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(5%, -8%) scale(1.1); }
+  50% { transform: translate(-5%, 5%) scale(0.95); }
+  75% { transform: translate(8%, 3%) scale(1.05); }
+}
+
+/* Glass Card for Aurora */
+.aurora-glass {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--border-radius);
+}
+
+/* Hero Section */
+.hero {
+  padding: 140px 0 100px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0A0A1A 0%, #0D0D2B 50%, #0A0A1A 100%);
+}
+.hero h1 {
+  font-size: clamp(56px, 10vw, 96px);
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(135deg, var(--electric-blue) 0%, var(--magenta) 30%, var(--cyan) 60%, var(--purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease-in-out infinite;
+}
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.hero .subtitle {
+  font-size: 18px;
+  color: rgba(255,255,255,0.6);
+  max-width: 550px;
+  margin: 0 auto 24px;
+  position: relative;
+  z-index: 1;
+}
+.hero .tag {
+  position: relative;
+  z-index: 1;
+}
+.hero-aurora-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 40px;
+  padding: 48px 32px;
+  position: relative;
+  z-index: 1;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 50px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.8);
+}
+.aurora-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--cyan);
+  animation: aurora-pulse 3s ease-in-out infinite;
+}
+@keyframes aurora-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,255,0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(0,255,255,0); }
+}
+
+/* Navigation */
+.demo-nav {
+  padding: 16px 0;
+  background: rgba(10,10,26,0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.demo-nav .container {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.demo-nav a {
+  padding: 12px 24px;
+  border-radius: 12px;
+  background: transparent;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s;
+  border: 1px solid transparent;
+}
+.demo-nav a:hover {
+  background: rgba(255,255,255,0.05);
+  color: #FFFFFF;
+}
+.demo-nav a.active {
+  background: rgba(0,255,255,0.1);
+  color: var(--cyan);
+  border-color: rgba(0,255,255,0.2);
+}
+
+/* Section Titles */
+.section-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 32px;
+  background: linear-gradient(135deg, var(--electric-blue) 0%, var(--magenta) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 32px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 14px;
+  font-family: var(--font-primary);
+  position: relative;
+  overflow: hidden;
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.btn:hover::before {
+  opacity: 1;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--electric-blue) 0%, var(--magenta) 100%);
+  color: #FFFFFF;
+  box-shadow: 0 8px 32px rgba(0,128,255,0.3);
+}
+.btn-primary::before {
+  background: linear-gradient(135deg, var(--magenta) 0%, var(--electric-blue) 100%);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,128,255,0.5);
+}
+.btn-secondary {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #FFFFFF;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.3);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--cyan);
+  border: 1px solid rgba(0,255,255,0.3);
+}
+.btn-ghost:hover {
+  background: rgba(0,255,255,0.1);
+  border-color: var(--cyan);
+}
+.btn-disabled {
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.3);
+  border: 1px solid rgba(255,255,255,0.08);
+  cursor: not-allowed;
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 20px;
+}
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: rgba(255,255,255,0.6);
+}
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 16px 20px;
+  font-size: 16px;
+  font-family: var(--font-primary);
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: #FFFFFF;
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  outline: none;
+  transition: all 0.3s;
+}
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  border-color: var(--electric-blue);
+  box-shadow: 0 0 0 3px rgba(0,128,255,0.15);
+  background: rgba(255,255,255,0.1);
+}
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: rgba(255,255,255,0.3);
+}
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,255,255,0.4)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+.form-checkbox,
+.form-radio {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--cyan);
+  cursor: pointer;
+}
+.form-row {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+.form-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.8);
+}
+
+/* Cards */
+.card {
+  padding: 32px;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--border-radius);
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--electric-blue), var(--magenta), var(--cyan));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.card:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.2);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.card:hover::before {
+  opacity: 1;
+}
+.card-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, rgba(0,128,255,0.2) 0%, rgba(255,20,147,0.2) 100%);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.card-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.card-text {
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.7;
+}
+
+/* Typography */
+.typo-h1 { font-size: 56px; font-weight: 900; line-height: 1; margin-bottom: 20px; background: linear-gradient(135deg, var(--cyan) 0%, var(--magenta) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.typo-h2 { font-size: 42px; font-weight: 700; line-height: 1.1; margin-bottom: 20px; background: linear-gradient(135deg, var(--electric-blue) 0%, var(--purple) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.typo-h3 { font-size: 32px; font-weight: 600; line-height: 1.2; margin-bottom: 20px; color: var(--magenta); }
+.typo-h4 { font-size: 24px; font-weight: 600; line-height: 1.3; margin-bottom: 20px; color: var(--cyan); }
+.typo-h5 { font-size: 18px; font-weight: 600; line-height: 1.4; margin-bottom: 20px; color: var(--purple); }
+.typo-h6 { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; color: rgba(255,255,255,0.4); }
+.typo-body { font-size: 16px; line-height: 1.6; margin-bottom: 16px; color: rgba(255,255,255,0.8); }
+.typo-caption { font-size: 12px; color: rgba(255,255,255,0.4); letter-spacing: 0.5px; }
+
+/* Modal */
+.modal-content {
+  background: rgba(15,15,35,0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 24px;
+  padding: 0;
+  max-width: 500px;
+  width: 90%;
+  overflow: hidden;
+  box-shadow:
+    0 40px 100px rgba(0,0,0,0.6),
+    0 0 80px rgba(0,128,255,0.1);
+}
+.modal-header {
+  padding: 28px 32px;
+  font-size: 20px;
+  font-weight: 700;
+  background: linear-gradient(135deg, rgba(0,128,255,0.15) 0%, rgba(255,20,147,0.15) 100%);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease-in-out infinite;
+}
+.modal-body {
+  padding: 32px;
+}
+.modal-body p {
+  font-size: 15px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 24px;
+  line-height: 1.7;
+}
+.modal-content .btn {
+  width: 100%;
+}
+
+/* Swatches */
+.swatch {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.15);
+  transition: transform 0.3s;
+}
+.swatch:hover {
+  transform: scale(1.1);
+}
+
+/* Style Info */
+.style-info {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--border-radius);
+ text-align: center;}
+</style>
+</head>
+<body>
+<!-- Viewport Switcher Bar -->
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+
+<div class="vp-frame">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="aurora-bg">
+      <div class="aurora-layer aurora-1"></div>
+      <div class="aurora-layer aurora-2"></div>
+      <div class="aurora-layer aurora-3"></div>
+      <div class="aurora-layer aurora-4"></div>
+    </div>
+    <div class="container">
+      <span class="tag tag-era">2020s Modern</span>
+      <span class="tag tag-complexity-medium">Complexity: Medium</span>
+      <h1>Aurora UI</h1>
+      <p class="subtitle">Flowing aurora/northern lights gradients with subtle animations. Ethereal beauty meets modern interface design.</p>
+      <div class="hero-aurora-badge">
+        <div class="aurora-dot"></div>
+        Flowing gradients with 8-12s animations
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation Demo -->
+  <nav class="demo-nav">
+    <div class="container">
+      <a href="#" class="active">Home</a>
+      <a href="#">Studio</a>
+      <a href="#">Music</a>
+      <a href="#">Gallery</a>
+      <a href="#">Contact</a>
+    </div>
+  </nav>
+
+  <!-- Buttons Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Buttons</h2>
+      <div class="flex-gap">
+        <button class="btn btn-primary">Primary Action</button>
+        <button class="btn btn-secondary">Glass Button</button>
+        <button class="btn btn-ghost">Ghost Button</button>
+        <button class="btn btn-disabled" disabled>Disabled</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Forms Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Form Elements</h2>
+      <div style="max-width: 600px; margin: 0 auto;">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" placeholder="Enter your name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-textarea" placeholder="Type your message..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select">
+            <option>Select category</option>
+            <option>Creative Agency</option>
+            <option>Music Platform</option>
+            <option>Modern SaaS</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label><input type="checkbox" class="form-checkbox"> Remember me</label>
+          <label><input type="radio" name="plan" class="form-radio"> Free</label>
+          <label><input type="radio" name="plan" class="form-radio"> Pro</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cards Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Cards</h2>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">🎵</div>
+          <div class="card-title">Music Platform</div>
+          <p class="card-text">Flowing aurora gradients create an immersive, atmospheric experience for music lovers.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🎨</div>
+          <div class="card-title">Creative Agency</div>
+          <p class="card-text">Ethereal animations and vibrant colors showcase creative vision and artistic excellence.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🚀</div>
+          <div class="card-title">Modern SaaS</div>
+          <p class="card-text">Aurora effects add premium polish to modern software products and platforms.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typography Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Typography</h2>
+      <div class="typo-h1">Heading 1 — Aurora Flow</div>
+      <div class="typo-h2">Heading 2 — Electric Dreams</div>
+      <div class="typo-h3">Heading 3 — Magenta Glow</div>
+      <div class="typo-h4">Heading 4 — Cyan Spark</div>
+      <div class="typo-h5">Heading 5 — Purple Mist</div>
+      <div class="typo-h6">Heading 6 — Muted Label</div>
+      <p class="typo-body">Body text maintains excellent readability with subtle transparency. The aurora color scheme creates a sense of wonder and modernity throughout the interface.</p>
+      <p class="typo-caption">Caption — metadata and supporting text</p>
+    </div>
+  </section>
+
+  <!-- Color Palette -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Color Palette</h2>
+      <div class="swatch-row">
+        <div class="swatch" style="background: linear-gradient(135deg, #0080FF, #8B5CF6);" data-hex="Gradient"></div>
+        <div class="swatch" style="background: #0080FF;" data-hex="#0080FF"></div>
+        <div class="swatch" style="background: #FF1493;" data-hex="#FF1493"></div>
+        <div class="swatch" style="background: #00FFFF;" data-hex="#00FFFF"></div>
+        <div class="swatch" style="background: #8B5CF6;" data-hex="#8B5CF6"></div>
+        <div class="swatch" style="background: #FF6B35;" data-hex="#FF6B35"></div>
+        <div class="swatch" style="background: #0A0A1A;" data-hex="#0A0A1A"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal Demo -->
+  <div id="demo-modal" class="modal-overlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.7); align-items:center; justify-content:center;">
+    <div class="modal-content">
+      <div class="modal-header">Aurora Modal Dialog</div>
+      <div class="modal-body">
+        <p>This modal features the aurora color scheme with flowing gradient animations and glassmorphism effects. The ethereal aesthetic creates a sense of wonder and modernity.</p>
+        <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Modal Dialog</h2>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button>
+    </div>
+  </section>
+
+  <!-- Style Info Panel -->
+  <section class="section">
+    <div class="container">
+      <div class="style-info">
+        <h3>Style Information</h3>
+        <div class="style-info-grid">
+          <div class="style-info-item">
+            <div class="label">Era/Origin</div>
+            <div class="value">2020s Modern (Aurora UI)</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Best For</div>
+            <div class="value">Modern SaaS, creative agencies, music platforms</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Avoid For</div>
+            <div class="value">Enterprise apps, government, content-heavy sites</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Complexity</div>
+            <div class="value">Medium — requires CSS animations and gradient expertise</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">CSS Keywords</div>
+            <div class="value">linear-gradient (multi-stop), animation:8-12s, mix-blend-mode, backdrop-filter:blur</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Design Variables</div>
+            <div class="value">--blue:#0080FF, --magenta:#FF1493, --cyan:#00FFFF, --animation:10s</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="shared.js"></script>
+</body>
+</html>

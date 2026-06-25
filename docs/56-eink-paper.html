@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-Ink / Paper - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #FDFBF7;
+  --text-color: #1A1A1A;
+  --pencil-grey: #4A4A4A;
+  --mid-grey: #8A8A8A;
+  --light-grey: #C8C8C8;
+  --paper-white: #F5F5F5;
+  --ink-black: #1A1A1A;
+  --border-color: #D0D0D0;
+  --font-primary: Georgia, 'Times New Roman', serif;
+  --border-radius: 0px;
+  --shadow: none;
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: var(--font-primary);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+/* ============================================
+   Paper Grain Texture (SVG noise overlay)
+   ============================================ */
+.grain-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+}
+.grain-overlay svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================
+   Hero Section
+   ============================================ */
+.hero {
+  background: var(--page-bg);
+  padding: 140px 0 100px;
+  border-bottom: 2px solid var(--ink-black);
+  position: relative;
+  text-align: center;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.012) 2px,
+      rgba(0,0,0,0.012) 3px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.008) 2px,
+      rgba(0,0,0,0.008) 3px
+    );
+  pointer-events: none;
+}
+.hero .tag {
+  border-radius: 0;
+  font-family: var(--font-primary);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border: 1px solid var(--ink-black);
+  background: transparent;
+  color: var(--ink-black);
+}
+.hero .tag-era {
+  background: transparent;
+  color: var(--ink-black);
+  border: 1px solid var(--ink-black);
+}
+.hero .tag-complexity-low {
+  background: transparent;
+  color: var(--pencil-grey);
+  border: 1px solid var(--pencil-grey);
+}
+.hero h1 {
+  font-size: clamp(42px, 7vw, 80px);
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+  margin: 24px 0 20px;
+  color: var(--ink-black);
+}
+.hero .hero-quote {
+  font-size: 20px;
+  font-style: italic;
+  color: var(--pencil-grey);
+  max-width: 620px;
+  margin: 0 auto 24px;
+  line-height: 1.6;
+}
+.hero .hero-quote cite {
+  display: block;
+  font-size: 14px;
+  font-style: normal;
+  margin-top: 12px;
+  color: var(--mid-grey);
+  letter-spacing: 0.5px;
+}
+.hero .hero-paragraph {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: left;
+  font-size: 17px;
+  line-height: 1.8;
+  color: var(--pencil-grey);
+}
+.hero .hero-paragraph::first-letter {
+  float: left;
+  font-size: 64px;
+  line-height: 0.8;
+  padding-right: 8px;
+  padding-top: 6px;
+  color: var(--ink-black);
+  font-weight: 400;
+}
+
+/* ============================================
+   Navigation — Newspaper style
+   ============================================ */
+.demo-nav {
+  background: var(--page-bg);
+  border-bottom: 1px solid var(--ink-black);
+  border-top: 1px solid var(--ink-black);
+  padding: 14px 0;
+}
+.demo-nav .container {
+  display: flex;
+  gap: 0;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.demo-nav a {
+  color: var(--ink-black);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  padding: 4px 16px;
+  font-family: var(--font-primary);
+}
+.demo-nav a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.demo-nav .nav-separator {
+  color: var(--mid-grey);
+  font-size: 14px;
+  user-select: none;
+}
+
+/* ============================================
+   Section Titles
+   ============================================ */
+.section-title {
+  font-family: var(--font-primary);
+  font-size: 26px;
+  font-weight: 400;
+  margin-bottom: 32px;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+  color: var(--ink-black);
+}
+
+/* ============================================
+   Buttons — Sharp, no transitions
+   ============================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 400;
+  font-family: var(--font-primary);
+  border: 1px solid var(--ink-black);
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  letter-spacing: 0.3px;
+  transition: none;
+}
+.btn:active {
+  transform: none;
+}
+
+/* Primary: black filled, white text */
+.btn-primary {
+  background: var(--ink-black);
+  color: #FFFFFF;
+  border-color: var(--ink-black);
+}
+.btn-primary:hover {
+  background: #333333;
+  border-color: #333333;
+}
+
+/* Secondary: outline */
+.btn-secondary {
+  background: transparent;
+  color: var(--ink-black);
+  border-color: var(--ink-black);
+}
+.btn-secondary:hover {
+  background: var(--ink-black);
+  color: #FFFFFF;
+}
+
+/* Ghost: text only with underline */
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-black);
+  border-color: transparent;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.btn-ghost:hover {
+  background: rgba(0,0,0,0.04);
+}
+
+/* Disabled: light grey */
+.btn-disabled {
+  background: var(--paper-white);
+  color: var(--light-grey);
+  border-color: var(--light-grey);
+  cursor: not-allowed;
+}
+
+/* ============================================
+   Forms — Clean, paper-like
+   ============================================ */
+.form-group {
+  margin-bottom: 20px;
+}
+.form-label {
+  display: block;
+  font-family: var(--font-primary);
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  color: var(--pencil-grey);
+}
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-family: var(--font-primary);
+  border: 1px solid var(--border-color);
+  background: #FFFFFF;
+  color: var(--ink-black);
+  border-radius: 2px;
+  outline: none;
+  transition: none;
+}
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  border-color: var(--ink-black);
+  border-width: 2px;
+  padding: 11px 15px;
+}
+.form-textarea {
+  resize: vertical;
+  min-height: 140px;
+  line-height: 1.7;
+}
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231A1A1A' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+.form-checkbox,
+.form-radio {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--ink-black);
+  cursor: pointer;
+}
+.form-row {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+.form-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  font-family: var(--font-primary);
+}
+
+/* ============================================
+   Cards — Thin border, no shadow, editorial
+   ============================================ */
+.card {
+  border: 1px solid var(--border-color);
+  padding: 28px;
+  background: #FFFFFF;
+  transition: none;
+  position: relative;
+}
+.card:hover {
+  transform: none;
+}
+.card-title {
+  font-family: var(--font-primary);
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 12px;
+  color: var(--ink-black);
+  letter-spacing: 0.3px;
+}
+.card-meta {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--mid-grey);
+  margin-bottom: 12px;
+  font-family: var(--font-primary);
+}
+.card-text {
+  font-size: 15px;
+  color: var(--pencil-grey);
+  line-height: 1.7;
+  font-family: var(--font-primary);
+}
+.card-divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 16px 0;
+}
+.card-verse {
+  font-style: italic;
+  line-height: 1.8;
+}
+
+/* ============================================
+   Typography — Editorial serif
+   ============================================ */
+.typo-h1 { font-size: 48px; font-weight: 400; line-height: 1.2; margin-bottom: 20px; color: var(--ink-black); }
+.typo-h2 { font-size: 36px; font-weight: 400; line-height: 1.3; margin-bottom: 20px; color: var(--ink-black); }
+.typo-h3 { font-size: 28px; font-weight: 400; line-height: 1.4; margin-bottom: 20px; color: var(--ink-black); }
+.typo-h4 { font-size: 22px; font-weight: 400; line-height: 1.4; margin-bottom: 20px; color: var(--ink-black); }
+.typo-h5 { font-size: 18px; font-weight: 400; line-height: 1.5; margin-bottom: 20px; color: var(--ink-black); }
+.typo-h6 { font-size: 14px; font-weight: 400; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; color: var(--pencil-grey); }
+.typo-body { font-size: 17px; line-height: 1.6; margin-bottom: 16px; color: var(--pencil-grey); }
+.typo-caption { font-size: 12px; color: var(--mid-grey); text-transform: uppercase; letter-spacing: 1.5px; font-family: var(--font-primary); }
+
+/* ============================================
+   Color Swatches — Sharp rectangles
+   ============================================ */
+.palette-card {
+  background: var(--paper-white);
+  padding: 32px;
+  border: 1px solid var(--border-color);
+}
+.swatch-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 16px 0; }
+.swatch {
+  width: 80px; height: 80px;
+  border-radius: 0;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  position: relative;
+}
+.swatch:hover::after {
+  content: attr(data-hex);
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-family: var(--font-primary);
+  white-space: nowrap;
+  background: var(--ink-black);
+  color: #FFFFFF;
+  padding: 3px 8px;
+  border-radius: 0;
+}
+
+/* ============================================
+   Modal — Clean, no blur, sharp edges
+   ============================================ */
+.modal-overlay {
+  background: rgba(0,0,0,0.3);
+}
+.modal-content {
+  background: #FFFFFF;
+  border: 2px solid var(--ink-black);
+  padding: 40px;
+  max-width: 480px;
+  width: 90%;
+  border-radius: 0;
+  box-shadow: none;
+}
+.modal-content h3 {
+  font-family: var(--font-primary);
+  font-size: 24px;
+  font-weight: 400;
+  margin-bottom: 16px;
+  color: var(--ink-black);
+}
+.modal-content p {
+  font-size: 16px;
+  color: var(--pencil-grey);
+  margin-bottom: 28px;
+  line-height: 1.7;
+  font-family: var(--font-primary);
+}
+.modal-content .btn {
+  width: 100%;
+}
+
+/* ============================================
+   Style Info Panel
+   ============================================ */
+.style-info {
+  background: var(--paper-white);
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+ text-align: center;}
+.style-info h3 {
+  font-family: var(--font-primary);
+  font-weight: 400;
+}
+
+/* ============================================
+   Sections — Generous whitespace
+   ============================================ */
+.section {
+  padding: 64px 0;
+}
+.section + .section {
+  border-top: 1px solid var(--border-color);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 768px) {
+  .hero { padding: 100px 0 60px;  text-align: center;}
+  .hero h1 { font-size: 36px; }
+  .hero .hero-quote { font-size: 17px; padding: 0 16px; }
+  .demo-nav .container { gap: 0; }
+  .demo-nav a { padding: 4px 10px; font-size: 13px; }
+  .nav-separator { display: none; }
+  .form-row { flex-direction: column; gap: 12px; align-items: flex-start; }
+  .section { padding: 48px 0; }
+  .typo-h1 { font-size: 36px; }
+  .typo-h2 { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Paper Grain Texture Overlay -->
+<div class="grain-overlay" aria-hidden="true">
+  <svg>
+    <filter id="grain-filter">
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#grain-filter)"/>
+  </svg>
+</div>
+
+<!-- Viewport Switcher Bar -->
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+
+<div class="vp-frame">
+
+  <!-- ============================================
+       SECTION 1: Hero
+       ============================================ -->
+  <section class="hero">
+    <div class="container">
+      <span class="tag tag-era">2020s Digital Well-being</span>
+      <span class="tag tag-complexity-low">Complexity: Low</span>
+      <h1>The Digital Page</h1>
+      <div class="hero-quote">
+        "A reader lives a thousand lives before he dies. The man who never reads lives only one."
+        <cite>— George R.R. Martin</cite>
+      </div>
+      <div class="hero-paragraph">
+        There is a quiet pleasure in the act of reading — the weight of words on a page, the gentle rhythm of sentences unfolding. In a world saturated with motion and noise, the printed page remains a sanctuary of focus. This style draws from the timeless simplicity of paper: the off-white warmth of a well-worn book, the crisp certainty of black ink, the deliberate pacing of serif typography. Here, every element exists to serve the text, and nothing exists to distract from it.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SECTION 2: Navigation
+       ============================================ -->
+  <nav class="demo-nav">
+    <div class="container">
+      <a href="#">News</a>
+      <span class="nav-separator">/</span>
+      <a href="#">Essays</a>
+      <span class="nav-separator">/</span>
+      <a href="#">Poetry</a>
+      <span class="nav-separator">/</span>
+      <a href="#">Letters</a>
+      <span class="nav-separator">/</span>
+      <a href="#">Archive</a>
+    </div>
+  </nav>
+
+  <!-- ============================================
+       SECTION 3: Buttons
+       ============================================ -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Buttons</h2>
+      <div class="flex-gap">
+        <button class="btn btn-primary">Subscribe</button>
+        <button class="btn btn-secondary">Read More</button>
+        <button class="btn btn-ghost">Skip to Content</button>
+        <button class="btn btn-disabled" disabled>Unavailable</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SECTION 4: Forms
+       ============================================ -->
+  <section class="section" style="background: var(--paper-white);">
+    <div class="container">
+      <h2 class="section-title">Form Elements</h2>
+      <div style="max-width: 560px; margin: 0 auto;">
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input type="text" class="form-input" placeholder="Enter your full name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Thoughts</label>
+          <textarea class="form-textarea" placeholder="Write freely, without distraction..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select">
+            <option>Select a category</option>
+            <option>Essays</option>
+            <option>Poetry</option>
+            <option>Fiction</option>
+            <option>Letters</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label><input type="checkbox" class="form-checkbox"> I agree to the terms</label>
+          <label><input type="radio" name="format" class="form-radio"> Print</label>
+          <label><input type="radio" name="format" class="form-radio"> Digital</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SECTION 5: Cards
+       ============================================ -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Cards</h2>
+      <div class="grid-3">
+        <!-- Essay Card -->
+        <div class="card">
+          <div class="card-meta">Essay</div>
+          <div class="card-title">On the Virtue of Slow Reading</div>
+          <hr class="card-divider">
+          <p class="card-text">In an age of infinite scrolling, the deliberate act of reading one sentence at a time has become almost radical. We have traded depth for breadth, and in doing so, lost something essential about how we understand the world.</p>
+        </div>
+        <!-- Poetry Card -->
+        <div class="card">
+          <div class="card-meta">Poetry</div>
+          <div class="card-title">Still Morning</div>
+          <hr class="card-divider">
+          <p class="card-text card-verse">
+            The ink dries slow on winter pages,<br>
+            each word a breath held in the cold.<br>
+            Outside, the world insists on noise —<br>
+            here, silence writes what we are told<br>
+            to forget.
+          </p>
+        </div>
+        <!-- Journal Card -->
+        <div class="card">
+          <div class="card-meta">Journal</div>
+          <div class="card-title">June 21, 2026</div>
+          <hr class="card-divider">
+          <p class="card-text">Woke early to the sound of rain. Made tea, sat by the window with a notebook. Some mornings are given to stillness. I wrote two pages longhand — nothing important, just observations. The quality of light through wet glass. The way the kettle hums before it boils.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SECTION 6: Typography
+       ============================================ -->
+  <section class="section" style="background: var(--paper-white);">
+    <div class="container">
+      <h2 class="section-title">Typography</h2>
+      <div class="typo-h1">Heading 1 — The Weight of Words</div>
+      <div class="typo-h2">Heading 2 — Quiet Authority</div>
+      <div class="typo-h3">Heading 3 — Editorial Clarity</div>
+      <div class="typo-h4">Heading 4 — Measured Prose</div>
+      <div class="typo-h5">Heading 5 — Gentle Emphasis</div>
+      <div class="typo-h6">Heading 6 — Caption &amp; Label</div>
+      <p class="typo-body">Body text in Georgia serif carries the warmth of traditional typesetting. Each letterform is designed for sustained reading — the serifs guide the eye along the line, the generous x-height ensures legibility at any size. This is type that invites you to slow down.</p>
+      <p class="typo-caption">Caption — metadata, timestamps, and quiet annotations</p>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SECTION 7: Color Palette
+       ============================================ -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Color Palette</h2>
+      <div class="palette-card">
+        <div class="swatch-row">
+          <div class="swatch" style="background: #FDFBF7;" data-hex="#FDFBF7"></div>
+          <div class="swatch" style="background: #F5F5F5;" data-hex="#F5F5F5"></div>
+          <div class="swatch" style="background: #1A1A1A;" data-hex="#1A1A1A"></div>
+          <div class="swatch" style="background: #4A4A4A;" data-hex="#4A4A4A"></div>
+          <div class="swatch" style="background: #8A8A8A;" data-hex="#8A8A8A"></div>
+          <div class="swatch" style="background: #C8C8C8;" data-hex="#C8C8C8"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SECTION 8: Modal
+       ============================================ -->
+  <div id="demo-modal" class="modal-overlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.3); align-items:center; justify-content:center;">
+    <div class="modal-content">
+      <h3>A Note</h3>
+      <p>This modal appears without animation or blur — a simple overlay, like a card placed upon a page. It demands your attention gently, then releases it when dismissed. No spectacle, only substance.</p>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Close</button>
+    </div>
+  </div>
+  <section class="section" style="background: var(--paper-white);">
+    <div class="container">
+      <h2 class="section-title">Modal Dialog</h2>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SECTION 9: Style Info Panel
+       ============================================ -->
+  <section class="section">
+    <div class="container">
+      <div class="style-info">
+        <h3>Style Information</h3>
+        <div class="style-info-grid">
+          <div class="style-info-item">
+            <div class="label">Era / Origin</div>
+            <div class="value">2020s Digital Well-being</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Best For</div>
+            <div class="value">Reading apps, digital newspapers, journals, distraction-free writing</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Avoid For</div>
+            <div class="value">Gaming, entertainment, data-heavy dashboards, fast-paced interactions</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Complexity</div>
+            <div class="value">Low — relies on typography, whitespace, and restraint</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Font</div>
+            <div class="value">Georgia, serif — optimized for screen reading with traditional warmth</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Effects</div>
+            <div class="value">Grain/noise texture, sharp step-based transitions, no motion blur, no easing</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">CSS Keywords</div>
+            <div class="value">feTurbulence noise, transition:none, border-radius:0, no box-shadow, high contrast</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Design Variables</div>
+            <div class="value">--page-bg:#FDFBF7, --ink-black:#1A1A1A, --font-primary:Georgia serif</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script src="shared.js"></script>
+</body>
+</html>

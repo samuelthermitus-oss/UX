@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skeuomorphism - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #D4C4A8;
+  --text-color: #3B2F2F;
+  --wood: #8B4513;
+  --leather: #A0522D;
+  --dark-leather: #6B3A2A;
+  --metal: #B8B8B8;
+  --metal-dark: #8A8A8A;
+  --cream: #F5F0E1;
+  --stitch: #C4A882;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: Georgia, 'Times New Roman', system-ui;
+  min-height: 100vh;
+}
+
+/* Wood texture pattern */
+.wood-bg {
+  background:
+    repeating-linear-gradient(
+      87deg,
+      transparent,
+      transparent 3px,
+      rgba(0,0,0,0.03) 3px,
+      rgba(0,0,0,0.03) 6px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(139,69,19,0.08) 0px,
+      rgba(160,82,45,0.05) 2px,
+      rgba(139,69,19,0.08) 4px
+    ),
+    linear-gradient(180deg, #8B6914, #A0722D, #8B6914, #7A5C1E);
+  background-size: 100% 100%;
+}
+
+/* Leather texture */
+.leather-bg {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23A0522D'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%239B4D25' opacity='0.3'/%3E%3Crect x='2' y='2' width='1' height='1' fill='%23B06240' opacity='0.2'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, #A0522D, #8B4513, #A0522D);
+  background-size: 4px 4px, 100% 100%;
+}
+
+/* Hero Section */
+.skeu-hero {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 20px;
+  position: relative;
+  background:
+    repeating-linear-gradient(
+      87deg,
+      transparent,
+      transparent 3px,
+      rgba(0,0,0,0.03) 3px,
+      rgba(0,0,0,0.03) 6px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(139,69,19,0.08) 0px,
+      rgba(160,82,45,0.05) 2px,
+      rgba(139,69,19,0.08) 4px
+    ),
+    linear-gradient(180deg, #6B3A1A, #8B4513, #6B3A1A);
+}
+
+.skeu-hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.15), transparent);
+}
+
+.skeu-hero .hero-plate {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.1), rgba(0,0,0,0.05)),
+    linear-gradient(180deg, #F5F0E1, #E8DCC8);
+  border-radius: 8px;
+  padding: 50px 60px;
+  box-shadow:
+    0 8px 16px rgba(0,0,0,0.4),
+    0 2px 4px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.8),
+    inset 0 -1px 0 rgba(0,0,0,0.1);
+  border: 1px solid #C4A882;
+  max-width: 650px;
+  width: 90%;
+}
+
+.skeu-hero h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 700;
+  color: #3B2F2F;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+  margin-bottom: 20px;
+}
+
+.skeu-hero .subtitle {
+  font-size: 1.1rem;
+  color: #6B5B4B;
+  font-style: italic;
+  margin-bottom: 24px;
+}
+
+.skeu-hero .tagline {
+  font-size: 0.95rem;
+  color: #7B6B5B;
+  line-height: 1.7;
+}
+
+/* Navigation */
+.skeu-nav {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  padding: 0;
+  flex-wrap: wrap;
+  background:
+    linear-gradient(180deg, #7A5C1E, #6B4D14);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.15),
+    inset 0 -2px 4px rgba(0,0,0,0.3),
+    0 4px 8px rgba(0,0,0,0.3);
+  border-top: 1px solid #9A7A3E;
+  border-bottom: 2px solid #4A3510;
+}
+
+.skeu-nav a {
+  color: #F5F0E1;
+  text-decoration: none;
+  padding: 14px 22px;
+  font-size: 0.9rem;
+  font-weight: 400;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  transition: all 0.4s;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  border-left: 1px solid rgba(0,0,0,0.2);
+}
+
+.skeu-nav a:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* Buttons */
+.skeu-buttons {
+  padding: 64px 20px;
+  text-align: center;
+  background: var(--page-bg);
+}
+
+.skeu-buttons h2 {
+  font-size: 1.5rem;
+  color: #3B2F2F;
+  margin-bottom: 32px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.btn-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.skeu-btn {
+  font-family: Georgia, system-ui;
+  font-size: 0.95rem;
+  padding: 12px 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 400;
+  transition: all 0.3s;
+  position: relative;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+}
+
+.skeu-btn.btn-wood {
+  background: linear-gradient(180deg, #A0722D, #8B6514, #7A5C1E);
+  color: #F5F0E1;
+  border: 1px solid #5A4010;
+  box-shadow:
+    0 3px 6px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    inset 0 -1px 0 rgba(0,0,0,0.2);
+}
+
+.skeu-btn.btn-wood:hover {
+  background: linear-gradient(180deg, #B0823D, #9B7524, #8A6C2E);
+  box-shadow:
+    0 4px 8px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.25);
+  transform: translateY(-1px);
+}
+
+.skeu-btn.btn-wood:active {
+  background: linear-gradient(180deg, #7A5C1E, #8B6514, #A0722D);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.3);
+  transform: translateY(1px);
+}
+
+.skeu-btn.btn-leather {
+  background: linear-gradient(180deg, #B06240, #A0522D, #8B4513);
+  color: #F5F0E1;
+  border: 1px solid #5A2A10;
+  box-shadow:
+    0 3px 6px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.15),
+    inset 0 -1px 0 rgba(0,0,0,0.2);
+}
+
+.skeu-btn.btn-leather:hover {
+  background: linear-gradient(180deg, #C07250, #B06240, #9B5523);
+  box-shadow:
+    0 4px 8px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+  transform: translateY(-1px);
+}
+
+.skeu-btn.btn-metal {
+  background: linear-gradient(180deg, #D0D0D0, #B8B8B8, #A0A0A0);
+  color: #333;
+  border: 1px solid #888;
+  box-shadow:
+    0 3px 6px rgba(0,0,0,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.8),
+    inset 0 -1px 0 rgba(0,0,0,0.1);
+}
+
+.skeu-btn.btn-metal:hover {
+  background: linear-gradient(180deg, #E0E0E0, #C8C8C8, #B0B0B0);
+  transform: translateY(-1px);
+}
+
+.skeu-btn.btn-metal:active {
+  background: linear-gradient(180deg, #A0A0A0, #B8B8B8, #D0D0D0);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+  transform: translateY(1px);
+}
+
+.skeu-btn.btn-red {
+  background: linear-gradient(180deg, #D04040, #C03030, #A02020);
+  color: #F5F0E1;
+  border: 1px solid #801010;
+  box-shadow:
+    0 3px 6px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    inset 0 -1px 0 rgba(0,0,0,0.2);
+}
+
+.skeu-btn.btn-red:hover {
+  background: linear-gradient(180deg, #E05050, #D04040, #B03030);
+  transform: translateY(-1px);
+}
+
+/* Forms */
+.skeu-forms {
+  padding: 64px 20px;
+  max-width: 550px;
+  margin: 0 auto;
+  background: var(--page-bg);
+}
+
+.skeu-forms h2 {
+  font-size: 1.5rem;
+  color: #3B2F2F;
+  margin-bottom: 32px;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #5B4B3B;
+  margin-bottom: 20px;
+}
+
+.skeu-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-family: Georgia, system-ui;
+  border: 2px solid #B8A888;
+  border-radius: 4px;
+  color: #3B2F2F;
+  background: linear-gradient(180deg, #F0EBE0, #FAFAF5);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.1),
+    0 1px 0 rgba(255,255,255,0.8);
+  outline: none;
+  transition: all 0.3s;
+}
+
+.skeu-input:focus {
+  border-color: #8B6514;
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.1),
+    0 0 0 3px rgba(139,101,20,0.2);
+}
+
+.skeu-input::placeholder {
+  color: #A09080;
+}
+
+textarea.skeu-input {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Cards */
+.skeu-cards {
+  padding: 64px 20px;
+}
+
+.skeu-cards h2 {
+  font-size: 1.5rem;
+  color: #3B2F2F;
+  margin-bottom: 32px;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.skeu-card {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow:
+    0 6px 12px rgba(0,0,0,0.25),
+    0 2px 4px rgba(0,0,0,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+  transition: transform 0.4s, box-shadow 0.4s;
+}
+
+.skeu-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 10px 20px rgba(0,0,0,0.3),
+    0 4px 8px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+.skeu-card .card-header {
+  padding: 20px 24px;
+  color: #F5F0E1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.skeu-card .card-body {
+  padding: 24px;
+  background: linear-gradient(145deg, #F5F0E1, #EDE5D5);
+}
+
+.skeu-card .card-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.skeu-card h3 {
+  font-size: 1.1rem;
+  color: #3B2F2F;
+  margin-bottom: 10px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.skeu-card p {
+  font-size: 0.9rem;
+  color: #6B5B4B;
+  line-height: 1.7;
+}
+
+/* Typography */
+.skeu-typography {
+  padding: 64px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.skeu-typography h2 {
+  font-size: 1.5rem;
+  color: #3B2F2F;
+  margin-bottom: 32px;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.type-sample {
+  margin-bottom: 24px;
+  padding: 20px 24px;
+  background: linear-gradient(145deg, #F5F0E1, #EDE5D5);
+  border-radius: 6px;
+  border-left: 5px solid var(--wood);
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.type-sample .label {
+  font-size: 0.7rem;
+  color: #8B6514;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.type-sample h1 { font-size: 2.5rem; color: #3B2F2F; text-shadow: 0 1px 0 rgba(255,255,255,0.8); }
+.type-sample h2 { font-size: 1.8rem; color: #4B3F2F; }
+.type-sample h3 { font-size: 1.3rem; color: #5B4B3B; }
+.type-sample p { font-size: 1rem; color: #6B5B4B; line-height: 1.8; font-style: italic; }
+
+/* Color Palette */
+.skeu-palette {
+  padding: 64px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.skeu-palette h2 {
+  font-size: 1.5rem;
+  color: #3B2F2F;
+  margin-bottom: 32px;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 14px;
+}
+
+.swatch {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px;
+  box-shadow:
+    0 3px 6px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+  transition: transform 0.3s;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.swatch:hover { transform: scale(1.05); }
+
+.swatch .swatch-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: rgba(0,0,0,0.4);
+  padding: 4px 8px;
+  border-radius: 3px;
+  color: #F5F0E1;
+}
+
+/* Modal */
+.skeu-modal-section {
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.skeu-modal-section h2 {
+  font-size: 1.5rem;
+  color: #3B2F2F;
+  margin-bottom: 32px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.modal-trigger {
+  font-family: Georgia, system-ui;
+  padding: 14px 32px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  background: linear-gradient(180deg, #B06240, #A0522D, #8B4513);
+  color: #F5F0E1;
+  border: 1px solid #5A2A10;
+  box-shadow:
+    0 3px 6px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.15);
+  transition: all 0.3s;
+}
+
+.modal-trigger:hover {
+  background: linear-gradient(180deg, #C07250, #B06240, #9B5523);
+  transform: translateY(-1px);
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.active { display: flex; }
+
+.skeu-modal {
+  background: linear-gradient(145deg, #F5F0E1, #EDE5D5);
+  border-radius: 8px;
+  padding: 36px;
+  max-width: 480px;
+  width: 90%;
+  position: relative;
+  box-shadow:
+    0 12px 24px rgba(0,0,0,0.4),
+    0 4px 8px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.8),
+    inset 0 -1px 0 rgba(0,0,0,0.05);
+  border: 1px solid #C4A882;
+}
+
+.skeu-modal h3 {
+  font-size: 1.3rem;
+  color: #3B2F2F;
+  margin-bottom: 12px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.skeu-modal p {
+  color: #6B5B4B;
+  line-height: 1.7;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+.skeu-modal .modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: linear-gradient(180deg, #D0D0D0, #B8B8B8);
+  border: 1px solid #888;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 1rem;
+  color: #555;
+  cursor: pointer;
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Style Info */
+.skeu-info {
+  padding: 64px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.skeu-info h2 {
+  font-size: 1.5rem;
+  color: #3B2F2F;
+  margin-bottom: 32px;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.info-item {
+  padding: 20px;
+  border-radius: 6px;
+  background: linear-gradient(145deg, #F5F0E1, #EDE5D5);
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+  border: 1px solid #C4A882;
+}
+
+.info-item .info-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #8B6514;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+}
+
+.info-item .info-value {
+  font-weight: 700;
+  color: #3B2F2F;
+}
+
+@media (max-width: 768px) {
+  .skeu-hero .hero-plate { padding: 48px 20px; }
+  .card-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+<div class="vp-frame">
+
+<!-- Hero -->
+<section class="skeu-hero">
+  <div class="hero-plate">
+    <h1>Skeuomorphism</h1>
+    <p class="subtitle">"Making the digital feel real."</p>
+    <p class="tagline">Leather stitching, brushed metal, and carved wood. Every element mimics its real-world counterpart with meticulous detail, rich textures, and lifelike depth that users instantly recognize.</p>
+  </div>
+</section>
+
+<!-- Navigation -->
+<nav class="skeu-nav">
+  <a href="#">Home</a>
+  <a href="#">Library</a>
+  <a href="#">Workshop</a>
+  <a href="#">Gallery</a>
+  <a href="#">Settings</a>
+</nav>
+
+<!-- Buttons -->
+<section class="skeu-buttons">
+  <h2>Crafted Buttons</h2>
+  <div class="btn-grid">
+    <button class="skeu-btn btn-wood">Wooden</button>
+    <button class="skeu-btn btn-leather">Leather</button>
+    <button class="skeu-btn btn-metal">Chrome</button>
+    <button class="skeu-btn btn-red">Enamel</button>
+  </div>
+</section>
+
+<!-- Forms -->
+<section class="skeu-forms">
+  <h2>Journal Entry</h2>
+  <div class="form-group">
+    <label>Your Name</label>
+    <input type="text" class="skeu-input" placeholder="Enter your name...">
+  </div>
+  <div class="form-group">
+    <label>Email</label>
+    <input type="email" class="skeu-input" placeholder="your@email.com">
+  </div>
+  <div class="form-group">
+    <label>Message</label>
+    <textarea class="skeu-input" placeholder="Write your thoughts..."></textarea>
+  </div>
+  <button class="skeu-btn btn-wood" style="width:100%;padding:14px;">Seal &amp; Send</button>
+</section>
+
+<!-- Cards -->
+<section class="skeu-cards">
+  <h2>Artisan Collection</h2>
+  <div class="card-grid">
+    <div class="skeu-card">
+      <div class="card-header" style="background:linear-gradient(180deg,#8B4513,#6B3513);">Handcrafted</div>
+      <div class="card-body">
+        <div class="card-icon">&#127912;</div>
+        <h3>Master Workshop</h3>
+        <p>Each piece is meticulously crafted by hand using traditional techniques passed down through generations of artisans.</p>
+      </div>
+    </div>
+    <div class="skeu-card">
+      <div class="card-header" style="background:linear-gradient(180deg,#A0522D,#80421D);">Heritage</div>
+      <div class="card-body">
+        <div class="card-icon">&#128220;</div>
+        <h3>Rich Legacy</h3>
+        <p>Inspired by the golden age of craftsmanship, where every detail tells a story and every surface has a purpose.</p>
+      </div>
+    </div>
+    <div class="skeu-card">
+      <div class="card-header" style="background:linear-gradient(180deg,#7A5C1E,#5A4010);">Premium</div>
+      <div class="card-body">
+        <div class="card-icon">&#128142;</div>
+        <h3>Luxury Materials</h3>
+        <p>Select from the finest leathers, polished metals, and rare woods sourced from sustainable forests worldwide.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Typography -->
+<section class="skeu-typography">
+  <h2>Typography</h2>
+  <div class="type-sample">
+    <div class="label">Display</div>
+    <h1>The Art of Craft</h1>
+  </div>
+  <div class="type-sample">
+    <div class="label">Heading</div>
+    <h2>Timeless Elegance</h2>
+  </div>
+  <div class="type-sample">
+    <div class="label">Subheading</div>
+    <h3>Where Tradition Meets Innovation</h3>
+  </div>
+  <div class="type-sample">
+    <div class="label">Body</div>
+    <p>In a world of flat pixels and fleeting trends, skeuomorphism stands as a testament to the enduring beauty of craftsmanship. Every texture, every shadow, every gradient is a love letter to the physical world we inhabit.</p>
+  </div>
+</section>
+
+<!-- Color Palette -->
+<section class="skeu-palette">
+  <h2>Material Palette</h2>
+  <div class="palette-grid">
+    <div class="swatch" style="background:#8B4513;"><span class="swatch-label">#8B4513</span></div>
+    <div class="swatch" style="background:#A0522D;"><span class="swatch-label">#A0522D</span></div>
+    <div class="swatch" style="background:#B8B8B8;"><span class="swatch-label">#B8B8B8</span></div>
+    <div class="swatch" style="background:#F5F0E1;"><span class="swatch-label" style="color:#3B2F2F;">#F5F0E1</span></div>
+    <div class="swatch" style="background:#6B3A2A;"><span class="swatch-label">#6B3A2A</span></div>
+    <div class="swatch" style="background:#C4A882;"><span class="swatch-label">#C4A882</span></div>
+    <div class="swatch" style="background:#D4C4A8;"><span class="swatch-label" style="color:#3B2F2F;">#D4C4A8</span></div>
+  </div>
+</section>
+
+<!-- Modal -->
+<section class="skeu-modal-section">
+  <h2>Dialog Box</h2>
+  <button class="modal-trigger" onclick="document.getElementById('skeu-modal').classList.add('active')">Open Dialog</button>
+  <div id="skeu-modal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('active')">
+    <div class="skeu-modal">
+      <button class="modal-close" onclick="document.getElementById('skeu-modal').classList.remove('active')">&times;</button>
+      <h3>A Crafted Notice</h3>
+      <p>This dialog box is wrapped in rich leather-bound styling, complete with realistic shadows and beveled edges that evoke the feel of a premium physical object.</p>
+      <button class="skeu-btn btn-leather" onclick="document.getElementById('skeu-modal').classList.remove('active')">Understood</button>
+    </div>
+  </div>
+</section>
+
+<!-- Style Info -->
+<section class="skeu-info">
+  <h2>Style Information</h2>
+  <div class="info-grid">
+    <div class="info-item">
+      <div class="info-label">Era</div>
+      <div class="info-value">2007-2012 iOS</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Complexity</div>
+      <div class="info-value">High</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Best For</div>
+      <div class="info-value">Legacy Apps, Gaming, Premium Products</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Font</div>
+      <div class="info-value">Georgia, System-UI</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Border Radius</div>
+      <div class="info-value">4-8px with beveled edges</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Effects</div>
+      <div class="info-value">Realistic shadows, Textures, Complex gradients</div>
+    </div>
+  </div>
+</section>
+
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

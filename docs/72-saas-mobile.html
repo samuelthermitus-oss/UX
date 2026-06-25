@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SaaS Mobile - Style Showcase</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    :root {
+      --page-bg: #FAFAFA;
+      --text-color: #1A1A1A;
+      --blue: #0052FF;
+      --gradient-end: #4D7CFF;
+      --card: #FFFFFF;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--page-bg);
+      color: var(--text-color);
+      font-family: system-ui, -apple-system, sans-serif;
+      line-height: 1.4;
+    }
+
+    /* === HERO === */
+    .saas-hero {
+      min-height: 420px;
+      background: linear-gradient(160deg, #FFFFFF 0%, #F0F4FF 50%, #E8EEFF 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 60px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .saas-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 40%, rgba(0,82,255,0.06) 0%, transparent 60%);
+    }
+    .saas-hero .hero-icon {
+      width: 64px; height: 64px;
+      background: linear-gradient(135deg, var(--blue), var(--gradient-end));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 32px rgba(0,82,255,0.25);
+      position: relative;
+    }
+    .saas-hero h1 {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .saas-hero p {
+      font-size: 15px;
+      color: #555;
+      max-width: 280px;
+      line-height: 1.6;
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    /* === GLASSMORPHIC NAV === */
+    .mobile-nav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: rgba(250,250,250,0.8);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(0,0,0,0.06);
+      padding: 10px 0 14px;
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+    }
+    .mobile-nav .tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      color: #999;
+      font-size: 10px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 200ms;
+    }
+    .mobile-nav .tab.active { color: var(--blue); }
+    .mobile-nav .tab .tab-icon {
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    /* === SECTIONS === */
+    .section {
+      padding: 40px 20px;
+      border-bottom: 1px solid #F0F0F0;
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: #999;
+      margin-bottom: 24px;
+    }
+
+    /* === BUTTONS === */
+    .saas-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .saas-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 16px 24px;
+      font-family: system-ui, sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      text-align: center;
+      transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .saas-btn:active { transform: scale(0.96); }
+    .saas-btn.primary {
+      background: linear-gradient(135deg, var(--blue), var(--gradient-end));
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(0,82,255,0.25);
+    }
+    .saas-btn.secondary {
+      background: var(--card);
+      color: var(--text-color);
+      border: 2px solid #E5E7EB;
+    }
+    .saas-btn.ghost {
+      background: transparent;
+      color: var(--blue);
+    }
+    .saas-btn.disabled {
+      background: #F3F4F6;
+      color: #BBB;
+      cursor: not-allowed;
+    }
+    .saas-btn .pulse-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #10B981;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    /* === FORMS === */
+    .saas-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .saas-field {
+      position: relative;
+    }
+    .saas-field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .saas-field input,
+    .saas-field textarea,
+    .saas-field select {
+      width: 100%;
+      padding: 14px 16px;
+      font-family: system-ui, sans-serif;
+      font-size: 15px;
+      border: 2px solid #E5E7EB;
+      border-radius: 12px;
+      background: var(--card);
+      color: var(--text-color);
+      outline: none;
+      -webkit-appearance: none;
+      transition: border-color 200ms;
+    }
+    .saas-field input:focus,
+    .saas-field textarea:focus,
+    .saas-field select:focus {
+      border-color: var(--blue);
+    }
+    .saas-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .saas-checkbox input[type="checkbox"],
+    .saas-checkbox input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--blue);
+      cursor: pointer;
+    }
+
+    /* === CARDS === */
+    .saas-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .saas-card {
+      background: var(--card);
+      border: 1px solid #F0F0F0;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .saas-card .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .saas-card .card-icon {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .saas-card .card-icon.blue { background: rgba(0,82,255,0.1); }
+    .saas-card .card-icon.green { background: rgba(16,185,129,0.1); }
+    .saas-card .card-icon.amber { background: rgba(245,158,11,0.1); }
+    .saas-card .card-stat {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: #10B981;
+    }
+    .saas-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .saas-card p {
+      font-size: 13px;
+      color: #888;
+      line-height: 1.5;
+    }
+
+    /* === TYPOGRAPHY === */
+    .saas-type {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .saas-type .type-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid #F0F0F0;
+    }
+    .saas-type .type-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #BBB;
+      min-width: 28px;
+      flex-shrink: 0;
+    }
+    .saas-type h1 { font-size: 42px; font-weight: 800; letter-spacing: -1px; line-height: 1; }
+    .saas-type h2 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; }
+    .saas-type h3 { font-size: 24px; font-weight: 700; line-height: 1; }
+    .saas-type h4 { font-size: 20px; font-weight: 700; line-height: 1; }
+    .saas-type h5 { font-size: 16px; font-weight: 700; line-height: 1; }
+    .saas-type h6 { font-size: 13px; font-weight: 600; line-height: 1; color: #999; }
+
+    /* === COLOR SWATCHES === */
+    .saas-swatches {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .saas-swatch {
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--card);
+      border: 1px solid #F0F0F0;
+    }
+    .saas-swatch .swatch-color { height: 56px; }
+    .saas-swatch .swatch-info { padding: 10px 12px; }
+    .saas-swatch .swatch-name { font-size: 12px; font-weight: 700; }
+    .saas-swatch .swatch-hex { font-size: 11px; color: #999; font-family: monospace; }
+
+    /* === MODAL === */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-box {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.15);
+      animation: modalSpring 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes modalSpring {
+      0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-box h3 {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .modal-box p {
+      font-size: 14px;
+      color: #888;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .modal-close {
+      background: linear-gradient(135deg, var(--blue), var(--gradient-end));
+      color: #fff;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 16px;
+      font-family: system-ui, sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 4px 16px rgba(0,82,255,0.25);
+      transition: transform 200ms;
+    }
+    .modal-close:active { transform: scale(0.96); }
+
+    /* === STYLE INFO === */
+    .style-info {
+      background: #F3F4F6;
+      padding: 32px 20px;
+     text-align: center;}
+    .style-info h3 {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+    .style-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .style-info-item {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 12px;
+      border: 1px solid #F0F0F0;
+    }
+    .style-info-item .info-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--blue);
+      margin-bottom: 4px;
+    }
+    .style-info-item .info-value {
+      font-size: 13px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="vp-bar">
+    <span class="vp-label">Viewpoint:</span>
+    <button class="vp-btn" data-size="1920">1920</button>
+    <button class="vp-btn" data-size="1440">1440</button>
+    <button class="vp-btn" data-size="1024">1024</button>
+    <button class="vp-btn" data-size="768">768</button>
+    <button class="vp-btn" data-size="375">375</button>
+    <button class="vp-btn" data-size="320">320</button>
+    <span id="vp-width" class="vp-width">Full</span>
+    <a href="index.html" class="vp-back">← Back to All Styles</a>
+  </div>
+
+  <div class="vp-frame">
+    <!-- Hero -->
+    <section class="saas-hero">
+      <div class="hero-icon">&#9889;</div>
+      <h1>Build Faster.<br>Ship Smarter.</h1>
+      <p>The high-tech boutique experience for modern SaaS products. Electric blue on clean white.</p>
+    </section>
+
+    <!-- Bottom Nav -->
+    <nav class="mobile-nav">
+      <a class="tab active"><span class="tab-icon">&#9733;</span><span>Home</span></a>
+      <a class="tab"><span class="tab-icon">&#9881;</span><span>Tools</span></a>
+      <a class="tab"><span class="tab-icon">&#9879;</span><span>Deploy</span></a>
+      <a class="tab"><span class="tab-icon">&#9776;</span><span>More</span></a>
+    </nav>
+
+    <!-- Buttons -->
+    <section class="section">
+      <div class="section-title">Buttons</div>
+      <div class="saas-btns">
+        <button class="saas-btn primary"><span class="pulse-dot"></span> Deploy Now</button>
+        <button class="saas-btn secondary">Save Draft</button>
+        <button class="saas-btn ghost">Learn More</button>
+        <button class="saas-btn disabled" disabled>Unavailable</button>
+      </div>
+    </section>
+
+    <!-- Forms -->
+    <section class="section">
+      <div class="section-title">Forms</div>
+      <div class="saas-form">
+        <div class="saas-field">
+          <label>Project Name</label>
+          <input type="text" placeholder="My Awesome Project">
+        </div>
+        <div class="saas-field">
+          <label>API Endpoint</label>
+          <input type="url" placeholder="https://api.example.com">
+        </div>
+        <div class="saas-field">
+          <label>Environment</label>
+          <select>
+            <option>Production</option>
+            <option>Staging</option>
+            <option>Development</option>
+          </select>
+        </div>
+        <div class="saas-field">
+          <label>Notes</label>
+          <textarea rows="3" placeholder="Deployment notes"></textarea>
+        </div>
+        <div class="saas-checkbox"><input type="checkbox" id="ck1"><label for="ck1">Enable auto-deploy</label></div>
+        <div class="saas-checkbox"><input type="radio" name="r1" id="r1"><label for="r1">Standalone</label></div>
+        <div class="saas-checkbox"><input type="radio" name="r1" id="r2"><label for="r2">Team plan</label></div>
+      </div>
+    </section>
+
+    <!-- Cards -->
+    <section class="section">
+      <div class="section-title">Cards</div>
+      <div class="saas-cards">
+        <div class="saas-card">
+          <div class="card-header">
+            <div class="card-icon blue">&#9889;</div>
+            <span class="card-stat">+12.4%</span>
+          </div>
+          <h3>Performance</h3>
+          <p>Spring animations, gradient buttons, and pulsing status indicators.</p>
+        </div>
+        <div class="saas-card">
+          <div class="card-header">
+            <div class="card-icon green">&#10003;</div>
+            <span class="card-stat">99.9%</span>
+          </div>
+          <h3>Uptime SLA</h3>
+          <p>Enterprise-grade reliability with real-time monitoring dashboards.</p>
+        </div>
+        <div class="saas-card">
+          <div class="card-header">
+            <div class="card-icon amber">&#9878;</div>
+            <span class="card-stat">1.2ms</span>
+          </div>
+          <h3>Latency</h3>
+          <p>Edge-deployed infrastructure with monospace data displays.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Typography -->
+    <section class="section">
+      <div class="section-title">Typography</div>
+      <div class="saas-type">
+        <div class="type-row"><span class="type-label">H1</span><h1>Aa</h1></div>
+        <div class="type-row"><span class="type-label">H2</span><h2>Aa</h2></div>
+        <div class="type-row"><span class="type-label">H3</span><h3>Aa</h3></div>
+        <div class="type-row"><span class="type-label">H4</span><h4>Aa</h4></div>
+        <div class="type-row"><span class="type-label">H5</span><h5>Aa</h5></div>
+        <div class="type-row"><span class="type-label">H6</span><h6>Aa</h6></div>
+      </div>
+    </section>
+
+    <!-- Color Swatches -->
+    <section class="section">
+      <div class="section-title">Colors</div>
+      <div class="saas-swatches">
+        <div class="saas-swatch"><div class="swatch-color" style="background:linear-gradient(135deg,#0052FF,#4D7CFF)"></div><div class="swatch-info"><div class="swatch-name">Electric Blue</div><div class="swatch-hex">#0052FF</div></div></div>
+        <div class="saas-swatch"><div class="swatch-color" style="background:#FAFAFA;border:1px solid #eee"></div><div class="swatch-info"><div class="swatch-name">Background</div><div class="swatch-hex">#FAFAFA</div></div></div>
+        <div class="saas-swatch"><div class="swatch-color" style="background:#FFFFFF;border:1px solid #eee"></div><div class="swatch-info"><div class="swatch-name">Card</div><div class="swatch-hex">#FFFFFF</div></div></div>
+        <div class="saas-swatch"><div class="swatch-color" style="background:#4D7CFF"></div><div class="swatch-info"><div class="swatch-name">Gradient End</div><div class="swatch-hex">#4D7CFF</div></div></div>
+      </div>
+    </section>
+
+    <!-- Style Info -->
+    <section class="style-info">
+      <h3>Style Info</h3>
+      <div class="style-info-grid">
+        <div class="style-info-item"><div class="info-label">Era</div><div class="info-value">2020s SaaS</div></div>
+        <div class="style-info-item"><div class="info-label">Complexity</div><div class="info-value">Medium</div></div>
+        <div class="style-info-item"><div class="info-label">Radius</div><div class="info-value">16px</div></div>
+        <div class="style-info-item"><div class="info-label">Effects</div><div class="info-value">Spring / Pulse</div></div>
+      </div>
+    </section>
+
+    <!-- Modal -->
+    <button class="saas-btn primary" style="margin:24px 20px;" onclick="toggleModal('demo-modal')">Open Modal</button>
+  </div>
+
+  <div id="demo-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>SaaS Modal</h3>
+      <p>Clean surfaces, gradient CTAs, and spring physics. The boutique high-tech mobile experience.</p>
+      <button class="modal-close" onclick="toggleModal('demo-modal')">Close</button>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+</body>
+</html>

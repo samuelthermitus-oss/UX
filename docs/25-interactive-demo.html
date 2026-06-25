@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Product Demo - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root{--bg:#fff;--surface:#F9FAFB;--dark:#111827;--text:#111827;--text-dim:#6B7280;--primary:#7C3AED;--primary-dark:#6D28D9;--teal:#14B8A6;--pink:#EC4899;--amber:#F59E0B;--border:#E5E7EB;--font:system-ui,-apple-system,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.6}
+
+/* ══ HERO ══ */
+.hero{background:linear-gradient(135deg,#F5F3FF 0%,#fff 50%,#ECFDF5 100%);padding:100px 24px 80px;text-align:center}
+.hero h1{font-size:clamp(2.5rem,6vw,4rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;margin-bottom:14px}
+.hero .sub{font-size:1.1rem;color:var(--text-dim);max-width:500px;margin:0 auto 28px}
+
+/* ══ PRODUCT SIMULATOR ══ */
+.simulator{max-width:860px;margin:0 auto}
+.sim-chrome{background:var(--dark);border-radius:14px 14px 0 0;padding:10px 16px;display:flex;align-items:center;gap:6px}
+.sim-dot{width:10px;height:10px;border-radius:50%}
+.sim-dot.r{background:#EF4444}.sim-dot.y{background:#F59E0B}.sim-dot.g{background:#22C55E}
+.sim-bar{flex:1;display:flex;gap:8px;margin-left:12px}
+.sim-tab{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5);padding:4px 12px;border-radius:6px;font-size:.72rem;font-weight:500}
+.sim-tab.active{background:rgba(124,58,237,.4);color:#fff}
+.sim-body{background:#1E293B;border-radius:0 0 14px 14px;padding:24px;min-height:320px;display:grid;grid-template-columns:180px 1fr;gap:16px}
+.sim-nav{background:rgba(255,255,255,.04);border-radius:8px;padding:12px}
+.sim-nav-item{padding:8px 10px;border-radius:6px;font-size:.78rem;color:rgba(255,255,255,.4);margin-bottom:2px;cursor:pointer;transition:all .15s}
+.sim-nav-item:hover{color:rgba(255,255,255,.7)}
+.sim-nav-item.active{background:var(--primary);color:#fff}
+.sim-content{display:flex;flex-direction:column;gap:12px}
+.sim-chart{flex:1;background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(20,184,166,.15));border-radius:8px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.3);font-size:.85rem}
+.sim-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sim-card{background:rgba(255,255,255,.04);border-radius:6px;padding:10px;text-align:center}
+.sim-card .val{font-size:1.1rem;font-weight:700;color:#fff}
+.sim-card .lbl{font-size:.65rem;color:rgba(255,255,255,.4)}
+
+/* ══ STEP TIMELINE ══ */
+.timeline{padding:80px 24px;max-width:700px;margin:0 auto}
+.timeline h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:36px}
+.tl-track{position:relative;padding-left:32px}
+.tl-track::before{content:'';position:absolute;left:11px;top:0;bottom:0;width:2px;background:var(--border)}
+.tl-item{position:relative;margin-bottom:28px}
+.tl-dot{position:absolute;left:-32px;top:4px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff}
+.tl-dot.done{background:var(--teal)}
+.tl-dot.active{background:var(--primary)}
+.tl-dot.pending{background:var(--border);color:var(--text-dim)}
+.tl-item h3{font-size:1rem;font-weight:700;margin-bottom:4px}
+.tl-item p{font-size:.88rem;color:var(--text-dim);line-height:1.6}
+
+/* ══ INTERACTIVE CARDS ══ */
+.interactive{padding:80px 24px;background:var(--surface)}
+.interactive h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:32px}
+.inter-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1000px;margin:0 auto}
+.inter-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:28px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.inter-card::after{content:'Try it →';position:absolute;bottom:16px;right:16px;font-size:.78rem;font-weight:600;color:var(--primary);opacity:0;transition:opacity .2s}
+.inter-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.08);border-color:var(--primary)}
+.inter-card:hover::after{opacity:1}
+.inter-card .ico{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:14px}
+.inter-card h3{font-size:1rem;font-weight:700;margin-bottom:6px}
+.inter-card p{font-size:.82rem;color:var(--text-dim);line-height:1.6}
+
+/* ══ NAV ══ */
+.demo-nav{background:var(--dark);color:#fff;padding:12px 0}
+.demo-nav .container{display:flex;gap:24px;align-items:center;justify-content:center}
+.demo-nav .logo{font-weight:800;font-size:1rem;color:#fff;text-decoration:none}
+.demo-nav a{color:rgba(255,255,255,.6);text-decoration:none;font-size:.85rem;font-weight:500}
+.demo-nav a:hover{color:#fff}
+.demo-nav .nav-cta{margin-left:auto;background:var(--primary);color:#fff!important;padding:7px 18px;border-radius:8px}
+
+/* ══ BUTTONS ══ */
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 24px;font-size:.9rem;font-weight:600;border:2px solid transparent;cursor:pointer;border-radius:10px;font-family:var(--font);transition:all .25s}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,58,237,.3)}
+.btn-secondary{background:transparent;color:var(--primary);border-color:var(--primary)}
+.btn-secondary:hover{background:var(--primary);color:#fff}
+.btn-ghost{background:transparent;color:var(--text-dim);border-color:transparent}
+.btn-ghost:hover{background:var(--surface);color:var(--text)}
+.btn-disabled{background:#E5E7EB;color:#9CA3AF;border-color:#E5E7EB;cursor:not-allowed}
+.btn-play{width:60px;height:60px;border-radius:50%;background:var(--primary);color:#fff;border:none;font-size:1.3rem;cursor:pointer;box-shadow:0 8px 32px rgba(124,58,237,.4);transition:all .3s}
+.btn-play:hover{transform:scale(1.1);box-shadow:0 12px 40px rgba(124,58,237,.5)}
+
+/* ══ FORMS ══ */
+.forms{padding:80px 24px}
+.forms h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:28px}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:.82rem;font-weight:600;margin-bottom:5px}
+.fi{width:100%;padding:11px 14px;font-size:.95rem;font-family:var(--font);border:2px solid var(--border);background:#fff;color:var(--text);border-radius:10px;outline:none;transition:border .2s}
+.fi:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(124,58,237,.08)}
+select.fi{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath fill='%236B7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+textarea.fi{resize:vertical;min-height:100px}
+.form-row{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.form-row label{display:flex;align-items:center;gap:6px;font-size:.82rem;cursor:pointer}
+.form-row input{width:16px;height:16px;accent-color:var(--primary)}
+
+/* ══ CARDS ══ */
+.cards{padding:80px 24px;background:var(--surface)}
+.cards h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:32px}
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1000px;margin:0 auto}
+.card{border:1px solid var(--border);border-radius:12px;padding:24px;background:#fff;transition:all .2s}
+.card:hover{box-shadow:0 8px 24px rgba(0,0,0,.05)}
+.card h3{font-size:1rem;font-weight:700;margin-bottom:6px}
+.card p{font-size:.85rem;color:var(--text-dim);line-height:1.6}
+
+/* ══ TYPOGRAPHY ══ */
+.typo{padding:80px 24px;max-width:700px;margin:0 auto}
+.typo h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:28px}
+.ts{margin-bottom:14px;padding:18px;background:var(--surface);border-radius:12px;border-left:3px solid var(--primary)}
+.ts .lbl{font-size:.65rem;font-weight:600;color:var(--primary);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.ts h1{font-size:2rem;font-weight:900}.ts h2{font-size:1.5rem;font-weight:700}.ts h3{font-size:1.1rem;font-weight:700}
+.ts p{font-size:.95rem;color:var(--text-dim);line-height:1.8}
+
+/* ══ PALETTE ══ */
+.palette{padding:80px 24px;max-width:700px;margin:0 auto;background:var(--surface)}
+.palette h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:24px}
+.pal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:10px}
+.sw{aspect-ratio:1;border-radius:10px;display:flex;align-items:flex-end;justify-content:center;padding:6px;transition:all .3s;border:1px solid rgba(0,0,0,.06)}
+.sw:hover{transform:translateY(-2px)}
+.sw span{font-size:.58rem;font-weight:600;background:rgba(0,0,0,.5);padding:2px 6px;border-radius:4px;color:#fff}
+
+/* ══ MODAL ══ */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal-box{background:#fff;border-radius:16px;padding:36px;max-width:440px;width:90%;box-shadow:0 24px 64px rgba(0,0,0,.15);text-align:center}
+.modal-box h3{font-size:1.3rem;font-weight:700;margin-bottom:10px}
+.modal-box p{font-size:.88rem;color:var(--text-dim);margin-bottom:20px}
+.modal-sec{padding:80px 24px;text-align:center}
+.modal-sec h2{font-size:1.8rem;font-weight:800;margin-bottom:20px}
+
+/* ══ INFO ══ */
+.info{padding:80px 24px;background:var(--surface)}
+.info-box{max-width:900px;margin:0 auto;border:1px solid var(--border);border-radius:12px;padding:28px;background:#fff;text-align:center}
+.info-box h3{font-size:1rem;font-weight:700;margin-bottom:16px}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;text-align:left}
+.info-item{font-size:.82rem}
+.info-item .il{font-weight:600;margin-bottom:3px;opacity:.6;font-size:.7rem;text-transform:uppercase;letter-spacing:.04em}
+
+@media(max-width:768px){.sim-body{grid-template-columns:1fr}.sim-nav{display:none}.inter-grid,.card-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+<div class="vp-frame">
+
+<!-- HERO -->
+<section class="hero">
+  <span class="tag tag-era">2020s Modern</span>
+  <span class="tag tag-complexity-medium">Complexity: Medium</span>
+  <span class="tag tag-type">Landing Page</span>
+  <h1>See It in Action</h1>
+  <p class="sub">Experience our platform through an interactive walkthrough. No signup needed.</p>
+  <div style="text-align:center;margin-top:8px"><button class="btn-play">▶</button></div>
+</section>
+
+<!-- PRODUCT SIMULATOR -->
+<section style="padding:0 24px 80px">
+  <div class="simulator">
+    <div class="sim-chrome">
+      <div class="sim-dot r"></div><div class="sim-dot y"></div><div class="sim-dot g"></div>
+      <div class="sim-bar">
+        <div class="sim-tab active">Dashboard</div>
+        <div class="sim-tab">Analytics</div>
+        <div class="sim-tab">Projects</div>
+        <div class="sim-tab">Settings</div>
+      </div>
+    </div>
+    <div class="sim-body">
+      <div class="sim-nav">
+        <div class="sim-nav-item active">📊 Overview</div>
+        <div class="sim-nav-item">👥 Users</div>
+        <div class="sim-nav-item">💰 Revenue</div>
+        <div class="sim-nav-item">📈 Growth</div>
+        <div class="sim-nav-item">⚙️ Settings</div>
+      </div>
+      <div class="sim-content">
+        <div class="sim-cards">
+          <div class="sim-card"><div class="val">$48.2K</div><div class="lbl">Revenue</div></div>
+          <div class="sim-card"><div class="val">2,847</div><div class="lbl">Users</div></div>
+          <div class="sim-card"><div class="val">94.2%</div><div class="lbl">Retention</div></div>
+        </div>
+        <div class="sim-chart">Interactive Chart — Hover to explore data points</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STEP TIMELINE -->
+<section class="timeline">
+  <h2>How It Works</h2>
+  <div class="tl-track">
+    <div class="tl-item"><div class="tl-dot done">✓</div><h3>Sign Up</h3><p>Create your account in 30 seconds. No credit card required.</p></div>
+    <div class="tl-item"><div class="tl-dot active">2</div><h3>Connect Data</h3><p>Import from CSV, API, or connect directly to your database.</p></div>
+    <div class="tl-item"><div class="tl-dot pending">3</div><h3>Configure</h3><p>Customize dashboards, set permissions, invite your team.</p></div>
+    <div class="tl-item"><div class="tl-dot pending">4</div><h3>Go Live</h3><p>AI-powered insights surface trends and anomalies automatically.</p></div>
+  </div>
+</section>
+
+<!-- NAV -->
+<nav class="demo-nav">
+  <div class="container">
+    <a href="#" class="logo">◆ DemoApp</a>
+    <a href="#">Product</a><a href="#">Features</a><a href="#">Docs</a><a href="#">Pricing</a>
+    <a href="#" class="nav-cta">Try Free →</a>
+  </div>
+</nav>
+
+<!-- INTERACTIVE CARDS -->
+<section class="interactive">
+  <h2>Try These Features</h2>
+  <div class="inter-grid">
+    <div class="inter-card"><div class="ico" style="background:#F5F3FF;color:var(--primary)">📊</div><h3>Interactive Charts</h3><p>Zoom, pan, and filter data visually. Every chart responds to your interactions.</p></div>
+    <div class="inter-card"><div class="ico" style="background:#ECFDF5;color:var(--teal)">👥</div><h3>Live Collaboration</h3><p>See your team's cursors in real-time. Comment on any data point instantly.</p></div>
+    <div class="inter-card"><div class="ico" style="background:#FEF3C7;color:var(--amber)">🔌</div><h3>API Playground</h3><p>Test API endpoints directly in the browser. Auto-generated docs.</p></div>
+  </div>
+</section>
+
+<!-- BUTTONS -->
+<section style="padding:80px 24px">
+  <h2 style="font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:28px">Buttons</h2>
+  <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center">
+    <button class="btn btn-primary">Primary</button>
+    <button class="btn btn-secondary">Secondary</button>
+    <button class="btn btn-ghost">Ghost</button>
+    <button class="btn btn-disabled" disabled>Disabled</button>
+  </div>
+</section>
+
+<!-- FORMS -->
+<section class="forms">
+  <h2>Request a Demo</h2>
+  <div style="max-width:520px;margin:0 auto">
+    <div class="fg"><label>Full Name</label><input type="text" class="fi" placeholder="Your name"></div>
+    <div class="fg"><label>Email</label><input type="email" class="fi" placeholder="you@company.com"></div>
+    <div class="fg"><label>Use Case</label><select class="fi"><option>Select...</option><option>Analytics</option><option>BI</option><option>Data Engineering</option></select></div>
+    <div class="fg"><label>Message</label><textarea class="fi" placeholder="What would you like to demo?"></textarea></div>
+    <div class="form-row" style="margin-bottom:16px"><label><input type="checkbox"> I agree to terms</label><label><input type="radio" name="p"> Free</label><label><input type="radio" name="p"> Pro</label></div>
+    <button class="btn btn-primary" style="width:100%">Launch Demo →</button>
+  </div>
+</section>
+
+<!-- CARDS -->
+<section class="cards">
+  <h2>Product Capabilities</h2>
+  <div class="card-grid">
+    <div class="card"><h3>Real-Time Sync</h3><p>Changes propagate instantly across all connected devices and team members.</p></div>
+    <div class="card"><h3>Smart Alerts</h3><p>AI-powered notifications that learn from your behavior and surface what matters.</p></div>
+    <div class="card"><h3>Export Anywhere</h3><p>PDF, CSV, JSON, or direct API. Your data, your format, your choice.</p></div>
+  </div>
+</section>
+
+<!-- TYPOGRAPHY -->
+<section class="typo">
+  <h2>Typography</h2>
+  <div class="ts"><div class="lbl">H1</div><h1>Interactive Demo</h1></div>
+  <div class="ts"><div class="lbl">H2</div><h2>Product Walkthrough</h2></div>
+  <div class="ts"><div class="lbl">H3</div><h3>Feature Highlight</h3></div>
+  <div class="ts"><div class="lbl">Body</div><p>Interactive demo pages use clear, instructional typography. Every element guides the user through the product experience.</p></div>
+</section>
+
+<!-- PALETTE -->
+<section class="palette">
+  <h2>Color Palette</h2>
+  <div class="pal-grid">
+    <div class="sw" style="background:#7C3AED"><span>#7C3AED</span></div>
+    <div class="sw" style="background:#14B8A6"><span>#14B8A6</span></div>
+    <div class="sw" style="background:#EC4899"><span>#EC4899</span></div>
+    <div class="sw" style="background:#F59E0B"><span>#F59E0B</span></div>
+    <div class="sw" style="background:#111827"><span>#111827</span></div>
+    <div class="sw" style="background:#F9FAFB"><span>#F9FAFB</span></div>
+  </div>
+</section>
+
+<!-- MODAL -->
+<section class="modal-sec">
+  <h2>Modal Dialog</h2>
+  <button class="btn btn-primary" onclick="document.getElementById('dm').classList.add('active')">Open Modal</button>
+  <div id="dm" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('active')">
+    <div class="modal-box"><h3>Start Your Demo</h3><p>Experience the full product with sample data. No commitment.</p><button class="btn btn-primary" style="width:100%" onclick="document.getElementById('dm').classList.remove('active')">Launch Demo →</button></div>
+  </div>
+</section>
+
+<!-- INFO -->
+<section class="info">
+  <div class="info-box">
+    <h3>Style Information</h3>
+    <div class="info-grid">
+      <div class="info-item"><div class="il">Era</div><div class="iv">2020s Modern, Medium</div></div>
+      <div class="info-item"><div class="il">Best For</div><div class="iv">SaaS platforms, Developer tools</div></div>
+      <div class="info-item"><div class="il">Layout</div><div class="iv">Product simulator, Step timeline, Interactive cards</div></div>
+      <div class="info-item"><div class="il">CSS Keywords</div><div class="iv">product mockup, step timeline, play button, hover reveal</div></div>
+      <div class="info-item"><div class="il">Variables</div><div class="iv">--primary:#7C3AED, --teal:#14B8A6, --dark:#111827</div></div>
+      <div class="info-item"><div class="il">Unique Element</div><div class="iv">Browser-window product simulator with sidebar navigation</div></div>
+    </div>
+  </div>
+</section>
+
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

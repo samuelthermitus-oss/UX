@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Y2K Aesthetic - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #1A0A2E;
+  --text-color: #FFFFFF;
+  --neon-pink: #FF69B4;
+  --cyan: #00FFFF;
+  --silver: #C0C0C0;
+  --purple: #9400D3;
+  --chrome: linear-gradient(135deg, #E8E8E8 0%, #B0B0B0 25%, #FFFFFF 50%, #A0A0A0 75%, #D0D0D0 100%);
+  --surface: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.15);
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: 'system-ui', -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Hero */
+.hero {
+  background: linear-gradient(135deg, #1A0A2E 0%, #2D1B4E 30%, #FF69B4 60%, #00FFFF 100%);
+  padding: 100px 0 60px;
+  position: relative;
+  overflow: hidden;
+ text-align: center;}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 50%, rgba(255,105,180,0.3) 0%, transparent 50%),
+              radial-gradient(circle at 80% 50%, rgba(0,255,255,0.2) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.hero h1 {
+  font-size: clamp(40px, 7vw, 72px);
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 20px;
+  text-shadow: 0 0 40px rgba(255,105,180,0.5), 0 0 80px rgba(0,255,255,0.3);
+}
+
+.hero .subtitle {
+  font-size: 18px;
+  color: rgba(255,255,255,0.8);
+  max-width: 500px;
+  margin-bottom: 24px;
+ margin-left: auto; margin-right: auto;}
+
+.hero-tags {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.hero-tag {
+  padding: 48px 16px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* Bubble decorations */
+.bubble-grid {
+  display: flex;
+  gap: 24px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+
+.bubble {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--chrome);
+  box-shadow: inset -4px -4px 8px rgba(0,0,0,0.3),
+              inset 4px 4px 8px rgba(255,255,255,0.8),
+              0 4px 12px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+}
+
+.bubble.pink {
+  background: linear-gradient(135deg, #FFB6C1, #FF69B4, #FF1493);
+  color: white;
+  box-shadow: inset -4px -4px 8px rgba(0,0,0,0.2),
+              inset 4px 4px 8px rgba(255,255,255,0.4),
+              0 0 20px rgba(255,105,180,0.5);
+}
+
+.bubble.cyan {
+  background: linear-gradient(135deg, #E0FFFF, #00FFFF, #00CED1);
+  color: #003333;
+  box-shadow: inset -4px -4px 8px rgba(0,0,0,0.2),
+              inset 4px 4px 8px rgba(255,255,255,0.4),
+              0 0 20px rgba(0,255,255,0.5);
+}
+
+.bubble.purple {
+  background: linear-gradient(135deg, #DDA0DD, #9400D3, #800080);
+  color: white;
+  box-shadow: inset -4px -4px 8px rgba(0,0,0,0.3),
+              inset 4px 4px 8px rgba(255,255,255,0.3),
+              0 0 20px rgba(148,0,211,0.5);
+}
+
+/* Glossy Buttons */
+.btn-glossy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: none;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-glossy::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+  border-radius: 99px 99px 0 0;
+  pointer-events: none;
+}
+
+.btn-glossy:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.btn-pink {
+  background: linear-gradient(180deg, #FF85C8, #FF69B4, #E91E9C);
+  color: white;
+  box-shadow: 0 4px 12px rgba(255,105,180,0.4);
+}
+
+.btn-cyan {
+  background: linear-gradient(180deg, #33FFFF, #00FFFF, #00CCCC);
+  color: #003333;
+  box-shadow: 0 4px 12px rgba(0,255,255,0.4);
+}
+
+.btn-chrome {
+  background: var(--chrome);
+  color: #333;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.btn-purple {
+  background: linear-gradient(180deg, #B030FF, #9400D3, #7000B0);
+  color: white;
+  box-shadow: 0 4px 12px rgba(148,0,211,0.4);
+}
+
+.btn-disabled {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.3);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.btn-disabled::after { display: none; }
+
+/* Navigation */
+.demo-nav {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 0;
+}
+
+.demo-nav .container {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+ justify-content: center;}
+
+.demo-nav a {
+  color: var(--silver);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  padding: 6px 12px;
+  border-radius: 99px;
+}
+
+.demo-nav a:hover {
+  color: var(--neon-pink);
+  background: rgba(255,105,180,0.1);
+}
+
+.demo-nav a.active {
+  color: var(--cyan);
+  background: rgba(0,255,255,0.1);
+}
+
+/* Forms */
+.form-group { margin-bottom: 20px; }
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cyan);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 16px;
+  font-family: inherit;
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(255,255,255,0.15);
+  color: white;
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 20px rgba(255,105,180,0.3);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: rgba(255,255,255,0.3);
+}
+
+.form-textarea { min-height: 100px; resize: vertical; }
+
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23C0C0C0' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+
+.form-checkbox,
+.form-radio {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--neon-pink);
+  cursor: pointer;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.form-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--neon-pink);
+  box-shadow: 0 8px 32px rgba(255,105,180,0.2);
+}
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.card-icon.pink {
+  background: rgba(255,105,180,0.2);
+  color: var(--neon-pink);
+  box-shadow: 0 0 16px rgba(255,105,180,0.3);
+}
+
+.card-icon.cyan {
+  background: rgba(0,255,255,0.2);
+  color: var(--cyan);
+  box-shadow: 0 0 16px rgba(0,255,255,0.3);
+}
+
+.card-icon.purple {
+  background: rgba(148,0,211,0.2);
+  color: #DDA0DD;
+  box-shadow: 0 0 16px rgba(148,0,211,0.3);
+}
+
+.card-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.card-text {
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.6;
+}
+
+.card-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  font-family: 'SF Mono', monospace;
+  background: linear-gradient(135deg, var(--neon-pink), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+}
+
+/* Typography */
+.typo-h1 { font-size: 56px; font-weight: 900; line-height: 1; margin-bottom: 20px; background: linear-gradient(135deg, var(--neon-pink), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.typo-h2 { font-size: 40px; font-weight: 700; line-height: 1.1; margin-bottom: 20px; color: white; }
+.typo-h3 { font-size: 30px; font-weight: 600; line-height: 1.2; margin-bottom: 20px; color: var(--neon-pink); }
+.typo-h4 { font-size: 22px; font-weight: 600; line-height: 1.3; margin-bottom: 20px; color: var(--cyan); }
+.typo-h5 { font-size: 18px; font-weight: 500; line-height: 1.4; margin-bottom: 20px; color: var(--silver); }
+.typo-h6 { font-size: 14px; font-weight: 500; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; color: rgba(255,255,255,0.5); }
+.typo-body { font-size: 16px; line-height: 1.6; margin-bottom: 16px; color: rgba(255,255,255,0.8); }
+
+/* Modal */
+.modal-content {
+  background: linear-gradient(135deg, rgba(30,15,60,0.95), rgba(50,25,80,0.95));
+  border: 2px solid var(--border);
+  border-radius: 24px;
+  padding: 40px;
+  max-width: 440px;
+  width: 90%;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.5),
+              0 0 40px rgba(255,105,180,0.2);
+}
+
+.modal-content h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 12px;
+}
+
+.modal-content p {
+  font-size: 15px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+.modal-content .btn-glossy { width: 100%; }
+
+/* Section */
+.section { padding: 64px 0; }
+.section-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-title::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--neon-pink);
+  box-shadow: 0 0 12px var(--neon-pink);
+}
+
+/* Style Info */
+.style-info {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+  backdrop-filter: blur(10px);
+ text-align: center;}
+
+.style-info h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 24px;
+}
+
+.style-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.style-info-item .label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.style-info-item .value { color: rgba(255,255,255,0.8); font-size: 14px; }
+</style>
+</head>
+<body>
+<!-- Viewport Switcher Bar -->
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+
+<div class="vp-frame">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <span class="tag tag-era" style="background:rgba(255,105,180,0.2);color:var(--neon-pink);border:1px solid rgba(255,105,180,0.3);">Y2K 2000s</span>
+      <span class="tag tag-complexity-medium" style="background:rgba(0,255,255,0.1);color:var(--cyan);border:1px solid rgba(0,255,255,0.2);">Medium Complexity</span>
+      <h1>Y2K Aesthetic</h1>
+      <p class="subtitle">Neon gradients, chrome effects, glossy buttons, and bubble shapes. Digital nostalgia meets modern design.</p>
+
+      <div class="bubble-grid">
+        <div class="bubble pink">Y</div>
+        <div class="bubble cyan">2</div>
+        <div class="bubble purple">K</div>
+        <div class="bubble">A</div>
+        <div class="bubble pink">E</div>
+        <div class="bubble cyan">S</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation Demo -->
+  <nav class="demo-nav">
+    <div class="container">
+      <a href="#" class="active">Home</a>
+      <a href="#">Music</a>
+      <a href="#">Fashion</a>
+      <a href="#">Gallery</a>
+      <a href="#">About</a>
+    </div>
+  </nav>
+
+  <!-- Buttons Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Glossy Buttons</h2>
+      <div class="flex-gap">
+        <button class="btn-glossy btn-pink">Hot Pink</button>
+        <button class="btn-glossy btn-cyan">Electric Cyan</button>
+        <button class="btn-glossy btn-chrome">Chrome</button>
+        <button class="btn-glossy btn-purple">Deep Purple</button>
+        <button class="btn-glossy btn-disabled" disabled>Disabled</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Forms Section -->
+  <section class="section" style="background: rgba(255,255,255,0.03);">
+    <div class="container">
+      <h2 class="section-title">Form Elements</h2>
+      <div style="max-width: 500px; margin: 0 auto;">
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input type="text" class="form-input" placeholder="Enter your name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" placeholder="you@y2k.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-textarea" placeholder="Type your message..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Vibe Check</label>
+          <select class="form-select">
+            <option>Select your vibe</option>
+            <option>Y2K Nostalgia</option>
+            <option>Cyber Chic</option>
+            <option>Bubblegum Pop</option>
+            <option>Chrome Dream</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label><input type="checkbox" class="form-checkbox"> Subscribe to newsletter</label>
+          <label><input type="radio" name="style" class="form-radio"> Pink</label>
+          <label><input type="radio" name="style" class="form-radio"> Cyan</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cards Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Feature Cards</h2>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon pink">M</div>
+          <div class="card-title">Music Player</div>
+          <div class="card-text">Stream your favorite Y2K hits with a chrome-inspired interface.</div>
+          <div class="card-stat">
+            <span class="stat-value">1.2M</span>
+            <span class="stat-label">monthly listeners</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon cyan">F</div>
+          <div class="card-title">Fashion Feed</div>
+          <div class="card-text">Browse the latest Y2K-inspired fashion trends and collections.</div>
+          <div class="card-stat">
+            <span class="stat-value">847K</span>
+            <span class="stat-label">followers</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon purple">G</div>
+          <div class="card-title">Gallery</div>
+          <div class="card-text">Curated aesthetic images with neon filters and chrome frames.</div>
+          <div class="card-stat">
+            <span class="stat-value">24K</span>
+            <span class="stat-label">photos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typography Section -->
+  <section class="section" style="background: rgba(255,255,255,0.03);">
+    <div class="container">
+      <h2 class="section-title">Typography</h2>
+      <div class="typo-h1">Bling Bling</div>
+      <div class="typo-h2">Digital Dreams</div>
+      <div class="typo-h3">Neon Nights</div>
+      <div class="typo-h4">Chrome Hearts</div>
+      <div class="typo-h5">Silver Lining</div>
+      <div class="typo-h6">Y2K Vibes Only</div>
+      <p class="typo-body">The Y2K aesthetic captures the optimistic futurism of the early 2000s. Chrome gradients, neon glows, glossy surfaces, and bubble shapes create a world that's both nostalgic and futuristic.</p>
+    </div>
+  </section>
+
+  <!-- Color Palette -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Color Palette</h2>
+      <div class="bubble-grid">
+        <div class="bubble pink" style="width:64px;height:64px;font-size:10px;"></div>
+        <div class="bubble cyan" style="width:64px;height:64px;font-size:10px;"></div>
+        <div class="bubble purple" style="width:64px;height:64px;font-size:10px;"></div>
+        <div class="bubble" style="width:64px;height:64px;font-size:10px;"></div>
+        <div class="bubble pink" style="width:64px;height:64px;font-size:10px;background:linear-gradient(135deg,#FF1493,#FF69B4);"></div>
+        <div class="bubble cyan" style="width:64px;height:64px;font-size:10px;background:linear-gradient(135deg,#00CED1,#00FFFF);"></div>
+      </div>
+      <div style="margin-top:16px;font-size:13px;color:rgba(255,255,255,0.5);">
+        Neon Pink #FF69B4 · Cyan #00FFFF · Silver #C0C0C0 · Purple #9400D3
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal Demo -->
+  <div id="demo-modal" class="modal-overlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); align-items:center; justify-content:center;">
+    <div class="modal-content">
+      <h3>Welcome to the Future</h3>
+      <p>This modal is dripping with Y2K chrome energy. Glossy gradients, neon glows, and bubble shapes everywhere.</p>
+      <button class="btn-glossy btn-pink" onclick="toggleModal('demo-modal')">Let's Go!</button>
+    </div>
+  </div>
+  <section class="section" style="background: rgba(255,255,255,0.03);">
+    <div class="container">
+      <h2 class="section-title">Modal Dialog</h2>
+      <button class="btn-glossy btn-pink" onclick="toggleModal('demo-modal')">Open Modal</button>
+    </div>
+  </section>
+
+  <!-- Style Info Panel -->
+  <section class="section">
+    <div class="container">
+      <div class="style-info">
+        <h3>Style Information</h3>
+        <div class="style-info-grid">
+          <div class="style-info-item">
+            <div class="label">Era/Origin</div>
+            <div class="value">Y2K 2000s, Medium complexity</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Best For</div>
+            <div class="value">Fashion brands, music platforms, Gen Z, nostalgia marketing</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Avoid For</div>
+            <div class="value">Enterprise, healthcare, legal, formal business</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Complexity</div>
+            <div class="value">Medium — chrome gradients, glossy effects, neon glows, bubble shapes</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">CSS Keywords</div>
+            <div class="value">linear-gradient chrome, border-radius: 50%, box-shadow glow, backdrop-filter</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Design Variables</div>
+            <div class="value">--neon-pink:#FF69B4, --cyan:#00FFFF, --purple:#9400D3, --chrome:linear-gradient</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="shared.js"></script>
+</body>
+</html>

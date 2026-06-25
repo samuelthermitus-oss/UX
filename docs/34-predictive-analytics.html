@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predictive Analytics - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root { --page-bg: #FFFFFF; --text-color: #111827; --forecast: #8B5CF6; --forecast-light: #EDE9FE; --confidence: rgba(139,92,246,0.15); --anomaly-red: #EF4444; --anomaly-orange: #F97316; --actual: #3B82F6; --surface: #FFFFFF; --surface-alt: #F9FAFB; --border: #E5E7EB; --text-muted: #6B7280; }
+body { background: var(--page-bg); color: var(--text-color); font-family: 'system-ui', -apple-system, sans-serif; font-size: 14px; line-height: 1.5; }
+
+/* Nav */
+.pre-nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 0; display: flex; align-items: center; justify-content: center; gap: 24px; }
+.pre-nav a { color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 500; }
+.pre-nav a:hover { color: var(--text-color); }
+.pre-nav a.active { color: var(--forecast); font-weight: 600; }
+
+/* Hero */
+.pre-hero { background: linear-gradient(180deg, var(--forecast-light) 0%, var(--surface) 100%); padding: 60px 0 40px; border-bottom: 1px solid var(--border); text-align: center; }
+.pre-hero h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 700; letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 12px; }
+.pre-hero .subtitle { font-size: 16px; color: var(--text-muted); max-width: 600px; margin: 0 auto 24px; }
+
+/* Forecast Chart */
+.forecast-chart { background: var(--surface); border-radius: 12px; padding: 24px; border: 1px solid var(--border); max-width: 800px; margin: 0 auto; }
+.chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.chart-title { font-size: 14px; font-weight: 600; }
+.chart-legend { display: flex; gap: 16px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
+.legend-line { width: 20px; height: 2px; border-radius: 1px; }
+.legend-line.solid { background: var(--actual); }
+.legend-line.dashed { background: repeating-linear-gradient(90deg, var(--forecast) 0 4px, transparent 4px 8px); }
+.legend-area { width: 16px; height: 12px; border-radius: 2px; background: var(--confidence); }
+.chart-plot { height: 200px; position: relative; border-left: 1px solid var(--border); border-bottom: 1px solid var(--border); background: repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(0,0,0,0.03) 39px, rgba(0,0,0,0.03) 40px); }
+.confidence-band { position: absolute; top: 20%; left: 50%; right: 10%; bottom: 30%; background: var(--confidence); border-radius: 8px; animation: fadeIn 1s ease-out; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.forecast-line { position: absolute; top: 35%; left: 50%; right: 10%; height: 2px; background: repeating-linear-gradient(90deg, var(--forecast) 0 6px, transparent 6px 12px); animation: drawLine 1.5s ease-out; transform-origin: left; }
+@keyframes drawLine { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.anomaly-marker { position: absolute; width: 12px; height: 12px; border-radius: 50%; background: var(--anomaly-red); border: 2px solid white; box-shadow: 0 0 0 2px var(--anomaly-red); animation: anomalyPulse 2s infinite; }
+.anomaly-marker.m1 { top: 15%; left: 25%; } .anomaly-marker.m2 { top: 70%; left: 35%; }
+@keyframes anomalyPulse { 0%, 100% { box-shadow: 0 0 0 2px var(--anomaly-red); } 50% { box-shadow: 0 0 0 6px rgba(239,68,68,0.3); } }
+.actual-line { position: absolute; top: 40%; left: 5%; width: 45%; height: 3px; background: var(--actual); border-radius: 2px; }
+
+/* Prediction Cards */
+.prediction-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 800px; margin: 24px auto 0; }
+.prediction-card { background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); position: relative; }
+.prediction-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--forecast); border-radius: 12px 12px 0 0; }
+.prediction-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.prediction-value { font-size: 24px; font-weight: 700; font-family: 'SF Mono', monospace; color: var(--forecast); margin-bottom: 4px; }
+.prediction-range { font-size: 12px; color: var(--text-muted); }
+.confidence-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 12px; overflow: hidden; }
+.confidence-fill { height: 100%; background: var(--forecast); border-radius: 2px; }
+
+/* Buttons */
+.section { padding: 48px 0; }
+.section-title { font-size: 18px; font-weight: 600; margin-bottom: 24px; text-align: center; }
+.btn-group { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; font-size: 13px; font-weight: 500; border: none; cursor: pointer; transition: all 0.2s; border-radius: 8px; font-family: inherit; }
+.btn-primary { background: var(--forecast); color: white; }
+.btn-primary:hover { background: #7C3AED; box-shadow: 0 4px 12px rgba(139,92,246,0.25); }
+.btn-secondary { background: var(--surface); color: var(--text-color); border: 1px solid var(--border); }
+
+/* Anomaly List */
+.anomaly-list { max-width: 600px; margin: 0 auto; }
+.anomaly-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px; transition: border-color 0.2s; }
+.anomaly-item:hover { border-color: var(--anomaly-red); }
+.anomaly-dot { width: 10px; height: 10px; border-radius: 50%; animation: anomalyPulse 2s infinite; }
+.anomaly-dot.critical { background: var(--anomaly-red); } .anomaly-dot.warning { background: var(--anomaly-orange); }
+.anomaly-info { flex: 1; }
+.anomaly-name { font-size: 13px; font-weight: 500; }
+.anomaly-time { font-size: 12px; color: var(--text-muted); }
+.anomaly-severity { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500; }
+.anomaly-severity.critical { background: rgba(239,68,68,0.1); color: var(--anomaly-red); }
+.anomaly-severity.warning { background: rgba(249,115,22,0.1); color: var(--anomaly-orange); }
+
+/* Config Form */
+.config-panel { max-width: 500px; margin: 0 auto; background: var(--surface-alt); border-radius: 12px; padding: 24px; }
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.form-input, .form-select { width: 100%; padding: 10px 14px; font-size: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; outline: none; }
+.form-input:focus, .form-select:focus { border-color: var(--forecast); box-shadow: 0 0 0 3px rgba(139,92,246,0.1); }
+.form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+.form-checkbox { width: 14px; height: 14px; accent-color: var(--forecast); }
+.form-row { display: flex; gap: 20px; align-items: center; }
+.form-row label { display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; }
+
+/* Trend Cards */
+.trends-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 800px; margin: 0 auto; }
+.trend-card { background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+.trend-card-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.trend-card-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; }
+.trend-stat { display: flex; align-items: baseline; gap: 6px; padding-top: 12px; border-top: 1px solid var(--border); }
+.stat-value { font-size: 24px; font-weight: 700; font-family: 'SF Mono', monospace; }
+.stat-label { font-size: 12px; color: var(--text-muted); }
+
+/* Swatches */
+.swatch-row { display: flex; gap: 8px; justify-content: center; }
+.swatch { width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; transition: transform 0.15s; }
+.swatch:hover { transform: scale(1.1); }
+
+/* Modal */
+.modal-overlay { display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.4); align-items:center; justify-content:center; }
+.modal-content { background: var(--surface); border-radius: 16px; padding: 32px; max-width: 440px; width: 90%; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
+.modal-content h3 { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+.modal-content p { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
+
+/* Style Info */
+.style-info { background: var(--surface-alt); border-radius: 12px; padding: 24px; border: 1px solid var(--border); text-align: center; max-width: 800px; margin: 0 auto; }
+.style-info h3 { font-size: 16px; font-weight: 600; margin-bottom: 20px; }
+.style-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.style-info-item .label { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.style-info-item .value { color: var(--text-color); font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="vp-bar"><span class="vp-label">📐 Viewport:</span><button class="vp-btn" data-size="1920">1920</button><button class="vp-btn" data-size="1440">1440</button><button class="vp-btn" data-size="1024">1024</button><button class="vp-btn" data-size="768">768</button><button class="vp-btn" data-size="375">375</button><button class="vp-btn" data-size="320">320</button><span id="vp-width" class="vp-width">Full</span><a href="index.html" class="vp-back">← Back to All Styles</a></div>
+<div class="vp-frame">
+  <div style="background:var(--surface-alt);padding:6px 24px;border-bottom:1px solid var(--border);display:flex;gap:8px;justify-content:center;"><span class="tag tag-era">2020s Modern</span><span class="tag tag-complexity-medium">Medium Complexity</span><span class="tag tag-type">BI/Analytics</span></div>
+  <nav class="pre-nav"><a href="#" class="active">Forecast</a><a href="#">Anomalies</a><a href="#">Trends</a><a href="#">Models</a><a href="#">Settings</a></nav>
+
+  <section class="pre-hero">
+    <h1>Predictive Analytics</h1>
+    <p class="subtitle">Forecast charts with confidence bands, anomaly detection, and trend predictions. See what's coming before it happens.</p>
+    <div class="forecast-chart">
+      <div class="chart-header">
+        <span class="chart-title">Revenue Forecast — Next 6 Months</span>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-line solid"></div> Actual</div>
+          <div class="legend-item"><div class="legend-line dashed"></div> Forecast</div>
+          <div class="legend-item"><div class="legend-area"></div> Confidence Band</div>
+          <div class="legend-item"><div style="width:10px;height:10px;border-radius:50%;background:var(--anomaly-red);"></div> Anomaly</div>
+        </div>
+      </div>
+      <div class="chart-plot"><div class="actual-line"></div><div class="confidence-band"></div><div class="forecast-line"></div><div class="anomaly-marker m1"></div><div class="anomaly-marker m2"></div></div>
+    </div>
+    <div class="prediction-grid">
+      <div class="prediction-card"><div class="prediction-label">Next Month Prediction</div><div class="prediction-value">$847K</div><div class="prediction-range">Range: $812K — $882K</div><div class="confidence-bar"><div class="confidence-fill" style="width:92%;"></div></div><div style="font-size:11px;color:var(--text-muted);margin-top:4px;">92% confidence</div></div>
+      <div class="prediction-card"><div class="prediction-label">Quarterly Forecast</div><div class="prediction-value">$2.6M</div><div class="prediction-range">Range: $2.4M — $2.8M</div><div class="confidence-bar"><div class="confidence-fill" style="width:85%;"></div></div><div style="font-size:11px;color:var(--text-muted);margin-top:4px;">85% confidence</div></div>
+      <div class="prediction-card"><div class="prediction-label">Annual Projection</div><div class="prediction-value">$10.2M</div><div class="prediction-range">Range: $9.4M — $11.1M</div><div class="confidence-bar"><div class="confidence-fill" style="width:78%;"></div></div><div style="font-size:11px;color:var(--text-muted);margin-top:4px;">78% confidence</div></div>
+    </div>
+  </section>
+
+  <div class="btn-group" style="padding:16px 0;"><button class="btn btn-primary">Run Forecast</button><button class="btn btn-secondary">Adjust Parameters</button></div>
+
+  <section class="section">
+    <div class="container"><h2 class="section-title">Detected Anomalies</h2>
+      <div class="anomaly-list">
+        <div class="anomaly-item"><div class="anomaly-dot critical"></div><div class="anomaly-info"><div class="anomaly-name">Sudden drop in conversion rate — 3.2% vs 4.1% expected</div><div class="anomaly-time">Detected 2 hours ago · Impact: High</div></div><div class="anomaly-severity critical">Critical</div></div>
+        <div class="anomaly-item"><div class="anomaly-dot warning"></div><div class="anomaly-info"><div class="anomaly-name">Unusual spike in cart abandonment — 68% vs 52% baseline</div><div class="anomaly-time">Detected 6 hours ago · Impact: Medium</div></div><div class="anomaly-severity warning">Warning</div></div>
+        <div class="anomaly-item"><div class="anomaly-dot warning"></div><div class="anomaly-info"><div class="anomaly-name">Session duration anomaly — 1m45s vs 4m12s average</div><div class="anomaly-time">Detected 1 day ago · Impact: Low</div></div><div class="anomaly-severity warning">Warning</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-alt);">
+    <div class="container"><h2 class="section-title">Model Configuration</h2>
+      <div class="config-panel">
+        <div class="form-group"><label class="form-label">Forecast Horizon</label><select class="form-select"><option>1 Month</option><option>3 Months</option><option selected>6 Months</option><option>12 Months</option></select></div>
+        <div class="form-group"><label class="form-label">Confidence Level</label><input type="text" class="form-input" placeholder="95"></div>
+        <div class="form-row"><label><input type="checkbox" class="form-checkbox"> Include seasonality</label><label><input type="radio" name="model" class="form-checkbox"> ARIMA</label><label><input type="radio" name="model" class="form-checkbox"> Prophet</label><label><input type="radio" name="model" class="form-checkbox"> LSTM</label></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container"><h2 class="section-title">Trend Analysis</h2>
+      <div class="trends-grid">
+        <div class="trend-card"><div class="trend-card-title">Upward Trend</div><div class="trend-card-text">Enterprise revenue showing consistent 15% MoM growth.</div><div class="trend-stat"><span class="stat-value" style="color:var(--forecast);">+15%</span><span class="stat-label">MoM growth</span></div></div>
+        <div class="trend-card"><div class="trend-card-title">Seasonal Pattern</div><div class="trend-card-text">Q4 holiday surge detected with 2.3x multiplier.</div><div class="trend-stat"><span class="stat-value">2.3x</span><span class="stat-label">seasonal lift</span></div></div>
+        <div class="trend-card"><div class="trend-card-title">Volatility Alert</div><div class="trend-card-text">API traffic showing increased variance.</div><div class="trend-stat"><span class="stat-value" style="color:var(--anomaly-orange);">78%</span><span class="stat-label">confidence</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-alt);"><div class="container"><h2 class="section-title">Color Palette</h2><div class="swatch-row">
+    <div class="swatch" style="background:#8B5CF6;" data-hex="#8B5CF6"></div><div class="swatch" style="background:#3B82F6;" data-hex="#3B82F6"></div><div class="swatch" style="background:#EF4444;" data-hex="#EF4444"></div><div class="swatch" style="background:#F97316;" data-hex="#F97316"></div><div class="swatch" style="background:#111827;" data-hex="#111827"></div><div class="swatch" style="background:#F9FAFB;" data-hex="#F9FAFB"></div>
+  </div></div></section>
+
+  <div id="demo-modal" class="modal-overlay"><div class="modal-content"><h3>Run Forecast Model</h3><p>This will retrain the predictive model with the latest data and generate updated forecasts.</p><button class="btn btn-primary" style="width:100%;" onclick="toggleModal('demo-modal')">Start Training</button></div></div>
+  <div style="text-align:center;padding:24px;"><button class="btn btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button></div>
+
+  <div style="padding:0 32px 32px;"><div class="style-info"><h3>Style Information</h3><div class="style-info-grid">
+    <div class="style-info-item"><div class="label">Era/Origin</div><div class="value">2020s Modern, BI/Analytics</div></div>
+    <div class="style-info-item"><div class="label">Best For</div><div class="value">Forecasting, anomaly detection, trend prediction</div></div>
+    <div class="style-info-item"><div class="label">Avoid For</div><div class="value">Real-time monitoring, historical-only dashboards</div></div>
+    <div class="style-info-item"><div class="label">Complexity</div><div class="value">Medium — forecast lines, confidence bands, anomaly markers</div></div>
+    <div class="style-info-item"><div class="label">CSS Keywords</div><div class="value">@keyframes, dashed borders, confidence shading, pulse animations</div></div>
+    <div class="style-info-item"><div class="label">Design Variables</div><div class="value">--forecast:#8B5CF6, --anomaly-red:#EF4444, --confidence:rgba(139,92,246,0.15)</div></div>
+  </div></div></div>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

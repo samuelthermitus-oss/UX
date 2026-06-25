@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI/UX Pro Max - Style Showcase</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0f0f17;
+  --surface: #1a1a2e;
+  --surface-2: #232340;
+  --surface-3: #2a2a4a;
+  --text: #e8e8f0;
+  --text-muted: #8888aa;
+  --text-dim: #5a5a7a;
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
+  --accent-glow: rgba(99,102,241,0.25);
+  --border: rgba(255,255,255,0.08);
+  --border-light: rgba(255,255,255,0.04);
+  --green: #22c55e;
+  --yellow: #eab308;
+  --red: #ef4444;
+  --radius: 10px;
+  --sidebar-w: 420px;
+  --header-h: 56px;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.5;
+  height: 100vh; overflow: hidden;
+}
+
+/* ===== HEADER ===== */
+.header {
+  height: var(--header-h); display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; border-bottom: 1px solid var(--border);
+  background: linear-gradient(90deg, rgba(99,102,241,0.06) 0%, transparent 60%);
+  flex-shrink: 0;
+}
+.header-left { display: flex; align-items: center; gap: 14px; }
+.logo {
+  font-size: 18px; font-weight: 800;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.header-stats { display: flex; gap: 12px; }
+.header-stat {
+  font-size: 11px; color: var(--text-muted); padding: 4px 10px;
+  background: var(--surface); border-radius: 99px; border: 1px solid var(--border);
+}
+.header-stat strong { color: var(--accent); }
+
+/* ===== LAYOUT ===== */
+.layout {
+  display: flex; height: calc(100vh - var(--header-h));
+}
+
+/* ===== LEFT SIDEBAR ===== */
+.sidebar {
+  width: var(--sidebar-w); min-width: var(--sidebar-w); max-width: var(--sidebar-w);
+  display: flex; flex-direction: column; border-right: 1px solid var(--border);
+  background: var(--surface); overflow: hidden;
+}
+.sidebar-toolbar {
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;
+}
+.search-box { position: relative; }
+.search-box input {
+  width: 100%; padding: 9px 14px 9px 36px; background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+  font-size: 13px; outline: none; transition: border-color 0.2s;
+}
+.search-box input:focus { border-color: var(--accent); }
+.search-box input::placeholder { color: var(--text-dim); }
+.search-box .search-icon {
+  position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+  font-size: 13px; pointer-events: none; opacity: 0.5;
+}
+.filter-row {
+  display: flex; gap: 4px; flex-wrap: wrap;
+}
+.filter-btn {
+  padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 500;
+  background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.filter-btn:hover { border-color: var(--accent); color: var(--text); }
+.filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.result-info {
+  font-size: 11px; color: var(--text-dim); padding: 0 16px;
+  padding-top: 8px; flex-shrink: 0;
+}
+
+/* Style list */
+.style-list {
+  flex: 1; overflow-y: auto; padding: 8px 0;
+  scrollbar-width: thin; scrollbar-color: var(--surface-3) transparent;
+}
+.style-list::-webkit-scrollbar { width: 6px; }
+.style-list::-webkit-scrollbar-track { background: transparent; }
+.style-list::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 3px; }
+
+.style-item {
+  display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+  cursor: pointer; transition: background 0.15s; border-left: 3px solid transparent;
+  position: relative;
+}
+.style-item:hover { background: rgba(99,102,241,0.06); }
+.style-item.active {
+  background: rgba(99,102,241,0.1); border-left-color: var(--accent);
+}
+.style-item-color {
+  width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; border: 1px solid rgba(255,255,255,0.08);
+}
+.style-item-info { flex: 1; min-width: 0; }
+.style-item-name {
+  font-size: 13px; font-weight: 600; line-height: 1.3;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.style-item-name .name-zh {
+  color: var(--accent-hover); font-weight: 500; font-size: 12px;
+}
+.style-item-meta .kw-zh {
+  font-size: 10px; color: var(--text-dim); max-width: 180px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  display: inline-block; vertical-align: middle;
+}
+.style-item-meta {
+  font-size: 11px; color: var(--text-muted); display: flex; gap: 8px; margin-top: 2px;
+}
+.style-item-meta .type-badge {
+  padding: 1px 6px; border-radius: 99px; font-size: 10px; font-weight: 500;
+}
+.type-badge.general { background: rgba(99,102,241,0.15); color: #818cf8; }
+.type-badge.landing { background: rgba(168,85,247,0.15); color: #c084fc; }
+.type-badge.bi { background: rgba(34,197,94,0.15); color: #4ade80; }
+.type-badge.mobile { background: rgba(234,179,8,0.15); color: #facc15; }
+
+.style-item .go-btn {
+  padding: 5px 14px; border-radius: 6px; font-size: 11px; font-weight: 600;
+  background: var(--accent); border: none; color: #fff; cursor: pointer;
+  opacity: 0; transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
+}
+.style-item:hover .go-btn, .style-item.active .go-btn { opacity: 1; }
+.style-item .go-btn:hover { background: var(--accent-hover); transform: scale(1.04); }
+.style-item .go-btn:active { transform: scale(0.96); }
+
+/* ===== RIGHT PREVIEW ===== */
+.preview-panel {
+  flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #111;
+}
+.preview-toolbar {
+  height: 44px; display: flex; align-items: center; padding: 0 16px; gap: 12px;
+  border-bottom: 1px solid var(--border); background: var(--surface);
+  flex-shrink: 0;
+}
+.preview-toolbar .vp-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+.vp-btn-group { display: flex; gap: 4px; }
+.vp-btn {
+  padding: 4px 10px; border-radius: 5px; font-size: 11px; font-weight: 500;
+  background: var(--surface-2); border: 1px solid var(--border); color: var(--text-muted);
+  cursor: pointer; transition: all 0.15s;
+}
+.vp-btn:hover { border-color: var(--accent); color: var(--text); }
+.vp-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.preview-toolbar .preview-title {
+  margin-left: auto; font-size: 12px; color: var(--text-dim);
+  max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* Preview iframe wrapper */
+.preview-wrapper {
+  flex: 1; display: flex; align-items: flex-start; justify-content: center;
+  overflow: auto; padding: 16px;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(99,102,241,0.03) 0%, transparent 50%),
+    var(--bg);
+}
+.preview-frame {
+  background: #fff; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 4px 40px rgba(0,0,0,0.4);
+  transition: width 0.3s ease, max-width 0.3s ease;
+  width: 100%; max-width: 100%; height: 100%;
+  min-height: 500px;
+}
+.preview-frame.vp-1920 { max-width: 1920px; }
+.preview-frame.vp-1440 { max-width: 1440px; }
+.preview-frame.vp-1024 { max-width: 1024px; }
+.preview-frame.vp-768 { max-width: 768px; }
+.preview-frame.vp-375 { max-width: 375px; }
+.preview-frame.vp-320 { max-width: 320px; }
+.preview-frame iframe {
+  width: 100%; height: 100%; min-height: 500px; border: none;
+  display: block;
+}
+
+/* Empty preview */
+.preview-empty {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: var(--text-dim); gap: 12px;
+}
+.preview-empty .icon { font-size: 48px; opacity: 0.3; }
+.preview-empty h3 { font-size: 16px; color: var(--text-muted); font-weight: 500; }
+.preview-empty p { font-size: 13px; max-width: 300px; text-align: center; line-height: 1.5; }
+
+/* Loading spinner */
+.preview-loading {
+  display: none; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%); z-index: 5;
+}
+.preview-loading.show { display: block; }
+.spinner {
+  width: 32px; height: 32px; border: 3px solid var(--border);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%; min-width: 100%; max-width: 100%;
+    height: 45vh; min-height: 200px;
+    border-right: none; border-bottom: 1px solid var(--border);
+  }
+  .preview-panel { height: 55vh; }
+  .preview-frame { min-height: 300px; }
+  .preview-frame iframe { min-height: 300px; }
+  .header-stats { display: none; }
+  .style-item .go-btn { opacity: 1; }
+}
+@media (max-width: 480px) {
+  .sidebar { height: 40vh; }
+  .preview-panel { height: 60vh; }
+  .filter-row { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+  .preview-toolbar { flex-wrap: wrap; height: auto; padding: 8px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-left">
+    <span class="logo">UI/UX Pro Max</span>
+  </div>
+  <div class="header-stats">
+    <span class="header-stat"><strong>84</strong> Styles</span>
+    <span class="header-stat"><strong>6</strong> Categories</span>
+    <span class="header-stat"><strong>6</strong> Viewports</span>
+  </div>
+</header>
+
+<!-- Main Layout -->
+<div class="layout">
+
+  <!-- Left Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search" placeholder="Search styles..." autocomplete="off">
+      </div>
+      <div class="filter-row" id="filterRow">
+        <button class="filter-btn active" data-filter="general">General</button>
+        <button class="filter-btn" data-filter="landing">Landing</button>
+        <button class="filter-btn" data-filter="bi">BI/Analytics</button>
+        <button class="filter-btn" data-filter="mobile">Mobile</button>
+        <button class="filter-btn" data-filter="minimal">极简风</button>
+        <button class="filter-btn" data-filter="retro">复古风</button>
+        <button class="filter-btn" data-filter="tech">科技风</button>
+        <button class="filter-btn" data-filter="soft">柔和风</button>
+        <button class="filter-btn" data-filter="bold">大胆风</button>
+        <button class="filter-btn" data-filter="nature">自然风</button>
+      </div>
+    </div>
+    <div class="result-info" id="resultInfo">84 styles</div>
+    <div class="style-list" id="styleList"></div>
+  </aside>
+
+  <!-- Right Preview -->
+  <main class="preview-panel">
+    <div class="preview-toolbar">
+      <span class="vp-label">📐 Viewport</span>
+      <div class="vp-btn-group" id="vpBtns">
+        <button class="vp-btn active" data-size="full">Full</button>
+        <button class="vp-btn" data-size="1920">1920</button>
+        <button class="vp-btn" data-size="1440">1440</button>
+        <button class="vp-btn" data-size="1024">1024</button>
+        <button class="vp-btn" data-size="768">768</button>
+        <button class="vp-btn" data-size="375">375</button>
+        <button class="vp-btn" data-size="320">320</button>
+      </div>
+      <span class="preview-title" id="previewTitle">Select a style to preview</span>
+    </div>
+    <div class="preview-wrapper" id="previewWrapper">
+      <div class="preview-empty" id="previewEmpty">
+        <div class="icon">🎨</div>
+        <h3>Select a Style</h3>
+        <p>Choose a style from the list on the left to preview it here. Click "Open" to view the full showcase.</p>
+      </div>
+      <div class="preview-frame" id="previewFrame" style="display:none">
+        <div class="preview-loading" id="previewLoading"><div class="spinner"></div></div>
+        <iframe id="previewIframe" src="about:blank" onload="onIframeLoad()"></iframe>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ===== ALL STYLES DATA =====
+const STYLES = [
+  {id:1,name:"Minimalism & Swiss Style",nameZh:"极简主义与瑞士风格",file:"01-minimalism-swiss.html",type:"general",tags:["minimal"],era:"1950s Swiss",complexity:"low",colors:["#000000","#FFFFFF","#F5F1E8"],keywords:"Clean, simple, spacious, functional, grid-based, geometric, sans-serif",keywordsZh:"简洁、简约、留白、功能性、网格布局、几何构型、无衬线字体"},
+  {id:2,name:"Neumorphism",nameZh:"新拟物化",file:"02-neumorphism.html",type:"general",tags:["soft"],era:"2020s",complexity:"medium",colors:["#C8E0F4","#F5E0E8","#E8E8E8"],keywords:"Soft UI, embossed, debossed, pastel, rounded, monochromatic",keywordsZh:"柔和界面、凸起效果、凹陷效果、柔和色调、圆角、单色系"},
+  {id:3,name:"Glassmorphism",nameZh:"毛玻璃风格",file:"03-glassmorphism.html",type:"general",tags:["soft"],era:"2020s",complexity:"medium",colors:["#0080FF","#8B00FF","#FF1493"],keywords:"Frosted glass, transparent, blurred, layered, vibrant background",keywordsZh:"磨砂玻璃、透明效果、模糊背景、层叠、鲜明背景色"},
+  {id:4,name:"Brutalism",nameZh:"粗野主义",file:"04-brutalism.html",type:"general",tags:["bold"],era:"1950s",complexity:"low",colors:["#FF0000","#0000FF","#FFFF00"],keywords:"Raw, unpolished, stark, high contrast, visible borders, asymmetric",keywordsZh:"原始、粗糙、生硬、高对比度、可见边框、非对称布局"},
+  {id:5,name:"3D & Hyperrealism",nameZh:"3D与超写实风格",file:"05-3d-hyperrealism.html",type:"general",tags:["tech"],era:"2020s",complexity:"high",colors:["#001F3F","#228B22","#FFD700"],keywords:"Depth, realistic textures, 3D models, immersive, WebGL, Three.js",keywordsZh:"纵深感、逼真纹理、3D模型、沉浸式体验、WebGL、Three.js"},
+  {id:6,name:"Vibrant & Block-based",nameZh:"活力色块风格",file:"06-vibrant-block.html",type:"general",tags:["bold"],era:"2020s",complexity:"medium",colors:["#39FF14","#BF00FF","#FF1493"],keywords:"Bold, energetic, playful, block layout, geometric, duotone",keywordsZh:"大胆、活力、趣味、色块布局、几何造型、双色调"},
+  {id:7,name:"Dark Mode (OLED)",nameZh:"深色模式（OLED优化）",file:"07-dark-mode-oled.html",type:"general",tags:["tech","minimal"],era:"2020s",complexity:"low",colors:["#000000","#121212","#39FF14"],keywords:"Dark theme, low light, high contrast, deep black, OLED, night mode",keywordsZh:"深色主题、低亮度、高对比度、纯黑背景、OLED省电、夜间模式"},
+  {id:8,name:"Accessible & Ethical",nameZh:"无障碍与伦理设计",file:"08-accessible-ethical.html",type:"general",tags:["minimal"],era:"Universal",complexity:"low",colors:["#1E40AF","#16A34A","#DC2626"],keywords:"WCAG AAA, high contrast, keyboard navigation, screen reader, focus",keywordsZh:"WCAG AAA标准、高对比度、键盘导航、屏幕阅读器、焦点状态"},
+  {id:9,name:"Claymorphism",nameZh:"黏土拟态风格",file:"09-claymorphism.html",type:"general",tags:["soft"],era:"2020s",complexity:"medium",colors:["#FDBCB4","#ADD8E6","#98FF98"],keywords:"Soft 3D, chunky, playful, toy-like, bubbly, pastel, thick borders",keywordsZh:"柔和3D、厚实、趣味、玩具感、泡泡感、柔和色调、粗边框"},
+  {id:10,name:"Aurora UI",nameZh:"极光界面",file:"10-aurora-ui.html",type:"general",tags:["tech"],era:"2020s",complexity:"medium",colors:["#0080FF","#FF1493","#00FFFF"],keywords:"Vibrant gradients, Northern Lights, mesh gradient, luminous, atmospheric",keywordsZh:"鲜艳渐变、北极光效果、网格渐变、发光感、氛围感"},
+  {id:11,name:"Retro-Futurism",nameZh:"复古未来主义",file:"11-retro-futurism.html",type:"general",tags:["retro"],era:"1980s",complexity:"medium",colors:["#0080FF","#FF006E","#00FFFF"],keywords:"Vintage sci-fi, 80s aesthetic, neon glow, CRT scanlines, synthwave",keywordsZh:"复古科幻、80年代美学、霓虹光效、CRT扫描线、合成波"},
+  {id:12,name:"Flat Design",nameZh:"扁平化设计",file:"12-flat-design.html",type:"general",tags:["minimal"],era:"2010s",complexity:"low",colors:["#FF0000","#0066FF","#00CC66"],keywords:"2D, minimalist, bold colors, no shadows, clean lines, icon-heavy",keywordsZh:"二维、极简、鲜明色彩、无阴影、简洁线条、图标化"},
+  {id:13,name:"Skeuomorphism",nameZh:"拟物化设计",file:"13-skeuomorphism.html",type:"general",tags:["retro"],era:"2007-2012",complexity:"high",colors:["#8B4513","#A0522D","#C0C0C0"],keywords:"Realistic, texture, depth, 3D, real-world metaphors, leather, wood",keywordsZh:"写实、纹理、纵深、3D效果、实物隐喻、皮革、木纹"},
+  {id:14,name:"Liquid Glass",nameZh:"液态玻璃",file:"14-liquid-glass.html",type:"general",tags:["soft","tech"],era:"2020s",complexity:"high",colors:["#0080FF","#FF1493","#00FFFF"],keywords:"Flowing glass, morphing, translucent, animated blur, iridescent",keywordsZh:"流动玻璃、形变、半透明、动态模糊、虹彩效果"},
+  {id:15,name:"Motion-Driven",nameZh:"动效驱动设计",file:"15-motion-driven.html",type:"general",tags:["tech"],era:"2020s",complexity:"high",colors:["#3B82F6","#22C55E","#EF4444"],keywords:"Animation-heavy, microinteractions, scroll effects, parallax, page transitions",keywordsZh:"动效丰富、微交互、滚动效果、视差滚动、页面过渡"},
+  {id:16,name:"Micro-interactions",nameZh:"微交互设计",file:"16-micro-interactions.html",type:"general",tags:["tech"],era:"2020s",complexity:"medium",colors:["#22C55E","#EF4444","#F59E0B"],keywords:"Small animations, gesture-based, tactile feedback, subtle, contextual",keywordsZh:"小型动画、手势交互、触觉反馈、微妙、上下文感知"},
+  {id:17,name:"Inclusive Design",nameZh:"包容性设计",file:"17-inclusive-design.html",type:"general",tags:["minimal"],era:"Universal",complexity:"low",colors:["#1E40AF","#16A34A","#DC2626"],keywords:"Accessible, color-blind friendly, high contrast, voice, screen reader",keywordsZh:"无障碍、色觉障碍友好、高对比度、语音支持、屏幕阅读器"},
+  {id:18,name:"Zero Interface",nameZh:"零界面设计",file:"18-zero-interface.html",type:"general",tags:["minimal","tech"],era:"AI-Era",complexity:"low",colors:["#FAFAFA","#F0F0F0","#F5F1E8"],keywords:"Minimal UI, voice-first, gesture-based, AI-driven, invisible controls",keywordsZh:"极简界面、语音优先、手势交互、AI驱动、隐式控件"},
+  {id:19,name:"Soft UI Evolution",nameZh:"柔和界面演进版",file:"19-soft-ui-evolution.html",type:"general",tags:["soft"],era:"2020s",complexity:"medium",colors:["#87CEEB","#FFB6C1","#90EE90"],keywords:"Evolved soft UI, better contrast, modern, subtle depth, hybrid",keywordsZh:"演进柔和界面、增强对比度、现代感、微妙纵深、混合风格"},
+  {id:20,name:"Hero-Centric Design",nameZh:"首屏英雄区设计",file:"20-hero-centric.html",type:"landing",tags:["bold"],era:"2020s",complexity:"medium",colors:["#3B82F6","#FFFFFF","#F3F4F6"],keywords:"Large hero, compelling headline, high-contrast CTA, dramatic visual",keywordsZh:"大尺寸首屏、引人标题、高对比度行动按钮、戏剧化视觉"},
+  {id:21,name:"Conversion-Optimized",nameZh:"转化率优化型",file:"21-conversion-optimized.html",type:"landing",tags:["minimal"],era:"2020s",complexity:"medium",colors:["#3B82F6","#22C55E","#FFFFFF"],keywords:"Form-focused, single CTA, urgency, trust signals, social proof",keywordsZh:"表单聚焦、单一行动按钮、紧迫感、信任标识、社会认同"},
+  {id:22,name:"Feature-Rich Showcase",nameZh:"功能丰富展示型",file:"22-feature-rich-showcase.html",type:"landing",tags:["tech"],era:"2020s",complexity:"medium",colors:["#6366F1","#8B5CF6","#F3F4F6"],keywords:"Multiple features, grid layout, benefit cards, interactive demos",keywordsZh:"多功能展示、网格布局、收益卡片、交互式演示"},
+  {id:23,name:"Minimal & Direct",nameZh:"极简直达型",file:"23-minimal-direct.html",type:"landing",tags:["minimal"],era:"2020s",complexity:"medium",colors:["#000000","#FFFFFF","#F5F5F5"],keywords:"Minimal text, white space, single column, direct, clean typography",keywordsZh:"精简文案、大量留白、单栏布局、直接表达、清爽排版"},
+  {id:24,name:"Social Proof-Focused",nameZh:"社会认同聚焦型",file:"24-social-proof.html",type:"landing",tags:["bold"],era:"2020s",complexity:"medium",colors:["#1E40AF","#22C55E","#F5F5F5"],keywords:"Testimonials, client logos, reviews, success metrics, credibility",keywordsZh:"用户证言、客户Logo、评价、成功指标、可信度展示"},
+  {id:25,name:"Interactive Product Demo",nameZh:"交互式产品演示型",file:"25-interactive-demo.html",type:"landing",tags:["tech"],era:"2020s",complexity:"medium",colors:["#3B82F6","#6366F1","#F3F4F6"],keywords:"Embedded product, video walkthrough, step-by-step, hover reveal",keywordsZh:"内嵌产品、视频导览、分步指引、悬停揭示"},
+  {id:26,name:"Trust & Authority",nameZh:"信任与权威型",file:"26-trust-authority.html",type:"landing",tags:["minimal"],era:"2020s",complexity:"medium",colors:["#1E40AF","#F59E0B","#059669"],keywords:"Certificates, badges, credentials, case studies, security",keywordsZh:"资质证书、徽章认证、专业资质、案例研究、安全保障"},
+  {id:27,name:"Storytelling-Driven",nameZh:"叙事驱动型",file:"27-storytelling-driven.html",type:"landing",tags:["bold"],era:"2020s",complexity:"medium",colors:["#8B5CF6","#F59E0B","#22C55E"],keywords:"Narrative flow, visual story, section transitions, emotional",keywordsZh:"叙事流、视觉故事、章节过渡、情感化设计"},
+  {id:28,name:"Data-Dense Dashboard",nameZh:"高密度数据仪表盘",file:"28-data-dense-dashboard.html",type:"bi",tags:["tech"],era:"2020s",complexity:"medium",colors:["#3B82F6","#22C55E","#EF4444"],keywords:"Multiple charts, KPI cards, data tables, minimal padding, grid",keywordsZh:"多图表、KPI卡片、数据表格、紧凑间距、网格布局"},
+  {id:29,name:"Heat Map Style",nameZh:"热力图风格",file:"29-heatmap.html",type:"bi",tags:["tech"],era:"2020s",complexity:"medium",colors:["#0080FF","#FFFFFF","#FF0000"],keywords:"Color-coded grid, intensity visualization, gradient coloring",keywordsZh:"色码网格、强度可视化、渐变着色"},
+  {id:30,name:"Executive Dashboard",nameZh:"高管仪表盘",file:"30-executive-dashboard.html",type:"bi",tags:["minimal"],era:"2020s",complexity:"medium",colors:["#1E40AF","#22C55E","#EF4444"],keywords:"High-level KPIs, large metrics, summary view, trend indicators",keywordsZh:"高层KPI、大尺寸指标、概览视图、趋势指示器"},
+  {id:31,name:"Real-Time Monitoring",nameZh:"实时监控面板",file:"31-real-time-monitoring.html",type:"bi",tags:["tech"],era:"2020s",complexity:"medium",colors:["#FF0000","#FFA500","#22C55E"],keywords:"Live data, status indicators, alerts, streaming charts",keywordsZh:"实时数据、状态指示器、告警通知、流式图表"},
+  {id:32,name:"Drill-Down Analytics",nameZh:"下钻分析面板",file:"32-drill-down-analytics.html",type:"bi",tags:["tech"],era:"2020s",complexity:"medium",colors:["#3B82F6","#8B5CF6","#F59E0B"],keywords:"Hierarchical data, expandable, drill-down paths, context preservation",keywordsZh:"层级数据、可展开、下钻路径、上下文保持"},
+  {id:33,name:"Comparative Analysis",nameZh:"对比分析面板",file:"33-comparative-analysis.html",type:"bi",tags:["tech"],era:"2020s",complexity:"medium",colors:["#3B82F6","#F97316","#22C55E"],keywords:"Side-by-side, period-over-period, A/B test, benchmarks",keywordsZh:"并排对比、跨期对比、A/B测试、基准指标"},
+  {id:34,name:"Predictive Analytics",nameZh:"预测分析面板",file:"34-predictive-analytics.html",type:"bi",tags:["tech"],era:"2020s",complexity:"medium",colors:["#8B5CF6","#F59E0B","#3B82F6"],keywords:"Forecast lines, confidence intervals, trend projections, anomaly",keywordsZh:"预测线、置信区间、趋势预测、异常检测"},
+  {id:35,name:"User Behavior Analytics",nameZh:"用户行为分析",file:"35-user-behavior.html",type:"bi",tags:["tech"],era:"2020s",complexity:"medium",colors:["#22C55E","#EF4444","#3B82F6"],keywords:"Funnel visualization, user flow, conversion tracking, cohort",keywordsZh:"漏斗可视化、用户路径、转化追踪、同期群分析"},
+  {id:36,name:"Financial Dashboard",nameZh:"财务仪表盘",file:"36-financial-dashboard.html",type:"bi",tags:["minimal"],era:"2020s",complexity:"medium",colors:["#22C55E","#EF4444","#003366"],keywords:"Revenue, profit/loss, budget tracking, cash flow, audit",keywordsZh:"营收、损益、预算追踪、现金流、审计"},
+  {id:37,name:"Sales Intelligence",nameZh:"销售智能面板",file:"37-sales-intelligence.html",type:"bi",tags:["tech"],era:"2020s",complexity:"medium",colors:["#22C55E","#EF4444","#F59E0B"],keywords:"Deal pipeline, sales metrics, quota tracking, forecast",keywordsZh:"交易管道、销售指标、配额追踪、预测"},
+  {id:38,name:"Neubrutalism",nameZh:"新粗野主义",file:"38-neubrutalism.html",type:"general",tags:["bold"],era:"2020s",complexity:"low",colors:["#FFEB3B","#FF5252","#2196F3"],keywords:"Bold borders, black outlines, primary colors, thick shadows, playful",keywordsZh:"粗边框、黑色轮廓、原色、厚重阴影、趣味感"},
+  {id:39,name:"Bento Box Grid",nameZh:"便当盒网格布局",file:"39-bento-box-grid.html",type:"general",tags:["minimal"],era:"Apple",complexity:"low",colors:["#FFFFFF","#F5F5F5","#6366F1"],keywords:"Modular cards, asymmetric grid, Apple-style, dashboard tiles",keywordsZh:"模块化卡片、非对称网格、Apple风格、仪表盘磁贴"},
+  {id:40,name:"Y2K Aesthetic",nameZh:"Y2K千禧美学",file:"40-y2k-aesthetic.html",type:"general",tags:["retro"],era:"Y2K",complexity:"medium",colors:["#FF69B4","#00FFFF","#C0C0C0"],keywords:"Neon pink, chrome, metallic, bubblegum, iridescent, glossy",keywordsZh:"霓虹粉、铬合金、金属质感、泡泡糖色、虹彩、光泽"},
+  {id:41,name:"Cyberpunk UI",nameZh:"赛博朋克界面",file:"41-cyberpunk.html",type:"general",tags:["tech","retro"],era:"Cyberpunk",complexity:"medium",colors:["#00FF00","#FF00FF","#00FFFF"],keywords:"Neon, dark mode, terminal, HUD, sci-fi, glitch, dystopian",keywordsZh:"霓虹、深色模式、终端、HUD、科幻、故障效果、反乌托邦"},
+  {id:42,name:"Organic Biophilic",nameZh:"有机亲生命设计",file:"42-organic-biophilic.html",type:"general",tags:["nature"],era:"Sustainable",complexity:"low",colors:["#228B22","#8B4513","#87CEEB"],keywords:"Nature, organic shapes, green, sustainable, rounded, wellness",keywordsZh:"自然、有机形态、绿色、可持续、圆润、健康"},
+  {id:43,name:"AI-Native UI",nameZh:"AI原生界面",file:"43-ai-native.html",type:"general",tags:["tech"],era:"AI-Era",complexity:"low",colors:["#6366F1","#10B981","#F5F5F5"],keywords:"Chatbot, conversational, voice, assistant, agentic, streaming text",keywordsZh:"聊天机器人、对话式、语音、助手、智能体、流式文本"},
+  {id:44,name:"Memphis Design",nameZh:"孟菲斯设计",file:"44-memphis-design.html",type:"general",tags:["retro","bold"],era:"1980s",complexity:"medium",colors:["#FF71CE","#FFCE5C","#86CCCA"],keywords:"80s, geometric, playful, shapes, patterns, squiggles, neon",keywordsZh:"80年代、几何、趣味、形状、图案、波浪线、霓虹"},
+  {id:45,name:"Vaporwave",nameZh:"蒸汽波",file:"45-vaporwave.html",type:"general",tags:["retro"],era:"80s-90s",complexity:"medium",colors:["#FF71CE","#01CDFE","#B967FF"],keywords:"Synthwave, neon, glitch, nostalgic, sunset gradient, dreamy",keywordsZh:"合成波、霓虹、故障、怀旧、日落渐变、梦幻"},
+  {id:46,name:"Dimensional Layering",nameZh:"维度层叠设计",file:"46-dimensional-layering.html",type:"general",tags:["tech"],era:"2020s",complexity:"medium",colors:["#FFFFFF","#F5F5F5","#6366F1"],keywords:"Depth, overlapping, z-index, layers, shadows, elevation, floating",keywordsZh:"纵深、重叠、z-index、层级、阴影、海拔、悬浮"},
+  {id:47,name:"Exaggerated Minimalism",nameZh:"夸张极简主义",file:"47-exaggerated-minimalism.html",type:"general",tags:["minimal"],era:"2020s",complexity:"low",colors:["#000000","#FFFFFF","#FF0000"],keywords:"Bold minimalism, oversized typography, high contrast, negative space",keywordsZh:"大胆极简、超大字体、高对比度、负空间"},
+  {id:48,name:"Kinetic Typography",nameZh:"动态排版",file:"48-kinetic-typography.html",type:"general",tags:["bold","tech"],era:"2020s",complexity:"high",colors:["#6366F1","#EC4899","#F59E0B"],keywords:"Motion text, animated type, dynamic, typing effect, morphing",keywordsZh:"运动文字、动画字体、动态效果、打字机效果、形变"},
+  {id:49,name:"Parallax Storytelling",nameZh:"视差叙事",file:"49-parallax-storytelling.html",type:"general",tags:["bold"],era:"2020s",complexity:"high",colors:["#8B5CF6","#22C55E","#F59E0B"],keywords:"Scroll-driven, narrative, layered, immersive, cinematic",keywordsZh:"滚动驱动、叙事、层叠、沉浸式、电影感"},
+  {id:50,name:"Swiss Modernism 2.0",nameZh:"瑞士现代主义 2.0",file:"50-swiss-modernism-2.html",type:"general",tags:["minimal"],era:"Swiss+2020s",complexity:"low",colors:["#000000","#FFFFFF","#FF3D00"],keywords:"Grid system, Helvetica, modular, asymmetric, mathematical spacing",keywordsZh:"网格系统、Helvetica、模块化、非对称、数学化间距"},
+  {id:51,name:"HUD / Sci-Fi FUI",nameZh:"HUD科幻界面",file:"51-hud-sci-fi.html",type:"general",tags:["tech"],era:"Sci-Fi",complexity:"high",colors:["#00FFFF","#0080FF","#FF0000"],keywords:"Futuristic, technical, wireframe, neon, data, transparency, iron man",keywordsZh:"未来感、技术感、线框、霓虹、数据、透明、钢铁侠风格"},
+  {id:52,name:"Pixel Art",nameZh:"像素艺术",file:"52-pixel-art.html",type:"general",tags:["retro"],era:"1980s",complexity:"medium",colors:["#FF0000","#00FF00","#0000FF"],keywords:"Retro, 8-bit, 16-bit, gaming, blocky, nostalgic, arcade",keywordsZh:"复古、8位、16位、游戏、像素块、怀旧、街机"},
+  {id:53,name:"Bento Grids",nameZh:"便当网格",file:"53-bento-grids.html",type:"general",tags:["minimal"],era:"Apple/Linear",complexity:"low",colors:["#F5F5F7","#FFFFFF","#1D1D1F"],keywords:"Apple-style, modular, cards, organized, clean, hierarchy",keywordsZh:"Apple风格、模块化、卡片、有序、清爽、层级"},
+  {id:55,name:"Spatial UI (VisionOS)",nameZh:"空间界面（VisionOS）",file:"55-spatial-ui.html",type:"general",tags:["tech","soft"],era:"2024 Spatial",complexity:"high",colors:["#FFFFFF","#5E6AD2","#F5F5F5"],keywords:"Glass, depth, immersion, spatial, translucent, gaze, gesture",keywordsZh:"玻璃、纵深、沉浸、空间感、半透明、注视、手势"},
+  {id:56,name:"E-Ink / Paper",nameZh:"电子墨水/纸质风格",file:"56-eink-paper.html",type:"general",tags:["minimal","nature"],era:"Well-being",complexity:"low",colors:["#FDFBF7","#1A1A1A","#4A4A4A"],keywords:"Paper-like, matte, high contrast, texture, reading, calm",keywordsZh:"类纸张、哑光、高对比度、纹理、阅读、宁静"},
+  {id:57,name:"Gen Z Chaos / Maximalism",nameZh:"Z世代混沌/极繁主义",file:"57-gen-z-chaos.html",type:"general",tags:["bold"],era:"2023+",complexity:"high",colors:["#FF00FF","#00FF00","#FFFF00"],keywords:"Chaos, clutter, stickers, raw, collage, loud, internet culture",keywordsZh:"混沌、杂乱、贴纸、原始、拼贴、张扬、互联网文化"},
+  {id:58,name:"Biomimetic / Organic 2.0",nameZh:"仿生/有机 2.0",file:"58-biomimetic.html",type:"general",tags:["nature"],era:"2024+",complexity:"high",colors:["#FF9999","#00FF41","#00FFFF"],keywords:"Nature-inspired, cellular, fluid, breathing, generative, life-like",keywordsZh:"自然启发、细胞形态、流体、呼吸感、生成式、仿生"},
+  {id:59,name:"Anti-Polish / Raw Aesthetic",nameZh:"反精致/原始美学",file:"59-anti-polish.html",type:"general",tags:["bold","nature"],era:"2025+",complexity:"low",colors:["#FAFAF8","#4A4A4A","#C4A77D"],keywords:"Hand-drawn, collage, scanned textures, unfinished, authentic, sketch",keywordsZh:"手绘、拼贴、扫描纹理、未完成感、真实、草图"},
+  {id:60,name:"Tactile Digital / Deformable UI",nameZh:"触感数字/可变形界面",file:"60-tactile-digital.html",type:"general",tags:["soft"],era:"2025+",complexity:"medium",colors:["#C0C0C0","#FF9ECD","#87CEEB"],keywords:"Jelly buttons, chrome, clay, squishy, deformable, bouncy, tactile",keywordsZh:"果冻按钮、铬合金、黏土、软弹、可变形、弹跳、触感"},
+  {id:61,name:"Nature Distilled",nameZh:"自然提炼",file:"61-nature-distilled.html",type:"general",tags:["nature"],era:"2025+",complexity:"low",colors:["#C67B5C","#D4C4A8","#6B7B3C"],keywords:"Muted earthy, skin tones, wood, soil, sand, terracotta, handmade warmth",keywordsZh:"柔和大地色、肤色调、木质、土壤、沙、赤陶、手作温度"},
+  {id:62,name:"Interactive Cursor Design",nameZh:"交互式光标设计",file:"62-interactive-cursor.html",type:"general",tags:["tech"],era:"2025+",complexity:"medium",colors:["#6366F1","#EC4899","#F59E0B"],keywords:"Custom cursor, cursor as tool, hover effects, magnetic, trail",keywordsZh:"自定义光标、光标即工具、悬停效果、磁吸、轨迹"},
+  {id:63,name:"Voice-First Multimodal",nameZh:"语音优先多模态",file:"63-voice-first.html",type:"general",tags:["tech"],era:"2025+",complexity:"medium",colors:["#6B8FAF","#9B8FBB","#FAFAFA"],keywords:"Voice UI, multimodal, audio, conversational, hands-free, ambient",keywordsZh:"语音界面、多模态、音频、对话式、免触控、环境感知"},
+  {id:64,name:"3D Product Preview",nameZh:"3D产品预览",file:"64-3d-product.html",type:"general",tags:["tech"],era:"2025+",complexity:"high",colors:["#E8E8E8","#3B82F6","#FFFFFF"],keywords:"360 view, rotatable, zoomable, AR preview, product configurator",keywordsZh:"360度视图、可旋转、可缩放、AR预览、产品配置器"},
+  {id:65,name:"Gradient Mesh / Aurora Evolved",nameZh:"渐变网格/极光演进",file:"65-gradient-mesh.html",type:"general",tags:["tech","soft"],era:"2025+",complexity:"medium",colors:["#00FFFF","#FF00FF","#FFFF00"],keywords:"Complex gradients, mesh, multi-color blend, aurora, iridescent",keywordsZh:"复杂渐变、网格、多色融合、极光、虹彩"},
+  {id:66,name:"Editorial Grid / Magazine",nameZh:"编辑网格/杂志风格",file:"66-editorial-grid.html",type:"general",tags:["minimal"],era:"Editorial",complexity:"low",colors:["#000000","#FFFFFF","#8B5CF6"],keywords:"Magazine layout, asymmetric, editorial typography, pull quotes",keywordsZh:"杂志布局、非对称、编辑排版、引用突出"},
+  {id:67,name:"Chromatic Aberration / RGB Split",nameZh:"色差/RGB分离效果",file:"67-chromatic-aberration.html",type:"general",tags:["retro","tech"],era:"Retro-Tech",complexity:"medium",colors:["#FF0000","#00FF00","#0000FF"],keywords:"RGB split, color fringing, glitch, retro tech, VHS, distortion",keywordsZh:"RGB分离、色散、故障、复古科技、VHS、失真"},
+  {id:68,name:"Vintage Analog / Retro Film",nameZh:"复古模拟/胶片风格",file:"68-vintage-analog.html",type:"general",tags:["retro","nature"],era:"70s-90s",complexity:"medium",colors:["#F5E6C8","#D4A574","#4A7B7C"],keywords:"Film grain, VHS, cassette, polaroid, analog warmth, faded colors",keywordsZh:"胶片颗粒、VHS、磁带、宝丽来、模拟温度、褪色"},
+  {id:69,name:"Bauhaus",nameZh:"包豪斯",file:"69-bauhaus.html",type:"mobile",tags:["bold","minimal"],era:"1919 Bauhaus",complexity:"medium",colors:["#D02020","#1040C0","#F0C020"],keywords:"Geometric, constructivist, primary colors, hard shadow, bold, mechanical",keywordsZh:"几何、构成主义、三原色、硬阴影、大胆、机械感"},
+  {id:70,name:"Minimalist Monochrome",nameZh:"极简单色",file:"70-minimalist-monochrome.html",type:"mobile",tags:["minimal"],era:"Editorial Mobile",complexity:"medium",colors:["#000000","#FFFFFF","#525252"],keywords:"Monochrome, black white, editorial, austere, typographic, sharp",keywordsZh:"单色、黑白、编辑风格、简约、排版主导、锐利"},
+  {id:71,name:"Modern Dark (Cinema)",nameZh:"现代深色（电影感）",file:"71-modern-dark-cinema.html",type:"mobile",tags:["tech"],era:"Cinematic",complexity:"high",colors:["#020203","#5E6AD2","#EDEDEF"],keywords:"Dark mode, cinematic, ambient light, glassmorphism, deep black, glow",keywordsZh:"深色模式、电影感、环境光、毛玻璃、深黑、辉光"},
+  {id:72,name:"SaaS Mobile",nameZh:"SaaS移动端",file:"72-saas-mobile.html",type:"mobile",tags:["tech"],era:"SaaS Mobile",complexity:"medium",colors:["#0052FF","#4D7CFF","#FAFAFA"],keywords:"SaaS, electric blue, gradient, fintech, spring animation, boutique",keywordsZh:"SaaS、电光蓝、渐变、金融科技、弹簧动画、精品感"},
+  {id:73,name:"Terminal CLI",nameZh:"终端命令行",file:"73-terminal-cli.html",type:"mobile",tags:["tech","retro"],era:"Retro-Future",complexity:"medium",colors:["#33FF00","#050505","#FFB000"],keywords:"Terminal, cli, matrix green, monospace, hacker, ascii, command line",keywordsZh:"终端、命令行、矩阵绿、等宽字体、黑客、ASCII、命令行界面"},
+  {id:74,name:"Kinetic Brutalism",nameZh:"动态粗野主义",file:"74-kinetic-brutalism.html",type:"mobile",tags:["bold"],era:"Brutalism",complexity:"high",colors:["#DFE104","#09090B","#FAFAFA"],keywords:"Kinetic, brutalism, marquee, acid yellow, uppercase, oversized, aggressive",keywordsZh:"动态、粗野、跑马灯、酸性黄、大写、超大字号、侵略性"},
+  {id:75,name:"Flat Design Mobile",nameZh:"扁平化移动端",file:"75-flat-mobile.html",type:"mobile",tags:["minimal"],era:"Flat Mobile",complexity:"low",colors:["#3B82F6","#10B981","#FFFFFF"],keywords:"Flat, 2D, no shadow, color blocking, geometric, bold, touch-first",keywordsZh:"扁平、二维、无阴影、色块分割、几何、大胆、触控优先"},
+  {id:76,name:"Material You (MD3)",nameZh:"Material You（MD3）",file:"76-material-you.html",type:"mobile",tags:["soft"],era:"Material 3",complexity:"medium",colors:["#6750A4","#E8DEF8","#FFFBFE"],keywords:"Material design 3, tonal surfaces, pills, soft curves, android",keywordsZh:"Material设计3、色调表面、药丸形、柔和曲线、安卓风格"},
+  {id:77,name:"Neo Brutalism (Mobile)",nameZh:"新粗野主义（移动端）",file:"77-neo-brutalism-mobile.html",type:"mobile",tags:["bold"],era:"Neo-Brutalism",complexity:"high",colors:["#FF6B6B","#FFD93D","#FFFDF5"],keywords:"Neo brutalism, pop art, stickers, thick borders, cream, hard shadow",keywordsZh:"新粗野、波普艺术、贴纸、粗边框、奶油色、硬阴影"},
+  {id:78,name:"Bold Typography (Mobile Poster)",nameZh:"粗体排版（移动海报）",file:"78-bold-typography.html",type:"mobile",tags:["bold"],era:"Editorial 2020s",complexity:"medium",colors:["#0A0A0A","#FAFAFA","#FF3D00"],keywords:"Bold typography, editorial, poster, vermillion, edge-to-edge type",keywordsZh:"粗体排版、编辑风格、海报、朱红、满版文字"},
+  {id:79,name:"Academia (Scholarly)",nameZh:"学院风（学术风格）",file:"79-academia.html",type:"mobile",tags:["retro","nature"],era:"Scholarly",complexity:"high",colors:["#1C1714","#E8DFD4","#C9A962"],keywords:"Academia, library, mahogany, parchment, brass, crimson, scholarly",keywordsZh:"学院、图书馆、红木、羊皮纸、黄铜、深红、学术"},
+  {id:80,name:"Cyberpunk Mobile HUD",nameZh:"赛博朋克移动HUD",file:"80-cyberpunk-mobile.html",type:"mobile",tags:["tech"],era:"Cyber-Noir",complexity:"high",colors:["#0A0A0F","#00FF88","#FF00FF"],keywords:"Cyberpunk, neon, glitch, chamfered, scanlines, crt, hud, matrix",keywordsZh:"赛博朋克、霓虹、故障、倒角、扫描线、CRT、HUD、矩阵"},
+  {id:81,name:"Bitcoin DeFi",nameZh:"比特币DeFi",file:"81-bitcoin-defi.html",type:"mobile",tags:["tech"],era:"Fintech/Web3",complexity:"high",colors:["#F7931A","#EA580C","#FFD600"],keywords:"Web3, bitcoin, defi, digital gold, wallet, orange, glassmorphism",keywordsZh:"Web3、比特币、去中心化金融、数字黄金、钱包、橙色、毛玻璃"},
+  {id:82,name:"Claymorphism (Mobile)",nameZh:"黏土拟态（移动端）",file:"82-claymorphism-mobile.html",type:"mobile",tags:["soft"],era:"Consumer",complexity:"high",colors:["#7C3AED","#DB2777","#F4F1FA"],keywords:"Claymorphism, clay, 3d, soft, bubbly, candy, playful, squish",keywordsZh:"黏土拟态、黏土、3D、柔和、泡泡、糖果色、趣味、软弹"},
+  {id:83,name:"Enterprise SaaS (Mobile)",nameZh:"企业级SaaS（移动端）",file:"83-enterprise-saas.html",type:"mobile",tags:["tech"],era:"Enterprise",complexity:"high",colors:["#4F46E5","#7C3AED","#F8FAFC"],keywords:"Enterprise, saas, b2b, professional, indigo, gradient, polished",keywordsZh:"企业级、SaaS、B2B、专业、靛蓝、渐变、精致"},
+  {id:84,name:"Sketch Hand-Drawn",nameZh:"手绘草图风格",file:"84-sketch-hand-drawn.html",type:"mobile",tags:["nature","bold"],era:"Creative",complexity:"medium",colors:["#FF4D4D","#2D2D2D","#FDFBF7"],keywords:"Sketch, hand-drawn, handwriting, wobbly, imperfect, paper, kalam",keywordsZh:"草图、手绘、手写、摇晃、不完美、纸张、Kalam字体"},
+  {id:85,name:"Neumorphism (Mobile)",nameZh:"新拟物化（移动端）",file:"85-neumorphism-mobile.html",type:"mobile",tags:["soft"],era:"Tools/Lifestyle",complexity:"medium",colors:["#6C63FF","#E0E5EC","#D1D9E6"],keywords:"Neumorphism, soft ui, dual shadow, extruded, inset, ceramic, depth",keywordsZh:"新拟物化、柔和界面、双重阴影、凸起、内凹、陶瓷感、纵深"},
+];
+
+// ===== STATE =====
+let currentFilter = 'general';
+let currentSearch = '';
+let selectedStyle = null;
+let currentVp = 'full';
+
+// ===== RENDER SIDEBAR LIST =====
+function renderList() {
+  const list = document.getElementById('styleList');
+  const info = document.getElementById('resultInfo');
+
+  const filtered = STYLES.filter(s => {
+    const mf = s.type === currentFilter || s.tags.includes(currentFilter);
+    const ms = !currentSearch || s.name.toLowerCase().includes(currentSearch) || s.era.toLowerCase().includes(currentSearch);
+    return mf && ms;
+  });
+
+  info.textContent = filtered.length + ' style' + (filtered.length !== 1 ? 's' : '');
+
+  list.innerHTML = filtered.map(s => {
+    const isActive = selectedStyle && selectedStyle.id === s.id;
+    const grad = s.colors.length >= 3
+      ? `background:linear-gradient(135deg,${s.colors[0]},${s.colors[1]},${s.colors[2]})`
+      : `background:${s.colors[0]}`;
+    const textCol = ['#FFFFFF','#F5F5F7','#F5F5F5','#FFFFFF','#FDFBF7','#FAFAFA','#FAFAF8','#F4F1FA','#E8DFD4','#F5E6C8','#FFFDF5','#F0C020'].some(c => s.colors[0].toUpperCase() === c.toUpperCase())
+      ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.9)';
+    return `<div class="style-item ${isActive ? 'active' : ''}" data-id="${s.id}">
+      <div class="style-item-color" style="${grad}">
+        <span style="color:${textCol};font-size:11px">${s.id}</span>
+      </div>
+      <div class="style-item-info">
+        <div class="style-item-name">${s.name} <span class="name-zh">（${s.nameZh}）</span></div>
+        <div class="style-item-meta">
+          <span class="type-badge ${s.type}">${s.type === 'bi' ? 'BI' : s.type}</span>
+          <span>${s.era}</span>
+        </div>
+      </div>
+      <button class="go-btn" onclick="event.stopPropagation();goToStyle(${s.id})">Open →</button>
+    </div>`;
+  }).join('');
+
+  // Click to preview
+  list.querySelectorAll('.style-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const id = parseInt(item.dataset.id);
+      previewStyle(id);
+    });
+  });
+}
+
+// ===== PREVIEW =====
+function previewStyle(id) {
+  const style = STYLES.find(s => s.id === id);
+  if (!style) return;
+  selectedStyle = style;
+
+  // Update active state in list
+  document.querySelectorAll('.style-item').forEach(item => {
+    item.classList.toggle('active', parseInt(item.dataset.id) === id);
+  });
+
+  // Show preview
+  const empty = document.getElementById('previewEmpty');
+  const frame = document.getElementById('previewFrame');
+  const loading = document.getElementById('previewLoading');
+  const title = document.getElementById('previewTitle');
+  const iframe = document.getElementById('previewIframe');
+
+  empty.style.display = 'none';
+  frame.style.display = '';
+  loading.classList.add('show');
+  title.textContent = '#' + style.id + ' ' + style.name;
+
+  iframe.src = style.file;
+
+  // Scroll active item into view
+  const activeItem = document.querySelector('.style-item.active');
+  if (activeItem) activeItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+function onIframeLoad() {
+  document.getElementById('previewLoading').classList.remove('show');
+}
+
+// ===== NAVIGATE TO FULL PAGE =====
+function goToStyle(id) {
+  const style = STYLES.find(s => s.id === id);
+  if (style) window.location.href = style.file;
+}
+
+// ===== VIEWPORT SWITCHER =====
+document.getElementById('vpBtns').addEventListener('click', (e) => {
+  const btn = e.target.closest('.vp-btn');
+  if (!btn) return;
+  document.querySelectorAll('.vp-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentVp = btn.dataset.size;
+  const frame = document.getElementById('previewFrame');
+  frame.className = 'preview-frame';
+  if (currentVp !== 'full') frame.classList.add('vp-' + currentVp);
+});
+
+// ===== FILTER =====
+document.getElementById('filterRow').addEventListener('click', (e) => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = btn.dataset.filter;
+  renderList();
+});
+
+// ===== SEARCH =====
+document.getElementById('search').addEventListener('input', (e) => {
+  currentSearch = e.target.value.toLowerCase().trim();
+  renderList();
+});
+
+// ===== INIT =====
+renderList();
+</script>
+</body>
+</html>

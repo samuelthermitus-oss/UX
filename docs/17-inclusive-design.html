@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inclusive Design - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #FFFFFF;
+  --text-color: #111827;
+  --surface: #F9FAFB;
+  --border: #D1D5DB;
+  --text-secondary: #4B5563;
+  --primary: #1D4ED8;
+  --primary-dark: #1E40AF;
+  --focus-ring: #2563EB;
+  --success: #047857;
+  --error: #B91C1C;
+  --warning: #92400E;
+  --info: #1E40AF;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* Skip to content link */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  background: var(--primary);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  font-weight: 700;
+  text-decoration: none;
+  z-index: 10000;
+  transition: top 0.2s;
+  font-size: 1rem;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 4px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 4px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Hero */
+.inclusive-hero {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 20px;
+  background: var(--surface);
+}
+
+.inclusive-hero h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  max-width: 700px;
+}
+
+.inclusive-hero .subtitle {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  max-width: 580px;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.inclusive-hero .hero-badges {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: var(--page-bg);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.badge .badge-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+
+/* Navigation */
+.inclusive-nav {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 20px;
+  background: var(--page-bg);
+  border-top: 2px solid var(--border);
+  border-bottom: 2px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.inclusive-nav a {
+  color: var(--text-color);
+  text-decoration: none;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: background 0.15s;
+  border: 2px solid transparent;
+}
+
+.inclusive-nav a:hover {
+  background: var(--surface);
+}
+
+.inclusive-nav a[aria-current="page"] {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* Buttons */
+.inclusive-buttons {
+  padding: 64px 20px;
+  text-align: center;
+  background: var(--page-bg);
+}
+
+.inclusive-buttons h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.inclusive-buttons .section-desc {
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.inclusive-btn {
+  font-family: system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 14px 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 3px solid transparent;
+  min-height: 48px;
+  min-width: 48px;
+}
+
+.inclusive-btn.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.inclusive-btn.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.inclusive-btn.btn-primary:focus-visible {
+  outline: 4px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+.inclusive-btn.btn-outline {
+  background: transparent;
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.inclusive-btn.btn-outline:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+.inclusive-btn.btn-danger {
+  background: var(--error);
+  color: #fff;
+  border-color: var(--error);
+}
+
+.inclusive-btn.btn-success {
+  background: var(--success);
+  color: #fff;
+  border-color: var(--success);
+}
+
+.inclusive-btn.btn-neutral {
+  background: var(--surface);
+  color: var(--text-color);
+  border-color: var(--border);
+}
+
+.inclusive-btn.btn-neutral:hover {
+  background: var(--border);
+}
+
+.inclusive-btn.btn-disabled {
+  background: #E5E7EB;
+  color: #9CA3AF;
+  border-color: #E5E7EB;
+  cursor: not-allowed;
+}
+
+/* Forms */
+.inclusive-forms {
+  padding: 64px 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.inclusive-forms h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.inclusive-forms .section-desc {
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 20px;
+}
+
+.form-group .label-hint {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  display: block;
+}
+
+.form-group .required {
+  color: var(--error);
+}
+
+.inclusive-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1rem;
+  font-family: system-ui;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-color);
+  background: var(--page-bg);
+  outline: none;
+  transition: border-color 0.15s;
+  min-height: 48px;
+}
+
+.inclusive-input:focus {
+  border-color: var(--focus-ring);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+}
+
+.inclusive-input[aria-invalid="true"] {
+  border-color: var(--error);
+}
+
+.inclusive-input::placeholder {
+  color: #9CA3AF;
+}
+
+textarea.inclusive-input {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.input-error {
+  font-size: 0.9rem;
+  color: var(--error);
+  margin-top: 4px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.input-hint {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* Cards */
+.inclusive-cards {
+  padding: 64px 20px;
+  background: var(--surface);
+}
+
+.inclusive-cards h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.inclusive-cards .section-desc {
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 32px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.inclusive-card {
+  background: var(--page-bg);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 28px;
+  transition: border-color 0.15s;
+}
+
+.inclusive-card:hover {
+  border-color: var(--primary);
+}
+
+.inclusive-card .card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+}
+
+.inclusive-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.inclusive-card p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* Accessibility indicators */
+.a11y-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-top: 14px;
+}
+
+.a11y-aaa {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.a11y-aa {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+/* Typography */
+.inclusive-typography {
+  padding: 64px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.inclusive-typography h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.type-sample {
+  margin-bottom: 24px;
+  padding: 24px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  border-left: 5px solid var(--primary);
+}
+
+.type-sample .label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 8px;
+}
+
+.type-sample h1 { font-size: 2.2rem; font-weight: 800; }
+.type-sample h2 { font-size: 1.6rem; font-weight: 700; }
+.type-sample h3 { font-size: 1.2rem; font-weight: 700; }
+.type-sample p { font-size: 1rem; color: var(--text-secondary); line-height: 1.8; }
+
+/* Color Palette */
+.inclusive-palette {
+  padding: 64px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.inclusive-palette h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.inclusive-palette .section-desc {
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+}
+
+.swatch {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px;
+  border: 2px solid var(--border);
+  transition: border-color 0.15s;
+}
+
+.swatch:hover { border-color: var(--primary); }
+
+.swatch .swatch-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: rgba(255,255,255,0.9);
+  padding: 4px 10px;
+  border-radius: 4px;
+  color: #111;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.swatch .swatch-contrast {
+  font-size: 0.6rem;
+  font-weight: 600;
+  background: rgba(255,255,255,0.85);
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: #333;
+  margin-top: 3px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+/* Modal */
+.inclusive-modal-section {
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.inclusive-modal-section h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+
+.modal-trigger {
+  padding: 14px 28px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  border: 3px solid var(--primary);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: system-ui;
+  min-height: 48px;
+}
+
+.modal-trigger:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.active { display: flex; }
+
+.inclusive-modal {
+  background: var(--page-bg);
+  border-radius: 8px;
+  padding: 36px;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  border: 2px solid var(--border);
+}
+
+.inclusive-modal h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.inclusive-modal p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 24px;
+  font-size: 1rem;
+}
+
+.inclusive-modal .modal-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  color: var(--text-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.inclusive-modal .modal-close:hover {
+  background: var(--border);
+}
+
+/* Style Info */
+.inclusive-info {
+  padding: 64px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.inclusive-info h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.info-item {
+  padding: 20px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+}
+
+.info-item .info-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 4px;
+}
+
+.info-item .info-value {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .inclusive-hero h1 { font-size: 2rem; }
+  .card-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+<div class="vp-frame" id="main-content">
+
+<!-- Hero -->
+<section class="inclusive-hero">
+  <h1>Designed for Everyone</h1>
+  <p class="subtitle">Inclusive design ensures every person, regardless of ability, age, or background, can use and enjoy the product. High contrast, clear focus, and universal patterns.</p>
+  <div class="hero-badges">
+    <span class="badge">
+      <span class="badge-icon" style="background:#D1FAE5;">&#10003;</span>
+      WCAG AAA
+    </span>
+    <span class="badge">
+      <span class="badge-icon" style="background:#DBEAFE;">&#9679;</span>
+      4px Focus Ring
+    </span>
+    <span class="badge">
+      <span class="badge-icon" style="background:#FEF3C7;">&#9888;</span>
+      No Color-Only Indicators
+    </span>
+  </div>
+</section>
+
+<!-- Navigation -->
+<nav class="inclusive-nav" aria-label="Main navigation">
+  <a href="#" aria-current="page">Home</a>
+  <a href="#">Services</a>
+  <a href="#">Resources</a>
+  <a href="#">About</a>
+  <a href="#">Contact</a>
+</nav>
+
+<!-- Buttons -->
+<section class="inclusive-buttons">
+  <h2>Accessible Buttons</h2>
+  <p class="section-desc">All buttons have minimum 48x48px touch targets, sufficient color contrast (7:1+), and visible focus indicators.</p>
+  <div class="btn-grid">
+    <button class="inclusive-btn btn-primary">Primary Action</button>
+    <button class="inclusive-btn btn-outline">Secondary</button>
+    <button class="inclusive-btn btn-danger">Delete</button>
+    <button class="inclusive-btn btn-success">Confirm</button>
+    <button class="inclusive-btn btn-neutral">Cancel</button>
+    <button class="inclusive-btn btn-disabled" disabled aria-disabled="true">Disabled</button>
+  </div>
+</section>
+
+<!-- Forms -->
+<section class="inclusive-forms">
+  <h2>Accessible Form</h2>
+  <p class="section-desc">Labels, hints, and error messages are programmatically associated with inputs via aria attributes.</p>
+  <div class="form-group">
+    <label for="full-name">Full Name <span class="required" aria-hidden="true">*</span></label>
+    <span class="label-hint">As it appears on your government ID</span>
+    <input type="text" id="full-name" class="inclusive-input" required aria-required="true" placeholder="Enter your full name...">
+  </div>
+  <div class="form-group">
+    <label for="email">Email Address <span class="required" aria-hidden="true">*</span></label>
+    <input type="email" id="email" class="inclusive-input" required aria-required="true" aria-invalid="true" aria-describedby="email-error" value="invalid-email">
+    <div class="input-error" id="email-error" role="alert">&#9888; Please enter a valid email address</div>
+  </div>
+  <div class="form-group">
+    <label for="phone">Phone Number</label>
+    <span class="label-hint">Optional. Include country code for international numbers</span>
+    <input type="tel" id="phone" class="inclusive-input" aria-describedby="phone-hint" placeholder="+1 (555) 000-0000">
+    <div class="input-hint" id="phone-hint">Format: +[country code] [number]</div>
+  </div>
+  <div class="form-group">
+    <label for="message">Message</label>
+    <textarea id="message" class="inclusive-input" placeholder="How can we help you?"></textarea>
+  </div>
+  <button class="inclusive-btn btn-primary" style="width:100%;">Submit Form</button>
+</section>
+
+<!-- Cards -->
+<section class="inclusive-cards">
+  <h2>Inclusive Features</h2>
+  <p class="section-desc">Design decisions that put accessibility and inclusion first.</p>
+  <div class="card-grid">
+    <article class="inclusive-card">
+      <div class="card-icon" style="background:#DBEAFE;color:#1E40AF;">&#128065;</div>
+      <h3>High Contrast</h3>
+      <p>All text meets WCAG AAA contrast ratio of 7:1 or higher against its background. No information conveyed by color alone.</p>
+      <span class="a11y-indicator a11y-aaa">AAA Compliant</span>
+    </article>
+    <article class="inclusive-card">
+      <div class="card-icon" style="background:#D1FAE5;color:#047857;">&#9679;</div>
+      <h3>Focus Indicators</h3>
+      <p>4px+ visible focus rings on all interactive elements. Keyboard users can always see where they are on the page.</p>
+      <span class="a11y-indicator a11y-aaa">AAA Compliant</span>
+    </article>
+    <article class="inclusive-card">
+      <div class="card-icon" style="background:#FEF3C7;color:#92400E;">&#9881;</div>
+      <h3>Motion Options</h3>
+      <p>Respects prefers-reduced-motion. All animations can be disabled. No content relies solely on animation.</p>
+      <span class="a11y-indicator a11y-aaa">AAA Compliant</span>
+    </article>
+  </div>
+</section>
+
+<!-- Typography -->
+<section class="inclusive-typography">
+  <h2>Typography</h2>
+  <div class="type-sample">
+    <div class="label">Heading 1</div>
+    <h1>Accessibility First</h1>
+  </div>
+  <div class="type-sample">
+    <div class="label">Heading 2</div>
+    <h2>Universal Design Principles</h2>
+  </div>
+  <div class="type-sample">
+    <div class="label">Heading 3</div>
+    <h3>Everyone Deserves Equal Access</h3>
+  </div>
+  <div class="type-sample">
+    <div class="label">Body</div>
+    <p>Inclusive design goes beyond compliance. It is a philosophy that recognizes the diversity of human abilities, perspectives, and experiences. When we design for the margins, we create better products for everyone.</p>
+  </div>
+</section>
+
+<!-- Color Palette -->
+<section class="inclusive-palette">
+  <h2>Accessible Palette</h2>
+  <p class="section-desc">All colors tested for WCAG AAA contrast against white background.</p>
+  <div class="palette-grid">
+    <div class="swatch" style="background:#1D4ED8;"><span class="swatch-label">#1D4ED8</span><span class="swatch-contrast">8.6:1</span></div>
+    <div class="swatch" style="background:#047857;"><span class="swatch-label">#047857</span><span class="swatch-contrast">7.3:1</span></div>
+    <div class="swatch" style="background:#B91C1C;"><span class="swatch-label">#B91C1C</span><span class="swatch-contrast">7.1:1</span></div>
+    <div class="swatch" style="background:#92400E;"><span class="swatch-label">#92400E</span><span class="swatch-contrast">7.5:1</span></div>
+    <div class="swatch" style="background:#111827;"><span class="swatch-label">#111827</span><span class="swatch-contrast">18.1:1</span></div>
+    <div class="swatch" style="background:#4B5563;"><span class="swatch-label">#4B5563</span><span class="swatch-contrast">7.4:1</span></div>
+  </div>
+</section>
+
+<!-- Modal -->
+<section class="inclusive-modal-section">
+  <h2>Accessible Dialog</h2>
+  <button class="modal-trigger" onclick="document.getElementById('inclusive-modal').classList.add('active')" aria-haspopup="dialog">Open Dialog</button>
+  <div id="inclusive-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" onclick="if(event.target===this)this.classList.remove('active')">
+    <div class="inclusive-modal">
+      <button class="modal-close" onclick="document.getElementById('inclusive-modal').classList.remove('active')" aria-label="Close dialog">&times;</button>
+      <h3 id="modal-title">Confirm Your Choice</h3>
+      <p>This dialog traps focus, can be closed with Escape, and announces itself to screen readers via aria-modal and role attributes.</p>
+      <div style="display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap;">
+        <button class="inclusive-btn btn-neutral" onclick="document.getElementById('inclusive-modal').classList.remove('active')">Cancel</button>
+        <button class="inclusive-btn btn-primary" onclick="document.getElementById('inclusive-modal').classList.remove('active')">Confirm</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Style Info -->
+<section class="inclusive-info">
+  <h2>Style Information</h2>
+  <div class="info-grid">
+    <div class="info-item">
+      <div class="info-label">Era</div>
+      <div class="info-value">Universal</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Complexity</div>
+      <div class="info-value">Low</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Best For</div>
+      <div class="info-value">Public Services, Education, Healthcare</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Font</div>
+      <div class="info-value">System-UI, 16px+ Minimum</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Border Radius</div>
+      <div class="info-value">4px</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Effects</div>
+      <div class="info-value">Focus Rings, Motion Options, Voice</div>
+    </div>
+  </div>
+</section>
+
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

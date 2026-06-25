@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sketch Hand-Drawn - Mobile Style Showcase</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    :root {
+      --page-bg: #FDFBF7;
+      --text-color: #2D2D2D;
+      --red: #FF4D4D;
+      --pencil: #2D2D2D;
+      --paper: #FDFBF7;
+      --blue: #2D5DA1;
+      --postit: #FFF9C4;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--paper);
+      color: var(--pencil);
+      font-family: 'Segoe Print', 'Comic Sans MS', 'Patrick Hand', system-ui, sans-serif;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    /* Paper texture */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* === HERO === */
+    .sketch-hero {
+      min-height: 400px;
+      background: var(--paper);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 60px 24px;
+      position: relative;
+      border-bottom: 3px dashed var(--pencil);
+    }
+    .sketch-hero .tape {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-2deg);
+      width: 100px;
+      height: 30px;
+      background: rgba(255,249,196,0.8);
+      border: 1px solid rgba(45,45,45,0.1);
+      z-index: 2;
+    }
+    .sketch-hero .doodle-circle {
+      position: absolute;
+      top: 30px; right: 30px;
+      width: 60px; height: 60px;
+      border: 3px solid var(--red);
+      border-radius: 50% 48% 52% 47%;
+      opacity: 0.4;
+      transform: rotate(15deg);
+    }
+    .sketch-hero .doodle-star {
+      position: absolute;
+      bottom: 40px; left: 30px;
+      font-size: 40px;
+      opacity: 0.2;
+      transform: rotate(-10deg);
+    }
+    .sketch-hero h1 {
+      font-size: 40px;
+      font-weight: 400;
+      line-height: 1.2;
+      transform: rotate(-1deg);
+      margin-bottom: 20px;
+    }
+    .sketch-hero h1 .red { color: var(--red); }
+    .sketch-hero h1 .blue { color: var(--blue); }
+    .sketch-hero p {
+      font-size: 15px;
+      color: rgba(45,45,45,0.6);
+      margin-top: 12px;
+      margin-bottom: 20px;
+      transform: rotate(0.5deg);
+    }
+
+    /* === MOBILE NAV === */
+    .mobile-nav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: var(--paper);
+      border-top: 3px dashed var(--pencil);
+      padding: 10px 0 14px;
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+    }
+    .mobile-nav .tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--pencil);
+      font-size: 11px;
+      text-decoration: none;
+      cursor: pointer;
+      opacity: 0.4;
+    }
+    .mobile-nav .tab.active { opacity: 1; color: var(--red); }
+    .mobile-nav .tab .tab-icon { font-size: 20px; }
+
+    /* === SECTIONS === */
+    .section {
+      position: relative;
+      z-index: 1;
+      padding: 40px 20px;
+      border-bottom: 3px dashed rgba(45,45,45,0.2);
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--blue);
+      margin-bottom: 24px;
+      transform: rotate(-0.5deg);
+      display: inline-block;
+    }
+
+    /* === BUTTONS === */
+    .sketch-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .sketch-btn {
+      display: block;
+      width: 100%;
+      padding: 14px 20px;
+      font-family: 'Segoe Print', 'Comic Sans MS', system-ui, sans-serif;
+      font-size: 15px;
+      border: 3px solid var(--pencil);
+      border-radius: 15px 25px 20px 10px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: transform 150ms;
+      position: relative;
+    }
+    .sketch-btn:active { transform: scale(0.96) rotate(1deg); }
+    .sketch-btn.primary {
+      background: var(--red);
+      color: #fff;
+      box-shadow: 4px 4px 0px var(--pencil);
+    }
+    .sketch-btn.secondary {
+      background: var(--postit);
+      color: var(--pencil);
+      box-shadow: 3px 3px 0px var(--pencil);
+      transform: rotate(-0.5deg);
+    }
+    .sketch-btn.ghost {
+      background: transparent;
+      color: var(--blue);
+      border-color: var(--blue);
+      border-style: dashed;
+    }
+    .sketch-btn.disabled {
+      background: #E8E4DC;
+      color: #AAA;
+      border-color: #CCC;
+      border-style: dotted;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* === FORMS === */
+    .sketch-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .sketch-field label {
+      display: block;
+      font-size: 13px;
+      color: var(--blue);
+      margin-bottom: 4px;
+    }
+    .sketch-field input,
+    .sketch-field textarea,
+    .sketch-field select {
+      width: 100%;
+      padding: 12px 14px;
+      font-family: 'Segoe Print', 'Comic Sans MS', system-ui, sans-serif;
+      font-size: 15px;
+      border: 2px solid var(--pencil);
+      border-radius: 15px 25px 20px 10px;
+      background: var(--paper);
+      color: var(--pencil);
+      outline: none;
+      -webkit-appearance: none;
+      transform: rotate(-0.3deg);
+    }
+    .sketch-field input:focus,
+    .sketch-field textarea:focus,
+    .sketch-field select:focus {
+      border-color: var(--red);
+      background: rgba(255,249,196,0.3);
+    }
+    .sketch-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      transform: rotate(0.3deg);
+    }
+    .sketch-checkbox input[type="checkbox"],
+    .sketch-checkbox input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--red);
+      cursor: pointer;
+    }
+
+    /* === CARDS === */
+    .sketch-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .sketch-card {
+      background: var(--paper);
+      border: 3px solid var(--pencil);
+      border-radius: 15px 25px 20px 10px;
+      padding: 20px;
+      box-shadow: 4px 4px 0px var(--pencil);
+      position: relative;
+    }
+    .sketch-card:nth-child(2) { transform: rotate(-1.5deg); }
+    .sketch-card:nth-child(3) { transform: rotate(1deg); }
+    .sketch-card .card-tape {
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      width: 60px;
+      height: 20px;
+      background: rgba(255,249,196,0.8);
+      border: 1px solid rgba(45,45,45,0.1);
+      transform: rotate(-5deg);
+    }
+    .sketch-card h3 {
+      font-size: 18px;
+      margin-bottom: 6px;
+      margin-top: 4px;
+    }
+    .sketch-card p {
+      font-size: 13px;
+      color: rgba(45,45,45,0.6);
+      line-height: 1.5;
+    }
+    .sketch-card .card-tag {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 11px;
+      padding: 4px 10px;
+      border: 2px dashed var(--blue);
+      color: var(--blue);
+      border-radius: 10px 15px 12px 8px;
+      transform: rotate(-1deg);
+    }
+
+    /* === TYPOGRAPHY === */
+    .sketch-type {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .sketch-type .type-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 2px dashed rgba(45,45,45,0.15);
+    }
+    .sketch-type .type-label {
+      font-size: 10px;
+      color: var(--red);
+      min-width: 28px;
+      flex-shrink: 0;
+      transform: rotate(-5deg);
+    }
+    .sketch-type h1 { font-size: 40px; line-height: 1; }
+    .sketch-type h2 { font-size: 32px; line-height: 1; }
+    .sketch-type h3 { font-size: 24px; line-height: 1; }
+    .sketch-type h4 { font-size: 20px; line-height: 1; }
+    .sketch-type h5 { font-size: 16px; line-height: 1; }
+    .sketch-type h6 { font-size: 12px; line-height: 1; color: rgba(45,45,45,0.5); }
+
+    /* === COLOR SWATCHES === */
+    .sketch-swatches {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .sketch-swatch {
+      border: 3px solid var(--pencil);
+      border-radius: 15px 25px 20px 10px;
+      overflow: hidden;
+      box-shadow: 3px 3px 0px var(--pencil);
+    }
+    .sketch-swatch .swatch-color { height: 56px; }
+    .sketch-swatch .swatch-info { padding: 8px 10px; background: var(--paper); }
+    .sketch-swatch .swatch-name { font-size: 12px; }
+    .sketch-swatch .swatch-hex { font-size: 10px; opacity: 0.5; }
+
+    /* === MODAL === */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(45,45,45,0.4);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-box {
+      background: var(--paper);
+      border: 3px solid var(--pencil);
+      border-radius: 15px 25px 20px 10px;
+      box-shadow: 8px 8px 0px var(--pencil);
+      padding: 28px 24px;
+      width: 100%;
+      max-width: 360px;
+      transform: rotate(-0.5deg);
+    }
+    .modal-box h3 {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+    .modal-box p {
+      font-size: 14px;
+      color: rgba(45,45,45,0.6);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .modal-close {
+      background: var(--red);
+      color: #fff;
+      border: 3px solid var(--pencil);
+      padding: 12px 24px;
+      border-radius: 15px 25px 20px 10px;
+      font-family: 'Segoe Print', 'Comic Sans MS', system-ui, sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 3px 3px 0px var(--pencil);
+    }
+
+    /* === STYLE INFO === */
+    .style-info {
+      background: var(--postit);
+      padding: 40px 20px;
+      border-top: 3px dashed var(--pencil);
+      transform: rotate(-0.3deg);
+     text-align: center;}
+    .style-info h3 {
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+    .style-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .style-info-item {
+      background: var(--paper);
+      border: 2px solid var(--pencil);
+      border-radius: 10px 15px 12px 8px;
+      padding: 12px;
+      transform: rotate(0.5deg);
+    }
+    .style-info-item .info-label {
+      font-size: 10px;
+      color: var(--blue);
+      margin-bottom: 4px;
+    }
+    .style-info-item .info-value {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* Jiggle on error */
+    @keyframes jiggle {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-2deg); }
+      75% { transform: rotate(2deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="vp-bar">
+    <span class="vp-label">Viewpoint:</span>
+    <button class="vp-btn" data-size="1920">1920</button>
+    <button class="vp-btn" data-size="1440">1440</button>
+    <button class="vp-btn" data-size="1024">1024</button>
+    <button class="vp-btn" data-size="768">768</button>
+    <button class="vp-btn" data-size="375">375</button>
+    <button class="vp-btn" data-size="320">320</button>
+    <span id="vp-width" class="vp-width">Full</span>
+    <a href="index.html" class="vp-back">← Back to All Styles</a>
+  </div>
+
+  <div class="vp-frame">
+    <!-- Hero -->
+    <section class="sketch-hero">
+      <div class="tape"></div>
+      <div class="doodle-circle"></div>
+      <div class="doodle-star">&#9733;</div>
+      <h1>Sketch &<br><span class="red">Hand-Drawn</span></h1>
+      <p>Wobbly corners, dashed borders, and imperfect charm. Like a notebook come to life.</p>
+    </section>
+
+    <!-- Bottom Nav -->
+    <nav class="mobile-nav">
+      <a class="tab active"><span class="tab-icon">&#9997;</span><span>Sketch</span></a>
+      <a class="tab"><span class="tab-icon">&#128221;</span><span>Notes</span></a>
+      <a class="tab"><span class="tab-icon">&#127912;</span><span>Art</span></a>
+      <a class="tab"><span class="tab-icon">&#9776;</span><span>More</span></a>
+    </nav>
+
+    <!-- Buttons -->
+    <section class="section">
+      <div class="section-title">~ buttons ~</div>
+      <div class="sketch-btns">
+        <button class="sketch-btn primary">Draw Something!</button>
+        <button class="sketch-btn secondary" style="transform:rotate(-0.5deg);">Save to Notebook</button>
+        <button class="sketch-btn ghost">View Gallery</button>
+        <button class="sketch-btn disabled" disabled>Coming Soon...</button>
+      </div>
+    </section>
+
+    <!-- Forms -->
+    <section class="section">
+      <div class="section-title">~ forms ~</div>
+      <div class="sketch-form">
+        <div class="sketch-field">
+          <label>Your Name</label>
+          <input type="text" placeholder="Write your name here...">
+        </div>
+        <div class="sketch-field">
+          <label>Email</label>
+          <input type="email" placeholder="your@email.com">
+        </div>
+        <div class="sketch-field">
+          <label>Subject</label>
+          <select>
+            <option>Sketching</option>
+            <option>Doodling</option>
+            <option>Notes</option>
+          </select>
+        </div>
+        <div class="sketch-field">
+          <label>Your Thoughts</label>
+          <textarea rows="3" placeholder="Jot down your ideas..."></textarea>
+        </div>
+        <div class="sketch-checkbox"><input type="checkbox" id="ck1"><label for="ck1">I like sketching</label></div>
+        <div class="sketch-checkbox"><input type="radio" name="r1" id="r1"><label for="r1">Pen</label></div>
+        <div class="sketch-checkbox"><input type="radio" name="r1" id="r2"><label for="r2">Pencil</label></div>
+      </div>
+    </section>
+
+    <!-- Cards -->
+    <section class="section">
+      <div class="section-title">~ cards ~</div>
+      <div class="sketch-cards">
+        <div class="sketch-card">
+          <div class="card-tape"></div>
+          <h3>Wobbly Corners</h3>
+          <p>Every border-radius is unique. 15/25/20/10. Nothing is perfect, and that is the point.</p>
+          <span class="card-tag">Imperfect</span>
+        </div>
+        <div class="sketch-card">
+          <div class="card-tape"></div>
+          <h3>Dashed Borders</h3>
+          <p>Dot-dash patterns that look drawn by hand. Paper texture in the background.</p>
+          <span class="card-tag">Texture</span>
+        </div>
+        <div class="sketch-card">
+          <div class="card-tape"></div>
+          <h3>Jiggle on Error</h3>
+          <p>When something goes wrong, the element shakes. A playful nudge to try again.</p>
+          <span class="card-tag">Motion</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Typography -->
+    <section class="section">
+      <div class="section-title">~ typography ~</div>
+      <div class="sketch-type">
+        <div class="type-row"><span class="type-label">H1</span><h1>Aa</h1></div>
+        <div class="type-row"><span class="type-label">H2</span><h2>Aa</h2></div>
+        <div class="type-row"><span class="type-label">H3</span><h3>Aa</h3></div>
+        <div class="type-row"><span class="type-label">H4</span><h4>Aa</h4></div>
+        <div class="type-row"><span class="type-label">H5</span><h5>Aa</h5></div>
+        <div class="type-row"><span class="type-label">H6</span><h6>Aa</h6></div>
+      </div>
+    </section>
+
+    <!-- Color Swatches -->
+    <section class="section">
+      <div class="section-title">~ colors ~</div>
+      <div class="sketch-swatches">
+        <div class="sketch-swatch"><div class="swatch-color" style="background:#FF4D4D"></div><div class="swatch-info"><div class="swatch-name">Red Marker</div><div class="swatch-hex">#FF4D4D</div></div></div>
+        <div class="sketch-swatch"><div class="swatch-color" style="background:#2D2D2D"></div><div class="swatch-info"><div class="swatch-name">Pencil Black</div><div class="swatch-hex">#2D2D2D</div></div></div>
+        <div class="sketch-swatch"><div class="swatch-color" style="background:#2D5DA1"></div><div class="swatch-info"><div class="swatch-name">Blue Ballpoint</div><div class="swatch-hex">#2D5DA1</div></div></div>
+        <div class="sketch-swatch"><div class="swatch-color" style="background:#FFF9C4"></div><div class="swatch-info"><div class="swatch-name">Post-it Yellow</div><div class="swatch-hex">#FFF9C4</div></div></div>
+      </div>
+    </section>
+
+    <!-- Style Info -->
+    <section class="style-info">
+      <h3>~ style info ~</h3>
+      <div class="style-info-grid">
+        <div class="style-info-item"><div class="info-label">Era</div><div class="info-value">Creative / Edu</div></div>
+        <div class="style-info-item"><div class="info-label">Complexity</div><div class="info-value">Medium</div></div>
+        <div class="style-info-item"><div class="info-label">Radius</div><div class="info-value">15/25/20/10</div></div>
+        <div class="style-info-item"><div class="info-label">Borders</div><div class="info-value">Dashed / Dotted</div></div>
+      </div>
+    </section>
+
+    <!-- Modal -->
+    <button class="sketch-btn primary" style="margin:24px 20px;" onclick="toggleModal('demo-modal')">Open Modal</button>
+  </div>
+
+  <div id="demo-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Sketch Modal</h3>
+      <p>Wobbly corners, tape decorations, and hand-drawn charm. Like a notebook come to life on your phone.</p>
+      <button class="modal-close" onclick="toggleModal('demo-modal')">Close</button>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+</body>
+</html>

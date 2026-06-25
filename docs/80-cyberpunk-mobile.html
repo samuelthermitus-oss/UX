@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyberpunk Mobile HUD - Style Showcase</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    :root {
+      --page-bg: #0A0A0F;
+      --text-color: #E0E0E0;
+      --void: #0A0A0F;
+      --card: #12121A;
+      --green: #00FF88;
+      --magenta: #FF00FF;
+      --cyan: #00D4FF;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--void);
+      color: var(--text-color);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-weight: 700;
+      line-height: 1.3;
+      position: relative;
+    }
+    /* Scanline overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,255,136,0.02) 2px,
+        rgba(0,255,136,0.02) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* === HERO === */
+    .cyber-hero {
+      min-height: 440px;
+      background: var(--void);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px 20px;
+      position: relative;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+      border-bottom: 2px solid var(--green);
+    }
+    .cyber-hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 20% 50%, rgba(0,255,136,0.08) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 30%, rgba(255,0,255,0.06) 0%, transparent 40%);
+    }
+    .cyber-hero .hud-bracket {
+      position: absolute;
+      top: 20px; left: 20px;
+      right: 20px;
+    }
+    .cyber-hero .hud-bracket::before {
+      content: '[ HUD v2.0 ]';
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      color: var(--green);
+      letter-spacing: 2px;
+      opacity: 0.6;
+    }
+    .cyber-hero h1 {
+      font-size: 44px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+      line-height: 1;
+      position: relative;
+      text-shadow: 0 0 20px rgba(0,255,136,0.3);
+      margin-bottom: 20px;
+    }
+    .cyber-hero h1 .green { color: var(--green); }
+    .cyber-hero h1 .magenta { color: var(--magenta); }
+    .cyber-hero h1 .cyan { color: var(--cyan); }
+    .cyber-hero .hero-sub {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: var(--cyan);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      opacity: 0.6;
+      position: relative;
+    }
+    .cyber-hero .hud-corner {
+      position: absolute;
+      bottom: 30px;
+      right: 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      color: var(--magenta);
+      opacity: 0.5;
+      text-align: right;
+      line-height: 1.6;
+    }
+
+    /* === CRT FLICKER === */
+    @keyframes crtFlicker {
+      0%, 100% { opacity: 1; }
+      92% { opacity: 1; }
+      93% { opacity: 0.8; }
+      94% { opacity: 1; }
+      96% { opacity: 0.9; }
+      97% { opacity: 1; }
+    }
+    .cyber-hero h1 { animation: crtFlicker 4s infinite; }
+
+    /* === GLITCH === */
+    @keyframes glitch {
+      0%, 100% { transform: translate(0); }
+      20% { transform: translate(-2px, 1px); }
+      40% { transform: translate(2px, -1px); }
+      60% { transform: translate(-1px, -2px); }
+      80% { transform: translate(1px, 2px); }
+    }
+
+    /* === MOBILE NAV === */
+    .mobile-nav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: var(--card);
+      border-top: 1px solid rgba(0,255,136,0.2);
+      padding: 10px 0 14px;
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+    }
+    .mobile-nav .tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: rgba(224,224,224,0.3);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-decoration: none;
+      cursor: pointer;
+      font-family: 'Courier New', monospace;
+    }
+    .mobile-nav .tab.active { color: var(--green); }
+    .mobile-nav .tab .tab-icon { font-size: 18px; }
+
+    /* === SECTIONS === */
+    .section {
+      padding: 40px 20px;
+      border-bottom: 1px solid rgba(0,255,136,0.15);
+      position: relative;
+    }
+    .section-title {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      color: var(--green);
+      margin-bottom: 24px;
+    }
+
+    /* === BUTTONS === */
+    .cyber-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .cyber-btn {
+      display: block;
+      width: 100%;
+      padding: 14px 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      border: none;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+      transition: transform 200ms;
+    }
+    .cyber-btn:active { transform: scale(0.97); }
+    .cyber-btn.primary {
+      background: var(--green);
+      color: var(--void);
+      box-shadow: 0 0 20px rgba(0,255,136,0.3);
+    }
+    .cyber-btn.secondary {
+      background: var(--magenta);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(255,0,255,0.2);
+    }
+    .cyber-btn.ghost {
+      background: transparent;
+      color: var(--cyan);
+      border: 1px solid var(--cyan);
+    }
+    .cyber-btn.disabled {
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.2);
+      cursor: not-allowed;
+    }
+
+    /* === FORMS === */
+    .cyber-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .cyber-field label {
+      display: block;
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--green);
+      margin-bottom: 6px;
+    }
+    .cyber-field input,
+    .cyber-field textarea,
+    .cyber-field select {
+      width: 100%;
+      padding: 14px 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      border: 1px solid rgba(0,255,136,0.3);
+      border-radius: 0;
+      background: var(--card);
+      color: var(--green);
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .cyber-field input:focus,
+    .cyber-field textarea:focus,
+    .cyber-field select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 10px rgba(0,255,136,0.15);
+    }
+    .cyber-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: var(--cyan);
+    }
+    .cyber-checkbox input[type="checkbox"],
+    .cyber-checkbox input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--green);
+      cursor: pointer;
+    }
+
+    /* === CARDS (Chamfered) === */
+    .cyber-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .cyber-card {
+      background: var(--card);
+      border: 1px solid rgba(0,255,136,0.2);
+      padding: 20px;
+      position: relative;
+      clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+    }
+    .cyber-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--green), var(--cyan));
+    }
+    .cyber-card .card-hud {
+      font-family: 'Courier New', monospace;
+      font-size: 9px;
+      color: var(--magenta);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      opacity: 0.6;
+    }
+    .cyber-card h3 {
+      font-size: 17px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      text-shadow: 0 0 10px rgba(0,255,136,0.2);
+    }
+    .cyber-card p {
+      font-size: 12px;
+      color: rgba(224,224,224,0.5);
+      line-height: 1.5;
+    }
+    .cyber-card .card-tag {
+      display: inline-block;
+      margin-top: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      padding: 4px 10px;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+    }
+
+    /* === TYPOGRAPHY === */
+    .cyber-type {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .cyber-type .type-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(0,255,136,0.15);
+    }
+    .cyber-type .type-label {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      color: var(--magenta);
+      min-width: 28px;
+      flex-shrink: 0;
+    }
+    .cyber-type h1 { font-size: 42px; font-weight: 900; text-transform: uppercase; line-height: 1; }
+    .cyber-type h2 { font-size: 32px; font-weight: 900; text-transform: uppercase; line-height: 1; }
+    .cyber-type h3 { font-size: 24px; font-weight: 900; text-transform: uppercase; line-height: 1; }
+    .cyber-type h4 { font-size: 20px; font-weight: 900; text-transform: uppercase; line-height: 1; }
+    .cyber-type h5 { font-size: 16px; font-weight: 900; line-height: 1; }
+    .cyber-type h6 { font-family: 'Courier New', monospace; font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--green); line-height: 1; }
+
+    /* === COLOR SWATCHES === */
+    .cyber-swatches {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .cyber-swatch {
+      border: 1px solid rgba(0,255,136,0.2);
+      overflow: hidden;
+    }
+    .cyber-swatch .swatch-color { height: 50px; }
+    .cyber-swatch .swatch-info { padding: 8px 10px; background: var(--card); }
+    .cyber-swatch .swatch-name { font-size: 11px; font-weight: 700; }
+    .cyber-swatch .swatch-hex { font-family: 'Courier New', monospace; font-size: 10px; color: var(--green); opacity: 0.6; }
+
+    /* === MODAL === */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10,10,15,0.95);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-box {
+      background: var(--card);
+      border: 1px solid var(--green);
+      padding: 24px;
+      width: 100%;
+      max-width: 360px;
+      clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+      box-shadow: 0 0 30px rgba(0,255,136,0.15);
+      position: relative;
+    }
+    .modal-box h3 {
+      font-size: 20px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      text-shadow: 0 0 10px rgba(0,255,136,0.3);
+    }
+    .modal-box p {
+      font-size: 13px;
+      color: rgba(224,224,224,0.5);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .modal-close {
+      background: var(--green);
+      color: var(--void);
+      border: none;
+      padding: 14px 24px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      cursor: pointer;
+      width: 100%;
+      clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    }
+
+    /* === STYLE INFO === */
+    .style-info {
+      background: var(--card);
+      border-top: 1px solid rgba(0,255,136,0.2);
+      padding: 32px 20px;
+     text-align: center;}
+    .style-info h3 {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--green);
+      margin-bottom: 16px;
+    }
+    .style-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .style-info-item {
+      border: 1px solid rgba(0,255,136,0.15);
+      padding: 12px;
+    }
+    .style-info-item .info-label {
+      font-family: 'Courier New', monospace;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--magenta);
+      margin-bottom: 4px;
+    }
+    .style-info-item .info-value {
+      font-size: 13px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="vp-bar">
+    <span class="vp-label">Viewpoint:</span>
+    <button class="vp-btn" data-size="1920">1920</button>
+    <button class="vp-btn" data-size="1440">1440</button>
+    <button class="vp-btn" data-size="1024">1024</button>
+    <button class="vp-btn" data-size="768">768</button>
+    <button class="vp-btn" data-size="375">375</button>
+    <button class="vp-btn" data-size="320">320</button>
+    <span id="vp-width" class="vp-width">Full</span>
+    <a href="index.html" class="vp-back">← Back to All Styles</a>
+  </div>
+
+  <div class="vp-frame">
+    <!-- Hero -->
+    <section class="cyber-hero">
+      <div class="hud-bracket"></div>
+      <h1><span class="green">CYBER</span><br><span class="magenta">PUNK</span><br><span class="cyan">HUD</span></h1>
+      <div class="hero-sub">// Mobile Interface v2.0</div>
+      <div class="hud-corner">SYS: ONLINE<br>GPU: 98%<br>NET: 1.2ms</div>
+    </section>
+
+    <!-- Bottom Nav -->
+    <nav class="mobile-nav">
+      <a class="tab active"><span class="tab-icon">&#9654;</span><span>Run</span></a>
+      <a class="tab"><span class="tab-icon">&#9670;</span><span>Data</span></a>
+      <a class="tab"><span class="tab-icon">&#9881;</span><span>Sys</span></a>
+      <a class="tab"><span class="tab-icon">&#9776;</span><span>Menu</span></a>
+    </nav>
+
+    <!-- Buttons -->
+    <section class="section">
+      <div class="section-title">// buttons</div>
+      <div class="cyber-btns">
+        <button class="cyber-btn primary">EXECUTE</button>
+        <button class="cyber-btn secondary">OVERRIDE</button>
+        <button class="cyber-btn ghost">SCAN</button>
+        <button class="cyber-btn disabled" disabled>LOCKED</button>
+      </div>
+    </section>
+
+    <!-- Forms -->
+    <section class="section">
+      <div class="section-title">// input</div>
+      <div class="cyber-form">
+        <div class="cyber-field">
+          <label>IDENTIFIER</label>
+          <input type="text" placeholder="Enter ID...">
+        </div>
+        <div class="cyber-field">
+          <label>COORDINATES</label>
+          <input type="text" placeholder="x, y, z">
+        </div>
+        <div class="cyber-field">
+          <label>SECTOR</label>
+          <select>
+            <option>Sector 7G</option>
+            <option>Sector 9Z</option>
+            <option>Sector 12X</option>
+          </select>
+        </div>
+        <div class="cyber-field">
+          <label>LOG</label>
+          <textarea rows="3" placeholder="Enter log data..."></textarea>
+        </div>
+        <div class="cyber-checkbox"><input type="checkbox" id="ck1"><label for="ck1">ENCRYPT: ON</label></div>
+        <div class="cyber-checkbox"><input type="radio" name="r1" id="r1"><label for="r1">MODE: STEALTH</label></div>
+        <div class="cyber-checkbox"><input type="radio" name="r1" id="r2"><label for="r2">MODE: ASSAULT</label></div>
+      </div>
+    </section>
+
+    <!-- Cards -->
+    <section class="section">
+      <div class="section-title">// modules</div>
+      <div class="cyber-cards">
+        <div class="cyber-card">
+          <div class="card-hud">[ MODULE-01 ]</div>
+          <h3>Chamfered Corners</h3>
+          <p>45-degree clip-path cuts. Angular, aggressive, unmistakably cyber.</p>
+          <span class="card-tag">SHAPE</span>
+        </div>
+        <div class="cyber-card">
+          <div class="card-hud">[ MODULE-02 ]</div>
+          <h3>Neon Glow</h3>
+          <p>Green, magenta, cyan. Box-shadows with color bleed. The digital aurora.</p>
+          <span class="card-tag">LIGHT</span>
+        </div>
+        <div class="cyber-card">
+          <div class="card-hud">[ MODULE-03 ]</div>
+          <h3>CRT Effects</h3>
+          <p>Scanline overlays, flicker animations, glitch transforms. Broken beauty.</p>
+          <span class="card-tag">FX</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Typography -->
+    <section class="section">
+      <div class="section-title">// type</div>
+      <div class="cyber-type">
+        <div class="type-row"><span class="type-label">H1</span><h1>Aa</h1></div>
+        <div class="type-row"><span class="type-label">H2</span><h2>Aa</h2></div>
+        <div class="type-row"><span class="type-label">H3</span><h3>Aa</h3></div>
+        <div class="type-row"><span class="type-label">H4</span><h4>Aa</h4></div>
+        <div class="type-row"><span class="type-label">H5</span><h5>Aa</h5></div>
+        <div class="type-row"><span class="type-label">H6</span><h6>Aa</h6></div>
+      </div>
+    </section>
+
+    <!-- Color Swatches -->
+    <section class="section">
+      <div class="section-title">// palette</div>
+      <div class="cyber-swatches">
+        <div class="cyber-swatch"><div class="swatch-color" style="background:#0A0A0F;border:1px solid #00FF88"></div><div class="swatch-info"><div class="swatch-name">Void</div><div class="swatch-hex">#0A0A0F</div></div></div>
+        <div class="cyber-swatch"><div class="swatch-color" style="background:#00FF88"></div><div class="swatch-info"><div class="swatch-name">Neon Green</div><div class="swatch-hex">#00FF88</div></div></div>
+        <div class="cyber-swatch"><div class="swatch-color" style="background:#FF00FF"></div><div class="swatch-info"><div class="swatch-name">Magenta</div><div class="swatch-hex">#FF00FF</div></div></div>
+        <div class="cyber-swatch"><div class="swatch-color" style="background:#00D4FF"></div><div class="swatch-info"><div class="swatch-name">Cyan</div><div class="swatch-hex">#00D4FF</div></div></div>
+      </div>
+    </section>
+
+    <!-- Style Info -->
+    <section class="style-info">
+      <h3>// style_info</h3>
+      <div class="style-info-grid">
+        <div class="style-info-item"><div class="info-label">ERA</div><div class="info-value">Cyber-Noir</div></div>
+        <div class="style-info-item"><div class="info-label">COMPLEXITY</div><div class="info-value">High</div></div>
+        <div class="style-info-item"><div class="info-label">RADIUS</div><div class="info-value">0px / Chamfer</div></div>
+        <div class="style-info-item"><div class="info-label">FX</div><div class="info-value">Scanline + CRT</div></div>
+      </div>
+    </section>
+
+    <!-- Modal -->
+    <button class="cyber-btn primary" style="margin:24px 20px;" onclick="toggleModal('demo-modal')">OPEN MODAL</button>
+  </div>
+
+  <div id="demo-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>HUD Modal</h3>
+      <p>Dark void, neon accents, chamfered corners. The cyberpunk mobile interface from the future.</p>
+      <button class="modal-close" onclick="toggleModal('demo-modal')">CLOSE</button>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+</body>
+</html>

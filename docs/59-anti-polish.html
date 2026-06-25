@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anti-Polish / Raw Aesthetic - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #FAFAF8;
+  --text-color: #1A1A1A;
+  --pencil-grey: #4A4A4A;
+  --marker-black: #1A1A1A;
+  --kraft-brown: #C4A77D;
+  --kraft-dark: #8B7355;
+  --kraft-light: #D4C5A9;
+  --paper-white: #FAFAF8;
+  --tape-color: rgba(200, 190, 160, 0.45);
+}
+
+/* PAPER TEXTURE */
+body {
+  background-color: var(--page-bg);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 28px,
+      rgba(74, 74, 74, 0.03) 28px,
+      rgba(74, 74, 74, 0.03) 29px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 28px,
+      rgba(74, 74, 74, 0.02) 28px,
+      rgba(74, 74, 74, 0.02) 29px
+    );
+  font-family: 'Comic Sans MS', 'Segoe Print', system-ui, sans-serif;
+  color: var(--text-color);
+  transition: none;
+}
+
+* {
+  transition: none !important;
+  animation-duration: 0s !important;
+}
+
+@keyframes jitter {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-0.5px, 0.5px); }
+  50% { transform: translate(0.5px, -0.5px); }
+  75% { transform: translate(-0.5px, -0.5px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes pencilDraw {
+  0% { width: 0; }
+  100% { width: 100%; }
+}
+
+@keyframes roughWave {
+  0% { border-radius: 5px 10px 3px 12px; }
+  50% { border-radius: 10px 5px 12px 3px; }
+  100% { border-radius: 5px 10px 3px 12px; }
+}
+
+@keyframes tapeFloat {
+  0% { transform: rotate(-3deg) translateY(0); }
+  50% { transform: rotate(-2deg) translateY(-1px); }
+  100% { transform: rotate(-3deg) translateY(0); }
+}
+
+.jitter-text {
+  animation: jitter 0.3s infinite;
+  display: inline-block;
+}
+
+/* TAPE DECORATION */
+.tape {
+  position: absolute;
+  width: 80px;
+  height: 24px;
+  background: var(--tape-color);
+  z-index: 2;
+  box-shadow:
+    0 0 0 1px rgba(180, 170, 140, 0.2),
+    inset 0 0 4px rgba(255,255,255,0.3);
+}
+.tape--tl {
+  top: -6px;
+  left: 16px;
+  transform: rotate(-3deg);
+}
+.tape--tr {
+  top: -6px;
+  right: 16px;
+  transform: rotate(2deg);
+}
+.tape--br {
+  bottom: -6px;
+  right: 20px;
+  transform: rotate(1deg);
+}
+.tape--bl {
+  bottom: -6px;
+  left: 20px;
+  transform: rotate(-2deg);
+}
+
+/* ROUGH BORDER MIXIN */
+.rough-border {
+  border: 2px solid var(--pencil-grey);
+  border-radius: 5px 10px 3px 12px;
+  box-shadow:
+    1px 1px 0 0 var(--pencil-grey),
+    -1px 0px 0 0 rgba(74,74,74,0.3),
+    0px 1px 0 0 rgba(74,74,74,0.2);
+}
+
+/* WAVEY UNDERLINE */
+.wavy-underline {
+  text-decoration: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='8'%3E%3Cpath d='M0 4 Q 10 0, 20 4 T 40 4 T 60 4 T 80 4 T 100 4 T 120 4' stroke='%234A4A4A' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: bottom -2px left;
+  background-size: 60px 8px;
+  padding-bottom: 6px;
+}
+
+/* CROSSED OUT TEXT */
+.crossed {
+  position: relative;
+  display: inline-block;
+}
+.crossed::after {
+  content: '';
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  top: 50%;
+  height: 2px;
+  background: var(--marker-black);
+  transform: rotate(-1.5deg);
+}
+
+/* PENCIL UNDERLINE FOR BUTTONS */
+.pencil-underline {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='6'%3E%3Cpath d='M0 3 Q 8 0, 16 3 T 32 3 T 48 3 T 64 3 T 80 3 T 100 3' stroke='%234A4A4A' fill='none' stroke-width='1' stroke-dasharray='2,1'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: bottom 0 left;
+  background-size: 50px 6px;
+  padding-bottom: 5px;
+}
+
+/* ===================== HERO ===================== */
+.hero {
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 40px;
+  overflow: hidden;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 28px,
+      rgba(74,74,74,0.06) 28px,
+      rgba(74,74,74,0.06) 29px
+    ),
+    radial-gradient(ellipse at 20% 50%, rgba(196,167,125,0.06) 0%, transparent 60%);
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-title {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 900;
+  color: var(--marker-black);
+  letter-spacing: -2px;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+  transform: rotate(-0.8deg);
+}
+.hero-title-underline {
+  display: block;
+  margin-top: -4px;
+}
+.hero-title-underline svg {
+  width: 220px;
+  height: 14px;
+  display: block;
+  transform: rotate(1deg);
+}
+.hero-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  color: var(--pencil-grey);
+  margin-top: 24px;
+  position: relative;
+  z-index: 1;
+  transform: rotate(0.3deg);
+  opacity: 0.85;
+  font-style: italic;
+}
+.hero-subtitle .crossed {
+  opacity: 0.5;
+  margin-right: 10px;
+}
+.hero-grid-lines {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    linear-gradient(rgba(74,74,74,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74,74,74,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: 0;
+}
+.hero-misalign-1 {
+  position: absolute;
+  bottom: 60px;
+  right: 60px;
+  font-size: 0.85rem;
+  color: var(--pencil-grey);
+  opacity: 0.4;
+  transform: rotate(2deg);
+  z-index: 1;
+  font-style: italic;
+}
+.hero-misalign-2 {
+  position: absolute;
+  top: 40px;
+  right: 120px;
+  font-size: 0.75rem;
+  color: var(--pencil-grey);
+  opacity: 0.25;
+  transform: rotate(-1.5deg);
+  z-index: 1;
+  text-decoration: line-through;
+}
+.hero-tape-deco {
+  position: absolute;
+  width: 100px;
+  height: 22px;
+  background: rgba(196,167,125,0.25);
+  top: 30px;
+  left: 50px;
+  transform: rotate(-4deg);
+  z-index: 1;
+  animation: tapeFloat 4s ease-in-out infinite;
+}
+.hero-tape-deco-2 {
+  position: absolute;
+  bottom: 40px;
+  left: 100px;
+  width: 90px;
+  height: 20px;
+  background: rgba(196,167,125,0.2);
+  transform: rotate(2deg);
+  z-index: 1;
+}
+.hero-sketch-doodle {
+  position: absolute;
+  top: 80px;
+  right: 200px;
+  z-index: 1;
+  opacity: 0.15;
+  transform: rotate(5deg);
+}
+
+/* ===================== NAVIGATION ===================== */
+.nav-section {
+  padding: 40px 40px 20px;
+}
+.nav-handdrawn {
+  display: flex;
+  gap: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-bottom: 2px solid rgba(74,74,74,0.15);
+  padding-bottom: 12px;
+  flex-wrap: wrap;
+}
+.nav-handdrawn li {
+  margin: 0 16px 8px 0;
+}
+.nav-handdrawn li:nth-child(2) {
+  transform: rotate(0.5deg);
+}
+.nav-handdrawn li:nth-child(4) {
+  transform: rotate(-0.7deg);
+}
+.nav-handdrawn a {
+  color: var(--pencil-grey);
+  text-decoration: none;
+  font-size: 1.05rem;
+  padding: 4px 2px;
+  position: relative;
+  cursor: pointer;
+}
+.nav-handdrawn a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--marker-black);
+}
+.nav-handdrawn a:hover {
+  color: var(--marker-black);
+}
+.nav-handdrawn a:hover::after {
+  width: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='6'%3E%3Cpath d='M0 3 Q 8 0, 16 3 T 32 3 T 48 3 T 64 3 T 80 3 T 100 3' stroke='%231A1A1A' fill='none' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 50px 6px;
+  height: 6px;
+  bottom: -4px;
+}
+.nav-handdrawn .active {
+  color: var(--marker-black);
+  font-weight: 700;
+}
+.nav-handdrawn .active::after {
+  width: 100%;
+  height: 2px;
+  background: var(--marker-black);
+  bottom: -2px;
+}
+
+/* ===================== BUTTONS ===================== */
+.buttons-section {
+  padding: 40px;
+}
+.btn-group {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  margin-bottom: 20px;
+ justify-content: center;}
+.btn {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 10px 24px;
+  cursor: pointer;
+  position: relative;
+  transition: none;
+}
+.btn-primary {
+  background: var(--kraft-brown);
+  color: var(--marker-black);
+  border: 2px solid var(--kraft-dark);
+  border-radius: 5px 12px 4px 10px;
+  font-weight: 700;
+  box-shadow:
+    1px 1px 0 0 var(--kraft-dark),
+    -1px 0 0 0 rgba(139,115,85,0.2);
+}
+.btn-primary:hover {
+  background: var(--kraft-dark);
+  color: var(--paper-white);
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--pencil-grey);
+  border: 2px solid var(--pencil-grey);
+  border-radius: 10px 5px 12px 3px;
+  box-shadow:
+    1px 2px 0 0 rgba(74,74,74,0.3),
+    -1px -1px 0 0 rgba(74,74,74,0.15);
+}
+.btn-secondary:hover {
+  background: rgba(74,74,74,0.08);
+  color: var(--marker-black);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--pencil-grey);
+  border: none;
+  padding: 10px 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1rem;
+  position: relative;
+}
+.btn-ghost::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='6'%3E%3Cpath d='M0 3 Q 6 0, 12 3 T 24 3 T 36 3 T 48 3 T 60 3 T 72 3 T 80 3' stroke='%234A4A4A' fill='none' stroke-width='1'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 40px 6px;
+}
+.btn-ghost:hover {
+  color: var(--marker-black);
+}
+.btn-disabled {
+  background: #e8e8e6;
+  color: #aaa;
+  border: 2px solid #d0d0ce;
+  border-radius: 8px 4px 6px 10px;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ===================== FORMS ===================== */
+.forms-section {
+  padding: 40px;
+}
+.form-group {
+  margin-bottom: 20px;
+  max-width: 480px;
+}
+.form-group label {
+  display: block;
+  color: var(--pencil-grey);
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  transform: rotate(-0.3deg);
+}
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--marker-black);
+  background: var(--paper-white);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 27px,
+      rgba(74,74,74,0.04) 27px,
+      rgba(74,74,74,0.04) 28px
+    );
+  border: 2px solid var(--pencil-grey);
+  border-radius: 3px 8px 4px 6px;
+  box-shadow:
+    1px 1px 0 0 rgba(74,74,74,0.2),
+    -1px 0 0 0 rgba(74,74,74,0.1);
+  outline: none;
+}
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--kraft-brown);
+  box-shadow:
+    1px 1px 0 0 var(--kraft-dark),
+    -1px 0 0 0 rgba(139,115,85,0.2);
+}
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  transform: rotate(-0.2deg);
+}
+.form-check input[type="checkbox"],
+.form-check input[type="radio"] {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--pencil-grey);
+  border-radius: 3px 6px 4px 2px;
+  background: var(--paper-white);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+}
+.form-check input[type="radio"] {
+  border-radius: 50%;
+}
+.form-check input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 10px;
+  height: 14px;
+  border: solid var(--marker-black);
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(35deg);
+}
+.form-check input[type="radio"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 10px;
+  height: 10px;
+  background: var(--marker-black);
+  border-radius: 50%;
+}
+.form-check-label {
+  color: var(--pencil-grey);
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+/* ===================== CARDS ===================== */
+.cards-section {
+  padding: 40px;
+}
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+}
+.card {
+  background: var(--paper-white);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 23px,
+      rgba(74,74,74,0.03) 23px,
+      rgba(74,74,74,0.03) 24px
+    );
+  padding: 28px 24px 24px;
+  position: relative;
+  border: 2px solid rgba(74,74,74,0.2);
+  box-shadow:
+    1px 2px 0 0 rgba(74,74,74,0.12),
+    -1px 0 0 0 rgba(74,74,74,0.06);
+}
+.card:nth-child(1) {
+  border-radius: 4px 10px 6px 12px;
+  transform: rotate(-1.2deg);
+}
+.card:nth-child(2) {
+  border-radius: 10px 4px 12px 6px;
+  transform: rotate(0.8deg);
+}
+.card:nth-child(3) {
+  border-radius: 6px 12px 4px 8px;
+  transform: rotate(-0.4deg);
+}
+.card-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  border: 1.5px solid;
+  border-radius: 3px 6px 4px 2px;
+}
+.card-badge--progress {
+  color: var(--kraft-brown);
+  border-color: var(--kraft-brown);
+  background: rgba(196,167,125,0.1);
+}
+.card-badge--halfbaked {
+  color: var(--pencil-grey);
+  border-color: var(--pencil-grey);
+  background: rgba(74,74,74,0.05);
+  transform: rotate(1deg);
+}
+.card-badge--thinking {
+  color: var(--kraft-dark);
+  border-color: var(--kraft-dark);
+  background: rgba(139,115,85,0.08);
+  transform: rotate(-0.5deg);
+}
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--marker-black);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.card-desc {
+  color: var(--pencil-grey);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+.card-torn-edge {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: linear-gradient(135deg, var(--paper-white) 33.33%, transparent 33.33%) 0 0,
+              linear-gradient(225deg, var(--paper-white) 33.33%, transparent 33.33%) 0 0;
+  background-size: 12px 10px;
+  background-repeat: repeat-x;
+}
+
+/* ===================== TYPOGRAPHY ===================== */
+.typography-section {
+  padding: 40px;
+  max-width: 800px;
+}
+.typography-section h1 {
+  font-size: 2.8rem;
+  color: var(--marker-black);
+  margin-bottom: 8px;
+  transform: rotate(-0.5deg);
+}
+.typography-section h2 {
+  font-size: 2.1rem;
+  color: var(--marker-black);
+  margin-bottom: 6px;
+  transform: rotate(0.3deg);
+}
+.typography-section h3 {
+  font-size: 1.6rem;
+  color: var(--pencil-grey);
+  margin-bottom: 4px;
+  text-transform: lowercase;
+}
+.typography-section h4 {
+  font-size: 1.25rem;
+  color: var(--pencil-grey);
+  opacity: 0.8;
+  margin-bottom: 4px;
+}
+.typography-section h5 {
+  font-size: 1.05rem;
+  color: var(--pencil-grey);
+  opacity: 0.6;
+  margin-bottom: 4px;
+  font-style: italic;
+}
+.typography-section h6 {
+  font-size: 0.9rem;
+  color: var(--pencil-grey);
+  opacity: 0.5;
+  margin-bottom: 4px;
+  text-decoration: line-through;
+}
+.typo-demo-line {
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(74,74,74,0.1);
+}
+
+/* ===================== COLOR SWATCHES ===================== */
+.swatches-section {
+  padding: 40px;
+}
+.swatches-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  max-width: 800px;
+}
+.swatch {
+  width: 120px;
+  text-align: center;
+  transform: rotate(-0.5deg);
+}
+.swatch:nth-child(2) { transform: rotate(0.8deg); }
+.swatch:nth-child(4) { transform: rotate(-1deg); }
+.swatch:nth-child(6) { transform: rotate(0.5deg); }
+.swatch-color {
+  width: 120px;
+  height: 90px;
+  border: 2px solid var(--pencil-grey);
+  border-radius: 4px 10px 6px 8px;
+  box-shadow:
+    1px 1px 0 0 rgba(74,74,74,0.2),
+    -1px 0 0 0 rgba(74,74,74,0.1);
+  margin-bottom: 8px;
+}
+.swatch-label {
+  font-size: 0.8rem;
+  color: var(--pencil-grey);
+  font-weight: 600;
+}
+.swatch-hex {
+  font-size: 0.75rem;
+  color: var(--pencil-grey);
+  opacity: 0.6;
+}
+
+/* ===================== MODAL ===================== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(26,26,26,0.4);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+.modal-overlay.active {
+  display: flex;
+}
+.modal-content {
+  background: var(--paper-white);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 27px,
+      rgba(74,74,74,0.04) 27px,
+      rgba(74,74,74,0.04) 28px
+    );
+  padding: 36px 32px;
+  max-width: 480px;
+  width: 90%;
+  position: relative;
+  border: 2px solid var(--pencil-grey);
+  border-radius: 6px 12px 4px 10px;
+  box-shadow:
+    2px 3px 0 0 rgba(74,74,74,0.15),
+    -1px 0 0 0 rgba(74,74,74,0.08);
+  transform: rotate(-0.5deg);
+}
+.modal-title {
+  font-size: 1.6rem;
+  color: var(--marker-black);
+  font-weight: 900;
+  margin-bottom: 12px;
+  transform: rotate(0.5deg);
+}
+.modal-body {
+  color: var(--pencil-grey);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: var(--pencil-grey);
+  cursor: pointer;
+  font-family: inherit;
+  transform: rotate(3deg);
+}
+.modal-close:hover {
+  color: var(--marker-black);
+}
+
+/* ===================== STYLE INFO ===================== */
+.info-section {
+  padding: 40px;
+}
+.info-panel {
+  max-width: 600px;
+  border: 2px solid rgba(74,74,74,0.2);
+  padding: 24px 28px;
+  border-radius: 8px 4px 10px 6px;
+  background: var(--paper-white);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 23px,
+      rgba(74,74,74,0.03) 23px,
+      rgba(74,74,74,0.03) 24px
+    );
+  box-shadow:
+    1px 2px 0 0 rgba(74,74,74,0.08);
+  position: relative;
+}
+.info-panel .tape {
+  position: absolute;
+  width: 70px;
+  height: 20px;
+  background: rgba(196,167,125,0.3);
+  top: -8px;
+  left: 24px;
+  transform: rotate(-2deg);
+}
+.info-panel h3 {
+  font-size: 1.3rem;
+  color: var(--marker-black);
+  margin-bottom: 16px;
+  text-transform: lowercase;
+}
+.info-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 0.92rem;
+  align-items: baseline;
+}
+.info-label {
+  color: var(--pencil-grey);
+  font-weight: 700;
+  min-width: 100px;
+  opacity: 0.7;
+}
+.info-value {
+  color: var(--marker-black);
+}
+
+/* ===================== DEMO BUTTON ===================== */
+.demo-btn-wrap {
+  padding: 20px 40px;
+}
+.btn-demo-trigger {
+  background: var(--kraft-brown);
+  color: var(--marker-black);
+  border: 2px solid var(--kraft-dark);
+  border-radius: 5px 12px 4px 10px;
+  padding: 12px 28px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow:
+    1px 1px 0 0 var(--kraft-dark),
+    -1px 0 0 0 rgba(139,115,85,0.2);
+}
+.btn-demo-trigger:hover {
+  background: var(--kraft-dark);
+  color: var(--paper-white);
+}
+
+/* ===================== SECTION HEADERS ===================== */
+.section-header {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--pencil-grey);
+  opacity: 0.45;
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(74,74,74,0.15);
+}
+
+/* ===================== FOOTER NOTE ===================== */
+.footer-note {
+  padding: 40px;
+  text-align: center;
+  color: var(--pencil-grey);
+  opacity: 0.35;
+  font-size: 0.8rem;
+  font-style: italic;
+  transform: rotate(0.3deg);
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 768px) {
+  .hero {
+    padding: 48px 20px;
+    min-height: 60vh;
+   text-align: center;}
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  .nav-handdrawn {
+    gap: 4px;
+  }
+  .nav-handdrawn li {
+    margin: 0 10px 6px 0;
+  }
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .swatches-grid {
+    gap: 14px;
+  }
+  .swatch {
+    width: 100px;
+  }
+  .swatch-color {
+    width: 100px;
+    height: 70px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- VIEWPORT BAR -->
+<div class="vp-bar">
+  <span class="vp-label">&#128208; Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">&larr; Back to All Styles</a>
+</div>
+
+<div class="vp-frame">
+
+<!-- ========== 1. HERO ========== -->
+<section class="hero">
+  <div class="hero-grid-lines"></div>
+  <div class="hero-tape-deco"></div>
+  <div class="hero-tape-deco-2"></div>
+  <div class="hero-misalign-2">ignore the grid</div>
+
+  <!-- hand-drawn doodle SVG -->
+  <svg class="hero-sketch-doodle" width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10 50 Q 20 10, 30 30 T 50 15" stroke="#4A4A4A" stroke-width="1.5" fill="none"/>
+    <circle cx="48" cy="14" r="4" stroke="#4A4A4A" stroke-width="1" fill="none"/>
+    <path d="M8 52 L 12 48 L 16 54" stroke="#4A4A4A" stroke-width="1" fill="none"/>
+  </svg>
+
+  <h1 class="hero-title jitter-text">unpolished.</h1>
+  <span class="hero-title-underline">
+    <svg viewBox="0 0 220 14" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 8 Q 20 2, 40 8 T 80 8 T 120 8 T 160 8 T 200 8 T 220 8" stroke="#C4A77D" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </svg>
+  </span>
+
+  <p class="hero-subtitle">
+    <span class="crossed">design has to be perfect</span>
+    design doesn't need to be perfect
+  </p>
+
+  <div class="hero-misalign-1">made by hand, not by formula</div>
+</section>
+
+
+<!-- ========== 2. NAVIGATION ========== -->
+<section class="nav-section">
+  <p class="section-header">// Navigation</p>
+  <ul class="nav-handdrawn">
+    <li><a href="#" class="active">about</a></li>
+    <li><a href="#">work</a></li>
+    <li><a href="#">process</a></li>
+    <li><a href="#">journal</a></li>
+    <li><a href="#">contact</a></li>
+  </ul>
+</section>
+
+
+<!-- ========== 3. BUTTONS ========== -->
+<section class="buttons-section">
+  <p class="section-header">// Buttons</p>
+  <div class="btn-group">
+    <button class="btn btn-primary">send it</button>
+    <button class="btn btn-secondary">maybe later</button>
+    <button class="btn btn-ghost">just looking</button>
+    <button class="btn btn-disabled" disabled>not yet</button>
+  </div>
+  <div class="btn-group">
+    <button class="btn btn-primary" style="border-radius: 12px 4px 10px 6px;">primary alt</button>
+    <button class="btn btn-secondary" style="transform: rotate(1deg);">rotated a bit</button>
+    <button class="btn btn-ghost" style="transform: rotate(-0.5deg);">subtle angle</button>
+  </div>
+</section>
+
+
+<!-- ========== 4. FORMS ========== -->
+<section class="forms-section">
+  <p class="section-header">// Forms</p>
+  <div class="form-group">
+    <label>your name (or whatever)</label>
+    <input type="text" placeholder="scribble here...">
+  </div>
+  <div class="form-group">
+    <label>email (if you want)</label>
+    <input type="email" placeholder="you@example.com">
+  </div>
+  <div class="form-group">
+    <label>thoughts</label>
+    <textarea placeholder="write freely, no pressure..."></textarea>
+  </div>
+  <div class="form-group">
+    <label>vibe</label>
+    <select>
+      <option>raw & unfiltered</option>
+      <option>loosely organized chaos</option>
+      <option>beautiful mess</option>
+      <option>still figuring it out</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label style="margin-bottom: 10px;">preferences</label>
+    <div class="form-check">
+      <input type="checkbox" id="chk1" checked>
+      <label class="form-check-label" for="chk1">imperfection is a feature</label>
+    </div>
+    <div class="form-check">
+      <input type="checkbox" id="chk2">
+      <label class="form-check-label" for="chk2">polish is overrated</label>
+    </div>
+    <div class="form-check">
+      <input type="checkbox" id="chk3">
+      <label class="form-check-label" for="chk3">I enjoy rough edges</label>
+    </div>
+  </div>
+  <div class="form-group">
+    <label style="margin-bottom: 10px;">mood</label>
+    <div class="form-check">
+      <input type="radio" name="mood" id="mood1" checked>
+      <label class="form-check-label" for="mood1">scanned sketchbook</label>
+    </div>
+    <div class="form-check">
+      <input type="radio" name="mood" id="mood2">
+      <label class="form-check-label" for="mood2">napkin doodle</label>
+    </div>
+    <div class="form-check">
+      <input type="radio" name="mood" id="mood3">
+      <label class="form-check-label" for="mood3">marginalia</label>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== 5. CARDS ========== -->
+<section class="cards-section">
+  <p class="section-header">// Cards</p>
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="tape tape--tl"></div>
+      <span class="card-badge card-badge--progress">In Progress</span>
+      <h3 class="card-title">The Unfinished Poster</h3>
+      <p class="card-desc">A screenprint project that's been "almost done" since March. The roughness is part of the charm. Probably.</p>
+      <div class="card-torn-edge"></div>
+    </div>
+
+    <div class="card">
+      <div class="tape tape--tr"></div>
+      <span class="card-badge card-badge--halfbaked">Half-Baked Idea</span>
+      <h3 class="card-title">Analog Type Specimen</h3>
+      <p class="card-desc">Hand-lettered alphabet scanned at 300dpi and never cleaned up. Every smudge tells a story.</p>
+      <div class="card-torn-edge"></div>
+    </div>
+
+    <div class="card">
+      <div class="tape tape--bl"></div>
+      <span class="card-badge card-badge--thinking">Still Thinking</span>
+      <h3 class="card-title">Notebook Archive</h3>
+      <p class="card-desc">Digitizing ten years of Moleskine pages. Coffee stains and all. Might be art, might be a mess.</p>
+      <div class="card-torn-edge"></div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========== 6. TYPOGRAPHY ========== -->
+<section class="typography-section">
+  <p class="section-header">// Typography</p>
+  <div class="typo-demo-line">
+    <h1>heading one &mdash; unpolished.</h1>
+  </div>
+  <div class="typo-demo-line">
+    <h2>heading two &mdash; rough around the edges</h2>
+  </div>
+  <div class="typo-demo-line">
+    <h3>heading three &mdash; lowercase and loose</h3>
+  </div>
+  <div class="typo-demo-line">
+    <h4>heading four &mdash; quieter now</h4>
+  </div>
+  <div class="typo-demo-line">
+    <h5>heading five &mdash; almost a whisper</h5>
+  </div>
+  <div class="typo-demo-line">
+    <h6>heading six &mdash; fading away</h6>
+  </div>
+</section>
+
+
+<!-- ========== 7. COLOR SWATCHES ========== -->
+<section class="swatches-section">
+  <p class="section-header">// Colors</p>
+  <div class="swatches-grid">
+    <div class="swatch">
+      <div class="swatch-color" style="background: #FAFAF8;"></div>
+      <div class="swatch-label">Paper White</div>
+      <div class="swatch-hex">#FAFAF8</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background: #4A4A4A;"></div>
+      <div class="swatch-label">Pencil Grey</div>
+      <div class="swatch-hex">#4A4A4A</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background: #1A1A1A;"></div>
+      <div class="swatch-label">Marker Black</div>
+      <div class="swatch-hex">#1A1A1A</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background: #C4A77D;"></div>
+      <div class="swatch-label">Kraft Brown</div>
+      <div class="swatch-hex">#C4A77D</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background: #8B7355;"></div>
+      <div class="swatch-label">Kraft Dark</div>
+      <div class="swatch-hex">#8B7355</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background: #D4C5A9;"></div>
+      <div class="swatch-label">Kraft Light</div>
+      <div class="swatch-hex">#D4C5A9</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== 8. MODAL ========== -->
+<section class="demo-btn-wrap">
+  <p class="section-header">// Modal</p>
+  <button class="btn-demo-trigger" onclick="toggleModal('demo-modal')">psst... open me</button>
+</section>
+
+<div class="modal-overlay" id="demo-modal" onclick="if(event.target===this)toggleModal('demo-modal')">
+  <div class="modal-content">
+    <div class="tape tape--tl" style="width: 70px;"></div>
+    <div class="tape tape--tr" style="width: 60px;"></div>
+    <button class="modal-close" onclick="toggleModal('demo-modal')">&times;</button>
+    <h2 class="modal-title">psst... hey</h2>
+    <div class="modal-body">
+      <p>this is a modal. it's not trying to be perfect. it's just here, doing its thing, like a sticky note on your monitor.</p>
+      <p style="margin-top: 12px; font-style: italic; opacity: 0.6;">the best interfaces feel like they were made by a person, not a machine.</p>
+    </div>
+    <button class="btn btn-primary" onclick="toggleModal('demo-modal')">got it, thanks</button>
+  </div>
+</div>
+
+
+<!-- ========== 9. STYLE INFO PANEL ========== -->
+<section class="info-section">
+  <p class="section-header">// Style Info</p>
+  <div class="info-panel">
+    <div class="tape"></div>
+    <h3>about this style</h3>
+    <div class="info-row">
+      <span class="info-label">Era:</span>
+      <span class="info-value">2025+ Anti-Digital</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Complexity:</span>
+      <span class="info-value">Low</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Best For:</span>
+      <span class="info-value">Creative portfolios, artist sites, indie brands, handmade products</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Font:</span>
+      <span class="info-value">system-ui, sketch-style</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Effects:</span>
+      <span class="info-value">Hand-drawn, paper texture, jitter, rough borders, tape, torn edges</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Philosophy:</span>
+      <span class="info-value">Authentic imperfection. Scanned notebook energy. Raw over refined.</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== FOOTER ========== -->
+<div class="footer-note">
+  made with smudged ink and good intentions &mdash; 2025
+</div>
+
+</div><!-- /vp-frame -->
+
+<script src="shared.js"></script>
+<script>
+function toggleModal(id) {
+  var el = document.getElementById(id);
+  if (el) {
+    el.classList.toggle('active');
+  }
+}
+</script>
+</body>
+</html>

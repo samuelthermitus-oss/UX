@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glassmorphism - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #0F0F23;
+  --text-color: #FFFFFF;
+  --glass-bg: rgba(255,255,255,0.15);
+  --glass-border: rgba(255,255,255,0.2);
+  --glass-blur: blur(15px);
+  --accent-blue: #0080FF;
+  --accent-purple: #8B00FF;
+  --accent-pink: #FF1493;
+  --border-radius: 16px;
+  --font-primary: system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: var(--font-primary);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Glass Card Mixin */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius);
+}
+
+/* Hero Section */
+.hero {
+  padding: 140px 0 100px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 25%, #0a1a3e 50%, #1a0a2e 75%, #0a0a1a 100%);
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -30%;
+  left: -20%;
+  width: 60%;
+  height: 160%;
+  background: radial-gradient(ellipse, rgba(0,128,255,0.4) 0%, transparent 70%);
+  animation: float-blob 12s ease-in-out infinite;
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  right: -20%;
+  width: 60%;
+  height: 140%;
+  background: radial-gradient(ellipse, rgba(255,20,147,0.3) 0%, transparent 70%);
+  animation: float-blob 15s ease-in-out infinite reverse;
+  pointer-events: none;
+}
+@keyframes float-blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(5%, -5%) scale(1.05); }
+  66% { transform: translate(-3%, 3%) scale(0.95); }
+}
+.hero h1 {
+  font-size: clamp(48px, 8vw, 88px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(135deg, #FFFFFF 0%, #0080FF 50%, #FF1493 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero .subtitle {
+  font-size: 18px;
+  color: rgba(255,255,255,0.7);
+  max-width: 500px;
+  margin: 0 auto 24px;
+  position: relative;
+  z-index: 1;
+}
+.hero .tag {
+  position: relative;
+  z-index: 1;
+}
+.hero-glass-card {
+  display: inline-block;
+  margin-top: 40px;
+  padding: 48px 40px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Floating Orbs */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.5;
+  pointer-events: none;
+  animation: orb-float 10s ease-in-out infinite;
+}
+.orb-1 { width: 300px; height: 300px; background: var(--accent-blue); top: 10%; left: 5%; animation-delay: 0s; }
+.orb-2 { width: 250px; height: 250px; background: var(--accent-purple); top: 60%; right: 10%; animation-delay: -3s; }
+.orb-3 { width: 200px; height: 200px; background: var(--accent-pink); bottom: 10%; left: 30%; animation-delay: -6s; }
+@keyframes orb-float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(30px, -30px); }
+}
+
+/* Navigation */
+.demo-nav {
+  padding: 16px 0;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.demo-nav .container {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.demo-nav a {
+  padding: 10px 20px;
+  border-radius: 10px;
+  background: transparent;
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s;
+  border: 1px solid transparent;
+}
+.demo-nav a:hover {
+  background: rgba(255,255,255,0.1);
+  color: #FFFFFF;
+}
+.demo-nav a.active {
+  background: rgba(255,255,255,0.15);
+  color: #FFFFFF;
+  border-color: rgba(255,255,255,0.2);
+}
+
+/* Section Titles */
+.section-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 12px;
+  font-family: var(--font-primary);
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  color: #FFFFFF;
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 8px 32px rgba(0,128,255,0.3);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,128,255,0.5);
+}
+.btn-secondary {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  color: #FFFFFF;
+  border: 1px solid var(--glass-border);
+}
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.25);
+  transform: translateY(-2px);
+}
+.btn-ghost {
+  background: transparent;
+  color: rgba(255,255,255,0.8);
+  border: 1px solid rgba(255,255,255,0.3);
+}
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.1);
+  color: #FFFFFF;
+}
+.btn-disabled {
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.3);
+  border: 1px solid rgba(255,255,255,0.1);
+  cursor: not-allowed;
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 20px;
+}
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: rgba(255,255,255,0.7);
+}
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 15px;
+  font-family: var(--font-primary);
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08);
+  color: #FFFFFF;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  outline: none;
+  transition: all 0.3s;
+}
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(0,128,255,0.2);
+  background: rgba(255,255,255,0.12);
+}
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: rgba(255,255,255,0.4);
+}
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,255,255,0.5)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+.form-checkbox,
+.form-radio {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent-blue);
+  cursor: pointer;
+}
+.form-row {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+.form-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Cards */
+.card {
+  padding: 28px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--border-radius);
+  transition: all 0.3s;
+}
+.card:hover {
+  background: rgba(255,255,255,0.18);
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,0.3);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, rgba(0,128,255,0.3), rgba(139,0,255,0.3));
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.card-text {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.6;
+}
+
+/* Typography */
+.typo-h1 { font-size: 48px; font-weight: 800; line-height: 1.1; margin-bottom: 20px; }
+.typo-h2 { font-size: 36px; font-weight: 700; line-height: 1.2; margin-bottom: 20px; }
+.typo-h3 { font-size: 28px; font-weight: 600; line-height: 1.3; margin-bottom: 20px; }
+.typo-h4 { font-size: 22px; font-weight: 600; line-height: 1.3; margin-bottom: 20px; }
+.typo-h5 { font-size: 18px; font-weight: 600; line-height: 1.4; margin-bottom: 20px; }
+.typo-h6 { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; color: rgba(255,255,255,0.5); }
+.typo-body { font-size: 16px; line-height: 1.6; margin-bottom: 16px; color: rgba(255,255,255,0.9); }
+.typo-caption { font-size: 12px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; }
+
+/* Modal */
+.modal-content {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+}
+.modal-content h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.modal-content p {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+.modal-content .btn {
+  width: 100%;
+}
+
+/* Swatches */
+.swatch {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Style Info */
+.style-info {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--border-radius);
+ text-align: center;}
+</style>
+</head>
+<body>
+<!-- Viewport Switcher Bar -->
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+
+<div class="vp-frame">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="container">
+      <span class="tag tag-era">2020s Modern</span>
+      <span class="tag tag-complexity-medium">Complexity: Medium</span>
+      <h1>Glassmorphism</h1>
+      <p class="subtitle">Frosted glass effects with translucent layers over vibrant backgrounds. Depth through transparency.</p>
+      <div class="hero-glass-card glass">
+        <span style="font-size: 14px; color: rgba(255,255,255,0.8);">Frosted glass cards floating on gradient backgrounds</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation Demo -->
+  <nav class="demo-nav">
+    <div class="container">
+      <a href="#" class="active">Dashboard</a>
+      <a href="#">Analytics</a>
+      <a href="#">Portfolio</a>
+      <a href="#">Settings</a>
+      <a href="#">Billing</a>
+    </div>
+  </nav>
+
+  <!-- Buttons Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Buttons</h2>
+      <div class="flex-gap">
+        <button class="btn btn-primary">Primary Action</button>
+        <button class="btn btn-secondary">Glass Button</button>
+        <button class="btn btn-ghost">Ghost Button</button>
+        <button class="btn btn-disabled" disabled>Disabled</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Forms Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Form Elements</h2>
+      <div style="max-width: 600px; margin: 0 auto;">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" placeholder="Enter your name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-textarea" placeholder="Type your message..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select">
+            <option>Select category</option>
+            <option>SaaS Platform</option>
+            <option>Financial Dashboard</option>
+            <option>Lifestyle App</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label><input type="checkbox" class="form-checkbox"> Remember me</label>
+          <label><input type="radio" name="plan" class="form-radio"> Starter</label>
+          <label><input type="radio" name="plan" class="form-radio"> Enterprise</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cards Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Cards</h2>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <div class="card-title">Financial Dashboard</div>
+          <p class="card-text">Glass effects create depth over data visualizations without obscuring content.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🎨</div>
+          <div class="card-title">Creative Portfolio</div>
+          <p class="card-text">Translucent layers let background imagery show through, creating rich visual depth.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🚀</div>
+          <div class="card-title">Modern SaaS</div>
+          <p class="card-text">Frosted glass communicates modernity and sophistication for premium products.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typography Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Typography</h2>
+      <div class="typo-h1">Heading 1 — Glass Depth</div>
+      <div class="typo-h2">Heading 2 — Translucent Layers</div>
+      <div class="typo-h3">Heading 3 — Frosted Elegance</div>
+      <div class="typo-h4">Heading 4 — Visual Depth</div>
+      <div class="typo-h5">Heading 5 — Modern Presence</div>
+      <div class="typo-h6">Heading 6 — Label Style</div>
+      <p class="typo-body">Body text maintains excellent readability against glass backgrounds. The translucency creates a sense of depth and modernity while keeping content accessible and clear.</p>
+      <p class="typo-caption">Caption — metadata and supporting text</p>
+    </div>
+  </section>
+
+  <!-- Color Palette -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Color Palette</h2>
+      <div class="swatch-row">
+        <div class="swatch" style="background: linear-gradient(135deg, #0080FF, #8B00FF);" data-hex="Gradient"></div>
+        <div class="swatch" style="background: #0080FF;" data-hex="#0080FF"></div>
+        <div class="swatch" style="background: #8B00FF;" data-hex="#8B00FF"></div>
+        <div class="swatch" style="background: #FF1493;" data-hex="#FF1493"></div>
+        <div class="swatch" style="background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3);" data-hex="rgba(255,255,255,0.15)"></div>
+        <div class="swatch" style="background: #0F0F23;" data-hex="#0F0F23"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal Demo -->
+  <div id="demo-modal" class="modal-overlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
+    <div class="modal-content">
+      <h3>Glass Modal Dialog</h3>
+      <p>This modal uses frosted glass effects with backdrop blur. The translucent surface creates depth over the dark overlay.</p>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Close</button>
+    </div>
+  </div>
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Modal Dialog</h2>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button>
+    </div>
+  </section>
+
+  <!-- Style Info Panel -->
+  <section class="section">
+    <div class="container">
+      <div class="style-info">
+        <h3>Style Information</h3>
+        <div class="style-info-grid">
+          <div class="style-info-item">
+            <div class="label">Era/Origin</div>
+            <div class="value">2020s Modern (Glassmorphism)</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Best For</div>
+            <div class="value">Modern SaaS, financial dashboards, lifestyle apps</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Avoid For</div>
+            <div class="value">Content-heavy sites, low-bandwidth environments, older browsers</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Complexity</div>
+            <div class="value">Medium — requires backdrop-filter support</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">CSS Keywords</div>
+            <div class="value">backdrop-filter:blur(15px), background:rgba(255,255,255,0.15), border:1px solid rgba(255,255,255,0.2)</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Design Variables</div>
+            <div class="value">--glass-bg:rgba(255,255,255,0.15), --glass-blur:blur(15px), --accent:#0080FF</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="shared.js"></script>
+</body>
+</html>

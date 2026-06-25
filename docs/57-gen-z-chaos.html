@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gen Z Chaos - UI Style Showcase</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    :root {
+      --page-bg: #0a0a0a;
+      --text-color: #ffffff;
+      --magenta: #FF00FF;
+      --green: #00FF00;
+      --yellow: #FFFF00;
+      --blue: #0000FF;
+      --red: #FF0000;
+      --orange: #FF6600;
+    }
+
+    /* --- KEYFRAMES --- */
+    @keyframes jitter {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      10% { transform: translate(-2px, 1px) rotate(-1deg); }
+      20% { transform: translate(3px, -1px) rotate(1deg); }
+      30% { transform: translate(-1px, 3px) rotate(-2deg); }
+      40% { transform: translate(2px, -2px) rotate(2deg); }
+      50% { transform: translate(-3px, 0px) rotate(-1deg); }
+      60% { transform: translate(1px, 2px) rotate(1deg); }
+      70% { transform: translate(-2px, -1px) rotate(-2deg); }
+      80% { transform: translate(3px, 1px) rotate(2deg); }
+      90% { transform: translate(-1px, -3px) rotate(-1deg); }
+    }
+
+    @keyframes marqueeScroll {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes rainbow {
+      0% { color: #FF00FF; }
+      16% { color: #FF0000; }
+      33% { color: #FFFF00; }
+      50% { color: #00FF00; }
+      66% { color: #0000FF; }
+      83% { color: #FF6600; }
+      100% { color: #FF00FF; }
+    }
+
+    @keyframes rainbowBg {
+      0% { background-color: #FF00FF; }
+      16% { background-color: #FF0000; }
+      33% { background-color: #FFFF00; }
+      50% { background-color: #00FF00; }
+      66% { background-color: #0000FF; }
+      83% { background-color: #FF6600; }
+      100% { background-color: #FF00FF; }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+      50% { transform: translateY(-8px) rotate(var(--rot, 0deg)); }
+    }
+
+    @keyframes wobble {
+      0%, 100% { transform: rotate(var(--rot, -3deg)) scale(1); }
+      25% { transform: rotate(calc(var(--rot, -3deg) + 5deg)) scale(1.05); }
+      75% { transform: rotate(calc(var(--rot, -3deg) - 5deg)) scale(0.95); }
+    }
+
+    @keyframes slideAcross {
+      0% { transform: translateX(-100%) rotate(var(--rot, 0deg)); }
+      100% { transform: translateX(calc(100vw + 100%)) rotate(var(--rot, 0deg)); }
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    @keyframes colorCycle {
+      0% { border-color: #FF00FF; }
+      25% { border-color: #00FF00; }
+      50% { border-color: #FFFF00; }
+      75% { border-color: #FF0000; }
+      100% { border-color: #FF00FF; }
+    }
+
+    /* --- PAGE --- */
+    body {
+      background: var(--page-bg);
+      color: var(--text-color);
+      font-family: system-ui, -apple-system, 'Segoe UI', 'Comic Sans MS', Impact, sans-serif;
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    /* --- MARQUEE BANNER --- */
+    .genz-marquee {
+      background: var(--magenta);
+      color: var(--green);
+      font-size: 1.2rem;
+      font-weight: 900;
+      padding: 10px 0;
+      overflow: hidden;
+      white-space: nowrap;
+      border-bottom: 4px dashed var(--yellow);
+      border-top: 4px dashed var(--yellow);
+      position: relative;
+      z-index: 999;
+    }
+
+    .genz-marquee span {
+      display: inline-block;
+      animation: marqueeScroll 12s linear infinite;
+      font-family: 'Impact', system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+    }
+
+    /* --- HERO --- */
+    .hero-genz {
+      position: relative;
+      min-height: 90vh;
+      background: linear-gradient(135deg, #FF00FF22, #00FF0022, #FFFF0022, #0000FF22, #FF000022);
+      background-size: 400% 400%;
+      animation: rainbowBg 8s ease infinite;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 6px solid var(--magenta);
+    }
+
+    .hero-bg-shapes {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-bg-shapes .shape {
+      position: absolute;
+      border-radius: 50%;
+      mix-blend-mode: screen;
+      opacity: 0.5;
+    }
+
+    .hero-bg-shapes .shape:nth-child(1) {
+      width: 300px; height: 300px;
+      background: var(--magenta);
+      top: 10%; left: 5%;
+      animation: jitter 0.3s infinite;
+    }
+
+    .hero-bg-shapes .shape:nth-child(2) {
+      width: 200px; height: 200px;
+      background: var(--green);
+      top: 60%; right: 10%;
+      border-radius: 0;
+      transform: rotate(45deg);
+      animation: spin 6s linear infinite;
+    }
+
+    .hero-bg-shapes .shape:nth-child(3) {
+      width: 150px; height: 150px;
+      background: var(--yellow);
+      bottom: 15%; left: 20%;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    }
+
+    .hero-bg-shapes .shape:nth-child(4) {
+      width: 250px; height: 250px;
+      background: var(--red);
+      top: 20%; right: 20%;
+      border-radius: 50% 0;
+      mix-blend-mode: overlay;
+      animation: jitter 0.5s infinite;
+    }
+
+    .hero-bg-shapes .shape:nth-child(5) {
+      width: 180px; height: 180px;
+      background: var(--blue);
+      bottom: 30%; right: 30%;
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      animation: spin 10s linear infinite reverse;
+    }
+
+    .hero-title {
+      position: relative;
+      z-index: 2;
+      font-family: 'Impact', 'Arial Black', system-ui, sans-serif;
+      font-size: clamp(3rem, 10vw, 9rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      text-stroke: 4px #000;
+      -webkit-text-stroke: 4px #000;
+      color: var(--magenta);
+      transform: rotate(-5deg);
+      text-align: center;
+      line-height: 1;
+      mix-blend-mode: normal;
+      filter: drop-shadow(4px 4px 0 #000) drop-shadow(-2px -2px 0 var(--green));
+    }
+
+    .hero-title .title-green {
+      color: var(--green);
+      -webkit-text-stroke: 3px #000;
+      transform: rotate(3deg) display: inline-block;
+      display: inline-block;
+    }
+
+    .hero-title .title-yellow {
+      color: var(--yellow);
+      -webkit-text-stroke: 3px #000;
+      transform: rotate(-8deg);
+      display: inline-block;
+    }
+
+    .hero-title .title-red {
+      color: var(--red);
+      -webkit-text-stroke: 3px #fff;
+      display: inline-block;
+      transform: rotate(6deg) scale(1.1);
+    }
+
+    /* Sticker Overlays */
+    .sticker {
+      position: absolute;
+      z-index: 3;
+      padding: 8px 18px;
+      font-weight: 900;
+      font-family: 'Impact', system-ui, sans-serif;
+      text-transform: uppercase;
+      border: 3px solid #000;
+      box-shadow: 3px 3px 0 #000;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .sticker-1 {
+      background: var(--yellow);
+      color: #000;
+      top: 15%; left: 8%;
+      transform: rotate(-12deg);
+      font-size: 1.4rem;
+      animation: wobble 2s ease-in-out infinite;
+      --rot: -12deg;
+    }
+
+    .sticker-2 {
+      background: var(--green);
+      color: #000;
+      top: 25%; right: 10%;
+      transform: rotate(8deg);
+      font-size: 1.8rem;
+      animation: jitter 0.4s infinite;
+    }
+
+    .sticker-3 {
+      background: var(--red);
+      color: #fff;
+      bottom: 30%; left: 12%;
+      transform: rotate(15deg);
+      font-size: 1.2rem;
+      border-color: #fff;
+      box-shadow: 3px 3px 0 #fff;
+    }
+
+    .sticker-4 {
+      background: var(--blue);
+      color: var(--yellow);
+      top: 60%; right: 15%;
+      transform: rotate(-20deg);
+      font-size: 1.5rem;
+      animation: bounce 1.5s ease-in-out infinite;
+      --rot: -20deg;
+    }
+
+    .sticker-5 {
+      background: #000;
+      color: var(--magenta);
+      border-color: var(--magenta);
+      box-shadow: 3px 3px 0 var(--magenta);
+      bottom: 15%; right: 8%;
+      transform: rotate(5deg);
+      font-size: 1rem;
+    }
+
+    .sticker-6 {
+      background: var(--magenta);
+      color: #000;
+      top: 70%; left: 5%;
+      transform: rotate(-7deg);
+      font-size: 0.9rem;
+      mix-blend-mode: screen;
+    }
+
+    .sticker-7 {
+      background: var(--orange);
+      color: #fff;
+      bottom: 40%; right: 5%;
+      transform: rotate(22deg);
+      font-size: 1.1rem;
+      mix-blend-mode: multiply;
+    }
+
+    /* Upside down / sideways text */
+    .hero-side-text {
+      position: absolute;
+      z-index: 2;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      color: var(--green);
+      writing-mode: vertical-rl;
+      mix-blend-mode: screen;
+      letter-spacing: 2px;
+    }
+
+    .hero-side-text.left {
+      left: 2%;
+      top: 20%;
+      transform: rotate(180deg);
+    }
+
+    .hero-side-text.right {
+      right: 2%;
+      bottom: 20%;
+      color: var(--magenta);
+    }
+
+    .hero-upside-down {
+      position: absolute;
+      z-index: 2;
+      font-size: 2rem;
+      font-weight: 900;
+      transform: rotate(180deg);
+      color: var(--yellow);
+      text-stroke: 2px #000;
+      -webkit-text-stroke: 2px #000;
+      mix-blend-mode: difference;
+    }
+
+    .hero-upside-down.pos1 {
+      bottom: 10%; left: 35%;
+    }
+
+    .hero-upside-down.pos2 {
+      top: 8%; right: 35%;
+      font-size: 1rem;
+      color: var(--red);
+    }
+
+    /* Random geometric shapes in hero */
+    .hero-geo {
+      position: absolute;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .hero-geo.square {
+      width: 60px; height: 60px;
+      background: var(--green);
+      border: 3px solid #000;
+      top: 40%; left: 3%;
+      transform: rotate(45deg);
+      mix-blend-mode: overlay;
+    }
+
+    .hero-geo.diamond {
+      width: 40px; height: 40px;
+      background: var(--yellow);
+      border: 2px solid var(--magenta);
+      top: 35%; right: 5%;
+      transform: rotate(30deg);
+      animation: spin 4s linear infinite;
+    }
+
+    .hero-geo.cross {
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) rotate(15deg);
+      width: 80px; height: 20px;
+      background: var(--red);
+      mix-blend-mode: screen;
+    }
+
+    .hero-geo.cross::after {
+      content: '';
+      position: absolute;
+      width: 20px; height: 80px;
+      background: var(--red);
+      left: 30px; top: -30px;
+    }
+
+    /* --- NAVIGATION --- */
+    .nav-genz {
+      background: #000;
+      padding: 20px 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      border-top: 4px solid var(--magenta);
+      border-bottom: 4px solid var(--green);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-genz::before {
+      content: '★ ☆ ★ ☆ ★ ☆ ★ ☆ ★ ☆ ★ ☆ ★ ☆ ★ ☆ ★ ☆ ★ ☆ ★ ☆ ★ ☆ ★ ☆ ★ ☆';
+      position: absolute;
+      top: 2px;
+      left: 0;
+      width: 200%;
+      font-size: 0.6rem;
+      color: var(--yellow);
+      animation: marqueeScroll 8s linear infinite;
+      white-space: nowrap;
+    }
+
+    .nav-genz a {
+      text-decoration: none;
+      font-weight: 900;
+      font-family: 'Impact', system-ui, sans-serif;
+      text-transform: uppercase;
+      font-size: 1.5rem;
+      padding: 8px 16px;
+      border: 3px solid #000;
+      box-shadow: 2px 2px 0 #000;
+      position: relative;
+      transition: all 0.1s;
+    }
+
+    .nav-genz a:nth-child(1) {
+      color: var(--magenta);
+      background: #000;
+      transform: rotate(-3deg);
+      border-color: var(--magenta);
+    }
+
+    .nav-genz a:nth-child(2) {
+      color: #000;
+      background: var(--green);
+      transform: rotate(2deg);
+      font-size: 1.8rem;
+    }
+
+    .nav-genz a:nth-child(3) {
+      color: var(--yellow);
+      background: var(--blue);
+      transform: rotate(-5deg);
+      border-color: var(--yellow);
+    }
+
+    .nav-genz a:nth-child(4) {
+      color: var(--red);
+      background: var(--yellow);
+      transform: rotate(4deg);
+      font-size: 1.2rem;
+    }
+
+    .nav-genz a:nth-child(5) {
+      color: #fff;
+      background: var(--red);
+      transform: rotate(-1deg);
+      border-color: var(--magenta);
+      font-size: 1.6rem;
+    }
+
+    .nav-genz a:hover {
+      animation: jitter 0.15s infinite;
+      filter: brightness(1.2);
+    }
+
+    /* --- BUTTONS SECTION --- */
+    .section-genz {
+      padding: 64px 20px;
+      position: relative;
+      border: 3px dashed var(--magenta);
+      margin: 20px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .section-genz h2 {
+      font-family: 'Impact', system-ui, sans-serif;
+      font-size: 2.5rem;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      transform: rotate(-2deg);
+      text-stroke: 2px #000;
+      -webkit-text-stroke: 2px #000;
+    }
+
+    .btn-genz {
+      font-family: 'Impact', system-ui, sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+      font-size: 1.1rem;
+      padding: 12px 24px;
+      border: 4px solid #000;
+      box-shadow: 4px 4px 0 #000;
+      cursor: pointer;
+      transition: all 0.1s;
+      display: inline-block;
+      margin: 8px;
+      letter-spacing: 1px;
+    }
+
+    .btn-genz:hover {
+      animation: jitter 0.15s infinite;
+    }
+
+    .btn-genz:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 #000;
+    }
+
+    .btn-genz.primary {
+      background: var(--magenta);
+      color: var(--green);
+      border-radius: 0;
+      transform: rotate(-2deg);
+      font-size: 1.3rem;
+    }
+
+    .btn-genz.primary:hover {
+      background: var(--green);
+      color: var(--magenta);
+    }
+
+    .btn-genz.secondary {
+      background: transparent;
+      color: var(--green);
+      border: 4px solid var(--green);
+      border-radius: 20px;
+      transform: rotate(3deg);
+    }
+
+    .btn-genz.secondary:hover {
+      background: var(--green);
+      color: #000;
+    }
+
+    .btn-genz.ghost {
+      background: transparent;
+      color: var(--yellow);
+      border: none;
+      box-shadow: none;
+      transform: rotate(-4deg);
+      font-size: 1.5rem;
+      text-decoration: underline;
+      text-decoration-thickness: 3px;
+      text-decoration-color: var(--yellow);
+    }
+
+    .btn-genz.ghost:hover {
+      color: var(--magenta);
+      text-decoration-color: var(--magenta);
+      animation: rainbow 1s linear infinite;
+    }
+
+    .btn-genz.disabled {
+      background: #333;
+      color: #666;
+      border-color: #555;
+      box-shadow: 3px 3px 0 #222;
+      cursor: not-allowed;
+      transform: rotate(1deg);
+      border-radius: 50px;
+    }
+
+    .btn-genz.disabled:hover {
+      animation: none;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+     justify-content: center;}
+
+    /* --- FORMS SECTION --- */
+    .form-genz {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      position: relative;
+    }
+
+    .form-genz .form-group {
+      position: relative;
+    }
+
+    .form-genz label {
+      display: block;
+      font-weight: 900;
+      text-transform: uppercase;
+      font-family: 'Impact', system-ui, sans-serif;
+      font-size: 1rem;
+      margin-bottom: 6px;
+      letter-spacing: 2px;
+    }
+
+    .form-genz label:nth-child(1) {
+      color: var(--magenta);
+      transform: rotate(-1deg);
+      display: inline-block;
+    }
+
+    .form-group:nth-child(1) label { color: var(--magenta); transform: rotate(-2deg) display: inline-block; display: inline-block; transform: rotate(-2deg); }
+    .form-group:nth-child(2) label { color: var(--green); transform: rotate(1deg); }
+    .form-group:nth-child(3) label { color: var(--yellow); transform: rotate(-3deg); }
+    .form-group:nth-child(4) label { color: var(--red); transform: rotate(2deg); }
+    .form-group:nth-child(5) label { color: var(--blue); transform: rotate(-1deg); }
+    .form-group:nth-child(6) label { color: var(--orange); transform: rotate(3deg); }
+    .form-group:nth-child(7) label { color: var(--magenta); transform: rotate(-2deg); }
+
+    .form-genz input[type="text"],
+    .form-genz input[type="email"],
+    .form-genz input[type="password"],
+    .form-genz input[type="number"],
+    .form-genz input[type="url"],
+    .form-genz input[type="search"],
+    .form-genz input[type="date"],
+    .form-genz input[type="time"],
+    .form-genz input[type="datetime-local"],
+    .form-genz input[type="month"],
+    .form-genz input[type="week"],
+    .form-genz input[type="tel"],
+    .form-genz textarea,
+    .form-genz select {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 1rem;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      background: #111;
+      color: #fff;
+      border: 3px solid;
+      outline: none;
+      box-shadow: 3px 3px 0 #000;
+      transition: all 0.1s;
+    }
+
+    .form-group:nth-child(1) input,
+    .form-group:nth-child(1) textarea { border-color: var(--magenta); transform: rotate(0.5deg); }
+    .form-group:nth-child(2) input,
+    .form-group:nth-child(2) textarea { border-color: var(--green); transform: rotate(-0.5deg); border-radius: 20px; }
+    .form-group:nth-child(3) input,
+    .form-group:nth-child(3) select { border-color: var(--yellow); transform: rotate(0.3deg); }
+    .form-group:nth-child(4) input { border-color: var(--red); transform: rotate(-0.8deg); border-radius: 0 20px 0 20px; }
+    .form-group:nth-child(5) input,
+    .form-group:nth-child(5) textarea { border-color: var(--blue); transform: rotate(0.6deg); border-radius: 20px 0 20px 0; }
+    .form-group:nth-child(6) input { border-color: var(--orange); transform: rotate(-0.4deg); border-style: dashed; }
+    .form-group:nth-child(7) select { border-color: var(--magenta); transform: rotate(0.7deg); }
+
+    .form-genz input:focus,
+    .form-genz textarea:focus,
+    .form-genz select:focus {
+      box-shadow: 0 0 0 3px var(--magenta), 0 0 20px var(--magenta), 3px 3px 0 #000;
+    }
+
+    .form-genz textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    /* Checkboxes & Radios */
+    .form-checks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .form-checks label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 6px 12px;
+      border: 2px solid var(--magenta);
+      background: rgba(255, 0, 255, 0.1);
+      font-size: 0.9rem;
+      transform: rotate(-1deg);
+    }
+
+    .form-checks label:nth-child(2) { border-color: var(--green); background: rgba(0, 255, 0, 0.1); transform: rotate(1deg); }
+    .form-checks label:nth-child(3) { border-color: var(--yellow); background: rgba(255, 255, 0, 0.1); transform: rotate(-2deg); color: var(--yellow); }
+    .form-checks label:nth-child(4) { border-color: var(--red); background: rgba(255, 0, 0, 0.1); transform: rotate(2deg); }
+
+    .form-checks input[type="checkbox"],
+    .form-checks input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--magenta);
+    }
+
+    .form-checks input[type="radio"] {
+      border-radius: 50%;
+    }
+
+    /* --- CARDS SECTION --- */
+    .cards-genz {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      justify-content: center;
+      padding: 60px 30px;
+      position: relative;
+      min-height: 500px;
+    }
+
+    .card-genz {
+      width: 320px;
+      padding: 30px 24px;
+      border: 5px solid #000;
+      box-shadow: 6px 6px 0 #000;
+      position: relative;
+      transition: all 0.15s;
+    }
+
+    .card-genz:hover {
+      animation: jitter 0.2s infinite;
+      z-index: 10;
+    }
+
+    .card-genz:nth-child(1) {
+      background: var(--magenta);
+      color: #000;
+      transform: rotate(-4deg);
+      z-index: 2;
+      margin-right: -30px;
+    }
+
+    .card-genz:nth-child(2) {
+      background: var(--yellow);
+      color: #000;
+      transform: rotate(2deg) translateY(30px);
+      z-index: 3;
+      margin-right: -30px;
+    }
+
+    .card-genz:nth-child(3) {
+      background: var(--green);
+      color: #000;
+      transform: rotate(-6deg) translateY(-20px);
+      z-index: 1;
+    }
+
+    .card-genz h3 {
+      font-family: 'Impact', system-ui, sans-serif;
+      font-size: 2rem;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      text-stroke: 2px #000;
+      -webkit-text-stroke: 1px #000;
+    }
+
+    .card-genz p {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      font-weight: 700;
+    }
+
+    .card-genz .card-sticker {
+      position: absolute;
+      top: -15px;
+      right: -15px;
+      padding: 6px 14px;
+      font-weight: 900;
+      font-family: 'Impact', system-ui, sans-serif;
+      text-transform: uppercase;
+      border: 3px solid #000;
+      box-shadow: 2px 2px 0 #000;
+      font-size: 0.8rem;
+      transform: rotate(8deg);
+    }
+
+    .card-genz:nth-child(1) .card-sticker { background: var(--yellow); color: #000; }
+    .card-genz:nth-child(2) .card-sticker { background: var(--red); color: #fff; transform: rotate(-12deg); }
+    .card-genz:nth-child(3) .card-sticker { background: var(--blue); color: var(--yellow); transform: rotate(15deg); }
+
+    .card-genz .card-blend {
+      mix-blend-mode: overlay;
+      background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .card-genz .card-emoji {
+      font-size: 3rem;
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      mix-blend-mode: screen;
+    }
+
+    .card-genz:nth-child(1) .card-emoji { transform: rotate(20deg); }
+    .card-genz:nth-child(2) .card-emoji { transform: rotate(-15deg); }
+    .card-genz:nth-child(3) .card-emoji { transform: rotate(30deg); }
+
+    /* --- TYPOGRAPHY SECTION --- */
+    .typo-genz h1 {
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-family: 'Impact', system-ui, sans-serif;
+      color: var(--magenta);
+      text-stroke: 4px #000;
+      -webkit-text-stroke: 4px #000;
+      transform: rotate(-3deg);
+      margin-bottom: 20px;
+      line-height: 1;
+      mix-blend-mode: screen;
+    }
+
+    .typo-genz h2 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-family: 'Arial Black', system-ui, sans-serif;
+      color: var(--green);
+      text-stroke: 3px #000;
+      -webkit-text-stroke: 3px #000;
+      transform: rotate(2deg);
+      margin-bottom: 20px;
+      line-height: 1.1;
+    }
+
+    .typo-genz h3 {
+      font-size: clamp(1.5rem, 4vw, 3rem);
+      font-family: 'Georgia', serif;
+      color: var(--yellow);
+      text-stroke: 2px #000;
+      -webkit-text-stroke: 2px #000;
+      transform: rotate(-5deg);
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    .typo-genz h4 {
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      font-family: 'Courier New', monospace;
+      color: var(--red);
+      text-stroke: 2px #000;
+      -webkit-text-stroke: 2px #000;
+      transform: rotate(4deg);
+      margin-bottom: 20px;
+    }
+
+    .typo-genz h5 {
+      font-size: clamp(1rem, 2vw, 1.5rem);
+      font-family: system-ui, sans-serif;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 8px;
+      transform: rotate(-7deg);
+      margin-bottom: 20px;
+      mix-blend-mode: difference;
+    }
+
+    .typo-genz h6 {
+      font-size: clamp(0.8rem, 1.5vw, 1.1rem);
+      font-family: 'Comic Sans MS', cursive, system-ui;
+      color: var(--orange);
+      transform: rotate(180deg);
+      display: inline-block;
+      margin-bottom: 12px;
+      border: 2px solid var(--orange);
+      padding: 4px 12px;
+    }
+
+    .typo-genz .outline-text {
+      font-size: 4rem;
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 3px var(--magenta);
+      font-family: 'Impact', system-ui, sans-serif;
+      text-transform: uppercase;
+      transform: rotate(-2deg);
+      margin: 10px 0;
+    }
+
+    .typo-genz .flipped-text {
+      transform: rotate(180deg);
+      display: inline-block;
+      color: var(--green);
+      font-size: 2rem;
+      font-weight: 900;
+      -webkit-text-stroke: 1px #000;
+    }
+
+    /* --- COLOR SWATCHES --- */
+    .swatches-genz {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      padding: 40px 20px;
+      position: relative;
+      min-height: 300px;
+      justify-content: center;
+    }
+
+    .swatch-genz {
+      border: 4px solid #000;
+      box-shadow: 4px 4px 0 #000;
+      display: flex;
+      align-items: flex-end;
+      padding: 10px;
+      font-family: 'Courier New', monospace;
+      font-weight: 900;
+      font-size: 0.85rem;
+      color: #fff;
+      text-shadow: 1px 1px 0 #000;
+      position: relative;
+      margin: 5px;
+    }
+
+    .swatch-genz:nth-child(1) { width: 140px; height: 140px; background: var(--magenta); transform: rotate(-5deg); z-index: 3; color: #000; text-shadow: none; }
+    .swatch-genz:nth-child(2) { width: 160px; height: 120px; background: var(--green); transform: rotate(3deg) translateY(-20px); z-index: 2; color: #000; text-shadow: none; }
+    .swatch-genz:nth-child(3) { width: 120px; height: 160px; background: var(--yellow); transform: rotate(-8deg) translateX(-10px); z-index: 4; color: #000; text-shadow: none; }
+    .swatch-genz:nth-child(4) { width: 150px; height: 130px; background: var(--blue); transform: rotate(6deg) translateY(10px); z-index: 1; }
+    .swatch-genz:nth-child(5) { width: 130px; height: 150px; background: var(--red); transform: rotate(-3deg) translateX(15px); z-index: 2; }
+    .swatch-genz:nth-child(6) { width: 145px; height: 135px; background: var(--orange); transform: rotate(10deg) translateY(-15px); z-index: 3; }
+
+    .swatch-genz .swatch-label {
+      font-size: 0.75rem;
+      background: rgba(0,0,0,0.7);
+      padding: 2px 6px;
+      position: absolute;
+      bottom: 4px;
+      left: 4px;
+    }
+
+    /* --- MODAL --- */
+    .modal-overlay-genz {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      mix-blend-mode: normal;
+    }
+
+    .modal-overlay-genz.active {
+      display: flex;
+    }
+
+    .modal-genz {
+      background: #000;
+      border: 6px solid var(--magenta);
+      box-shadow: 8px 8px 0 var(--green), 16px 16px 0 var(--yellow);
+      padding: 40px;
+      max-width: 500px;
+      width: 90%;
+      position: relative;
+      transform: rotate(-2deg);
+      animation: jitter 0.3s infinite;
+    }
+
+    .modal-genz h2 {
+      font-family: 'Impact', system-ui, sans-serif;
+      font-size: 2.5rem;
+      color: var(--yellow);
+      text-transform: uppercase;
+      transform: rotate(3deg);
+      text-stroke: 2px #000;
+      -webkit-text-stroke: 2px #000;
+      margin-bottom: 15px;
+    }
+
+    .modal-genz p {
+      color: var(--green);
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .modal-genz .modal-close-genz {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: var(--red);
+      color: #fff;
+      border: 3px solid #000;
+      box-shadow: 2px 2px 0 #000;
+      width: 40px;
+      height: 40px;
+      font-size: 1.5rem;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: rotate(10deg);
+      transition: all 0.1s;
+    }
+
+    .modal-genz .modal-close-genz:hover {
+      animation: jitter 0.1s infinite;
+      background: var(--magenta);
+      color: #000;
+    }
+
+    .modal-stickers {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .modal-stickers span {
+      position: absolute;
+      font-weight: 900;
+      font-family: 'Impact', system-ui, sans-serif;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border: 2px solid #000;
+      box-shadow: 2px 2px 0 #000;
+    }
+
+    .modal-stickers span:nth-child(1) { top: -10px; left: 20%; background: var(--green); color: #000; transform: rotate(-8deg); }
+    .modal-stickers span:nth-child(2) { bottom: -10px; right: 15%; background: var(--yellow); color: #000; transform: rotate(12deg); }
+    .modal-stickers span:nth-child(3) { top: 50%; left: -10px; background: var(--red); color: #fff; transform: rotate(-5deg); }
+
+    .modal-open-btn-genz {
+      font-family: 'Impact', system-ui, sans-serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      background: var(--magenta);
+      color: var(--green);
+      border: 4px solid #000;
+      box-shadow: 4px 4px 0 #000;
+      padding: 14px 28px;
+      cursor: pointer;
+      transform: rotate(-2deg);
+      transition: all 0.1s;
+    }
+
+    .modal-open-btn-genz:hover {
+      animation: jitter 0.15s infinite;
+      background: var(--green);
+      color: var(--magenta);
+    }
+
+    /* --- STYLE INFO PANEL --- */
+    .info-panel-genz {
+      background: #111;
+      border: 4px solid var(--magenta);
+      margin: 20px;
+      padding: 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      position: relative;
+    }
+
+    .info-panel-genz::before {
+      content: 'STYLE INFO';
+      position: absolute;
+      top: -14px;
+      left: 20px;
+      background: var(--magenta);
+      color: #000;
+      padding: 4px 16px;
+      font-family: 'Impact', system-ui, sans-serif;
+      font-weight: 900;
+      font-size: 1rem;
+      text-transform: uppercase;
+      transform: rotate(-1deg);
+      border: 2px solid #000;
+      box-shadow: 2px 2px 0 #000;
+    }
+
+    .info-item-genz {
+      padding: 15px;
+      border: 2px solid;
+      position: relative;
+    }
+
+    .info-item-genz:nth-child(1) { border-color: var(--magenta); transform: rotate(-1deg); }
+    .info-item-genz:nth-child(2) { border-color: var(--green); transform: rotate(1deg); }
+    .info-item-genz:nth-child(3) { border-color: var(--yellow); transform: rotate(-2deg); }
+    .info-item-genz:nth-child(4) { border-color: var(--red); transform: rotate(1deg); }
+    .info-item-genz:nth-child(5) { border-color: var(--blue); transform: rotate(-1deg); }
+
+    .info-item-genz .info-label {
+      font-family: 'Impact', system-ui, sans-serif;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+
+    .info-item-genz:nth-child(1) .info-label { color: var(--magenta); }
+    .info-item-genz:nth-child(2) .info-label { color: var(--green); }
+    .info-item-genz:nth-child(3) .info-label { color: var(--yellow); }
+    .info-item-genz:nth-child(4) .info-label { color: var(--red); }
+    .info-item-genz:nth-child(5) .info-label { color: var(--blue); }
+
+    .info-item-genz .info-value {
+      font-weight: 900;
+      font-size: 1rem;
+      color: #fff;
+    }
+
+    /* --- FOOTER --- */
+    .footer-genz {
+      background: #000;
+      border-top: 4px solid var(--green);
+      padding: 30px;
+      text-align: center;
+      position: relative;
+    }
+
+    .footer-genz p {
+      font-family: 'Impact', system-ui, sans-serif;
+      color: var(--magenta);
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      transform: rotate(-1deg);
+      animation: rainbow 4s linear infinite;
+    }
+
+    .footer-genz .footer-sticker {
+      display: inline-block;
+      background: var(--yellow);
+      color: #000;
+      padding: 4px 12px;
+      font-weight: 900;
+      border: 2px solid #000;
+      box-shadow: 2px 2px 0 #000;
+      font-family: 'Impact', system-ui, sans-serif;
+      text-transform: uppercase;
+      margin: 8px;
+      transform: rotate(3deg);
+      font-size: 0.8rem;
+    }
+
+    .footer-genz .footer-sticker:nth-child(2) { background: var(--green); transform: rotate(-5deg); }
+    .footer-genz .footer-sticker:nth-child(3) { background: var(--magenta); color: #000; transform: rotate(7deg); }
+    .footer-genz .footer-sticker:nth-child(4) { background: var(--red); color: #fff; transform: rotate(-3deg); }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 768px) {
+      .hero-title { font-size: clamp(2rem, 8vw, 4rem); }
+      .sticker { font-size: 0.8rem !important; padding: 5px 10px; }
+      .card-genz { width: 90%; margin: 10px auto; transform: rotate(0) !important; }
+      .card-genz:nth-child(2), .card-genz:nth-child(3) { transform: rotate(0) !important; margin-right: 0; }
+      .nav-genz a { font-size: 1rem !important; }
+      .swatch-genz { width: 100px !important; height: 100px !important; }
+      .typo-genz h1 { -webkit-text-stroke: 2px #000; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Viewport Bar -->
+  <div class="vp-bar">
+    <span class="vp-label">📐 Viewport:</span>
+    <button class="vp-btn" data-size="1920">1920</button>
+    <button class="vp-btn" data-size="1440">1440</button>
+    <button class="vp-btn" data-size="1024">1024</button>
+    <button class="vp-btn" data-size="768">768</button>
+    <button class="vp-btn" data-size="375">375</button>
+    <button class="vp-btn" data-size="320">320</button>
+    <span id="vp-width" class="vp-width">Full</span>
+    <a href="index.html" class="vp-back">← Back to All Styles</a>
+  </div>
+
+  <div class="vp-frame">
+
+    <!-- ======================== -->
+    <!-- MARQUEE SCROLL BANNER    -->
+    <!-- ======================== -->
+    <div class="genz-marquee">
+      <span>★ THIS IS THE INTERNET AND IT IS BEAUTIFUL ★ &nbsp;&nbsp;&nbsp; THIS IS THE INTERNET AND IT IS BEAUTIFUL ★ &nbsp;&nbsp;&nbsp; THIS IS THE INTERNET AND IT IS BEAUTIFUL ★ &nbsp;&nbsp;&nbsp; THIS IS THE INTERNET AND IT IS BEAUTIFUL ★</span>
+    </div>
+
+    <!-- ======================== -->
+    <!-- 1. HERO - MAXIMALIST CHAOS -->
+    <!-- ======================== -->
+    <section class="hero-genz">
+
+      <!-- Background Shapes -->
+      <div class="hero-bg-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+      </div>
+
+      <!-- Geometric Elements -->
+      <div class="hero-geo square"></div>
+      <div class="hero-geo diamond"></div>
+      <div class="hero-geo cross"></div>
+
+      <!-- Stickers -->
+      <div class="sticker sticker-1">VIBE CHECK</div>
+      <div class="sticker sticker-2">SLAY</div>
+      <div class="sticker sticker-3">NO CAP</div>
+      <div class="sticker sticker-4">BRB</div>
+      <div class="sticker sticker-5">bestie??</div>
+      <div class="sticker sticker-6">its giving</div>
+      <div class="sticker sticker-7">main char</div>
+
+      <!-- Side Text -->
+      <span class="hero-side-text left">THIS IS CHAOS AND WE LOVE IT</span>
+      <span class="hero-side-text right">MAXIMALISM IS NOT A CRIME</span>
+
+      <!-- Upside Down Text -->
+      <div class="hero-upside-down pos1">TOO MUCH IS NEVER ENOUGH</div>
+      <div class="hero-upside-down pos2">more is more</div>
+
+      <!-- Main Title -->
+      <h1 class="hero-title">
+        <span class="title-green">GEN</span>
+        <span class="title-yellow"> Z</span>
+        <br>
+        <span class="title-red">ENERGY</span>
+      </h1>
+    </section>
+
+    <!-- ======================== -->
+    <!-- 2. NAVIGATION            -->
+    <!-- ======================== -->
+    <nav class="nav-genz">
+      <a href="#">/HOME</a>
+      <a href="#">/DRIP</a>
+      <a href="#">/VIBES</a>
+      <a href="#">/STAN</a>
+      <a href="#">/CONTACT</a>
+    </nav>
+
+    <!-- ======================== -->
+    <!-- 3. BUTTONS               -->
+    <!-- ======================== -->
+    <section class="section-genz">
+      <h2 style="color: var(--yellow);">BUTTONS // BUT MAKE IT CHAOS</h2>
+      <div class="btn-row">
+        <button class="btn-genz primary">PRIMARY SLAY</button>
+        <button class="btn-genz secondary">SECONDARY VIBE</button>
+        <button class="btn-genz ghost">GHOST MODE</button>
+        <button class="btn-genz disabled" disabled>NO ENERGY</button>
+      </div>
+      <div class="btn-row" style="margin-top: 15px;">
+        <button class="btn-genz primary" style="border-radius: 50px; transform: rotate(5deg);">ROUND ONE</button>
+        <button class="btn-genz secondary" style="transform: rotate(-3deg); font-size: 0.9rem;">SMOL</button>
+        <button class="btn-genz ghost" style="transform: rotate(8deg); color: var(--red);">ANGRY TEXT</button>
+        <button class="btn-genz primary" style="transform: rotate(-7deg); font-size: 1.8rem; border-color: var(--yellow); color: var(--yellow); background: var(--blue);">BIG ENERGY</button>
+      </div>
+    </section>
+
+    <!-- ======================== -->
+    <!-- 4. FORMS                 -->
+    <!-- ======================== -->
+    <section class="section-genz">
+      <h2 style="color: var(--green); transform: rotate(2deg);">FILL THIS OUT OR WHATEVER</h2>
+      <div class="form-genz">
+        <div class="form-group">
+          <label for="gz-name">ur name (or alias)</label>
+          <input type="text" id="gz-name" placeholder="slay_master_3000">
+        </div>
+        <div class="form-group">
+          <label for="gz-email">email (we wont spam... much)</label>
+          <input type="email" id="gz-email" placeholder="vibes@internet.com">
+        </div>
+        <div class="form-group">
+          <label for="gz-pw">secret password</label>
+          <input type="password" id="gz-pw" placeholder="********">
+        </div>
+        <div class="form-group">
+          <label for="gz-url">ur url</label>
+          <input type="url" id="gz-url" placeholder="https://itsgiving.com">
+        </div>
+        <div class="form-group">
+          <label for="gz-date">when did this happen</label>
+          <input type="date" id="gz-date">
+        </div>
+        <div class="form-group">
+          <label for="gz-number">how many vibes (0-100)</label>
+          <input type="number" id="gz-number" min="0" max="100" value="99">
+        </div>
+        <div class="form-group">
+          <label for="gz-select">pick ur vibe</label>
+          <select id="gz-select">
+            <option>chaotic good</option>
+            <option>chaotic neutral</option>
+            <option>chaotic evil</option>
+            <option>main character</option>
+            <option>background character</option>
+          </select>
+        </div>
+        <div class="form-group" style="grid-column: 1 / -1;">
+          <label for="gz-textarea">tell us everything</label>
+          <textarea id="gz-textarea" placeholder="no cap this is the best form ever..."></textarea>
+        </div>
+      </div>
+      <!-- Checkboxes & Radios -->
+      <div style="margin-top: 20px;">
+        <div class="form-checks">
+          <label><input type="checkbox" checked> slay</label>
+          <label><input type="checkbox" checked> vibe check</label>
+          <label><input type="checkbox"> mid</label>
+          <label><input type="checkbox"> cringe</label>
+        </div>
+        <div class="form-checks" style="margin-top: 12px;">
+          <label><input type="radio" name="gz-radio" checked> no cap</label>
+          <label><input type="radio" name="gz-radio"> fr fr</label>
+          <label><input type="radio" name="gz-radio"> on god</label>
+          <label><input type="radio" name="gz-radio"> its giving</label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== -->
+    <!-- 5. CARDS                 -->
+    <!-- ======================== -->
+    <section class="section-genz" style="overflow: visible;">
+      <h2 style="color: var(--red); transform: rotate(-3deg); text-align: center;">CARDS BUT STACKED LIKE STICKERS</h2>
+      <div class="cards-genz">
+        <!-- Card 1 -->
+        <div class="card-genz">
+          <div class="card-blend"></div>
+          <span class="card-sticker">FIRE EMOJI</span>
+          <h3>Chaotic Energy</h3>
+          <p>This card has absolutely no chill. It does what it wants. It rotates when it feels like it. It exists on its own terms.</p>
+          <span class="card-emoji">🔥</span>
+        </div>
+        <!-- Card 2 -->
+        <div class="card-genz">
+          <div class="card-blend"></div>
+          <span class="card-sticker">MAIN CHARACTER</span>
+          <h3>Digital Native</h3>
+          <p>Born on the internet, raised by memes. This card speaks fluent Gen Z and only communicates in screenshots.</p>
+          <span class="card-emoji">👑</span>
+        </div>
+        <!-- Card 3 -->
+        <div class="card-genz">
+          <div class="card-blend"></div>
+          <span class="card-sticker">ITS GIVING</span>
+          <h3>Maximal Mode</h3>
+          <p>Minimalism could never. This card is giving EVERYTHING at once. Colors, rotations, chaos. We love to see it.</p>
+          <span class="card-emoji">✨</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== -->
+    <!-- 6. TYPOGRAPHY            -->
+    <!-- ======================== -->
+    <section class="section-genz typo-genz">
+      <h2 style="color: var(--magenta); transform: rotate(5deg); text-align: center;">TYPE BUT MAKE IT LOUD</h2>
+      <h1>THIS IS H1 AND SHE IS DRAMATIC</h1>
+      <h2>H2 IS HERE AND READY TO FIGHT</h2>
+      <h3>H3 said "let me be serif for a sec"</h3>
+      <h4>H4 ON COURIER BECAUSE WHY NOT</h4>
+      <h5>H5 is spaced out and mysterious</h5>
+      <h6>h6 is upside down and thats ok</h6>
+      <div class="outline-text">OUTLINE VIBES ONLY</div>
+      <span class="flipped-text">this text is literally upside down lol</span>
+    </section>
+
+    <!-- ======================== -->
+    <!-- 7. COLOR SWATCHES        -->
+    <!-- ======================== -->
+    <section class="section-genz">
+      <h2 style="color: var(--blue); transform: rotate(-4deg); text-align: center;">THE PALETTE (its giving rainbow explosion)</h2>
+      <div class="swatches-genz">
+        <div class="swatch-genz">
+          <span class="swatch-label">#FF00FF</span>
+        </div>
+        <div class="swatch-genz">
+          <span class="swatch-label">#00FF00</span>
+        </div>
+        <div class="swatch-genz">
+          <span class="swatch-label">#FFFF00</span>
+        </div>
+        <div class="swatch-genz">
+          <span class="swatch-label">#0000FF</span>
+        </div>
+        <div class="swatch-genz">
+          <span class="swatch-label">#FF0000</span>
+        </div>
+        <div class="swatch-genz">
+          <span class="swatch-label">#FF6600</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== -->
+    <!-- 8. MODAL                 -->
+    <!-- ======================== -->
+    <section class="section-genz" style="text-align: center;">
+      <h2 style="color: var(--orange); transform: rotate(2deg);">MODAL? MORE LIKE MODAL-ISH</h2>
+      <button class="modal-open-btn-genz" onclick="toggleModal('demo-modal')">OPEN THE CHAOS</button>
+
+      <!-- Modal Overlay -->
+      <div class="modal-overlay-genz" id="demo-modal">
+        <div class="modal-genz">
+          <div class="modal-stickers">
+            <span>WAIT WHAT</span>
+            <span>NO WAY</span>
+            <span>LOL</span>
+          </div>
+          <button class="modal-close-genz" onclick="toggleModal('demo-modal')">&times;</button>
+          <h2>WAIT WHAT</h2>
+          <p>you actually opened this?? we were not expecting anyone to click that. anyway, welcome to the chaos. make yourself at home. or dont. we dont gatekeep here bestie.</p>
+          <button class="btn-genz primary" onclick="toggleModal('demo-modal')" style="margin-top: 10px;">OK ILL LEAVE NOW</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== -->
+    <!-- 9. STYLE INFO PANEL      -->
+    <!-- ======================== -->
+    <section class="info-panel-genz">
+      <div class="info-item-genz">
+        <div class="info-label">Era</div>
+        <div class="info-value">2023+ Internet Core</div>
+      </div>
+      <div class="info-item-genz">
+        <div class="info-label">Complexity</div>
+        <div class="info-value">High</div>
+      </div>
+      <div class="info-item-genz">
+        <div class="info-label">Best For</div>
+        <div class="info-value">Gen Z lifestyle brands, music artists, viral marketing, fashion</div>
+      </div>
+      <div class="info-item-genz">
+        <div class="info-label">Font</div>
+        <div class="info-value">Mixed system fonts (Impact, Comic Sans, Courier, Arial Black, Georgia)</div>
+      </div>
+      <div class="info-item-genz">
+        <div class="info-label">Effects</div>
+        <div class="info-value">Marquee, jitter, sticker overlays, blend modes, rainbow cycling, random rotations</div>
+      </div>
+    </section>
+
+    <!-- ======================== -->
+    <!-- FOOTER                   -->
+    <!-- ======================== -->
+    <footer class="footer-genz">
+      <p>GEN Z CHAOS // MAXIMALISM // INTERNET CORE // 2023+</p>
+      <div style="margin-top: 15px;">
+        <span class="footer-sticker">made with chaos</span>
+        <span class="footer-sticker">no minimalism allowed</span>
+        <span class="footer-sticker">more is more</span>
+        <span class="footer-sticker">slay</span>
+      </div>
+    </footer>
+
+  </div><!-- end .vp-frame -->
+
+  <script src="shared.js"></script>
+</body>
+</html>

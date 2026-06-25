@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biomimetic / Organic 2.0 - UI Style Showcase</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    :root {
+      --page-bg: #001E3C;
+      --text-color: #d0eaff;
+      --cellular-pink: #FF9999;
+      --chlorophyll-green: #00FF41;
+      --bioluminescent-blue: #00BFFF;
+      --deep-ocean: #001E3C;
+      --ocean-mid: #1A3A5C;
+      --sage: #66CCAA;
+      --glow-green: rgba(0, 255, 65, 0.4);
+      --glow-blue: rgba(0, 191, 255, 0.4);
+      --glow-pink: rgba(255, 153, 153, 0.4);
+      --glass-bg: rgba(0, 30, 60, 0.55);
+      --glass-border: rgba(0, 191, 255, 0.18);
+    }
+
+    /* ─── KEYFRAMES ─── */
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes breatheSlow {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+
+    @keyframes morphBlob {
+      0%   { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+      25%  { border-radius: 58% 42% 38% 62% / 52% 60% 40% 48%; }
+      50%  { border-radius: 70% 30% 50% 50% / 40% 68% 32% 60%; }
+      75%  { border-radius: 42% 58% 62% 38% / 68% 38% 62% 32%; }
+      100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+    }
+
+    @keyframes morphBlob2 {
+      0%   { border-radius: 50% 50% 30% 70% / 60% 40% 60% 40%; }
+      25%  { border-radius: 35% 65% 55% 45% / 45% 55% 45% 55%; }
+      50%  { border-radius: 65% 35% 45% 55% / 35% 65% 35% 65%; }
+      75%  { border-radius: 45% 55% 65% 35% / 55% 35% 55% 35%; }
+      100% { border-radius: 50% 50% 30% 70% / 60% 40% 60% 40%; }
+    }
+
+    @keyframes morphBlob3 {
+      0%   { border-radius: 40% 60% 60% 40% / 50% 40% 60% 50%; }
+      33%  { border-radius: 60% 40% 40% 60% / 40% 60% 40% 60%; }
+      66%  { border-radius: 50% 50% 50% 50% / 60% 40% 60% 40%; }
+      100% { border-radius: 40% 60% 60% 40% / 50% 40% 60% 50%; }
+    }
+
+    @keyframes floatUp {
+      0%   { transform: translateY(0) translateX(0); opacity: 0.7; }
+      25%  { transform: translateY(-18px) translateX(5px); opacity: 1; }
+      50%  { transform: translateY(-30px) translateX(-3px); opacity: 0.85; }
+      75%  { transform: translateY(-15px) translateX(7px); opacity: 1; }
+      100% { transform: translateY(0) translateX(0); opacity: 0.7; }
+    }
+
+    @keyframes floatGentle {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      33%  { transform: translateY(-12px) rotate(1.5deg); }
+      66%  { transform: translateY(-6px) rotate(-1deg); }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 65, 0.2), 0 0 40px rgba(0, 191, 255, 0.1); }
+      50% { box-shadow: 0 0 30px rgba(0, 255, 65, 0.35), 0 0 60px rgba(0, 191, 255, 0.2); }
+    }
+
+    @keyframes glowText {
+      0%, 100% { text-shadow: 0 0 20px rgba(0, 255, 65, 0.5), 0 0 40px rgba(0, 191, 255, 0.3); }
+      50% { text-shadow: 0 0 30px rgba(0, 255, 65, 0.8), 0 0 60px rgba(0, 191, 255, 0.5), 0 0 80px rgba(0, 191, 255, 0.2); }
+    }
+
+    @keyframes flowLine {
+      0%   { stroke-dashoffset: 1000; opacity: 0; }
+      10%  { opacity: 0.6; }
+      50%  { opacity: 0.4; }
+      90%  { opacity: 0.6; }
+      100% { stroke-dashoffset: 0; opacity: 0; }
+    }
+
+    @keyframes ambientDrift {
+      0%   { transform: translate(0, 0) scale(1); }
+      33%  { transform: translate(30px, -20px) scale(1.05); }
+      66%  { transform: translate(-20px, 15px) scale(0.98); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+
+    @keyframes gradientShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes cellFloat {
+      0%   { transform: translateY(100vh) scale(0.5); opacity: 0; }
+      10%  { opacity: 0.6; }
+      50%  { opacity: 0.3; }
+      90%  { opacity: 0.6; }
+      100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
+    }
+
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    @keyframes pulseRing {
+      0%   { transform: scale(1); opacity: 0.6; }
+      100% { transform: scale(2.5); opacity: 0; }
+    }
+
+    /* ─── BASE ─── */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--deep-ocean);
+      color: var(--text-color);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: radial-gradient(ellipse at 30% 40%, rgba(0, 191, 255, 0.12) 0%, transparent 60%),
+                  radial-gradient(ellipse at 70% 60%, rgba(0, 255, 65, 0.08) 0%, transparent 50%),
+                  radial-gradient(ellipse at 50% 80%, rgba(255, 153, 153, 0.06) 0%, transparent 40%),
+                  var(--deep-ocean);
+    }
+
+    .hero-ambient {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .ambient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: ambientDrift 12s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+    }
+    .ambient-orb:nth-child(1) {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(0, 255, 65, 0.15), transparent 70%);
+      top: 10%; left: 5%;
+      animation-delay: 0s; animation-duration: 14s;
+    }
+    .ambient-orb:nth-child(2) {
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(0, 191, 255, 0.12), transparent 70%);
+      top: 30%; right: 10%;
+      animation-delay: -4s; animation-duration: 18s;
+    }
+    .ambient-orb:nth-child(3) {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(255, 153, 153, 0.1), transparent 70%);
+      bottom: 15%; left: 40%;
+      animation-delay: -8s; animation-duration: 16s;
+    }
+    .ambient-orb:nth-child(4) {
+      width: 250px; height: 250px;
+      background: radial-gradient(circle, rgba(102, 204, 170, 0.1), transparent 70%);
+      top: 60%; left: 15%;
+      animation-delay: -2s; animation-duration: 20s;
+    }
+
+    /* Organic Blob Shapes */
+    .hero-blobs {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .hero-blob {
+      position: absolute;
+      filter: blur(1px);
+    }
+
+    .hero-blob--1 {
+      width: 220px; height: 220px;
+      background: linear-gradient(135deg, rgba(0, 255, 65, 0.15), rgba(0, 191, 255, 0.1));
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      animation: morphBlob 12s ease-in-out infinite, floatGentle 8s ease-in-out infinite, breatheSlow 6s ease-in-out infinite;
+      top: 15%; left: 10%;
+      box-shadow: 0 0 40px rgba(0, 255, 65, 0.15), inset 0 0 30px rgba(0, 191, 255, 0.1);
+    }
+
+    .hero-blob--2 {
+      width: 180px; height: 180px;
+      background: linear-gradient(225deg, rgba(255, 153, 153, 0.12), rgba(0, 191, 255, 0.08));
+      border-radius: 58% 42% 38% 62% / 52% 60% 40% 48%;
+      animation: morphBlob2 15s ease-in-out infinite, floatGentle 10s ease-in-out infinite 2s;
+      top: 25%; right: 15%;
+      box-shadow: 0 0 35px rgba(255, 153, 153, 0.12), inset 0 0 25px rgba(0, 191, 255, 0.08);
+    }
+
+    .hero-blob--3 {
+      width: 160px; height: 160px;
+      background: linear-gradient(45deg, rgba(0, 191, 255, 0.1), rgba(102, 204, 170, 0.08));
+      border-radius: 40% 60% 60% 40% / 50% 40% 60% 50%;
+      animation: morphBlob3 10s ease-in-out infinite, floatGentle 7s ease-in-out infinite 1s;
+      bottom: 20%; right: 25%;
+      box-shadow: 0 0 30px rgba(0, 191, 255, 0.1), inset 0 0 20px rgba(102, 204, 170, 0.08);
+    }
+
+    .hero-blob--4 {
+      width: 120px; height: 120px;
+      background: linear-gradient(180deg, rgba(0, 255, 65, 0.1), rgba(255, 153, 153, 0.08));
+      border-radius: 50% 50% 30% 70% / 60% 40% 60% 40%;
+      animation: morphBlob 14s ease-in-out infinite 3s, floatGentle 9s ease-in-out infinite 3s;
+      bottom: 30%; left: 20%;
+      box-shadow: 0 0 25px rgba(0, 255, 65, 0.1);
+    }
+
+    .hero-blob--5 {
+      width: 260px; height: 260px;
+      background: linear-gradient(315deg, rgba(0, 191, 255, 0.08), rgba(0, 255, 65, 0.05));
+      border-radius: 60% 40% 50% 50% / 35% 65% 35% 65%;
+      animation: morphBlob2 18s ease-in-out infinite 1s, floatGentle 11s ease-in-out infinite 4s;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      box-shadow: 0 0 50px rgba(0, 191, 255, 0.08);
+    }
+
+    /* Flowing vein/mycelium lines */
+    .hero-veins {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .hero-veins svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .vein-line {
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-dasharray: 8 12;
+      animation: flowLine 8s linear infinite;
+    }
+    .vein-line--1 { stroke: rgba(0, 255, 65, 0.25); animation-delay: 0s; animation-duration: 7s; }
+    .vein-line--2 { stroke: rgba(0, 191, 255, 0.2); animation-delay: -2s; animation-duration: 9s; }
+    .vein-line--3 { stroke: rgba(255, 153, 153, 0.18); animation-delay: -4s; animation-duration: 11s; }
+    .vein-line--4 { stroke: rgba(102, 204, 170, 0.2); animation-delay: -1s; animation-duration: 8s; }
+    .vein-line--5 { stroke: rgba(0, 191, 255, 0.15); animation-delay: -6s; animation-duration: 10s; }
+
+    /* Floating cells / particles */
+    .hero-cells {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .floating-cell {
+      position: absolute;
+      border-radius: 50%;
+      animation: cellFloat linear infinite;
+      opacity: 0;
+    }
+    .floating-cell:nth-child(1) {
+      width: 6px; height: 6px; background: var(--chlorophyll-green);
+      left: 10%; animation-duration: 14s; animation-delay: 0s;
+      box-shadow: 0 0 8px rgba(0, 255, 65, 0.6);
+    }
+    .floating-cell:nth-child(2) {
+      width: 4px; height: 4px; background: var(--bioluminescent-blue);
+      left: 25%; animation-duration: 18s; animation-delay: -3s;
+      box-shadow: 0 0 6px rgba(0, 191, 255, 0.6);
+    }
+    .floating-cell:nth-child(3) {
+      width: 8px; height: 8px; background: var(--cellular-pink);
+      left: 45%; animation-duration: 16s; animation-delay: -6s;
+      box-shadow: 0 0 10px rgba(255, 153, 153, 0.5);
+    }
+    .floating-cell:nth-child(4) {
+      width: 5px; height: 5px; background: var(--sage);
+      left: 65%; animation-duration: 20s; animation-delay: -2s;
+      box-shadow: 0 0 7px rgba(102, 204, 170, 0.5);
+    }
+    .floating-cell:nth-child(5) {
+      width: 7px; height: 7px; background: var(--bioluminescent-blue);
+      left: 80%; animation-duration: 15s; animation-delay: -8s;
+      box-shadow: 0 0 9px rgba(0, 191, 255, 0.5);
+    }
+    .floating-cell:nth-child(6) {
+      width: 3px; height: 3px; background: var(--chlorophyll-green);
+      left: 35%; animation-duration: 22s; animation-delay: -5s;
+      box-shadow: 0 0 5px rgba(0, 255, 65, 0.6);
+    }
+    .floating-cell:nth-child(7) {
+      width: 5px; height: 5px; background: var(--cellular-pink);
+      left: 55%; animation-duration: 17s; animation-delay: -10s;
+      box-shadow: 0 0 7px rgba(255, 153, 153, 0.5);
+    }
+    .floating-cell:nth-child(8) {
+      width: 4px; height: 4px; background: var(--sage);
+      left: 90%; animation-duration: 19s; animation-delay: -4s;
+      box-shadow: 0 0 6px rgba(102, 204, 170, 0.5);
+    }
+    .floating-cell:nth-child(9) {
+      width: 6px; height: 6px; background: var(--bioluminescent-blue);
+      left: 5%; animation-duration: 21s; animation-delay: -7s;
+      box-shadow: 0 0 8px rgba(0, 191, 255, 0.5);
+    }
+    .floating-cell:nth-child(10) {
+      width: 3px; height: 3px; background: var(--chlorophyll-green);
+      left: 75%; animation-duration: 13s; animation-delay: -9s;
+      box-shadow: 0 0 5px rgba(0, 255, 65, 0.6);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 2rem;
+      animation: breathe 6s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 8vw, 7rem);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      background: linear-gradient(135deg, var(--chlorophyll-green), var(--bioluminescent-blue), var(--cellular-pink));
+      background-size: 200% 200%;
+      animation: gradientShift 8s ease-in-out infinite, glowText 4s ease-in-out infinite;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 2.5vw, 1.4rem);
+      color: rgba(208, 234, 255, 0.8);
+      font-weight: 300;
+      max-width: 600px;
+      margin: 0 auto 24px;
+      text-shadow: 0 0 20px rgba(0, 191, 255, 0.2);
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 0.5rem 1.5rem;
+      border-radius: 50px;
+      background: rgba(0, 255, 65, 0.08);
+      border: 1px solid rgba(0, 255, 65, 0.2);
+      color: var(--chlorophyll-green);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      animation: glowPulse 4s ease-in-out infinite;
+    }
+
+    /* ─── NAVIGATION ─── */
+    .bio-nav {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      padding: 1.5rem 2rem;
+      background: rgba(0, 30, 60, 0.7);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .bio-nav-item {
+      padding: 0.65rem 1.8rem;
+      border-radius: 50px;
+      background: linear-gradient(135deg, rgba(0, 255, 65, 0.06), rgba(0, 191, 255, 0.06));
+      border: 1px solid rgba(0, 191, 255, 0.15);
+      color: var(--text-color);
+      font-family: system-ui, sans-serif;
+      font-size: 0.92rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.5s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bio-nav-item::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(135deg, var(--chlorophyll-green), var(--bioluminescent-blue));
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: -1;
+    }
+
+    .bio-nav-item:hover {
+      border-color: rgba(0, 255, 65, 0.3);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0, 255, 65, 0.15), 0 0 30px rgba(0, 191, 255, 0.1);
+      animation: glowPulse 2s ease-in-out infinite;
+    }
+
+    .bio-nav-item:hover::before {
+      opacity: 0.15;
+    }
+
+    .bio-nav-item.active {
+      background: linear-gradient(135deg, rgba(0, 255, 65, 0.2), rgba(0, 191, 255, 0.15));
+      border-color: rgba(0, 255, 65, 0.4);
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.15);
+      color: var(--chlorophyll-green);
+    }
+
+    /* ─── SECTIONS ─── */
+    .style-section {
+      padding: 64px 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--chlorophyll-green);
+      margin-bottom: 32px;
+      text-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+    }
+
+    .section-desc {
+      color: rgba(208, 234, 255, 0.6);
+      margin-bottom: 2.5rem;
+      font-size: 1rem;
+    }
+
+    /* ─── BUTTONS ─── */
+    .button-showcase {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .bio-btn {
+      padding: 0.85rem 2.2rem;
+      border: none;
+      border-radius: 50px;
+      font-family: system-ui, sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.5s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 0.02em;
+    }
+
+    .bio-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .bio-btn-primary {
+      background: linear-gradient(135deg, var(--chlorophyll-green), var(--bioluminescent-blue));
+      color: var(--deep-ocean);
+      box-shadow: 0 4px 20px rgba(0, 255, 65, 0.2);
+    }
+    .bio-btn-primary:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 30px rgba(0, 255, 65, 0.35), 0 0 50px rgba(0, 191, 255, 0.15);
+      animation: breathe 2s ease-in-out infinite;
+    }
+
+    .bio-btn-secondary {
+      background: linear-gradient(135deg, var(--cellular-pink), #ffcccc);
+      color: var(--deep-ocean);
+      box-shadow: 0 4px 20px rgba(255, 153, 153, 0.2);
+    }
+    .bio-btn-secondary:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 8px 30px rgba(255, 153, 153, 0.35), 0 0 50px rgba(255, 153, 153, 0.15);
+      animation: breathe 2s ease-in-out infinite;
+    }
+
+    .bio-btn-ghost {
+      background: transparent;
+      color: var(--bioluminescent-blue);
+      border: 2px solid rgba(0, 191, 255, 0.35);
+    }
+    .bio-btn-ghost:hover {
+      border-color: rgba(0, 191, 255, 0.6);
+      background: rgba(0, 191, 255, 0.08);
+      transform: translateY(-3px);
+      box-shadow: 0 0 25px rgba(0, 191, 255, 0.15);
+      animation: breathe 2s ease-in-out infinite;
+    }
+
+    .bio-btn-disabled {
+      background: rgba(100, 120, 140, 0.2);
+      color: rgba(208, 234, 255, 0.3);
+      cursor: not-allowed;
+      border: 1px solid rgba(100, 120, 140, 0.15);
+    }
+    .bio-btn-disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* ─── FORMS ─── */
+    .bio-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      max-width: 550px;
+    }
+
+    .bio-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .bio-label {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: rgba(208, 234, 255, 0.7);
+      letter-spacing: 0.03em;
+    }
+
+    .bio-input,
+    .bio-textarea,
+    .bio-select {
+      padding: 0.85rem 1.3rem;
+      border-radius: 20px;
+      border: 1.5px solid rgba(0, 191, 255, 0.2);
+      background: rgba(0, 30, 60, 0.5);
+      color: var(--text-color);
+      font-family: system-ui, sans-serif;
+      font-size: 1rem;
+      transition: all 0.4s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+      outline: none;
+      backdrop-filter: blur(10px);
+    }
+
+    .bio-input:focus,
+    .bio-textarea:focus,
+    .bio-select:focus {
+      border-color: rgba(0, 255, 65, 0.4);
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.1), 0 0 40px rgba(0, 191, 255, 0.05);
+      background: rgba(0, 30, 60, 0.7);
+    }
+
+    .bio-input::placeholder,
+    .bio-textarea::placeholder {
+      color: rgba(208, 234, 255, 0.3);
+    }
+
+    .bio-textarea {
+      min-height: 120px;
+      resize: vertical;
+      border-radius: 24px;
+    }
+
+    .bio-select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2300BFFF' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1.2rem center;
+      padding-right: 3rem;
+    }
+
+    .bio-select option {
+      background: var(--deep-ocean);
+      color: var(--text-color);
+    }
+
+    .bio-checkbox-group,
+    .bio-radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .bio-check-item,
+    .bio-radio-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      border: 1px solid rgba(0, 191, 255, 0.15);
+      background: rgba(0, 30, 60, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .bio-check-item:hover,
+    .bio-radio-item:hover {
+      border-color: rgba(0, 255, 65, 0.3);
+      background: rgba(0, 30, 60, 0.5);
+    }
+
+    .bio-check-item input,
+    .bio-radio-item input {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      border: 2px solid rgba(0, 191, 255, 0.35);
+      background: rgba(0, 30, 60, 0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .bio-radio-item input {
+      border-radius: 50%;
+    }
+
+    .bio-check-item input:checked,
+    .bio-radio-item input:checked {
+      background: linear-gradient(135deg, var(--chlorophyll-green), var(--bioluminescent-blue));
+      border-color: transparent;
+      box-shadow: 0 0 12px rgba(0, 255, 65, 0.3);
+    }
+
+    .bio-check-item input:checked::after {
+      content: '✓';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--deep-ocean);
+      font-size: 0.7rem;
+      font-weight: 800;
+    }
+
+    .bio-radio-item input:checked::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--deep-ocean);
+    }
+
+    .bio-check-label,
+    .bio-radio-label {
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    /* ─── CARDS ─── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .bio-card {
+      background: linear-gradient(145deg, rgba(0, 30, 60, 0.6), rgba(0, 30, 60, 0.3));
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--glass-border);
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.5s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+      border-radius: 30% 5% 30% 5% / 5% 30% 5% 30%;
+    }
+
+    .bio-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background: linear-gradient(135deg, rgba(0, 255, 65, 0.1), transparent, rgba(0, 191, 255, 0.1));
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 0;
+    }
+
+    .bio-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 30%, rgba(0, 255, 65, 0.05) 0%, transparent 50%);
+      animation: ambientDrift 10s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bio-card:hover {
+      transform: translateY(-5px) scale(1.01);
+      border-color: rgba(0, 255, 65, 0.25);
+      box-shadow: 0 10px 40px rgba(0, 255, 65, 0.1), 0 0 60px rgba(0, 191, 255, 0.05);
+    }
+
+    .bio-card:hover::before {
+      opacity: 1;
+    }
+
+    .bio-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .bio-card:nth-child(1) {
+      animation: morphBlob 16s ease-in-out infinite, breatheSlow 6s ease-in-out infinite;
+      animation-delay: 0s, 0s;
+    }
+    .bio-card:nth-child(2) {
+      animation: morphBlob2 18s ease-in-out infinite, breatheSlow 7s ease-in-out infinite 1s;
+      border-radius: 5% 30% 5% 30% / 30% 5% 30% 5%;
+    }
+    .bio-card:nth-child(3) {
+      animation: morphBlob3 14s ease-in-out infinite, breatheSlow 5s ease-in-out infinite 2s;
+      border-radius: 20% 10% 20% 10% / 10% 20% 10% 20%;
+    }
+
+    .bio-card-icon {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+      display: block;
+      animation: floatGentle 4s ease-in-out infinite;
+    }
+
+    .bio-card-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+      background: linear-gradient(135deg, var(--chlorophyll-green), var(--bioluminescent-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .bio-card-text {
+      color: rgba(208, 234, 255, 0.7);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .bio-card-tag {
+      display: inline-block;
+      margin-top: 1.2rem;
+      padding: 0.35rem 1rem;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .bio-card-tag--green {
+      background: rgba(0, 255, 65, 0.1);
+      color: var(--chlorophyll-green);
+      border: 1px solid rgba(0, 255, 65, 0.2);
+    }
+    .bio-card-tag--blue {
+      background: rgba(0, 191, 255, 0.1);
+      color: var(--bioluminescent-blue);
+      border: 1px solid rgba(0, 191, 255, 0.2);
+    }
+    .bio-card-tag--pink {
+      background: rgba(255, 153, 153, 0.1);
+      color: var(--cellular-pink);
+      border: 1px solid rgba(255, 153, 153, 0.2);
+    }
+
+    /* ─── TYPOGRAPHY ─── */
+    .typo-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .typo-row {
+      padding: 1.5rem 2rem;
+      border-radius: 30px;
+      background: rgba(0, 30, 60, 0.3);
+      border: 1px solid rgba(0, 191, 255, 0.1);
+      transition: all 0.4s ease;
+    }
+
+    .typo-row:hover {
+      background: rgba(0, 30, 60, 0.5);
+      border-color: rgba(0, 191, 255, 0.2);
+    }
+
+    .typo-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: rgba(208, 234, 255, 0.35);
+      margin-bottom: 0.4rem;
+    }
+
+    .typo-row h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--chlorophyll-green);
+      text-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+    }
+    .typo-row h2 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--bioluminescent-blue);
+      text-shadow: 0 0 15px rgba(0, 191, 255, 0.25);
+    }
+    .typo-row h3 {
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: var(--cellular-pink);
+      text-shadow: 0 0 12px rgba(255, 153, 153, 0.2);
+    }
+    .typo-row h4 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--sage);
+    }
+    .typo-row h5 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--bioluminescent-blue);
+    }
+    .typo-row h6 {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: rgba(208, 234, 255, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* ─── COLOR SWATCHES ─── */
+    .swatches-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .swatch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      padding: 2rem 1rem;
+      background: rgba(0, 30, 60, 0.3);
+      border: 1px solid rgba(0, 191, 255, 0.1);
+      transition: all 0.4s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+    }
+
+    .swatch:hover {
+      transform: translateY(-5px);
+      border-color: rgba(0, 191, 255, 0.25);
+    }
+
+    .swatch-color {
+      width: 80px;
+      height: 80px;
+      transition: all 0.5s ease;
+      animation: breatheSlow 5s ease-in-out infinite;
+    }
+
+    .swatch:nth-child(1) .swatch-color { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; background: #FF9999; }
+    .swatch:nth-child(2) .swatch-color { border-radius: 58% 42% 38% 62% / 52% 60% 40% 48%; background: #00FF41; box-shadow: 0 0 25px rgba(0, 255, 65, 0.3); }
+    .swatch:nth-child(3) .swatch-color { border-radius: 40% 60% 60% 40% / 50% 40% 60% 50%; background: #00BFFF; box-shadow: 0 0 25px rgba(0, 191, 255, 0.3); }
+    .swatch:nth-child(4) .swatch-color { border-radius: 50% 50% 30% 70% / 60% 40% 60% 40%; background: #001E3C; border: 1px solid rgba(0, 191, 255, 0.2); }
+    .swatch:nth-child(5) .swatch-color { border-radius: 65% 35% 45% 55% / 35% 65% 35% 65%; background: #1A3A5C; border: 1px solid rgba(0, 191, 255, 0.15); }
+    .swatch:nth-child(6) .swatch-color { border-radius: 45% 55% 55% 45% / 55% 35% 55% 35%; background: #66CCAA; }
+
+    .swatch:hover .swatch-color {
+      transform: scale(1.1);
+    }
+
+    .swatch-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .swatch-hex {
+      font-size: 0.78rem;
+      color: rgba(208, 234, 255, 0.5);
+      font-family: monospace;
+    }
+
+    /* ─── MODAL ─── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 10, 20, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: linear-gradient(145deg, rgba(0, 30, 60, 0.9), rgba(0, 20, 45, 0.95));
+      border: 1px solid rgba(0, 255, 65, 0.15);
+      padding: 3rem;
+      max-width: 520px;
+      width: 100%;
+      position: relative;
+      border-radius: 30% 5% 30% 5% / 5% 30% 5% 30%;
+      animation: morphBlob 12s ease-in-out infinite, breatheSlow 4s ease-in-out infinite;
+      box-shadow: 0 0 40px rgba(0, 255, 65, 0.08), 0 0 80px rgba(0, 191, 255, 0.05);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: rgba(255, 153, 153, 0.1);
+      color: var(--cellular-pink);
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 153, 153, 0.2);
+      transform: rotate(90deg);
+    }
+
+    .modal-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--chlorophyll-green);
+      margin-bottom: 1rem;
+      text-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+    }
+
+    .modal-text {
+      color: rgba(208, 234, 255, 0.7);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+
+    /* ─── STYLE INFO PANEL ─── */
+    .info-panel {
+      background: linear-gradient(145deg, rgba(0, 30, 60, 0.5), rgba(0, 30, 60, 0.25));
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--glass-border);
+      border-radius: 30px;
+      padding: 2.5rem;
+      animation: morphBlob3 20s ease-in-out infinite;
+      box-shadow: 0 0 30px rgba(0, 191, 255, 0.05);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .info-item {
+      padding: 1.2rem 1.5rem;
+      border-radius: 20px;
+      background: rgba(0, 30, 60, 0.4);
+      border: 1px solid rgba(0, 191, 255, 0.1);
+    }
+
+    .info-item-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(208, 234, 255, 0.4);
+      margin-bottom: 0.4rem;
+    }
+
+    .info-item-value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--chlorophyll-green);
+    }
+
+    .info-item-value.blue { color: var(--bioluminescent-blue); }
+    .info-item-value.pink { color: var(--cellular-pink); }
+    .info-item-value.sage { color: var(--sage); }
+
+    /* ─── DIVIDER ─── */
+    .bio-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.2), rgba(0, 191, 255, 0.2), transparent);
+      margin: 0 auto;
+      max-width: 600px;
+      border: none;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .hero-title { font-size: 2.8rem; }
+      .hero-subtitle { font-size: 1rem; padding: 0 1rem; }
+      .button-showcase { flex-direction: column; align-items: stretch; }
+      .bio-btn { text-align: center; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .swatches-grid { grid-template-columns: repeat(3, 1fr); }
+      .typo-row h1 { font-size: 2rem; }
+      .typo-row h2 { font-size: 1.6rem; }
+      .info-grid { grid-template-columns: 1fr; }
+      .bio-nav { gap: 0.5rem; padding: 1rem; }
+      .bio-nav-item { padding: 0.5rem 1.2rem; font-size: 0.82rem; }
+      .style-section { padding: 3rem 1.2rem; }
+    }
+
+    @media (max-width: 480px) {
+      .swatches-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero-blob--1 { width: 140px; height: 140px; }
+      .hero-blob--2 { width: 120px; height: 120px; }
+      .hero-blob--3 { width: 100px; height: 100px; }
+      .hero-blob--5 { width: 160px; height: 160px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── VIEWPORT BAR ─── -->
+  <div class="vp-bar">
+    <span class="vp-label">📐 Viewport:</span>
+    <button class="vp-btn" data-size="1920">1920</button>
+    <button class="vp-btn" data-size="1440">1440</button>
+    <button class="vp-btn" data-size="1024">1024</button>
+    <button class="vp-btn" data-size="768">768</button>
+    <button class="vp-btn" data-size="375">375</button>
+    <button class="vp-btn" data-size="320">320</button>
+    <span id="vp-width" class="vp-width">Full</span>
+    <a href="index.html" class="vp-back">← Back to All Styles</a>
+  </div>
+
+  <div class="vp-frame">
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 1: HERO                                -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="hero">
+      <!-- Ambient orbs -->
+      <div class="hero-ambient">
+        <div class="ambient-orb"></div>
+        <div class="ambient-orb"></div>
+        <div class="ambient-orb"></div>
+        <div class="ambient-orb"></div>
+      </div>
+
+      <!-- Organic blob shapes -->
+      <div class="hero-blobs">
+        <div class="hero-blob hero-blob--1"></div>
+        <div class="hero-blob hero-blob--2"></div>
+        <div class="hero-blob hero-blob--3"></div>
+        <div class="hero-blob hero-blob--4"></div>
+        <div class="hero-blob hero-blob--5"></div>
+      </div>
+
+      <!-- Flowing vein lines (mycelium / vascular) -->
+      <div class="hero-veins">
+        <svg viewBox="0 0 1200 800" preserveAspectRatio="none">
+          <path class="vein-line vein-line--1" d="M0,400 C200,350 300,450 500,380 S800,300 1000,420 S1200,380 1200,400" />
+          <path class="vein-line vein-line--2" d="M0,300 C150,250 350,350 550,280 S750,200 950,320 S1150,280 1200,300" />
+          <path class="vein-line vein-line--3" d="M0,500 C200,480 400,520 600,470 S850,430 1050,510 S1200,490 1200,500" />
+          <path class="vein-line vein-line--4" d="M100,200 C250,180 400,250 600,200 S800,150 1000,230 S1150,190 1200,210" />
+          <path class="vein-line vein-line--5" d="M0,600 C180,570 380,630 580,580 S820,540 1020,610 S1180,590 1200,600" />
+        </svg>
+      </div>
+
+      <!-- Floating cells / particles -->
+      <div class="hero-cells">
+        <div class="floating-cell"></div>
+        <div class="floating-cell"></div>
+        <div class="floating-cell"></div>
+        <div class="floating-cell"></div>
+        <div class="floating-cell"></div>
+        <div class="floating-cell"></div>
+        <div class="floating-cell"></div>
+        <div class="floating-cell"></div>
+        <div class="floating-cell"></div>
+        <div class="floating-cell"></div>
+      </div>
+
+      <!-- Hero content -->
+      <div class="hero-content">
+        <div class="hero-badge">Organic Computing</div>
+        <h1 class="hero-title">Biomimetic</h1>
+        <p class="hero-subtitle">Where interfaces breathe, adapt, and evolve. Inspired by nature's own systems — from bioluminescent deep-sea organisms to mycelium networks that connect entire forests.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 2: NAVIGATION                          -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <nav class="bio-nav">
+      <a href="#" class="bio-nav-item active">Organism</a>
+      <a href="#" class="bio-nav-item">Ecosystem</a>
+      <a href="#" class="bio-nav-item">Growth</a>
+      <a href="#" class="bio-nav-item">Symbiosis</a>
+      <a href="#" class="bio-nav-item">Habitat</a>
+    </nav>
+
+    <hr class="bio-divider">
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 3: BUTTONS                             -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="style-section">
+      <h2 class="section-title">Buttons</h2>
+      <p class="section-desc">Organic forms with breathing hover states and bioluminescent glows. Every curve is alive.</p>
+      <div class="button-showcase">
+        <button class="bio-btn bio-btn-primary">Primary Organism</button>
+        <button class="bio-btn bio-btn-secondary">Secondary Cell</button>
+        <button class="bio-btn bio-btn-ghost">Ghost Spore</button>
+        <button class="bio-btn bio-btn-disabled" disabled>Dormant</button>
+      </div>
+    </section>
+
+    <hr class="bio-divider">
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 4: FORMS                               -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="style-section">
+      <h2 class="section-title">Forms</h2>
+      <p class="section-desc">Soft, rounded inputs that feel like touching a living membrane. Gentle focus glows guide interaction.</p>
+      <form class="bio-form" onsubmit="return false;">
+        <div class="bio-form-group">
+          <label class="bio-label">Organism Name</label>
+          <input class="bio-input" type="text" placeholder="Enter organism designation...">
+        </div>
+        <div class="bio-form-group">
+          <label class="bio-label">Habitat Notes</label>
+          <textarea class="bio-textarea" placeholder="Describe environmental conditions..."></textarea>
+        </div>
+        <div class="bio-form-group">
+          <label class="bio-label">Classification</label>
+          <select class="bio-select">
+            <option value="">Select classification...</option>
+            <option value="flora">Flora — Plant-based systems</option>
+            <option value="fauna">Fauna — Animal-inspired design</option>
+            <option value="fungi">Fungi — Mycelium networks</option>
+            <option value="marine">Marine — Deep ocean organisms</option>
+          </select>
+        </div>
+        <div class="bio-form-group">
+          <label class="bio-label">Growth Stage</label>
+          <div class="bio-check-group">
+            <div class="bio-checkbox-group">
+              <label class="bio-check-item">
+                <input type="checkbox" checked>
+                <span class="bio-check-label">Germination</span>
+              </label>
+              <label class="bio-check-item">
+                <input type="checkbox">
+                <span class="bio-check-label">Vegetative</span>
+              </label>
+              <label class="bio-check-item">
+                <input type="checkbox">
+                <span class="bio-check-label">Flowering</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="bio-form-group">
+          <label class="bio-label">Environment</label>
+          <div class="bio-radio-group">
+            <label class="bio-radio-item">
+              <input type="radio" name="env" checked>
+              <span class="bio-radio-label">Terrestrial</span>
+            </label>
+            <label class="bio-radio-item">
+              <input type="radio" name="env">
+              <span class="bio-radio-label">Aquatic</span>
+            </label>
+            <label class="bio-radio-item">
+              <input type="radio" name="env">
+              <span class="bio-radio-label">Aerial</span>
+            </label>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <hr class="bio-divider">
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 5: CARDS                               -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="style-section">
+      <h2 class="section-title">Cards</h2>
+      <p class="section-desc">Living card surfaces with morphing borders, flowing gradients, and glass-like translucency.</p>
+      <div class="cards-grid">
+        <div class="bio-card">
+          <span class="bio-card-icon">🧬</span>
+          <h3 class="bio-card-title">Cellular Division</h3>
+          <p class="bio-card-text">Inspired by mitosis, interfaces that split, replicate, and evolve. Each interaction generates new pathways — adaptive UI that grows with user behavior.</p>
+          <span class="bio-card-tag bio-card-tag--green">Generative</span>
+        </div>
+        <div class="bio-card">
+          <span class="bio-card-icon">🍄</span>
+          <h3 class="bio-card-title">Mycelium Network</h3>
+          <p class="bio-card-text">Underground fungal networks connect trees across vast distances. Our navigation mirrors this — hidden pathways that surface contextually, linking disparate content.</p>
+          <span class="bio-card-tag bio-card-tag--blue">Connected</span>
+        </div>
+        <div class="bio-card">
+          <span class="bio-card-icon">🪸</span>
+          <h3 class="bio-card-title">Coral Growth</h3>
+          <p class="bio-card-text">Reef systems build complexity through simple repeating patterns. Our component architecture follows this principle — small, simple elements composing rich, living structures.</p>
+          <span class="bio-card-tag bio-card-tag--pink">Composable</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="bio-divider">
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 6: TYPOGRAPHY                          -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="style-section">
+      <h2 class="section-title">Typography</h2>
+      <p class="section-desc">System fonts rendered with organic color and soft luminance. Text that feels like it glows from within.</p>
+      <div class="typo-grid">
+        <div class="typo-row">
+          <div class="typo-label">H1 — Primary Growth</div>
+          <h1>Living Systems</h1>
+        </div>
+        <div class="typo-row">
+          <div class="typo-label">H2 — Ecosystem Layer</div>
+          <h2>Adaptive Networks</h2>
+        </div>
+        <div class="typo-row">
+          <div class="typo-label">H3 — Organism Scale</div>
+          <h3>Symbiotic Interfaces</h3>
+        </div>
+        <div class="typo-row">
+          <div class="typo-label">H4 — Colony Structure</div>
+          <h4>Emergent Behavior</h4>
+        </div>
+        <div class="typo-row">
+          <div class="typo-label">H5 — Spore Level</div>
+          <h5>Decentralized Growth</h5>
+        </div>
+        <div class="typo-row">
+          <div class="typo-label">H6 — Genetic Code</div>
+          <h6>Bioluminescent Foundation</h6>
+        </div>
+      </div>
+    </section>
+
+    <hr class="bio-divider">
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 7: COLOR SWATCHES                      -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="style-section">
+      <h2 class="section-title">Color Palette</h2>
+      <p class="section-desc">Deep ocean bioluminescence meets cellular biology. Every color pulses with latent energy.</p>
+      <div class="swatches-grid">
+        <div class="swatch">
+          <div class="swatch-color"></div>
+          <span class="swatch-name">Cellular Pink</span>
+          <span class="swatch-hex">#FF9999</span>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color"></div>
+          <span class="swatch-name">Chlorophyll Green</span>
+          <span class="swatch-hex">#00FF41</span>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color"></div>
+          <span class="swatch-name">Bioluminescent Blue</span>
+          <span class="swatch-hex">#00BFFF</span>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color"></div>
+          <span class="swatch-name">Deep Ocean</span>
+          <span class="swatch-hex">#001E3C</span>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color"></div>
+          <span class="swatch-name">Ocean Mid</span>
+          <span class="swatch-hex">#1A3A5C</span>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color"></div>
+          <span class="swatch-name">Sage</span>
+          <span class="swatch-hex">#66CCAA</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="bio-divider">
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 8: MODAL                               -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="style-section">
+      <h2 class="section-title">Modal</h2>
+      <p class="section-desc">A living dialog that emerges from the deep, morphing its border as it breathes.</p>
+      <button class="bio-btn bio-btn-primary" onclick="toggleModal('demo-modal')">Open Living Modal</button>
+    </section>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="demo-modal">
+      <div class="modal-content">
+        <button class="modal-close" onclick="toggleModal('demo-modal')">&times;</button>
+        <h3 class="modal-title">Symbiotic Dialog</h3>
+        <p class="modal-text">This modal breathes with the same organic rhythm as the rest of the interface. Its border morphs continuously, creating a sense of living, evolving presence. Every interaction in Biomimetic design should feel like communicating with a living system.</p>
+        <div class="modal-actions">
+          <button class="bio-btn bio-btn-ghost" onclick="toggleModal('demo-modal')">Dismiss</button>
+          <button class="bio-btn bio-btn-primary" onclick="toggleModal('demo-modal')">Acknowledge</button>
+        </div>
+      </div>
+    </div>
+
+    <hr class="bio-divider">
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 9: STYLE INFO PANEL                    -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="style-section">
+      <h2 class="section-title">Style Information</h2>
+      <p class="section-desc">Technical specifications and design philosophy behind the Biomimetic / Organic 2.0 system.</p>
+      <div class="info-panel">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-item-label">Era</div>
+            <div class="info-item-value">2024+ Generative</div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-label">Complexity</div>
+            <div class="info-item-value blue">High</div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-label">Best For</div>
+            <div class="info-item-value pink">Sustainability tech, biotech, meditation, generative art</div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-label">Font</div>
+            <div class="info-item-value sage">system-ui</div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-label">Effects</div>
+            <div class="info-item-value">Breathing, morphing, growth, bioluminescence</div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-label">Animation Style</div>
+            <div class="info-item-value blue">Physics-based easing, cubic-bezier curves</div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-label">Color Theory</div>
+            <div class="info-item-value pink">Deep ocean bioluminescence + cellular biology</div>
+          </div>
+          <div class="info-item">
+            <div class="info-item-label">Design Principle</div>
+            <div class="info-item-value sage">No sharp edges. Everything breathes.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /vp-frame -->
+
+  <script src="shared.js"></script>
+
+  <!-- Modal toggle logic (in case shared.js doesn't provide it) -->
+  <script>
+    function toggleModal(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.classList.toggle('active');
+    }
+
+    // Close modal on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) {
+          overlay.classList.remove('active');
+        }
+      });
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.active').forEach(function(m) {
+          m.classList.remove('active');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

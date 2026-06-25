@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editorial Grid / Magazine - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #FFFFFF;
+  --text-color: #000000;
+  --accent: #C41E3A;
+  --surface: #FFFFFF;
+  --surface-alt: #F7F5F2;
+  --border-color: #E0DDD8;
+  --text-muted: #666666;
+  --font-serif: Georgia, 'Times New Roman', Merriweather, serif;
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Hero - Magazine Grid */
+.hero {
+  padding: 100px 0 0;
+  border-bottom: 3px solid #000;
+ text-align: center;}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  min-height: 500px;
+}
+.hero-content {
+  padding: 60px 48px 60px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.hero-image {
+  background: linear-gradient(135deg, #2C2C2C 0%, #1a1a1a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero-image::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255,255,255,0.02) 2px,
+    rgba(255,255,255,0.02) 4px
+  );
+}
+.hero-image .placeholder-text {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: rgba(255,255,255,0.3);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+.hero h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+}
+.hero .byline {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 16px;
+}
+.hero .excerpt {
+  font-size: 18px;
+  color: #444;
+  line-height: 1.7;
+  max-width: 480px;
+}
+
+/* Pull Quote */
+.pull-quote {
+  border-left: 4px solid var(--accent);
+  padding: 24px 32px;
+  margin: 32px 0;
+  font-size: 24px;
+  font-style: italic;
+  line-height: 1.5;
+  color: #333;
+}
+
+/* Navigation */
+.demo-nav {
+  background: #000;
+  color: #fff;
+  padding: 16px 0;
+  border-bottom: 1px solid #333;
+}
+.demo-nav .container {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+ justify-content: center;}
+.demo-nav a {
+  color: #fff;
+  text-decoration: none;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: color 0.2s;
+}
+.demo-nav a:hover { color: var(--accent); }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-primary {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+.btn-primary:hover {
+  background: #333;
+  border-color: #333;
+}
+.btn-secondary {
+  background: transparent;
+  color: #000;
+  border-color: #000;
+}
+.btn-secondary:hover {
+  background: #000;
+  color: #fff;
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: transparent;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.btn-ghost:hover { color: #000; }
+.btn-disabled {
+  background: #E5E5E5;
+  color: #999;
+  border-color: #E5E5E5;
+  cursor: not-allowed;
+}
+
+/* Forms */
+.form-group { margin-bottom: 20px; }
+.form-label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+}
+.form-input, .form-textarea, .form-select {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-family: var(--font-serif);
+  border: 1px solid var(--border-color);
+  background: var(--surface);
+  color: var(--text-color);
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  border-color: #000;
+}
+.form-textarea { resize: vertical; min-height: 120px; }
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+.form-checkbox, .form-radio {
+  width: 18px;
+  height: 18px;
+  accent-color: #000;
+}
+.form-row {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+.form-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+
+/* Cards */
+.card {
+  border: 1px solid var(--border-color);
+  background: var(--surface);
+  transition: all 0.3s;
+  overflow: hidden;
+}
+.card:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+.card-image {
+  height: 160px;
+  background: linear-gradient(135deg, #E8E5E0, #D5D0C8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+.card-body { padding: 24px; }
+.card-category {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.card-title {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+.card-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+.card-meta {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: #999;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Typography */
+.typo-h1 { font-family: var(--font-serif); font-size: 48px; font-weight: 700; line-height: 1.1; margin-bottom: 20px; }
+.typo-h2 { font-family: var(--font-serif); font-size: 36px; font-weight: 700; line-height: 1.2; margin-bottom: 20px; }
+.typo-h3 { font-family: var(--font-serif); font-size: 28px; font-weight: 700; line-height: 1.3; margin-bottom: 20px; }
+.typo-h4 { font-family: var(--font-sans); font-size: 22px; font-weight: 700; line-height: 1.3; margin-bottom: 20px; }
+.typo-h5 { font-family: var(--font-sans); font-size: 18px; font-weight: 600; line-height: 1.4; margin-bottom: 20px; }
+.typo-h6 { font-family: var(--font-sans); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; color: var(--accent); }
+.typo-body { font-family: var(--font-serif); font-size: 16px; line-height: 1.6; margin-bottom: 16px; color: #333; }
+.typo-caption { font-family: var(--font-sans); font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+/* Modal */
+.modal-overlay {
+  background: rgba(0,0,0,0.5);
+}
+.modal-content {
+  background: var(--surface);
+  border: 2px solid #000;
+  padding: 40px;
+  max-width: 480px;
+  width: 90%;
+}
+.modal-content h3 {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.modal-content p {
+  font-size: 15px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  line-height: 1.7;
+}
+.modal-content .btn { width: 100%; }
+
+.section-title {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 32px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #000;
+}
+
+/* Divider */
+.editorial-divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 0;
+}
+
+/* Magazine grid for cards */
+.editorial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+.editorial-grid .card {
+  border-right: 1px solid var(--border-color);
+}
+.editorial-grid .card:last-child {
+  border-right: none;
+}
+</style>
+</head>
+<body>
+<!-- Viewport Switcher Bar -->
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+
+<div class="vp-frame">
+  <!-- Hero Section - Magazine Grid -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-content">
+          <span class="tag tag-era" style="border-radius: 0;">2020s Editorial Digital</span>
+          <span class="tag tag-complexity-low" style="border-radius: 0;">Complexity: Low</span>
+          <div class="byline">Feature Article &middot; June 2026</div>
+          <h1>Editorial Grid</h1>
+          <p class="excerpt">Magazine-inspired asymmetric layouts with strong typography, editorial photography, and pull quotes that demand attention.</p>
+        </div>
+        <div class="hero-image">
+          <span class="placeholder-text">Editorial Image</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation -->
+  <nav class="demo-nav">
+    <div class="container">
+      <a href="#">World</a>
+      <a href="#">Culture</a>
+      <a href="#">Technology</a>
+      <a href="#">Opinion</a>
+      <a href="#">Subscribe</a>
+    </div>
+  </nav>
+
+  <!-- Buttons Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Buttons</h2>
+      <div class="flex-gap">
+        <button class="btn btn-primary">Subscribe Now</button>
+        <button class="btn btn-secondary">Read Later</button>
+        <button class="btn btn-ghost">Share Article</button>
+        <button class="btn btn-disabled" disabled>Unavailable</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pull Quote -->
+  <section class="section" style="background: var(--surface-alt);">
+    <div class="container">
+      <div class="pull-quote">
+        "The best editorial design doesn't just present information — it creates an experience that makes you want to keep reading."
+      </div>
+    </div>
+  </section>
+
+  <!-- Forms Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Form Elements</h2>
+      <div style="max-width: 600px; margin: 0 auto;">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" placeholder="Enter your name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Story</label>
+          <textarea class="form-textarea" placeholder="Tell us your story..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select">
+            <option>Select section</option>
+            <option>World News</option>
+            <option>Culture</option>
+            <option>Technology</option>
+            <option>Opinion</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label><input type="checkbox" class="form-checkbox"> Subscribe to newsletter</label>
+          <label><input type="radio" name="plan" class="form-radio"> Monthly</label>
+          <label><input type="radio" name="plan" class="form-radio"> Annual</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cards Section - Editorial Grid -->
+  <section class="section" style="background: var(--surface-alt);">
+    <div class="container">
+      <h2 class="section-title">Featured Stories</h2>
+      <div class="editorial-grid">
+        <div class="card">
+          <div class="card-image">Photography</div>
+          <div class="card-body">
+            <div class="card-category">Culture</div>
+            <div class="card-title">The Art of Visual Storytelling in Modern Media</div>
+            <p class="card-text">How photographers are redefining editorial imagery for the digital age.</p>
+            <div class="card-meta">By Sarah Chen &middot; 8 min read</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-image" style="background: linear-gradient(135deg, #D5D0C8, #C0BAA8);">Architecture</div>
+          <div class="card-body">
+            <div class="card-category">Design</div>
+            <div class="card-title">Brutalism's Quiet Comeback in Digital Design</div>
+            <p class="card-text">Raw aesthetics meet functional interfaces in a new wave of web design.</p>
+            <div class="card-meta">By James Morton &middot; 6 min read</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-image" style="background: linear-gradient(135deg, #C8C0B0, #B0A898);">Typography</div>
+          <div class="card-body">
+            <div class="card-category">Technology</div>
+            <div class="card-title">Variable Fonts: The Future of Responsive Typography</div>
+            <p class="card-text">A deep dive into how variable fonts are changing web design forever.</p>
+            <div class="card-meta">By Alex Rivera &middot; 10 min read</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typography Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Typography</h2>
+      <div class="typo-h1">Heading 1 — Editorial Lead</div>
+      <div class="typo-h2">Heading 2 — Story Title</div>
+      <div class="typo-h3">Heading 3 — Section Header</div>
+      <div class="typo-h4">Heading 4 — Subhead</div>
+      <div class="typo-h5">Heading 5 — Label</div>
+      <div class="typo-h6">Heading 6 — Category Tag</div>
+      <p class="typo-body">Editorial design draws from centuries of print typography. Serif fonts carry authority and tradition. The hierarchy is clear: headlines grab attention, subheads guide navigation, and body text flows naturally for extended reading. Every element serves the story.</p>
+      <p class="typo-caption">Caption text — photo credit, metadata</p>
+    </div>
+  </section>
+
+  <!-- Color Palette -->
+  <section class="section" style="background: var(--surface-alt);">
+    <div class="container">
+      <h2 class="section-title">Color Palette</h2>
+      <div class="swatch-row">
+        <div class="swatch" style="background: #000000;" data-hex="#000000"></div>
+        <div class="swatch" style="background: #FFFFFF; border-color: #ccc;" data-hex="#FFFFFF"></div>
+        <div class="swatch" style="background: #C41E3A;" data-hex="#C41E3A"></div>
+        <div class="swatch" style="background: #F7F5F2;" data-hex="#F7F5F2"></div>
+        <div class="swatch" style="background: #666666;" data-hex="#666666"></div>
+        <div class="swatch" style="background: #E0DDD8;" data-hex="#E0DDD8"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal -->
+  <div id="demo-modal" class="modal-overlay" style="display:none; position:fixed; inset:0; z-index:9999; align-items:center; justify-content:center;">
+    <div class="modal-content">
+      <h3>Subscribe to Continue</h3>
+      <p>Unlock unlimited access to our editorial content. Join thousands of readers who trust our journalism.</p>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Close</button>
+    </div>
+  </div>
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Modal Dialog</h2>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button>
+    </div>
+  </section>
+
+  <!-- Style Info -->
+  <section class="section" style="background: var(--surface-alt);">
+    <div class="container">
+      <div class="style-info">
+        <h3>Style Information</h3>
+        <div class="style-info-grid">
+          <div class="style-info-item">
+            <div class="label">Era/Origin</div>
+            <div class="value">2020s Editorial Digital</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Best For</div>
+            <div class="value">News sites, blogs, magazines, editorial content, long-form articles</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Avoid For</div>
+            <div class="value">SaaS dashboards, gaming, highly interactive apps</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Complexity</div>
+            <div class="value">Low — CSS grid, scroll animations, standard editorial patterns</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">CSS Keywords</div>
+            <div class="value">font-family:serif, display:grid, grid-template-columns, border-bottom, letter-spacing</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Design Variables</div>
+            <div class="value">--font-serif:Georgia, --accent:#C41E3A, --border-color, editorial grid spacing, pull quotes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="shared.js"></script>
+<script>
+(function() {
+  // Scroll reveal animation
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.card, .pull-quote, .typo-h1, .typo-h2, .typo-h3').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+  });
+
+  // Trigger initial visible elements
+  setTimeout(() => {
+    document.querySelectorAll('.card, .pull-quote, .typo-h1, .typo-h2, .typo-h3').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight) {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }
+    });
+  }, 100);
+})();
+</script>
+</body>
+</html>

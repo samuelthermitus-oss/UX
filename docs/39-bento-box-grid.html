@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bento Box Grid - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #FFFFFF;
+  --text-color: #1D1D1F;
+  --surface: #FFFFFF;
+  --surface-alt: #F5F5F7;
+  --border: #E8E8ED;
+  --text-muted: #86868B;
+  --accent: #0071E3;
+  --accent-hover: #0077ED;
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: 'system-ui', -apple-system, 'SF Pro Display', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Hero */
+.hero {
+  background: var(--surface-alt);
+  padding: 80px 0 60px;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.hero .subtitle {
+  font-size: 18px;
+  color: var(--text-muted);
+  max-width: 500px;
+  margin: 0 auto;
+  margin-bottom: 24px;
+}
+
+/* Bento Grid */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 200px;
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.bento-item {
+  background: var(--surface-alt);
+  border-radius: 20px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.bento-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+}
+
+.bento-item.span-2 { grid-column: span 2; }
+.bento-item.span-2-row { grid-row: span 2; }
+.bento-item.span-2x2 { grid-column: span 2; grid-row: span 2; }
+
+.bento-item.dark {
+  background: #1D1D1F;
+  color: white;
+}
+
+.bento-item.accent {
+  background: var(--accent);
+  color: white;
+}
+
+.bento-item.gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.bento-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+.bento-icon.blue { background: rgba(0,113,227,0.1); color: var(--accent); }
+.bento-icon.white { background: rgba(255,255,255,0.2); color: white; }
+
+.bento-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  letter-spacing: -0.3px;
+}
+
+.bento-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.bento-item.dark .bento-text,
+.bento-item.accent .bento-text,
+.bento-item.gradient .bento-text {
+  color: rgba(255,255,255,0.7);
+}
+
+.bento-stat {
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.bento-stat-label {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* Navigation */
+.demo-nav {
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 0;
+  position: sticky;
+  top: 44px;
+  z-index: 100;
+}
+
+.demo-nav .container {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  justify-content: center;
+}
+
+.demo-nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.demo-nav a:hover { color: var(--text-color); }
+.demo-nav a.active { color: var(--accent); font-weight: 600; }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 980px;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 4px 16px rgba(0,113,227,0.3);
+}
+
+.btn-secondary {
+  background: var(--surface-alt);
+  color: var(--text-color);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: #EBEBF0;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--accent);
+}
+
+.btn-ghost:hover {
+  background: rgba(0,113,227,0.05);
+}
+
+.btn-disabled {
+  background: var(--surface-alt);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+/* Forms */
+.form-group { margin-bottom: 20px; }
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-color);
+  margin-bottom: 8px;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-family: inherit;
+  background: var(--surface-alt);
+  border: 1px solid transparent;
+  color: var(--text-color);
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  background: var(--surface);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(0,113,227,0.1);
+}
+
+.form-textarea { min-height: 100px; resize: vertical; }
+
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2386868B' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+
+.form-checkbox,
+.form-radio {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.form-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 28px;
+  border: 1px solid var(--border);
+  transition: all 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+}
+
+.card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--surface-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 8px;
+  letter-spacing: -0.2px;
+}
+
+.card-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.card-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-color);
+  letter-spacing: -1px;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Typography */
+.typo-h1 { font-size: 56px; font-weight: 700; line-height: 1.05; margin-bottom: 20px; letter-spacing: -1.5px; }
+.typo-h2 { font-size: 40px; font-weight: 700; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
+.typo-h3 { font-size: 30px; font-weight: 600; line-height: 1.2; margin-bottom: 20px; letter-spacing: -0.5px; }
+.typo-h4 { font-size: 22px; font-weight: 600; line-height: 1.3; margin-bottom: 20px; }
+.typo-h5 { font-size: 18px; font-weight: 500; line-height: 1.4; margin-bottom: 20px; }
+.typo-h6 { font-size: 14px; font-weight: 500; line-height: 1.4; margin-bottom: 12px; color: var(--text-muted); }
+.typo-body { font-size: 16px; line-height: 1.6; margin-bottom: 16px; color: var(--text-color); }
+
+/* Modal */
+.modal-content {
+  background: var(--surface);
+  border-radius: 24px;
+  padding: 40px;
+  max-width: 440px;
+  width: 90%;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+}
+
+.modal-content h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 12px;
+  letter-spacing: -0.3px;
+}
+
+.modal-content p {
+  font-size: 15px;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+.modal-content .btn { width: 100%; }
+
+/* Section */
+.section { padding: 64px 0; }
+.section-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 32px;
+  letter-spacing: -0.3px;
+}
+
+/* Style Info */
+.style-info {
+  background: var(--surface-alt);
+  border-radius: 20px;
+  padding: 32px;
+ text-align: center;}
+
+.style-info h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 24px;
+}
+
+.style-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.style-info-item .label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.style-info-item .value { color: var(--text-color); font-size: 14px; }
+</style>
+</head>
+<body>
+<!-- Viewport Switcher Bar -->
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+
+<div class="vp-frame">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <span class="tag tag-era">2020s Apple</span>
+      <span class="tag tag-complexity-low">Low Complexity</span>
+      <span class="tag tag-type">General</span>
+      <h1>Bento Box Grid</h1>
+      <p class="subtitle">Modular cards with varied sizes. Apple-inspired layout that organizes content beautifully.</p>
+
+      <div class="bento-grid">
+        <div class="bento-item span-2 dark">
+          <div class="bento-icon white">A</div>
+          <div class="bento-title">Revenue Growth</div>
+          <div class="bento-text">Monthly recurring revenue increased 34% this quarter through new customer acquisition and expansion.</div>
+        </div>
+        <div class="bento-item accent">
+          <div class="bento-stat">98%</div>
+          <div class="bento-stat-label">Uptime SLA</div>
+        </div>
+        <div class="bento-item">
+          <div class="bento-icon blue">B</div>
+          <div class="bento-title">Quick Actions</div>
+          <div class="bento-text">Access your most used features in one tap.</div>
+        </div>
+        <div class="bento-item gradient span-2-row">
+          <div class="bento-icon white">C</div>
+          <div class="bento-title">Analytics</div>
+          <div class="bento-text">Track user behavior and conversion rates across all touchpoints.</div>
+        </div>
+        <div class="bento-item span-2">
+          <div class="bento-stat" style="font-size: 36px;">$2.4M</div>
+          <div class="bento-stat-label">Total Revenue This Quarter</div>
+        </div>
+        <div class="bento-item dark">
+          <div class="bento-title">Team</div>
+          <div class="bento-text">42 members across 6 time zones.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation Demo -->
+  <nav class="demo-nav">
+    <div class="container">
+      <a href="#" class="active">Overview</a>
+      <a href="#">Products</a>
+      <a href="#">Features</a>
+      <a href="#">Pricing</a>
+      <a href="#">Support</a>
+    </div>
+  </nav>
+
+  <!-- Buttons Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Buttons</h2>
+      <div class="flex-gap">
+        <button class="btn btn-primary">Get Started</button>
+        <button class="btn btn-secondary">Learn More</button>
+        <button class="btn btn-ghost">Watch Demo</button>
+        <button class="btn btn-disabled" disabled>Unavailable</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Forms Section -->
+  <section class="section" style="background: var(--surface-alt);">
+    <div class="container">
+      <h2 class="section-title">Form Elements</h2>
+      <div style="max-width: 500px; margin: 0 auto;">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" placeholder="Enter your name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-textarea" placeholder="How can we help?"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select">
+            <option>Select category</option>
+            <option>General</option>
+            <option>Support</option>
+            <option>Feedback</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label><input type="checkbox" class="form-checkbox"> Subscribe to updates</label>
+          <label><input type="radio" name="plan" class="form-radio"> Free</label>
+          <label><input type="radio" name="plan" class="form-radio"> Pro</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cards Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Feature Cards</h2>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">S</div>
+          <div class="card-title">Speed</div>
+          <div class="card-text">Lightning fast performance with sub-100ms response times across all endpoints.</div>
+          <div class="card-stat">
+            <span class="stat-value">47ms</span>
+            <span class="stat-label">avg response</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">R</div>
+          <div class="card-title">Reliability</div>
+          <div class="card-text">Enterprise-grade infrastructure with automatic failover and 99.99% uptime guarantee.</div>
+          <div class="card-stat">
+            <span class="stat-value">99.99%</span>
+            <span class="stat-label">uptime</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">S</div>
+          <div class="card-title">Scalability</div>
+          <div class="card-text">Auto-scaling infrastructure handles traffic spikes without manual intervention.</div>
+          <div class="card-stat">
+            <span class="stat-value">10M+</span>
+            <span class="stat-label">requests/day</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typography Section -->
+  <section class="section" style="background: var(--surface-alt);">
+    <div class="container">
+      <h2 class="section-title">Typography</h2>
+      <div class="typo-h1">Think Different</div>
+      <div class="typo-h2">Beautiful by Design</div>
+      <div class="typo-h3">Crafted with Care</div>
+      <div class="typo-h4">Attention to Detail</div>
+      <div class="typo-h5">Pixel Perfect</div>
+      <div class="typo-h6">Subtle Elegance</div>
+      <p class="typo-body">Apple-inspired design language emphasizes clarity, deference, and depth. Content is king, chrome is minimal, and every interaction feels natural.</p>
+    </div>
+  </section>
+
+  <!-- Color Palette -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Color Palette</h2>
+      <div class="swatch-row">
+        <div class="swatch" style="background: #FFFFFF; border-color: #E8E8ED;" data-hex="#FFFFFF"></div>
+        <div class="swatch" style="background: #F5F5F7;" data-hex="#F5F5F7"></div>
+        <div class="swatch" style="background: #0071E3;" data-hex="#0071E3"></div>
+        <div class="swatch" style="background: #1D1D1F;" data-hex="#1D1D1F"></div>
+        <div class="swatch" style="background: #86868B;" data-hex="#86868B"></div>
+        <div class="swatch" style="background: #E8E8ED;" data-hex="#E8E8ED"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal Demo -->
+  <div id="demo-modal" class="modal-overlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.4); backdrop-filter:blur(8px); align-items:center; justify-content:center;">
+    <div class="modal-content">
+      <h3>Get Started</h3>
+      <p>Create your account in seconds. No credit card required for the free tier.</p>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Sign Up Free</button>
+    </div>
+  </div>
+  <section class="section" style="background: var(--surface-alt);">
+    <div class="container">
+      <h2 class="section-title">Modal Dialog</h2>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button>
+    </div>
+  </section>
+
+  <!-- Style Info Panel -->
+  <section class="section">
+    <div class="container">
+      <div class="style-info">
+        <h3>Style Information</h3>
+        <div class="style-info-grid">
+          <div class="style-info-item">
+            <div class="label">Era/Origin</div>
+            <div class="value">2020s Apple, Low complexity</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Best For</div>
+            <div class="value">Dashboards, product pages, portfolios, Apple-style marketing</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Avoid For</div>
+            <div class="value">Data-heavy applications, dense information displays</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Complexity</div>
+            <div class="value">Low — grid layout, rounded corners, subtle shadows, hover scale</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">CSS Keywords</div>
+            <div class="value">display:grid, grid-column:span 2, border-radius: 20px, hover:scale(1.02)</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Design Variables</div>
+            <div class="value">--accent:#0071E3, --surface-alt:#F5F5F7, --border-radius:20px</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="shared.js"></script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparative Analysis Dashboard - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #FFFFFF;
+  --text-color: #111827;
+  --primary: #2563EB;
+  --compare-a: #2563EB;
+  --compare-b: #F97316;
+  --delta-up: #16A34A;
+  --delta-down: #DC2626;
+  --surface: #FFFFFF;
+  --surface-alt: #F9FAFB;
+  --border: #E5E7EB;
+  --text-muted: #6B7280;
+}
+body { background: var(--page-bg); color: var(--text-color); font-family: 'system-ui', -apple-system, sans-serif; font-size: 14px; line-height: 1.5; }
+
+/* Nav */
+.cmp-nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 0; display: flex; align-items: center; justify-content: center; gap: 24px; }
+.cmp-nav a { color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 500; }
+.cmp-nav a:hover { color: var(--text-color); }
+.cmp-nav a.active { color: var(--primary); font-weight: 600; }
+
+/* Hero */
+.cmp-hero { background: linear-gradient(180deg, #EFF6FF 0%, var(--surface) 100%); padding: 60px 0 40px; border-bottom: 1px solid var(--border); text-align: center; }
+.cmp-hero h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 700; letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 12px; }
+.cmp-hero .subtitle { font-size: 16px; color: var(--text-muted); max-width: 600px; margin: 0 auto 24px; }
+
+/* Period Selector */
+.period-selector { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+.period-btn { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+.period-btn:hover { border-color: var(--primary); color: var(--primary); }
+.period-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+/* Legend */
+.legend { display: flex; gap: 20px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); }
+.legend-color { width: 12px; height: 12px; border-radius: 3px; }
+
+/* Comparison Grid */
+.comparison-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 900px; margin: 0 auto; }
+.compare-card { background: var(--surface); border-radius: 12px; padding: 24px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+.compare-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+.compare-card.period-a::before { background: var(--compare-a); }
+.compare-card.period-b::before { background: var(--compare-b); }
+.compare-card.period-delta::before { background: linear-gradient(90deg, var(--compare-a), var(--compare-b)); }
+.compare-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+.compare-label.blue { color: var(--compare-a); }
+.compare-label.orange { color: var(--compare-b); }
+.compare-label.multi { color: var(--text-muted); }
+.compare-value { font-size: 32px; font-weight: 700; font-family: 'SF Mono', monospace; margin-bottom: 8px; }
+.delta-indicator { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 600; }
+.delta-indicator.up { background: rgba(22,163,74,0.1); color: var(--delta-up); }
+.delta-indicator.down { background: rgba(220,38,38,0.1); color: var(--delta-down); }
+
+/* Buttons */
+.section { padding: 48px 0; }
+.section-title { font-size: 18px; font-weight: 600; margin-bottom: 24px; text-align: center; }
+.btn-group { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; font-size: 13px; font-weight: 500; border: none; cursor: pointer; transition: all 0.2s; border-radius: 8px; font-family: inherit; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: #1D4ED8; box-shadow: 0 4px 12px rgba(37,99,235,0.25); }
+.btn-secondary { background: var(--surface); color: var(--text-color); border: 1px solid var(--border); }
+
+/* Comparison Bars */
+.compare-bars { max-width: 600px; margin: 0 auto; }
+.bar-group { margin-bottom: 16px; }
+.bar-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; display: flex; justify-content: space-between; }
+.bar-track { height: 10px; background: var(--surface-alt); border-radius: 5px; overflow: hidden; display: flex; gap: 2px; }
+.bar-fill { height: 100%; border-radius: 5px; transition: width 0.6s ease; }
+.bar-fill.blue { background: var(--compare-a); }
+.bar-fill.orange { background: var(--compare-b); }
+
+/* Config Form */
+.config-panel { max-width: 500px; margin: 0 auto; background: var(--surface-alt); border-radius: 12px; padding: 24px; }
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.form-input, .form-select { width: 100%; padding: 10px 14px; font-size: 14px; font-family: inherit; background: var(--surface); border: 1px solid var(--border); color: var(--text-color); border-radius: 8px; outline: none; }
+.form-input:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+.form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+.form-checkbox { width: 14px; height: 14px; accent-color: var(--primary); }
+.form-row { display: flex; gap: 20px; align-items: center; }
+.form-row label { display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; }
+
+/* Insight Cards */
+.insights-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 900px; margin: 0 auto; }
+.insight-card { background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+.insight-card-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.insight-card-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; }
+.insight-stat { display: flex; align-items: baseline; gap: 6px; padding-top: 12px; border-top: 1px solid var(--border); }
+.stat-value { font-size: 24px; font-weight: 700; font-family: 'SF Mono', monospace; }
+.stat-label { font-size: 12px; color: var(--text-muted); }
+
+/* Swatches */
+.swatch-row { display: flex; gap: 8px; justify-content: center; }
+.swatch { width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; transition: transform 0.15s; }
+.swatch:hover { transform: scale(1.1); }
+
+/* Modal */
+.modal-overlay { display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.4); align-items:center; justify-content:center; }
+.modal-content { background: var(--surface); border-radius: 16px; padding: 32px; max-width: 440px; width: 90%; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
+.modal-content h3 { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+.modal-content p { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
+
+/* Style Info */
+.style-info { background: var(--surface-alt); border-radius: 12px; padding: 24px; border: 1px solid var(--border); text-align: center; max-width: 900px; margin: 0 auto; }
+.style-info h3 { font-size: 16px; font-weight: 600; margin-bottom: 20px; }
+.style-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.style-info-item .label { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.style-info-item .value { color: var(--text-color); font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button><button class="vp-btn" data-size="1440">1440</button><button class="vp-btn" data-size="1024">1024</button><button class="vp-btn" data-size="768">768</button><button class="vp-btn" data-size="375">375</button><button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span><a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+<div class="vp-frame">
+  <div style="background:var(--surface-alt);padding:6px 24px;border-bottom:1px solid var(--border);display:flex;gap:8px;justify-content:center;">
+    <span class="tag tag-era">2020s Modern</span><span class="tag tag-complexity-medium">Medium Complexity</span><span class="tag tag-type">BI/Analytics</span>
+  </div>
+
+  <nav class="cmp-nav">
+    <a href="#" class="active">Overview</a><a href="#">Revenue</a><a href="#">Users</a><a href="#">Conversion</a><a href="#">Export</a>
+  </nav>
+
+  <section class="cmp-hero">
+    <h1>Comparative Analysis</h1>
+    <p class="subtitle">Side-by-side period comparison with delta indicators and animated comparison bars. See the difference at a glance.</p>
+    <div class="period-selector">
+      <button class="period-btn active">Q4 2024 vs Q3 2024</button>
+      <button class="period-btn">2024 vs 2023</button>
+      <button class="period-btn">This Month vs Last Month</button>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-color" style="background:var(--compare-a);"></div> Current Period</div>
+      <div class="legend-item"><div class="legend-color" style="background:var(--compare-b);"></div> Previous Period</div>
+    </div>
+    <div class="comparison-grid">
+      <div class="compare-card period-a">
+        <div class="compare-label blue">Current Period (Q4 2024)</div>
+        <div class="compare-value">$1.24M</div>
+        <span class="delta-indicator up">▲ +18.2% vs previous</span>
+      </div>
+      <div class="compare-card period-b">
+        <div class="compare-label orange">Previous Period (Q3 2024)</div>
+        <div class="compare-value">$1.05M</div>
+        <span class="delta-indicator up">▲ +6.1% vs prior</span>
+      </div>
+      <div class="compare-card period-delta">
+        <div class="compare-label multi">Net Difference</div>
+        <div class="compare-value" style="color:var(--delta-up);">+$189K</div>
+        <span class="delta-indicator up">▲ +18.2% improvement</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="btn-group" style="padding:16px 0;">
+    <button class="btn btn-primary">Run Comparison</button>
+    <button class="btn btn-secondary">Export Report</button>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Metric Comparison</h2>
+      <div class="compare-bars">
+        <div class="bar-group"><div class="bar-label"><span>Revenue</span><span>$1.24M vs $1.05M</span></div><div class="bar-track"><div class="bar-fill blue" style="width:65%;"></div><div class="bar-fill orange" style="width:35%;"></div></div></div>
+        <div class="bar-group"><div class="bar-label"><span>New Customers</span><span>2,847 vs 2,312</span></div><div class="bar-track"><div class="bar-fill blue" style="width:60%;"></div><div class="bar-fill orange" style="width:40%;"></div></div></div>
+        <div class="bar-group"><div class="bar-label"><span>Conversion Rate</span><span>4.2% vs 3.8%</span></div><div class="bar-track"><div class="bar-fill blue" style="width:58%;"></div><div class="bar-fill orange" style="width:42%;"></div></div></div>
+        <div class="bar-group"><div class="bar-label"><span>Avg Order Value</span><span>$435 vs $454</span></div><div class="bar-track"><div class="bar-fill blue" style="width:48%;"></div><div class="bar-fill orange" style="width:52%;"></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-alt);">
+    <div class="container">
+      <h2 class="section-title">Comparison Settings</h2>
+      <div class="config-panel">
+        <div class="form-group"><label class="form-label">Current Period</label><input type="text" class="form-input" placeholder="Oct 1 - Dec 31, 2024"></div>
+        <div class="form-group"><label class="form-label">Compare Against</label><select class="form-select"><option>Previous Period</option><option>Same Period Last Year</option><option>Custom Date Range</option></select></div>
+        <div class="form-row"><label><input type="checkbox" class="form-checkbox"> Show percentage change</label><label><input type="radio" name="display" class="form-checkbox"> Side by side</label><label><input type="radio" name="display" class="form-checkbox"> Overlaid</label></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Key Insights</h2>
+      <div class="insights-grid">
+        <div class="insight-card"><div class="insight-card-title">Strongest Growth</div><div class="insight-card-text">Enterprise segment grew 32% QoQ, driven by 3 new Fortune 500 contracts.</div><div class="insight-stat"><span class="stat-value" style="color:var(--delta-up);">+32%</span><span class="stat-label">QoQ growth</span></div></div>
+        <div class="insight-card"><div class="insight-card-title">Area of Concern</div><div class="insight-card-text">SMB churn increased 2.1 percentage points. Retention campaign recommended.</div><div class="insight-stat"><span class="stat-value" style="color:var(--delta-down);">+2.1pp</span><span class="stat-label">churn increase</span></div></div>
+        <div class="insight-card"><div class="insight-card-title">Stable Metric</div><div class="insight-card-text">Average session duration remained flat at 4m32s across both periods.</div><div class="insight-stat"><span class="stat-value">4m32s</span><span class="stat-label">avg session</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-alt);">
+    <div class="container">
+      <h2 class="section-title">Color Palette</h2>
+      <div class="swatch-row">
+        <div class="swatch" style="background:#2563EB;" data-hex="#2563EB"></div>
+        <div class="swatch" style="background:#F97316;" data-hex="#F97316"></div>
+        <div class="swatch" style="background:#16A34A;" data-hex="#16A34A"></div>
+        <div class="swatch" style="background:#DC2626;" data-hex="#DC2626"></div>
+        <div class="swatch" style="background:#111827;" data-hex="#111827"></div>
+        <div class="swatch" style="background:#F9FAFB;" data-hex="#F9FAFB"></div>
+      </div>
+    </div>
+  </section>
+
+  <div id="demo-modal" class="modal-overlay">
+    <div class="modal-content"><h3>Run Comparison</h3><p>This will generate a detailed comparison report between the selected periods.</p><button class="btn btn-primary" style="width:100%;" onclick="toggleModal('demo-modal')">Generate Report</button></div>
+  </div>
+  <div style="text-align:center;padding:24px;"><button class="btn btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button></div>
+
+  <div style="padding:0 32px 32px;"><div class="style-info"><h3>Style Information</h3><div class="style-info-grid">
+    <div class="style-info-item"><div class="label">Era/Origin</div><div class="value">2020s Modern, BI/Analytics</div></div>
+    <div class="style-info-item"><div class="label">Best For</div><div class="value">Period-over-period, A/B tests, market comparison</div></div>
+    <div class="style-info-item"><div class="label">Avoid For</div><div class="value">Single-period dashboards, simple reports</div></div>
+    <div class="style-info-item"><div class="label">Complexity</div><div class="value">Medium — comparison bars, delta indicators, animations</div></div>
+    <div class="style-info-item"><div class="label">CSS Keywords</div><div class="value">dual colors, delta indicators, bar charts, side-by-side grid</div></div>
+    <div class="style-info-item"><div class="label">Design Variables</div><div class="value">--compare-a:#2563EB, --compare-b:#F97316, --delta-up:#16A34A</div></div>
+  </div></div></div>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

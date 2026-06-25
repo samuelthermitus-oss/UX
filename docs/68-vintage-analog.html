@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vintage Analog / Retro Film - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #F5E6C8;
+  --text-color: #3D2B1F;
+  --accent-teal: #4A7B7C;
+  --accent-pink: #E8B4B8;
+  --cream: #F5E6C8;
+  --sepia: #D4A574;
+  --warm-brown: #8B6914;
+  --surface: #FFF8F0;
+  --surface-alt: #EDE0CC;
+  --border-color: rgba(139, 105, 20, 0.15);
+  --text-muted: #8B7355;
+  --font-primary: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: Georgia, 'Times New Roman', serif;
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: var(--font-primary);
+  font-size: 16px;
+  line-height: 1.6;
+  position: relative;
+}
+
+/* Film Grain Overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10000;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  animation: grainShift 0.8s steps(4) infinite;
+}
+@keyframes grainShift {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 1px); }
+  50% { transform: translate(1px, -1px); }
+  75% { transform: translate(-1px, 2px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Light Leak */
+.light-leak {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100vh;
+  background: linear-gradient(135deg, rgba(255, 180, 100, 0.08) 0%, rgba(255, 100, 80, 0.05) 40%, transparent 70%);
+  pointer-events: none;
+  z-index: 9999;
+  animation: leakPulse 8s ease-in-out infinite alternate;
+}
+@keyframes leakPulse {
+  0% { opacity: 0.6; transform: translateX(0); }
+  100% { opacity: 1; transform: translateX(-20px); }
+}
+
+/* Vignette */
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(61, 43, 31, 0.15) 100%);
+}
+
+/* Hero */
+.hero {
+  background: linear-gradient(180deg, var(--surface) 0%, var(--cream) 100%);
+  padding: 120px 0 80px;
+  text-align: center;
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(212, 165, 116, 0.1) 100%);
+  pointer-events: none;
+}
+.hero h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(40px, 7vw, 72px);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  color: var(--text-color);
+}
+.hero .subtitle {
+  font-size: 18px;
+  color: var(--text-muted);
+  max-width: 500px;
+  margin: 0 auto 24px;
+  line-height: 1.7;
+}
+
+/* Polaroid Frame */
+.polaroid {
+  background: #fff;
+  padding: 16px 16px 48px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05);
+  max-width: 300px;
+  margin: 0 auto;
+  transform: rotate(-2deg);
+  animation: polaroidShake 4s ease-in-out infinite;
+}
+@keyframes polaroidShake {
+  0%, 100% { transform: rotate(-2deg); }
+  25% { transform: rotate(-1.5deg) translateY(-2px); }
+  50% { transform: rotate(-2.5deg); }
+  75% { transform: rotate(-1.8deg) translateY(1px); }
+}
+.polaroid-image {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(135deg, var(--sepia) 0%, #C49A6C 50%, var(--accent-teal) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+  overflow: hidden;
+}
+.polaroid-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,200,100,0.15) 0%, transparent 50%);
+}
+.polaroid-caption {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 12px;
+}
+
+/* Navigation */
+.demo-nav {
+  background: var(--surface-alt);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 0;
+}
+.demo-nav .container {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+ justify-content: center;}
+.demo-nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.demo-nav a:hover { color: var(--accent-teal); }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: var(--font-primary);
+}
+.btn-primary {
+  background: var(--accent-teal);
+  color: #fff;
+  border-color: var(--accent-teal);
+}
+.btn-primary:hover {
+  background: #3D6B6C;
+  border-color: #3D6B6C;
+  box-shadow: 0 4px 12px rgba(74, 123, 124, 0.3);
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--accent-teal);
+  border-color: var(--accent-teal);
+}
+.btn-secondary:hover {
+  background: rgba(74, 123, 124, 0.08);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: transparent;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.btn-ghost:hover { color: var(--text-color); }
+.btn-disabled {
+  background: #D5C8B0;
+  color: #A89878;
+  border-color: #D5C8B0;
+  cursor: not-allowed;
+}
+
+/* Forms */
+.form-group { margin-bottom: 20px; }
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+}
+.form-input, .form-textarea, .form-select {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-family: var(--font-primary);
+  border: 1px solid var(--border-color);
+  background: var(--surface);
+  color: var(--text-color);
+  border-radius: 4px;
+  outline: none;
+  transition: all 0.2s;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 0 3px rgba(74, 123, 124, 0.1);
+}
+.form-textarea { resize: vertical; min-height: 120px; }
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238B7355' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+.form-checkbox, .form-radio {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-teal);
+}
+.form-row {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+.form-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s;
+  overflow: hidden;
+}
+.card:hover {
+  box-shadow: 0 6px 24px rgba(139, 105, 20, 0.1);
+  transform: translateY(-2px);
+}
+.card-image {
+  height: 160px;
+  position: relative;
+  overflow: hidden;
+}
+.card-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(61, 43, 31, 0.3) 100%);
+}
+.card-img-1 { background: linear-gradient(135deg, var(--sepia) 0%, #B8956A 100%); }
+.card-img-2 { background: linear-gradient(135deg, var(--accent-teal) 0%, #3A6566 100%); }
+.card-img-3 { background: linear-gradient(135deg, var(--accent-pink) 0%, #D4A0A4 100%); }
+.card-image .film-date {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.8);
+  font-family: monospace;
+  z-index: 1;
+}
+.card-body { padding: 20px; }
+.card-title {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.card-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Typography */
+.typo-h1 { font-family: var(--font-serif); font-size: 48px; font-weight: 700; line-height: 1.1; margin-bottom: 20px; }
+.typo-h2 { font-family: var(--font-serif); font-size: 36px; font-weight: 700; line-height: 1.2; margin-bottom: 20px; }
+.typo-h3 { font-family: var(--font-serif); font-size: 28px; font-weight: 700; line-height: 1.3; margin-bottom: 20px; }
+.typo-h4 { font-size: 22px; font-weight: 600; line-height: 1.3; margin-bottom: 20px; }
+.typo-h5 { font-size: 18px; font-weight: 600; line-height: 1.4; margin-bottom: 20px; }
+.typo-h6 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; color: var(--accent-teal); }
+.typo-body { font-family: var(--font-serif); font-size: 16px; line-height: 1.6; margin-bottom: 16px; color: #5A4A3A; }
+.typo-caption { font-size: 12px; color: var(--text-muted); font-family: monospace; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Modal */
+.modal-overlay {
+  background: rgba(61, 43, 31, 0.5);
+  backdrop-filter: blur(4px);
+}
+.modal-content {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  padding: 40px;
+  max-width: 480px;
+  width: 90%;
+  position: relative;
+}
+.modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--sepia), var(--accent-teal), var(--accent-pink));
+}
+.modal-content h3 {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.modal-content p {
+  font-size: 15px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  line-height: 1.7;
+}
+.modal-content .btn { width: 100%; }
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+
+/* VHS Tracking Line */
+.vhs-line {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  z-index: 10001;
+  pointer-events: none;
+  animation: vhsLineMove 10s linear infinite;
+}
+@keyframes vhsLineMove {
+  0% { top: -2px; }
+  100% { top: 100vh; }
+}
+
+/* Fade-in animation */
+.fade-in {
+  animation: fadeIn 1s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+<!-- Film Effects -->
+<div class="light-leak"></div>
+<div class="vignette"></div>
+<div class="vhs-line"></div>
+
+<!-- Viewport Switcher Bar -->
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+
+<div class="vp-frame">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <span class="tag tag-era" style="background: rgba(74,123,124,0.1); color: var(--accent-teal);">1970s-90s Analog Revival</span>
+      <span class="tag tag-complexity-medium" style="background: rgba(232,180,184,0.2); color: #B07078;">Complexity: Medium</span>
+      <h1 class="fade-in">Vintage Analog</h1>
+      <p class="subtitle fade-in">Film grain, warm sepia tones, light leaks, and polaroid frames. The beauty of imperfection captured through analog lenses.</p>
+
+      <!-- Polaroid -->
+      <div class="polaroid fade-in">
+        <div class="polaroid-image">Film Memory</div>
+        <div class="polaroid-caption">Summer, somewhere warm</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation -->
+  <nav class="demo-nav">
+    <div class="container">
+      <a href="#">Gallery</a>
+      <a href="#">Albums</a>
+      <a href="#">Darkroom</a>
+      <a href="#">About Film</a>
+      <a href="#">Contact</a>
+    </div>
+  </nav>
+
+  <!-- Buttons Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Buttons</h2>
+      <div class="flex-gap">
+        <button class="btn btn-primary">Develop Film</button>
+        <button class="btn btn-secondary">Preview</button>
+        <button class="btn btn-ghost">Share Print</button>
+        <button class="btn btn-disabled" disabled>Processing</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Forms Section -->
+  <section class="section" style="background: var(--surface);">
+    <div class="container">
+      <h2 class="section-title">Form Elements</h2>
+      <div style="max-width: 600px; margin: 0 auto;">
+        <div class="form-group">
+          <label class="form-label">Photographer</label>
+          <input type="text" class="form-input" placeholder="Enter your name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Location</label>
+          <input type="email" class="form-input" placeholder="Where was this taken?">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Story Behind the Shot</label>
+          <textarea class="form-textarea" placeholder="Tell us about this moment..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Film Stock</label>
+          <select class="form-select">
+            <option>Select film stock</option>
+            <option>Kodak Portra 400</option>
+            <option>Fujifilm Pro 400H</option>
+            <option>Kodak Ektar 100</option>
+            <option>Ilford HP5 Plus</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label><input type="checkbox" class="form-checkbox"> Enable light leaks</label>
+          <label><input type="radio" name="process" class="form-radio"> Color</label>
+          <label><input type="radio" name="process" class="form-radio"> Black & White</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cards Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Featured Work</h2>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-image card-img-1">
+            <span class="film-date">86 / 07 / 14</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Golden Hour Memories</div>
+            <p class="card-text">Shot on Kodak Portra 400. Warm tones and natural grain create timeless, nostalgic imagery.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-image card-img-2">
+            <span class="film-date">92 / 03 / 22</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Coastal Dreams</div>
+            <p class="card-text">Teal and coral palette captured through vintage lenses. Light leaks add organic character.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-image card-img-3">
+            <span class="film-date">78 / 11 / 05</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Soft Focus Portrait</div>
+            <p class="card-text">Pink-toned film stock with soft bokeh. The gentle imperfections make it feel alive.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typography Section -->
+  <section class="section" style="background: var(--surface);">
+    <div class="container">
+      <h2 class="section-title">Typography</h2>
+      <div class="typo-h1">Heading 1 — Film Still</div>
+      <div class="typo-h2">Heading 2 — Darkroom Print</div>
+      <div class="typo-h3">Heading 3 — Light Leak</div>
+      <div class="typo-h4">Heading 4 — Grain Texture</div>
+      <div class="typo-h5">Heading 5 — Sepia Tone</div>
+      <div class="typo-h6">Heading 6 — Film Stock Label</div>
+      <p class="typo-body">Vintage analog design captures the warmth and imperfection of film photography. Faded cream backgrounds, warm sepia accents, and gentle textures evoke nostalgia. Serif fonts carry the weight of history, while light leaks and film grain add organic, tactile quality that digital perfection cannot replicate.</p>
+      <p class="typo-caption">Frame 24A &middot; Kodak Tri-X 400 &middot; f/2.8</p>
+    </div>
+  </section>
+
+  <!-- Color Palette -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Color Palette</h2>
+      <div class="swatch-row">
+        <div class="swatch" style="background: #F5E6C8;" data-hex="#F5E6C8"></div>
+        <div class="swatch" style="background: #D4A574;" data-hex="#D4A574"></div>
+        <div class="swatch" style="background: #4A7B7C;" data-hex="#4A7B7C"></div>
+        <div class="swatch" style="background: #E8B4B8;" data-hex="#E8B4B8"></div>
+        <div class="swatch" style="background: #3D2B1F;" data-hex="#3D2B1F"></div>
+        <div class="swatch" style="background: #FFF8F0;" data-hex="#FFF8F0"></div>
+        <div class="swatch" style="background: #8B7355;" data-hex="#8B7355"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal -->
+  <div id="demo-modal" class="modal-overlay" style="display:none; position:fixed; inset:0; z-index:9999; align-items:center; justify-content:center;">
+    <div class="modal-content">
+      <h3>Print Preview</h3>
+      <p>This modal mimics the feel of a darkroom print emerging from the developer. The gradient top bar evokes the warm light of an enlarger.</p>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Close</button>
+    </div>
+  </div>
+  <section class="section" style="background: var(--surface);">
+    <div class="container">
+      <h2 class="section-title">Modal Dialog</h2>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button>
+    </div>
+  </section>
+
+  <!-- Style Info -->
+  <section class="section">
+    <div class="container">
+      <div class="style-info" style="background: var(--surface); border-color: var(--border-color);">
+        <h3>Style Information</h3>
+        <div class="style-info-grid">
+          <div class="style-info-item">
+            <div class="label">Era/Origin</div>
+            <div class="value">1970s-90s Analog Revival</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Best For</div>
+            <div class="value">Photography portfolios, music/vinyl brands, vintage fashion, nostalgia marketing</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Avoid For</div>
+            <div class="value">Tech startups, SaaS dashboards, fintech, modern corporate</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Complexity</div>
+            <div class="value">Medium — SVG noise filters, CSS animations, warm color palettes, film grain overlays</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">CSS Keywords</div>
+            <div class="value">font-family:Georgia, radial-gradient, feTurbulence, animation:grainShift, warm color palette</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Design Variables</div>
+            <div class="value">--cream:#F5E6C8, --sepia:#D4A574, --accent-teal:#4A7B7C, --accent-pink:#E8B4B8, film grain opacity</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="shared.js"></script>
+<script>
+(function() {
+  // Scroll reveal for cards
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+    observer.observe(el);
+  });
+
+  // Trigger initial visible
+  setTimeout(() => {
+    document.querySelectorAll('.card').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight) {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }
+    });
+  }, 200);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flat Design - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #FFFFFF;
+  --text-color: #333333;
+  --red: #E74C3C;
+  --orange: #F39C12;
+  --blue: #3498DB;
+  --green: #2ECC71;
+  --dark: #2C3E50;
+  --light-gray: #ECF0F1;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+/* Hero Section */
+.flat-hero {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 20px;
+  background: var(--blue);
+  color: #fff;
+  position: relative;
+}
+
+.flat-hero h1 {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+.flat-hero .subtitle {
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  font-weight: 400;
+  opacity: 0.9;
+  max-width: 550px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.flat-hero-btns {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.flat-hero-btns .flat-btn {
+  padding: 14px 32px;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.flat-hero-btns .flat-btn:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.flat-hero-btns .btn-white {
+  background: #fff;
+  color: var(--blue);
+}
+
+.flat-hero-btns .btn-dark {
+  background: var(--dark);
+  color: #fff;
+}
+
+/* Navigation */
+.flat-nav {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  padding: 0;
+  background: var(--dark);
+  flex-wrap: wrap;
+}
+
+.flat-nav a {
+  color: #fff;
+  text-decoration: none;
+  padding: 16px 24px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+
+.flat-nav a:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* Buttons */
+.flat-buttons {
+  padding: 64px 20px;
+  text-align: center;
+  background: var(--light-gray);
+}
+
+.flat-buttons h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 32px;
+}
+
+.btn-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.flat-btn {
+  padding: 12px 28px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.flat-btn:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.flat-btn.btn-red { background: var(--red); color: #fff; }
+.flat-btn.btn-orange { background: var(--orange); color: #fff; }
+.flat-btn.btn-blue { background: var(--blue); color: #fff; }
+.flat-btn.btn-green { background: var(--green); color: #fff; }
+.flat-btn.btn-dark { background: var(--dark); color: #fff; }
+.flat-btn.btn-outline {
+  background: transparent;
+  color: var(--blue);
+  border: 2px solid var(--blue);
+}
+.flat-btn.btn-outline:hover { background: var(--blue); color: #fff; }
+
+/* Forms */
+.flat-forms {
+  padding: 64px 20px;
+  max-width: 550px;
+  margin: 0 auto;
+}
+
+.flat-forms h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--dark);
+  margin-bottom: 20px;
+}
+
+.flat-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 1rem;
+  border: 2px solid var(--light-gray);
+  border-radius: 3px;
+  color: var(--text-color);
+  font-family: system-ui;
+  outline: none;
+  transition: border-color 0.15s;
+  background: #fff;
+}
+
+.flat-input:focus {
+  border-color: var(--blue);
+}
+
+.flat-input::placeholder {
+  color: #aaa;
+}
+
+textarea.flat-input {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .form-row { grid-template-columns: 1fr; }
+}
+
+/* Cards */
+.flat-cards {
+  padding: 64px 20px;
+  background: var(--page-bg);
+}
+
+.flat-cards h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.flat-card {
+  background: #fff;
+  border-radius: 3px;
+  overflow: hidden;
+  border: 2px solid var(--light-gray);
+  transition: border-color 0.15s;
+}
+
+.flat-card:hover {
+  border-color: var(--blue);
+}
+
+.flat-card .card-banner {
+  height: 8px;
+}
+
+.flat-card .card-body {
+  padding: 24px;
+}
+
+.flat-card .card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  color: #fff;
+}
+
+.flat-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 8px;
+}
+
+.flat-card p {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Typography */
+.flat-typography {
+  padding: 64px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.flat-typography h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.type-row {
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  border-left: 4px solid var(--blue);
+}
+
+.type-row .type-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+}
+
+.type-row h1 { font-size: 2.5rem; font-weight: 800; color: var(--dark); }
+.type-row h2 { font-size: 1.8rem; font-weight: 700; color: var(--dark); }
+.type-row h3 { font-size: 1.3rem; font-weight: 700; color: var(--dark); }
+.type-row p { font-size: 1rem; color: #666; line-height: 1.7; }
+
+/* Color Palette */
+.flat-palette {
+  padding: 64px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.flat-palette h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+}
+
+.swatch {
+  aspect-ratio: 1.2;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 12px;
+  transition: transform 0.15s;
+}
+
+.swatch:hover { transform: scale(1.03); }
+
+.swatch .swatch-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: rgba(0,0,0,0.2);
+  padding: 4px 10px;
+  border-radius: 2px;
+  color: #fff;
+}
+
+/* Modal */
+.flat-modal-section {
+  padding: 64px 20px;
+  text-align: center;
+  background: var(--light-gray);
+}
+
+.flat-modal-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 32px;
+}
+
+.modal-trigger {
+  padding: 14px 32px;
+  background: var(--red);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.modal-trigger:hover { opacity: 0.85; }
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.active { display: flex; }
+
+.flat-modal {
+  background: #fff;
+  border-radius: 3px;
+  padding: 36px;
+  max-width: 480px;
+  width: 90%;
+  position: relative;
+}
+
+.flat-modal h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 12px;
+}
+
+.flat-modal p {
+  color: #666;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.flat-modal .modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #999;
+  cursor: pointer;
+}
+
+.flat-modal .modal-close:hover { color: var(--dark); }
+
+/* Style Info */
+.flat-info {
+  padding: 64px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.flat-info h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.info-item {
+  padding: 20px;
+  border: 2px solid var(--light-gray);
+  border-radius: 3px;
+}
+
+.info-item .info-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+}
+
+.info-item .info-value {
+  font-weight: 700;
+  color: var(--dark);
+}
+
+@media (max-width: 768px) {
+  .flat-hero h1 { font-size: 2rem; }
+  .card-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+<div class="vp-frame">
+
+<!-- Hero -->
+<section class="flat-hero">
+  <h1>Flat Design</h1>
+  <p class="subtitle">Clean, bold, and beautifully simple. No shadows, no gradients, just pure color and clarity.</p>
+  <div class="flat-hero-btns">
+    <button class="flat-btn btn-white">Get Started</button>
+    <button class="flat-btn btn-dark">Learn More</button>
+  </div>
+</section>
+
+<!-- Navigation -->
+<nav class="flat-nav">
+  <a href="#">Home</a>
+  <a href="#">Products</a>
+  <a href="#">Solutions</a>
+  <a href="#">Pricing</a>
+  <a href="#">About</a>
+  <a href="#">Contact</a>
+</nav>
+
+<!-- Buttons -->
+<section class="flat-buttons">
+  <h2>Buttons</h2>
+  <div class="btn-grid">
+    <button class="flat-btn btn-red">Delete</button>
+    <button class="flat-btn btn-orange">Warning</button>
+    <button class="flat-btn btn-blue">Primary</button>
+    <button class="flat-btn btn-green">Success</button>
+    <button class="flat-btn btn-dark">Default</button>
+    <button class="flat-btn btn-outline">Outline</button>
+  </div>
+</section>
+
+<!-- Forms -->
+<section class="flat-forms">
+  <h2>Sign Up</h2>
+  <div class="form-row">
+    <div class="form-group">
+      <label>First Name</label>
+      <input type="text" class="flat-input" placeholder="John">
+    </div>
+    <div class="form-group">
+      <label>Last Name</label>
+      <input type="text" class="flat-input" placeholder="Doe">
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Email Address</label>
+    <input type="email" class="flat-input" placeholder="john@example.com">
+  </div>
+  <div class="form-group">
+    <label>Password</label>
+    <input type="password" class="flat-input" placeholder="Enter password...">
+  </div>
+  <div class="form-group">
+    <label>Bio</label>
+    <textarea class="flat-input" placeholder="Tell us about yourself..."></textarea>
+  </div>
+  <button class="flat-btn btn-blue" style="width:100%;padding:14px;">Create Account</button>
+</section>
+
+<!-- Cards -->
+<section class="flat-cards">
+  <h2>Features</h2>
+  <div class="card-grid">
+    <div class="flat-card">
+      <div class="card-banner" style="background:var(--red);"></div>
+      <div class="card-body">
+        <div class="card-icon" style="background:var(--red);">&#9889;</div>
+        <h3>Lightning Fast</h3>
+        <p>Optimized performance with zero overhead. Your apps load in milliseconds, not seconds.</p>
+      </div>
+    </div>
+    <div class="flat-card">
+      <div class="card-banner" style="background:var(--blue);"></div>
+      <div class="card-body">
+        <div class="card-icon" style="background:var(--blue);">&#128274;</div>
+        <h3>Secure by Default</h3>
+        <p>Enterprise-grade security baked in from day one. No configuration needed.</p>
+      </div>
+    </div>
+    <div class="flat-card">
+      <div class="card-banner" style="background:var(--green);"></div>
+      <div class="card-body">
+        <div class="card-icon" style="background:var(--green);">&#128640;</div>
+        <h3>Scale Instantly</h3>
+        <p>From prototype to production, handle millions of users without breaking a sweat.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Typography -->
+<section class="flat-typography">
+  <h2>Typography</h2>
+  <div class="type-row">
+    <div class="type-label">Heading 1</div>
+    <h1>Design Is Thinking</h1>
+  </div>
+  <div class="type-row">
+    <div class="type-label">Heading 2</div>
+    <h2>Made Visual</h2>
+  </div>
+  <div class="type-row">
+    <div class="type-label">Heading 3</div>
+    <h3>Simplicity is the ultimate sophistication</h3>
+  </div>
+  <div class="type-row">
+    <div class="type-label">Body Text</div>
+    <p>Flat design strips away unnecessary elements, focusing on clean aesthetics and bold colors. It emerged in the early 2010s as a reaction against skeuomorphism, favoring usability and fast rendering over decorative realism.</p>
+  </div>
+</section>
+
+<!-- Color Palette -->
+<section class="flat-palette">
+  <h2>Color Palette</h2>
+  <div class="palette-grid">
+    <div class="swatch" style="background:#E74C3C;"><span class="swatch-label">#E74C3C</span></div>
+    <div class="swatch" style="background:#F39C12;"><span class="swatch-label">#F39C12</span></div>
+    <div class="swatch" style="background:#3498DB;"><span class="swatch-label">#3498DB</span></div>
+    <div class="swatch" style="background:#2ECC71;"><span class="swatch-label">#2ECC71</span></div>
+    <div class="swatch" style="background:#2C3E50;"><span class="swatch-label">#2C3E50</span></div>
+    <div class="swatch" style="background:#ECF0F1;"><span class="swatch-label" style="color:#333;">#ECF0F1</span></div>
+  </div>
+</section>
+
+<!-- Modal -->
+<section class="flat-modal-section">
+  <h2>Modal Dialog</h2>
+  <button class="modal-trigger" onclick="document.getElementById('flat-modal').classList.add('active')">Open Modal</button>
+  <div id="flat-modal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('active')">
+    <div class="flat-modal">
+      <button class="modal-close" onclick="document.getElementById('flat-modal').classList.remove('active')">&times;</button>
+      <h3>Confirm Action</h3>
+      <p>Are you sure you want to proceed? This action demonstrates the flat design approach to modal dialogs with clean lines and solid colors.</p>
+      <div style="display:flex;gap:12px;justify-content:flex-end;">
+        <button class="flat-btn btn-dark" onclick="document.getElementById('flat-modal').classList.remove('active')">Cancel</button>
+        <button class="flat-btn btn-red" onclick="document.getElementById('flat-modal').classList.remove('active')">Confirm</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Style Info -->
+<section class="flat-info">
+  <h2>Style Information</h2>
+  <div class="info-grid">
+    <div class="info-item">
+      <div class="info-label">Era</div>
+      <div class="info-value">2010s Modern</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Complexity</div>
+      <div class="info-value">Low</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Best For</div>
+      <div class="info-value">Web Apps, Mobile Apps, MVPs, SaaS</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Font</div>
+      <div class="info-value">System-UI, Sans-Serif</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Border Radius</div>
+      <div class="info-value">2-4px</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Effects</div>
+      <div class="info-value">No gradients/shadows, Color shifts</div>
+    </div>
+  </div>
+</section>
+
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

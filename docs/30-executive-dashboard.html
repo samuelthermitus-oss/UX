@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive Dashboard - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #F8FAFC;
+  --text-color: #1E293B;
+  --brand-primary: #1E40AF;
+  --accent-blue: #2563EB;
+  --accent-green: #059669;
+  --accent-red: #DC2626;
+  --accent-amber: #D97706;
+  --accent-purple: #7C3AED;
+  --bg-card: #FFFFFF;
+  --text-muted: #64748B;
+  --border: #E2E8F0;
+  --font-primary: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: var(--font-primary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ===== NAVIGATION ===== */
+.exec-nav {
+  background: var(--brand-primary);
+  color: #fff;
+  padding: 12px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+.exec-nav .logo { font-weight: 800; font-size: 16px; color: #fff; text-decoration: none; }
+.exec-nav a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 13px; font-weight: 500; }
+.exec-nav a:hover { color: #fff; }
+.exec-nav .cta { margin-left: auto; background: rgba(255,255,255,0.15); color: #fff !important; padding: 6px 16px; border-radius: 6px; }
+
+/* ===== KPI HERO ===== */
+.kpi-hero {
+  background: var(--bg-card);
+  border-bottom: 2px solid var(--border);
+  padding: 32px 0 24px;
+  text-align: center;
+}
+.kpi-hero h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+.kpi-hero .subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.kpi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+.traffic-light {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.traffic-light.green { background: var(--accent-green); box-shadow: 0 0 8px rgba(5,150,105,0.4); }
+.traffic-light.yellow { background: var(--accent-amber); box-shadow: 0 0 8px rgba(217,119,6,0.4); }
+.traffic-light.red { background: var(--accent-red); box-shadow: 0 0 8px rgba(220,38,38,0.4); }
+.kpi-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px; }
+.kpi-value { font-size: 32px; font-weight: 800; line-height: 1; margin-bottom: 8px; }
+.kpi-change { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; }
+.kpi-change.up { color: var(--accent-green); }
+.kpi-change.down { color: var(--accent-red); }
+.kpi-change.warn { color: var(--accent-amber); }
+.sparkline { display: flex; align-items: flex-end; gap: 2px; height: 32px; margin-top: 12px; }
+.spark-bar { flex: 1; border-radius: 2px 2px 0 0; min-width: 4px; }
+
+/* ===== TWO-COLUMN CONTENT ===== */
+.exec-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.exec-col {
+  padding: 24px 32px;
+}
+.exec-col + .exec-col {
+  border-left: 1px solid var(--border);
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.section-header h2 { font-size: 16px; font-weight: 700; }
+.section-header .link { font-size: 12px; color: var(--accent-blue); font-weight: 600; cursor: pointer; text-decoration: none; }
+
+/* Trend List */
+.trend-list { list-style: none; }
+.trend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.trend-item:last-child { border-bottom: none; }
+.trend-item .label { color: var(--text-muted); }
+.trend-item .value { font-weight: 700; font-family: monospace; }
+.trend-item .change { font-size: 12px; font-weight: 600; margin-left: 8px; }
+.trend-item .change.up { color: var(--accent-green); }
+.trend-item .change.down { color: var(--accent-red); }
+
+/* Alert Items */
+.alert-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.alert-item:last-child { border-bottom: none; }
+.alert-item .label { color: var(--text-muted); flex: 1; }
+.alert-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.alert-badge.critical { background: rgba(220,38,38,0.1); color: var(--accent-red); }
+.alert-badge.warning { background: rgba(217,119,6,0.1); color: var(--accent-amber); }
+.alert-badge.positive { background: rgba(5,150,105,0.1); color: var(--accent-green); }
+
+/* ===== BUTTONS ROW ===== */
+.btn-row {
+  display: flex;
+  gap: 8px;
+  padding: 16px 32px;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  justify-content: center;
+}
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; font-size: 12px; font-weight: 600; border: 2px solid transparent; cursor: pointer; border-radius: 6px; font-family: var(--font-primary); transition: all 0.2s; }
+.btn-primary { background: var(--brand-primary); color: #fff; }
+.btn-primary:hover { background: #1E3A8A; transform: translateY(-1px); }
+.btn-secondary { background: transparent; color: var(--brand-primary); border-color: var(--brand-primary); }
+.btn-secondary:hover { background: var(--brand-primary); color: #fff; }
+.btn-ghost { background: transparent; color: var(--text-muted); border-color: transparent; }
+.btn-ghost:hover { background: var(--bg-card); color: var(--text-color); }
+
+/* ===== CARDS SECTION ===== */
+.cards-section {
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 32px;
+}
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.exec-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  background: var(--bg-card);
+  transition: all 0.2s;
+}
+.exec-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+.exec-card-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.exec-card-text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+/* ===== FORMS SECTION ===== */
+.forms-section { padding: 24px 32px; }
+.form-row { display: flex; gap: 16px; max-width: 900px; margin: 0 auto; }
+.form-group { flex: 1; margin-bottom: 16px; }
+.form-label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; color: var(--text-muted); }
+.form-input, .form-select {
+  width: 100%; padding: 8px 12px; font-size: 13px; font-family: var(--font-primary);
+  border: 1px solid var(--border); background: #fff; color: var(--text-color);
+  border-radius: 6px; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-input:focus, .form-select:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.08); }
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%2364748B' d='M5 7L0 2h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
+}
+.form-checkbox { width: 14px; height: 14px; accent-color: var(--brand-primary); }
+.form-options { display: flex; gap: 16px; align-items: center; margin-top: 8px; }
+.form-options label { display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; }
+
+/* ===== TYPOGRAPHY SECTION ===== */
+.typo-section { padding: 24px 32px; background: var(--bg-card); border-top: 1px solid var(--border); }
+.typo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; max-width: 900px; margin: 0 auto; }
+.typo-item { padding: 12px 0; border-bottom: 1px solid var(--border); }
+.typo-item:last-child { border-bottom: none; }
+
+/* ===== PALETTE ===== */
+.palette-section { padding: 24px 32px; }
+.swatch-row { display: flex; gap: 8px; max-width: 900px; margin: 0 auto; }
+.swatch { width: 36px; height: 36px; border-radius: 6px; border: 1px solid var(--border); cursor: pointer; transition: transform 0.15s; }
+.swatch:hover { transform: scale(1.1); }
+
+/* ===== MODAL ===== */
+.modal-overlay { display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; }
+.modal-content { background: #fff; border-radius: 12px; padding: 32px; max-width: 460px; width: 90%; box-shadow: 0 24px 64px rgba(0,0,0,0.15); }
+.modal-content h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.modal-content p { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+
+/* ===== STYLE INFO ===== */
+.style-info { background: var(--bg-card); border-radius: 10px; border: 1px solid var(--border); text-align: center; padding: 24px; max-width: 900px; margin: 0 auto; }
+.style-info h3 { font-size: 16px; font-weight: 600; margin-bottom: 20px; }
+.style-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.style-info-item .label { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.style-info-item .value { color: var(--text-color); font-size: 12px; }
+</style>
+</head>
+<body>
+<!-- Viewport Switcher Bar -->
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+
+<div class="vp-frame">
+  <!-- Tags -->
+  <div style="background:var(--bg-card);padding:6px 24px;border-bottom:1px solid var(--border);display:flex;gap:8px;justify-content:center;">
+    <span class="tag tag-era">2020s Modern</span>
+    <span class="tag tag-complexity-medium">Complexity: Medium</span>
+    <span class="tag tag-type">BI/Analytics</span>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="exec-nav">
+    <a href="#" class="logo">◆ ExecDash</a>
+    <a href="#">Overview</a>
+    <a href="#">Financial</a>
+    <a href="#">Operations</a>
+    <a href="#">Forecast</a>
+    <a href="#" class="cta">Export PDF</a>
+  </nav>
+
+  <!-- KPI Hero -->
+  <section class="kpi-hero">
+    <h1>Executive Summary</h1>
+    <p class="subtitle">Q2 2026 Performance Overview — Updated Jun 21, 2026</p>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="traffic-light green"></div>
+        <div class="kpi-label">Revenue</div>
+        <div class="kpi-value">$12.4M</div>
+        <div class="kpi-change up">▲ 18.2% YoY</div>
+        <div class="sparkline">
+          <div class="spark-bar" style="height:40%;background:var(--accent-blue);"></div>
+          <div class="spark-bar" style="height:50%;background:var(--accent-blue);"></div>
+          <div class="spark-bar" style="height:45%;background:var(--accent-blue);"></div>
+          <div class="spark-bar" style="height:60%;background:var(--accent-blue);"></div>
+          <div class="spark-bar" style="height:55%;background:var(--accent-blue);"></div>
+          <div class="spark-bar" style="height:70%;background:var(--accent-blue);"></div>
+          <div class="spark-bar" style="height:65%;background:var(--accent-blue);"></div>
+          <div class="spark-bar" style="height:80%;background:var(--accent-blue);"></div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="traffic-light green"></div>
+        <div class="kpi-label">Net Profit</div>
+        <div class="kpi-value">$3.8M</div>
+        <div class="kpi-change up">▲ 22.4% YoY</div>
+        <div class="sparkline">
+          <div class="spark-bar" style="height:35%;background:var(--accent-green);"></div>
+          <div class="spark-bar" style="height:42%;background:var(--accent-green);"></div>
+          <div class="spark-bar" style="height:38%;background:var(--accent-green);"></div>
+          <div class="spark-bar" style="height:50%;background:var(--accent-green);"></div>
+          <div class="spark-bar" style="height:55%;background:var(--accent-green);"></div>
+          <div class="spark-bar" style="height:48%;background:var(--accent-green);"></div>
+          <div class="spark-bar" style="height:62%;background:var(--accent-green);"></div>
+          <div class="spark-bar" style="height:70%;background:var(--accent-green);"></div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="traffic-light yellow"></div>
+        <div class="kpi-label">Customer Acquisition</div>
+        <div class="kpi-value">2,847</div>
+        <div class="kpi-change warn">▼ 3.1% vs target</div>
+        <div class="sparkline">
+          <div class="spark-bar" style="height:60%;background:var(--accent-amber);"></div>
+          <div class="spark-bar" style="height:55%;background:var(--accent-amber);"></div>
+          <div class="spark-bar" style="height:65%;background:var(--accent-amber);"></div>
+          <div class="spark-bar" style="height:50%;background:var(--accent-amber);"></div>
+          <div class="spark-bar" style="height:45%;background:var(--accent-amber);"></div>
+          <div class="spark-bar" style="height:52%;background:var(--accent-amber);"></div>
+          <div class="spark-bar" style="height:48%;background:var(--accent-amber);"></div>
+          <div class="spark-bar" style="height:44%;background:var(--accent-amber);"></div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="traffic-light green"></div>
+        <div class="kpi-label">Churn Rate</div>
+        <div class="kpi-value">1.2%</div>
+        <div class="kpi-change up">▲ 0.3% improvement</div>
+        <div class="sparkline">
+          <div class="spark-bar" style="height:80%;background:var(--accent-green);"></div>
+          <div class="spark-bar" style="height:72%;background:var(--accent-green);"></div>
+          <div class="spark-bar" style="height:68%;background:var(--accent-green);"></div>
+          <div class="spark-bar" style="height:60%;background:var(--accent-green);"></div>
+          <div class="spark-bar" style="height:55%;background:var(--accent-green);"></div>
+          <div class="spark-bar" style="height:48%;background:var(--accent-green);"></div>
+          <div class="spark-bar" style="height:42%;background:var(--accent-green);"></div>
+          <div class="spark-bar" style="height:35%;background:var(--accent-green);"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Buttons Row -->
+  <div class="btn-row">
+    <button class="btn btn-primary">Generate Report</button>
+    <button class="btn btn-secondary">Export PDF</button>
+    <button class="btn btn-ghost">Refresh Data</button>
+  </div>
+
+  <!-- Two-Column Content -->
+  <div class="exec-content">
+    <div class="exec-col">
+      <div class="section-header">
+        <h2>Revenue by Division</h2>
+        <a class="link">View All ▾</a>
+      </div>
+      <ul class="trend-list">
+        <li class="trend-item"><span class="label">Enterprise</span><span class="value">$6.2M</span><span class="change up">+24%</span></li>
+        <li class="trend-item"><span class="label">Mid-Market</span><span class="value">$3.8M</span><span class="change up">+15%</span></li>
+        <li class="trend-item"><span class="label">SMB</span><span class="value">$1.6M</span><span class="change up">+8%</span></li>
+        <li class="trend-item"><span class="label">Partners</span><span class="value">$0.8M</span><span class="change down">-2%</span></li>
+      </ul>
+    </div>
+    <div class="exec-col">
+      <div class="section-header">
+        <h2>Top Alerts</h2>
+        <a class="link">Manage ▾</a>
+      </div>
+      <div class="alert-item"><span class="label">Operating costs over budget</span><span class="alert-badge critical">Critical</span></div>
+      <div class="alert-item"><span class="label">APAC churn spike detected</span><span class="alert-badge warning">Warning</span></div>
+      <div class="alert-item"><span class="label">Enterprise pipeline growing</span><span class="alert-badge positive">Positive</span></div>
+      <div class="alert-item"><span class="label">NPS score all-time high</span><span class="alert-badge positive">Positive</span></div>
+    </div>
+  </div>
+
+  <!-- Cards Section -->
+  <div class="cards-section">
+    <div class="cards-grid">
+      <div class="exec-card">
+        <div class="exec-card-title">Quarterly Forecast</div>
+        <p class="exec-card-text">AI-powered projections based on current pipeline and historical trends. Confidence: 87%.</p>
+      </div>
+      <div class="exec-card">
+        <div class="exec-card-title">Risk Assessment</div>
+        <p class="exec-card-text">3 items require attention. Operating costs and APAC churn flagged for review.</p>
+      </div>
+      <div class="exec-card">
+        <div class="exec-card-title">Board Summary</div>
+        <p class="exec-card-text">Auto-generated executive summary for board presentation. Ready for review.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Forms Section -->
+  <div class="forms-section">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Report Name</label>
+        <input type="text" class="form-input" placeholder="Enter report name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Period</label>
+        <select class="form-select"><option>This Quarter</option><option>Last Quarter</option><option>Year to Date</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Export Format</label>
+        <div class="form-options">
+          <label><input type="radio" name="format" class="form-checkbox"> PDF</label>
+          <label><input type="radio" name="format" class="form-checkbox"> Excel</label>
+          <label><input type="radio" name="format" class="form-checkbox"> PPT</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Typography Section -->
+  <div class="typo-section">
+    <div class="typo-grid">
+      <div class="typo-item"><div style="font-size:36px;font-weight:800;line-height:1.15;">Heading 1 — Executive Title</div></div>
+      <div class="typo-item"><div style="font-size:28px;font-weight:700;line-height:1.2;">Heading 2 — Section Header</div></div>
+      <div class="typo-item"><div style="font-size:22px;font-weight:700;line-height:1.3;">Heading 3 — KPI Title</div></div>
+      <div class="typo-item"><div style="font-size:18px;font-weight:600;line-height:1.3;">Heading 4 — Subsection</div></div>
+      <div class="typo-item"><div style="font-size:15px;font-weight:600;line-height:1.4;">Heading 5 — Alert Title</div></div>
+      <div class="typo-item"><div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);">Heading 6 — Label</div></div>
+      <div class="typo-item" style="grid-column:span 2;"><p style="font-size:14px;line-height:1.6;margin-bottom:0;">Executive dashboards use clear, confident typography. KPI values are large and prominent. Supporting text is concise and actionable.</p></div>
+    </div>
+  </div>
+
+  <!-- Palette -->
+  <div class="palette-section">
+    <div class="swatch-row">
+      <div class="swatch" style="background:#1E40AF;" data-hex="#1E40AF"></div>
+      <div class="swatch" style="background:#2563EB;" data-hex="#2563EB"></div>
+      <div class="swatch" style="background:#059669;" data-hex="#059669"></div>
+      <div class="swatch" style="background:#DC2626;" data-hex="#DC2626"></div>
+      <div class="swatch" style="background:#D97706;" data-hex="#D97706"></div>
+      <div class="swatch" style="background:#7C3AED;" data-hex="#7C3AED"></div>
+      <div class="swatch" style="background:#1E293B;" data-hex="#1E293B"></div>
+      <div class="swatch" style="background:#F8FAFC;" data-hex="#F8FAFC"></div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="demo-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Export Executive Report</h3>
+      <p>Generate a formatted PDF for board distribution or investor presentations.</p>
+      <button class="btn btn-primary" style="width:100%;" onclick="toggleModal('demo-modal')">Generate Report →</button>
+    </div>
+  </div>
+  <div style="text-align:center;padding:24px;">
+    <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button>
+  </div>
+
+  <!-- Style Info -->
+  <div style="padding:0 32px 32px;">
+    <div class="style-info">
+      <h3>Style Information</h3>
+      <div class="style-info-grid">
+        <div class="style-info-item"><div class="label">Era/Origin</div><div class="value">2020s Modern, Medium, BI/Analytics</div></div>
+        <div class="style-info-item"><div class="label">Best For</div><div class="value">C-suite dashboards, business summary, decision-makers</div></div>
+        <div class="style-info-item"><div class="label">Avoid For</div><div class="value">Operational dashboards, developer tools, data entry</div></div>
+        <div class="style-info-item"><div class="label">Complexity</div><div class="value">Medium — large KPI cards (4-6 max), sparklines, traffic light indicators</div></div>
+        <div class="style-info-item"><div class="label">CSS Keywords</div><div class="value">KPI count-up animations, trend arrows, metric card hover, sparklines, traffic lights</div></div>
+        <div class="style-info-item"><div class="label">Design Variables</div><div class="value">--brand-primary, --accent-green, --accent-red, --accent-amber, --bg-card</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

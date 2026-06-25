@@ -1,0 +1,1049 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Nature Distilled - UI Style Showcase</title><link rel="stylesheet" href="shared.css"><style>
+:root{
+  --page-bg:#F5F0E1;
+  --text-color:#5C5246;
+  --terracotta:#C67B5C;
+  --sand:#D4C4A8;
+  --clay:#B5651D;
+  --cream:#F5F0E1;
+  --olive:#6B7B3C;
+  --brown:#8B7355;
+  --warm-grey:#7A7065;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--page-bg);
+  color:var(--text-color);
+  line-height:1.6;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* Grain texture overlay */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:9999;
+  opacity:0.035;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat:repeat;
+  background-size:180px 180px;
+}
+
+@keyframes gentleFloat{
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  50%{transform:translateY(-8px) rotate(1deg)}
+}
+
+@keyframes subtleDrift{
+  0%,100%{transform:translate(0,0)}
+  50%{transform:translate(6px,-4px)}
+}
+
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes softPulse{
+  0%,100%{opacity:0.25}
+  50%{opacity:0.4}
+}
+
+/* Hero */
+.hero{
+  position:relative;
+  min-height:520px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:80px 32px 64px;
+  background:linear-gradient(165deg,#F5F0E1 0%,#EDE6D3 40%,#E8DFCA 100%);
+  overflow:hidden;
+}
+
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size:256px 256px;
+  opacity:0.04;
+  pointer-events:none;
+}
+
+.hero-organic-shape{
+  position:absolute;
+  border-radius:50%;
+  opacity:0.12;
+  pointer-events:none;
+}
+
+.hero-organic-shape.shape-1{
+  width:320px;height:320px;
+  background:radial-gradient(circle,var(--terracotta) 0%,transparent 70%);
+  top:-60px;right:-80px;
+  animation:gentleFloat 12s ease-in-out infinite;
+}
+
+.hero-organic-shape.shape-2{
+  width:220px;height:220px;
+  background:radial-gradient(circle,var(--olive) 0%,transparent 70%);
+  bottom:-40px;left:-60px;
+  animation:gentleFloat 15s ease-in-out infinite 2s;
+}
+
+.hero-organic-shape.shape-3{
+  width:160px;height:160px;
+  border:3px solid var(--sand);
+  border-radius:60% 40% 55% 45%/50% 60% 40% 50%;
+  top:30%;left:10%;
+  animation:subtleDrift 18s ease-in-out infinite 1s;
+  opacity:0.2;
+}
+
+.hero-organic-shape.shape-4{
+  width:100px;height:100px;
+  border:2px solid var(--clay);
+  border-radius:40% 60% 50% 50%/55% 45% 55% 45%;
+  bottom:25%;right:12%;
+  animation:gentleFloat 10s ease-in-out infinite 3s;
+  opacity:0.15;
+}
+
+.hero-organic-shape.shape-line{
+  width:180px;height:3px;
+  background:linear-gradient(90deg,transparent,var(--sand),transparent);
+  border-radius:4px;
+  top:35%;left:50%;transform:translateX(-50%);
+  animation:softPulse 8s ease-in-out infinite;
+  opacity:0.3;
+}
+
+.hero h1{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:clamp(2.4rem,5vw,4rem);
+  font-weight:300;
+  color:var(--terracotta);
+  letter-spacing:0.04em;
+  margin-bottom:20px;
+  position:relative;
+  z-index:1;
+  line-height:1.15;
+}
+
+.hero .subtitle{
+  font-size:clamp(1rem,2vw,1.3rem);
+  color:var(--warm-grey);
+  font-weight:300;
+  letter-spacing:0.06em;
+  position:relative;
+  z-index:1;
+  margin-bottom:8px;
+}
+
+.hero .tagline{
+  font-size:0.85rem;
+  color:var(--sand);
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  font-weight:500;
+  position:relative;
+  z-index:1;
+  margin-top:24px;
+}
+
+.hero-ornament{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-top:20px;
+  position:relative;
+  z-index:1;
+}
+
+.hero-ornament span{
+  display:inline-block;
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--sand);
+  opacity:0.6;
+}
+
+.hero-ornament .line{
+  width:40px;height:1px;
+  background:var(--sand);
+  opacity:0.4;
+}
+
+/* Section styling */
+.section{
+  max-width:1000px;
+  margin:0 auto;
+  padding: 64px 32px;
+  animation:fadeInUp 0.6s cubic-bezier(0.25,0.46,0.45,0.94) both;
+}
+
+.section-title{
+  font-size:1.6rem;
+  font-weight:400;
+  color:var(--terracotta);
+  margin-bottom:32px;
+  letter-spacing:0.02em;
+}
+
+.section-subtitle{
+  font-size:0.85rem;
+  color:var(--warm-grey);
+  margin-bottom:32px;
+  letter-spacing:0.04em;
+}
+
+.section-divider{
+  width:60px;height:2px;
+  background:linear-gradient(90deg,var(--sand),var(--terracotta),var(--sand));
+  margin:0 auto 48px;
+  border-radius:2px;
+}
+
+/* Navigation */
+.nav-demo{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:8px 0;
+  padding:24px 32px;
+  background:rgba(255,255,255,0.5);
+  border-radius:16px;
+  box-shadow:0 2px 16px rgba(0,0,0,0.04);
+}
+
+.nav-demo a{
+  text-decoration:none;
+  color:var(--warm-grey);
+  font-size:0.95rem;
+  font-weight:500;
+  padding:8px 16px;
+  position:relative;
+  transition:color 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+
+.nav-demo a:hover{
+  color:var(--terracotta);
+}
+
+.nav-demo a.active{
+  color:var(--terracotta);
+}
+
+.nav-demo a.active::after{
+  content:"";
+  position:absolute;
+  bottom:2px;left:16px;right:16px;
+  height:2px;
+  background:var(--terracotta);
+  border-radius:2px;
+  transition:width 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+
+.nav-dot{
+  color:var(--sand)!important;
+  font-size:0.5rem!important;
+  cursor:default!important;
+  padding:0 6px!important;
+  opacity:0.5;
+}
+
+.nav-dot:hover{
+  color:var(--sand)!important;
+}
+
+/* Buttons */
+.btn-group{
+  display:flex;
+  flex-wrap:wrap;
+  gap:16px;
+  align-items:center;
+ justify-content: center;}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:14px 28px;
+  border-radius:12px;
+  font-family:system-ui,sans-serif;
+  font-size:0.9rem;
+  font-weight:500;
+  letter-spacing:0.02em;
+  border:none;
+  cursor:pointer;
+  transition:all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+  text-decoration:none;
+  box-shadow:0 4px 20px rgba(0,0,0,0.06);
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 28px rgba(0,0,0,0.1);
+}
+
+.btn:active{
+  transform:translateY(0);
+}
+
+.btn-primary{
+  background:var(--terracotta);
+  color:var(--cream);
+}
+
+.btn-primary:hover{
+  background:#b86e50;
+}
+
+.btn-secondary{
+  background:var(--olive);
+  color:var(--cream);
+}
+
+.btn-secondary:hover{
+  background:#5d6c34;
+}
+
+.btn-ghost{
+  background:transparent;
+  color:var(--terracotta);
+  border:2px solid var(--terracotta);
+  box-shadow:none;
+}
+
+.btn-ghost:hover{
+  background:var(--terracotta);
+  color:var(--cream);
+  box-shadow:0 4px 20px rgba(198,123,92,0.25);
+}
+
+.btn-disabled{
+  background:var(--sand);
+  color:#9a8e7e;
+  cursor:not-allowed;
+  box-shadow:none;
+}
+
+.btn-disabled:hover{
+  transform:none;
+  box-shadow:none;
+}
+
+/* Forms */
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.form-group{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.form-group.full-width{
+  grid-column:1/-1;
+}
+
+.form-label{
+  font-size:0.8rem;
+  color:var(--warm-grey);
+  font-weight:500;
+  letter-spacing:0.03em;
+}
+
+.form-input,
+.form-select,
+.form-textarea{
+  padding:12px 16px;
+  border:2px solid var(--sand);
+  border-radius:12px;
+  background:rgba(255,255,255,0.6);
+  font-family:system-ui,sans-serif;
+  font-size:0.9rem;
+  color:var(--text-color);
+  transition:border-color 0.3s cubic-bezier(0.25,0.46,0.45,0.94),box-shadow 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+  outline:none;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus{
+  border-color:var(--terracotta);
+  box-shadow:0 0 0 3px rgba(198,123,92,0.15);
+}
+
+.form-textarea{
+  min-height:100px;
+  resize:vertical;
+}
+
+.form-select{
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238B7355' fill='none' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  padding-right:36px;
+}
+
+.form-check-group{
+  display:flex;
+  flex-wrap:wrap;
+  gap:16px;
+  align-items:center;
+}
+
+.form-check{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+  font-size:0.88rem;
+  color:var(--warm-grey);
+}
+
+.form-check input[type="checkbox"],
+.form-check input[type="radio"]{
+  appearance:none;
+  width:20px;height:20px;
+  border:2px solid var(--sand);
+  background:rgba(255,255,255,0.6);
+  cursor:pointer;
+  transition:all 0.25s cubic-bezier(0.25,0.46,0.45,0.94);
+  position:relative;
+}
+
+.form-check input[type="checkbox"]{
+  border-radius:6px;
+}
+
+.form-check input[type="radio"]{
+  border-radius:50%;
+}
+
+.form-check input[type="checkbox"]:checked{
+  background:var(--terracotta);
+  border-color:var(--terracotta);
+}
+
+.form-check input[type="checkbox"]:checked::after{
+  content:"";
+  position:absolute;
+  top:3px;left:6px;
+  width:5px;height:9px;
+  border:solid var(--cream);
+  border-width:0 2px 2px 0;
+  transform:rotate(45deg);
+}
+
+.form-check input[type="radio"]:checked{
+  border-color:var(--olive);
+}
+
+.form-check input[type="radio"]:checked::after{
+  content:"";
+  position:absolute;
+  top:3px;left:3px;
+  width:10px;height:10px;
+  border-radius:50%;
+  background:var(--olive);
+}
+
+/* Cards */
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:24px;
+}
+
+.card{
+  background:rgba(255,255,255,0.7);
+  border-radius:16px;
+  padding:32px 28px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.06);
+  position:relative;
+  overflow:hidden;
+  transition:transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94),box-shadow 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 8px 32px rgba(0,0,0,0.1);
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;
+  height:4px;
+  border-radius:16px 16px 0 0;
+}
+
+.card-terracotta::before{background:var(--terracotta)}
+.card-olive::before{background:var(--olive)}
+.card-clay::before{background:var(--clay)}
+
+.card-icon{
+  width:48px;height:48px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.4rem;
+  margin-bottom:16px;
+}
+
+.card-terracotta .card-icon{background:rgba(198,123,92,0.12);color:var(--terracotta)}
+.card-olive .card-icon{background:rgba(107,123,60,0.12);color:var(--olive)}
+.card-clay .card-icon{background:rgba(181,101,29,0.12);color:var(--clay)}
+
+.card h3{
+  font-size:1.1rem;
+  font-weight:500;
+  margin-bottom:8px;
+}
+
+.card-terracotta h3{color:var(--terracotta)}
+.card-olive h3{color:var(--olive)}
+.card-clay h3{color:var(--clay)}
+
+.card p{
+  font-size:0.88rem;
+  color:var(--warm-grey);
+  line-height:1.6;
+}
+
+.card-tag{
+  display:inline-block;
+  margin-top:16px;
+  padding:4px 12px;
+  border-radius:20px;
+  font-size:0.72rem;
+  font-weight:500;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+}
+
+.card-terracotta .card-tag{background:rgba(198,123,92,0.1);color:var(--terracotta)}
+.card-olive .card-tag{background:rgba(107,123,60,0.1);color:var(--olive)}
+.card-clay .card-tag{background:rgba(181,101,29,0.1);color:var(--clay)}
+
+/* Typography */
+.type-showcase h1{font-size:clamp(2rem,4vw,3rem);color:var(--terracotta);font-weight:300;margin-bottom:20px;line-height:1.15}
+.type-showcase h2{font-size:clamp(1.6rem,3vw,2.2rem);color:var(--terracotta);font-weight:400;margin-bottom:20px;line-height:1.2}
+.type-showcase h3{font-size:clamp(1.3rem,2.5vw,1.7rem);color:var(--clay);font-weight:400;margin-bottom:20px;line-height:1.25}
+.type-showcase h4{font-size:clamp(1.1rem,2vw,1.35rem);color:var(--brown);font-weight:500;margin-bottom:20px;line-height:1.3}
+.type-showcase h5{font-size:clamp(0.95rem,1.5vw,1.1rem);color:var(--warm-grey);font-weight:500;margin-bottom:20px;line-height:1.35}
+.type-showcase h6{font-size:0.85rem;color:var(--warm-grey);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;line-height:1.4}
+.type-showcase p{font-size:0.92rem;color:var(--warm-grey);line-height:1.7;margin-bottom:16px;max-width:600px}
+
+/* Color Swatches */
+.swatches-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:16px;
+}
+
+.swatch{
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 4px 20px rgba(0,0,0,0.06);
+  background:rgba(255,255,255,0.6);
+  transition:transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+
+.swatch:hover{
+  transform:translateY(-3px);
+}
+
+.swatch-color{
+  height:100px;
+  border-radius:16px 16px 0 0;
+}
+
+.swatch-info{
+  padding:14px 16px;
+}
+
+.swatch-name{
+  font-size:0.82rem;
+  font-weight:600;
+  color:var(--text-color);
+  margin-bottom:2px;
+}
+
+.swatch-hex{
+  font-size:0.72rem;
+  color:var(--warm-grey);
+  letter-spacing:0.04em;
+  font-family:monospace;
+}
+
+/* Modal */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(92,82,70,0.3);
+  backdrop-filter:blur(6px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:10000;
+  padding:24px;
+}
+
+.modal-overlay.active{
+  display:flex;
+}
+
+.modal{
+  background:var(--cream);
+  border-radius:16px;
+  padding:40px 36px;
+  max-width:460px;
+  width:100%;
+  box-shadow:0 16px 64px rgba(0,0,0,0.12);
+  border:2px solid var(--sand);
+  position:relative;
+  animation:fadeInUp 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+
+.modal-close{
+  position:absolute;
+  top:16px;right:16px;
+  width:32px;height:32px;
+  border:none;
+  background:rgba(0,0,0,0.04);
+  border-radius:8px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.1rem;
+  color:var(--warm-grey);
+  transition:background 0.25s;
+}
+
+.modal-close:hover{
+  background:rgba(0,0,0,0.08);
+}
+
+.modal h3{
+  font-size:1.4rem;
+  color:var(--terracotta);
+  font-weight:400;
+  margin-bottom:12px;
+}
+
+.modal p{
+  font-size:0.88rem;
+  color:var(--warm-grey);
+  line-height:1.65;
+  margin-bottom:24px;
+}
+
+.modal-actions{
+  display:flex;
+  gap:12px;
+  justify-content:flex-end;
+}
+
+/* Info Panel */
+.info-panel{
+  background:rgba(255,255,255,0.5);
+  border-radius:16px;
+  padding:32px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.04);
+  border:1px solid rgba(212,196,168,0.4);
+}
+
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:20px;
+}
+
+.info-item{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.info-label{
+  font-size:0.72rem;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--sand);
+  font-weight:600;
+}
+
+.info-value{
+  font-size:0.88rem;
+  color:var(--text-color);
+  line-height:1.5;
+}
+
+/* Parallax subtle */
+.parallax-section{
+  position:relative;
+  transform-style:preserve-3d;
+}
+
+.parallax-section::after{
+  content:"";
+  position:absolute;
+  bottom:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--sand),transparent);
+}
+
+/* Responsive */
+@media(max-width:768px){
+  .form-grid{grid-template-columns:1fr}
+  .cards-grid{grid-template-columns:1fr}
+  .swatches-grid{grid-template-columns:repeat(3,1fr)}
+  .hero {min-height:400px;padding:60px 20px 48px text-align: center;}
+  .section{padding:64px 20px}
+  .nav-demo{padding:16px}
+  .modal{padding:28px 24px}
+}
+
+@media(max-width:480px){
+  .swatches-grid{grid-template-columns:repeat(2,1fr)}
+  .btn-group{flex-direction:column;align-items:stretch}
+  .btn{text-align:center;justify-content:center}
+}
+</style></head><body>
+
+<div class="vp-bar"><span class="vp-label">&#128208; Viewport:</span><button class="vp-btn" data-size="1920">1920</button><button class="vp-btn" data-size="1440">1440</button><button class="vp-btn" data-size="1024">1024</button><button class="vp-btn" data-size="768">768</button><button class="vp-btn" data-size="375">375</button><button class="vp-btn" data-size="320">320</button><span id="vp-width" class="vp-width">Full</span><a href="index.html" class="vp-back">&larr; Back to All Styles</a></div>
+
+<div class="vp-frame">
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-organic-shape shape-1"></div>
+  <div class="hero-organic-shape shape-2"></div>
+  <div class="hero-organic-shape shape-3"></div>
+  <div class="hero-organic-shape shape-4"></div>
+  <div class="hero-organic-shape shape-line"></div>
+  <h1>Nature Distilled</h1>
+  <p class="subtitle">Where earth meets interface</p>
+  <div class="hero-ornament">
+    <span class="line"></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span class="line"></span>
+  </div>
+  <p class="tagline">Handcrafted with intention</p>
+</section>
+
+<!-- Navigation -->
+<section class="section parallax-section">
+  <h2 class="section-title">Navigation</h2>
+  <p class="section-subtitle">Warm, inviting navigation with dot ornaments and gentle transitions</p>
+  <nav class="nav-demo">
+    <a href="#" class="active">Roots</a>
+    <span class="nav-dot">&bull;</span>
+    <a href="#">Harvest</a>
+    <span class="nav-dot">&bull;</span>
+    <a href="#">Craft</a>
+    <span class="nav-dot">&bull;</span>
+    <a href="#">Grow</a>
+    <span class="nav-dot">&bull;</span>
+    <a href="#">Gather</a>
+  </nav>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Buttons -->
+<section class="section parallax-section">
+  <h2 class="section-title">Buttons</h2>
+  <p class="section-subtitle">Soft rounded shapes with gentle hover lifts and warm shadows</p>
+  <div class="btn-group">
+    <button class="btn btn-primary">Primary</button>
+    <button class="btn btn-secondary">Secondary</button>
+    <button class="btn btn-ghost">Ghost</button>
+    <button class="btn btn-disabled" disabled>Disabled</button>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Forms -->
+<section class="section parallax-section">
+  <h2 class="section-title">Forms</h2>
+  <p class="section-subtitle">Warm cream inputs with terracotta focus rings and gentle transitions</p>
+  <div class="form-grid">
+    <div class="form-group">
+      <label class="form-label">Your Name</label>
+      <input type="text" class="form-input" placeholder="Enter your name">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-input" placeholder="hello@nature.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Experience</label>
+      <select class="form-select">
+        <option>Select a path...</option>
+        <option>Seedling</option>
+        <option>Sprout</option>
+        <option>In Bloom</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Phone</label>
+      <input type="tel" class="form-input" placeholder="+1 (555) 000-0000">
+    </div>
+    <div class="form-group full-width">
+      <label class="form-label">Your Story</label>
+      <textarea class="form-textarea" placeholder="Share your journey..."></textarea>
+    </div>
+    <div class="form-group full-width">
+      <div class="form-check-group">
+        <label class="form-check">
+          <input type="checkbox" checked> Subscribe to seasonal notes
+        </label>
+        <label class="form-check">
+          <input type="checkbox"> Receive harvest updates
+        </label>
+        <label class="form-check">
+          <input type="radio" name="notify" checked> Gentle reminders
+        </label>
+        <label class="form-check">
+          <input type="radio" name="notify"> No notifications
+        </label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Cards -->
+<section class="section parallax-section">
+  <h2 class="section-title">Cards</h2>
+  <p class="section-subtitle">Natural material feel with soft shadows and subtle accent colors</p>
+  <div class="cards-grid">
+    <div class="card card-terracotta">
+      <div class="card-icon">&#127807;</div>
+      <h3>Harvest</h3>
+      <p>Gathered with care from the earth's generous offerings. Each element thoughtfully sourced and naturally refined.</p>
+      <span class="card-tag">Seasonal</span>
+    </div>
+    <div class="card card-olive">
+      <div class="card-icon">&#127793;</div>
+      <h3>Garden</h3>
+      <p>Rooted in tradition, growing with purpose. A space where patience meets beauty in every detail.</p>
+      <span class="card-tag">Organic</span>
+    </div>
+    <div class="card card-clay">
+      <div class="card-icon">&#127912;</div>
+      <h3>Workshop</h3>
+      <p>Where raw materials become something meaningful. Handcrafted with the warmth of human touch.</p>
+      <span class="card-tag">Artisan</span>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Typography -->
+<section class="section parallax-section">
+  <h2 class="section-title">Typography</h2>
+  <p class="section-subtitle">Humanist sans-serif with warm earthy colors and gentle line-height</p>
+  <div class="type-showcase">
+    <h1>Heading One</h1>
+    <h2>Heading Two</h2>
+    <h3>Heading Three</h3>
+    <h4>Heading Four</h4>
+    <h5>Heading Five</h5>
+    <h6>Heading Six</h6>
+    <p>The earth speaks in colors warm and true. In every grain of clay and leaf of green, there is a story of patience, growth, and the quiet beauty of natural things becoming what they were always meant to be.</p>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Color Swatches -->
+<section class="section parallax-section">
+  <h2 class="section-title">Color Palette</h2>
+  <p class="section-subtitle">Muted earth tones drawn from nature's own palette</p>
+  <div class="swatches-grid">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#C67B5C"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Terracotta</div>
+        <div class="swatch-hex">#C67B5C</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#D4C4A8"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Sand Beige</div>
+        <div class="swatch-hex">#D4C4A8</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#B5651D"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Warm Clay</div>
+        <div class="swatch-hex">#B5651D</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#F5F0E1"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Soft Cream</div>
+        <div class="swatch-hex">#F5F0E1</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#6B7B3C"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Olive</div>
+        <div class="swatch-hex">#6B7B3C</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#8B7355"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Pencil Grey</div>
+        <div class="swatch-hex">#8B7355</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Modal -->
+<section class="section parallax-section">
+  <h2 class="section-title">Modal</h2>
+  <p class="section-subtitle">A gentle overlay for moments of focus and calm</p>
+  <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button>
+  <div class="modal-overlay" id="demo-modal">
+    <div class="modal">
+      <button class="modal-close" onclick="toggleModal('demo-modal')">&times;</button>
+      <h3>A Moment of Calm</h3>
+      <p>In the quiet spaces between moments, we find clarity. This is your reminder to pause, breathe, and reconnect with what matters most.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="toggleModal('demo-modal')">Later</button>
+        <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Embrace</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Style Info Panel -->
+<section class="section parallax-section">
+  <h2 class="section-title">Style Information</h2>
+  <p class="section-subtitle">The philosophy and principles behind this aesthetic</p>
+  <div class="info-panel">
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="info-label">Era</span>
+        <span class="info-value">2025+ Handmade Warmth</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Complexity</span>
+        <span class="info-value">Low</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Best For</span>
+        <span class="info-value">Wellness brands, sustainable products, artisan goods</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Font</span>
+        <span class="info-value">System-ui humanist sans-serif</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Effects</span>
+        <span class="info-value">Grain texture, parallax, natural easing, organic shapes</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Mood</span>
+        <span class="info-value">Warm, inviting, natural, calming, handcrafted</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Bottom spacer -->
+<div style="height:80px"></div>
+
+</div><!-- .vp-frame -->
+
+<script src="shared.js"></script>
+<script>
+// Modal toggle
+function toggleModal(id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.classList.toggle("active");
+}
+
+// Close modal on overlay click
+document.querySelectorAll(".modal-overlay").forEach(function(o){
+  o.addEventListener("click",function(e){
+    if(e.target===o) o.classList.remove("active");
+  });
+});
+
+// Close modal on Escape key
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape"){
+    document.querySelectorAll(".modal-overlay.active").forEach(function(o){
+      o.classList.remove("active");
+    });
+  }
+});
+
+// Subtle parallax on scroll
+(function(){
+  var sections=document.querySelectorAll(".parallax-section");
+  function onScroll(){
+    var sy=window.pageYOffset;
+    sections.forEach(function(s){
+      var rect=s.getBoundingClientRect();
+      var cy=rect.top+rect.height/2;
+      var vh=window.innerHeight;
+      if(cy>0&&cy<vh+rect.height){
+        var offset=(cy/vh-0.5)*8;
+        s.style.transform="translateY("+offset.toFixed(2)+"px)";
+      }
+    });
+  }
+  window.addEventListener("scroll",onScroll,{passive:true});
+  onScroll();
+})();
+
+// Nav active state
+document.querySelectorAll(".nav-demo a:not(.nav-dot)").forEach(function(a){
+  a.addEventListener("click",function(e){
+    e.preventDefault();
+    document.querySelectorAll(".nav-demo a").forEach(function(x){x.classList.remove("active")});
+    a.classList.add("active");
+  });
+});
+</script>
+</body></html>

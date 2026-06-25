@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HUD / Sci-Fi - UI Style Showcase</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    :root {
+      --page-bg: #0A0A14;
+      --text-color: #C0D0D8;
+      --cyan: #00FFFF;
+      --blue: #0080FF;
+      --red: #FF0000;
+      --green: #00FF41;
+      --dark-panel: rgba(10, 10, 20, 0.88);
+      --border-color: rgba(0, 255, 255, 0.25);
+      --glow-cyan: 0 0 6px rgba(0, 255, 255, 0.5), 0 0 14px rgba(0, 255, 255, 0.2);
+      --glow-blue: 0 0 6px rgba(0, 128, 255, 0.5), 0 0 14px rgba(0, 128, 255, 0.2);
+      --glow-red: 0 0 6px rgba(255, 0, 0, 0.5), 0 0 14px rgba(255, 0, 0, 0.2);
+      --glow-green: 0 0 6px rgba(0, 255, 65, 0.5), 0 0 14px rgba(0, 255, 65, 0.2);
+      --mono: 'Courier New', 'Consolas', 'Monaco', monospace;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--page-bg);
+      color: var(--text-color);
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ===== GRID OVERLAY ===== */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        linear-gradient(rgba(0,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ===== KEYFRAME ANIMATIONS ===== */
+    @keyframes scanLine {
+      0% { top: 0; opacity: 0; }
+      5% { opacity: 1; }
+      95% { opacity: 1; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    @keyframes tickerScroll {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    @keyframes hudPulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { text-shadow: 0 0 4px rgba(0,255,255,0.4); }
+      50% { text-shadow: 0 0 12px rgba(0,255,255,0.8), 0 0 24px rgba(0,255,255,0.3); }
+    }
+
+    @keyframes borderPulse {
+      0%, 100% { border-color: rgba(0,255,255,0.25); }
+      50% { border-color: rgba(0,255,255,0.5); }
+    }
+
+    /* ===== LAYOUT ===== */
+    .vp-frame {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    section {
+      margin-bottom: 60px;
+    }
+
+    /* ===== SECTION LABEL TAGS ===== */
+    .section-tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      margin-bottom: 24px;
+      animation: hudPulse 3s ease-in-out infinite;
+      position: relative;
+    }
+    .section-tag::before {
+      content: '[ ';
+      opacity: 0.5;
+    }
+    .section-tag::after {
+      content: ' ]';
+      opacity: 0.5;
+    }
+
+    /* ===== CORNER BRACKETS ===== */
+    .hud-corners {
+      position: relative;
+    }
+    .hud-corners::before,
+    .hud-corners::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-color: var(--cyan);
+      border-style: solid;
+      pointer-events: none;
+    }
+    .hud-corners::before {
+      top: -1px; left: -1px;
+      border-width: 1px 0 0 1px;
+    }
+    .hud-corners::after {
+      bottom: -1px; right: -1px;
+      border-width: 0 1px 1px 0;
+    }
+
+    .hud-corners-tr::before,
+    .hud-corners-tr::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-color: var(--cyan);
+      border-style: solid;
+      pointer-events: none;
+    }
+    .hud-corners-tr::before {
+      top: -1px; right: -1px;
+      border-width: 1px 1px 0 0;
+    }
+    .hud-corners-tr::after {
+      bottom: -1px; left: -1px;
+      border-width: 0 0 1px 1px;
+    }
+
+    /* ============================================================
+       1. HERO SECTION
+       ============================================================ */
+    .hero {
+      position: relative;
+      min-height: 520px;
+      background: var(--dark-panel);
+      border: 1px solid var(--border-color);
+      padding: 60px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      overflow: hidden;
+      animation: borderPulse 4s ease-in-out infinite;
+    }
+
+    /* Hero grid overlay */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        linear-gradient(rgba(0,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,255,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    /* Scanning line */
+    .hero::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      box-shadow: 0 0 12px var(--cyan), 0 0 30px rgba(0,255,255,0.3);
+      animation: scanLine 4s linear infinite;
+      pointer-events: none;
+    }
+
+    /* HUD corner brackets */
+    .hero .corner {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-color: var(--cyan);
+      border-style: solid;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .hero .corner.tl { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
+    .hero .corner.tr { top: 12px; right: 12px; border-width: 1px 1px 0 0; }
+    .hero .corner.bl { bottom: 12px; left: 12px; border-width: 0 0 1px 1px; }
+    .hero .corner.br { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
+
+    /* Technical markers */
+    .hero .marker {
+      position: absolute;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--cyan);
+      opacity: 0.6;
+      animation: hudPulse 3s ease-in-out infinite;
+    }
+    .hero .marker.top-left { top: 20px; left: 60px; }
+    .hero .marker.top-right { top: 20px; right: 60px; }
+    .hero .marker.mid-left { top: 50%; left: 20px; transform: translateY(-50%) rotate(-90deg); }
+    .hero .marker.mid-right { top: 50%; right: 20px; transform: translateY(-50%) rotate(90deg); }
+    .hero .marker.bottom-left { bottom: 50px; left: 60px; }
+    .hero .marker.bottom-right { bottom: 50px; right: 60px; }
+    .hero .marker .blink-dot {
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      background: var(--cyan);
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+      margin-right: 4px;
+    }
+
+    /* Crosshair center */
+    .hero .crosshair {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80px; height: 80px;
+      border: 1px solid rgba(0,255,255,0.15);
+      pointer-events: none;
+    }
+    .hero .crosshair::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: -10px; right: -10px;
+      height: 1px;
+      background: rgba(0,255,255,0.15);
+    }
+    .hero .crosshair::after {
+      content: '';
+      position: absolute;
+      left: 50%; top: -10px; bottom: -10px;
+      width: 1px;
+      background: rgba(0,255,255,0.15);
+    }
+
+    .hero-title {
+      font-family: var(--mono);
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 400;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      text-shadow: var(--glow-cyan);
+      animation: glowPulse 4s ease-in-out infinite;
+      z-index: 1;
+      margin-bottom: 20px;
+    }
+
+    .hero-subtitle {
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 4px;
+      color: rgba(0,255,255,0.6);
+      text-transform: uppercase;
+      z-index: 1;
+      margin-bottom: 24px;
+    }
+
+    .hero-data {
+      display: flex;
+      gap: 40px;
+      z-index: 1;
+      margin-bottom: 32px;
+    }
+
+    .hero-data-item {
+      text-align: center;
+    }
+
+    .hero-data-value {
+      font-size: 24px;
+      color: var(--cyan);
+      text-shadow: var(--glow-cyan);
+      display: block;
+    }
+
+    .hero-data-label {
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: rgba(0,255,255,0.5);
+      text-transform: uppercase;
+    }
+
+    .hero-status {
+      display: flex;
+      gap: 20px;
+      z-index: 1;
+      margin-bottom: 40px;
+    }
+
+    .hero-status-item {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(0,255,255,0.4);
+    }
+
+    .hero-status-item .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .hero-status-item .dot.green { background: var(--green); box-shadow: var(--glow-green); }
+    .hero-status-item .dot.cyan { background: var(--cyan); box-shadow: var(--glow-cyan); animation: hudPulse 2s ease-in-out infinite; }
+
+    /* Ticker */
+    .hero-ticker {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 28px;
+      border-top: 1px solid var(--border-color);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      background: rgba(0,255,255,0.03);
+      z-index: 2;
+    }
+    .hero-ticker-label {
+      flex-shrink: 0;
+      padding: 0 12px;
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--cyan);
+      border-right: 1px solid var(--border-color);
+      height: 100%;
+      display: flex;
+      align-items: center;
+      background: rgba(0,255,255,0.05);
+    }
+    .hero-ticker-text {
+      white-space: nowrap;
+      animation: tickerScroll 30s linear infinite;
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: rgba(0,255,255,0.5);
+      padding-left: 100%;
+    }
+
+    /* ============================================================
+       2. NAVIGATION
+       ============================================================ */
+    .nav-hud {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border-color);
+      background: var(--dark-panel);
+      flex-wrap: wrap;
+      overflow: hidden;
+     justify-content: center;}
+
+    .nav-hud a {
+      display: block;
+      padding: 12px 20px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(0,255,255,0.6);
+      text-decoration: none;
+      border-right: 1px solid var(--border-color);
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-hud a:last-child {
+      border-right: none;
+    }
+
+    .nav-hud a::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: var(--cyan);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+      box-shadow: var(--glow-cyan);
+    }
+
+    .nav-hud a:hover {
+      color: var(--cyan);
+      background: rgba(0,255,255,0.05);
+      text-shadow: var(--glow-cyan);
+    }
+
+    .nav-hud a:hover::before {
+      transform: scaleX(1);
+    }
+
+    .nav-hud a.active {
+      color: var(--cyan);
+      background: rgba(0,255,255,0.08);
+      text-shadow: var(--glow-cyan);
+    }
+
+    .nav-hud a.active::before {
+      transform: scaleX(1);
+    }
+
+    /* ============================================================
+       3. BUTTONS
+       ============================================================ */
+    .btn-group {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+     justify-content: center;}
+
+    .btn {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      border: 1px solid;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s ease;
+      background: transparent;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0,255,255,0.1), transparent);
+      transition: left 0.5s ease;
+    }
+    .btn:hover::after {
+      left: 100%;
+    }
+
+    .btn-primary {
+      background: var(--cyan);
+      color: #0A0A14;
+      border-color: var(--cyan);
+      box-shadow: 0 0 8px rgba(0,255,255,0.3), inset 0 0 8px rgba(0,255,255,0.1);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 0 16px rgba(0,255,255,0.5), 0 0 40px rgba(0,255,255,0.2), inset 0 0 12px rgba(0,255,255,0.15);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--red);
+      border-color: var(--red);
+      box-shadow: 0 0 4px rgba(255,0,0,0.2);
+    }
+    .btn-secondary:hover {
+      background: rgba(255,0,0,0.1);
+      box-shadow: 0 0 12px rgba(255,0,0,0.4), 0 0 30px rgba(255,0,0,0.15);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--cyan);
+      border-color: rgba(0,255,255,0.3);
+    }
+    .btn-ghost:hover {
+      border-color: var(--cyan);
+      background: rgba(0,255,255,0.05);
+      box-shadow: var(--glow-cyan);
+      text-shadow: var(--glow-cyan);
+      transform: translateY(-1px);
+    }
+
+    .btn-disabled {
+      background: rgba(40,40,50,0.5);
+      color: rgba(150,150,160,0.5);
+      border-color: rgba(100,100,110,0.3);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* ============================================================
+       4. FORMS
+       ============================================================ */
+    .hud-form {
+      max-width: 600px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .form-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(0,255,255,0.6);
+      margin-bottom: 8px;
+    }
+
+    .form-label::before {
+      content: '>> ';
+      color: var(--cyan);
+      opacity: 0.5;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+      width: 100%;
+      font-family: var(--mono);
+      font-size: 13px;
+      padding: 12px 16px;
+      background: rgba(10,10,20,0.9);
+      border: 1px solid var(--border-color);
+      color: var(--cyan);
+      outline: none;
+      transition: all 0.25s ease;
+      letter-spacing: 1px;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+
+    .form-input::placeholder,
+    .form-textarea::placeholder {
+      color: rgba(0,255,255,0.2);
+    }
+
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 8px rgba(0,255,255,0.2), inset 0 0 20px rgba(0,255,255,0.03);
+      text-shadow: 0 0 4px rgba(0,255,255,0.3);
+    }
+
+    .form-textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .form-select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300FFFF' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+    }
+
+    .form-select option {
+      background: #0A0A14;
+      color: var(--cyan);
+    }
+
+    .form-check-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .form-check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 12px;
+      letter-spacing: 1px;
+      color: rgba(0,255,255,0.7);
+    }
+
+    .form-check input[type="checkbox"],
+    .form-check input[type="radio"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1px solid var(--border-color);
+      background: rgba(10,10,20,0.9);
+      cursor: pointer;
+      flex-shrink: 0;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .form-check input[type="checkbox"] {
+      clip-path: none;
+    }
+
+    .form-check input[type="radio"] {
+      border-radius: 50%;
+    }
+
+    .form-check input[type="checkbox"]:checked,
+    .form-check input[type="radio"]:checked {
+      border-color: var(--cyan);
+      box-shadow: 0 0 6px rgba(0,255,255,0.4);
+    }
+
+    .form-check input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 5px;
+      width: 4px; height: 8px;
+      border: solid var(--cyan);
+      border-width: 0 1px 1px 0;
+      transform: rotate(45deg);
+    }
+
+    .form-check input[type="radio"]:checked::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 4px var(--cyan);
+    }
+
+    /* ============================================================
+       5. CARDS
+       ============================================================ */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .hud-card {
+      background: var(--dark-panel);
+      border: 1px solid var(--border-color);
+      padding: 32px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    /* Corner brackets */
+    .hud-card::before {
+      content: '';
+      position: absolute;
+      top: 6px; left: 6px;
+      width: 20px; height: 20px;
+      border-top: 1px solid var(--cyan);
+      border-left: 1px solid var(--cyan);
+      pointer-events: none;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+    }
+    .hud-card::after {
+      content: '';
+      position: absolute;
+      bottom: 6px; right: 6px;
+      width: 20px; height: 20px;
+      border-bottom: 1px solid var(--cyan);
+      border-right: 1px solid var(--cyan);
+      pointer-events: none;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Scanning line on hover */
+    .hud-card .scan-line {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .hud-card:hover {
+      border-color: rgba(0,255,255,0.5);
+      box-shadow: 0 0 20px rgba(0,255,255,0.08), inset 0 0 30px rgba(0,255,255,0.02);
+    }
+
+    .hud-card:hover::before,
+    .hud-card:hover::after {
+      opacity: 1;
+    }
+
+    .hud-card:hover .scan-line {
+      opacity: 1;
+      animation: scanLine 2s linear infinite;
+    }
+
+    .card-icon {
+      font-size: 28px;
+      margin-bottom: 16px;
+      color: var(--cyan);
+      text-shadow: var(--glow-cyan);
+      display: block;
+    }
+
+    .card-title {
+      font-family: var(--mono);
+      font-size: 14px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 12px;
+      text-shadow: 0 0 6px rgba(0,255,255,0.3);
+    }
+
+    .card-desc {
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.7;
+      color: rgba(0,255,255,0.5);
+      letter-spacing: 0.5px;
+    }
+
+    .card-meta {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(0,255,255,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-meta-item {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: rgba(0,255,255,0.35);
+      text-transform: uppercase;
+    }
+
+    .card-status {
+      font-size: 9px;
+      letter-spacing: 2px;
+      padding: 3px 10px;
+      border: 1px solid;
+      text-transform: uppercase;
+    }
+    .card-status.online { color: var(--green); border-color: rgba(0,255,65,0.3); }
+    .card-status.warning { color: var(--red); border-color: rgba(255,0,0,0.3); }
+    .card-status.active { color: var(--cyan); border-color: rgba(0,255,255,0.3); }
+
+    /* ============================================================
+       6. TYPOGRAPHY
+       ============================================================ */
+    .typo-section {
+      background: var(--dark-panel);
+      border: 1px solid var(--border-color);
+      padding: 32px;
+      position: relative;
+    }
+
+    .typo-section::before {
+      content: '';
+      position: absolute;
+      top: 6px; left: 6px;
+      width: 14px; height: 14px;
+      border-top: 1px solid var(--cyan);
+      border-left: 1px solid var(--cyan);
+      opacity: 0.5;
+    }
+
+    .typo-row {
+      display: flex;
+      align-items: baseline;
+      gap: 24px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(0,255,255,0.06);
+    }
+    .typo-row:last-child { border-bottom: none; }
+
+    .typo-label {
+      flex-shrink: 0;
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: rgba(0,255,255,0.4);
+      width: 40px;
+      text-transform: uppercase;
+    }
+
+    .typo-h1 { font-size: clamp(24px, 4vw, 38px); color: var(--cyan); text-shadow: var(--glow-cyan); letter-spacing: 4px; margin-bottom: 20px; }
+    .typo-h2 { font-size: clamp(20px, 3vw, 30px); color: var(--cyan); text-shadow: 0 0 8px rgba(0,255,255,0.4); letter-spacing: 3px; margin-bottom: 20px; }
+    .typo-h3 { font-size: clamp(16px, 2.5vw, 22px); color: rgba(0,255,255,0.85); letter-spacing: 2px; margin-bottom: 20px; }
+    .typo-h4 { font-size: 16px; color: rgba(0,255,255,0.7); letter-spacing: 2px; margin-bottom: 20px; }
+    .typo-h5 { font-size: 13px; color: rgba(0,255,255,0.6); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; }
+    .typo-h6 { font-size: 11px; color: rgba(0,255,255,0.5); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; }
+
+    /* ============================================================
+       7. COLOR SWATCHES
+       ============================================================ */
+    .swatches-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+    }
+
+    .swatch {
+      border: 1px solid var(--border-color);
+      background: var(--dark-panel);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .swatch:hover {
+      border-color: rgba(0,255,255,0.5);
+      box-shadow: 0 0 12px rgba(0,255,255,0.1);
+    }
+
+    .swatch-color {
+      height: 80px;
+      position: relative;
+    }
+
+    .swatch-color::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent);
+    }
+
+    .swatch-info {
+      padding: 12px 14px;
+    }
+
+    .swatch-hex {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .swatch-name {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: rgba(0,255,255,0.4);
+      text-transform: uppercase;
+    }
+
+    /* ============================================================
+       8. MODAL
+       ============================================================ */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--dark-panel);
+      border: 1px solid var(--cyan);
+      max-width: 500px;
+      width: 90%;
+      padding: 0;
+      position: relative;
+      box-shadow: 0 0 30px rgba(0,255,255,0.15), 0 0 60px rgba(0,255,255,0.05);
+      animation: fadeIn 0.3s ease;
+    }
+
+    /* Modal corners */
+    .modal-box::before {
+      content: '';
+      position: absolute;
+      top: 6px; left: 6px;
+      width: 24px; height: 24px;
+      border-top: 1px solid var(--cyan);
+      border-left: 1px solid var(--cyan);
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    .modal-box::after {
+      content: '';
+      position: absolute;
+      bottom: 6px; right: 6px;
+      width: 24px; height: 24px;
+      border-bottom: 1px solid var(--cyan);
+      border-right: 1px solid var(--cyan);
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: var(--red);
+      text-transform: uppercase;
+      text-shadow: var(--glow-red);
+      animation: hudPulse 2s ease-in-out infinite;
+    }
+
+    .modal-close {
+      background: none;
+      border: 1px solid rgba(255,0,0,0.3);
+      color: var(--red);
+      font-family: var(--mono);
+      font-size: 14px;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      line-height: 1;
+    }
+    .modal-close:hover {
+      background: rgba(255,0,0,0.15);
+      border-color: var(--red);
+      box-shadow: var(--glow-red);
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-body p {
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.8;
+      color: rgba(0,255,255,0.6);
+      letter-spacing: 0.5px;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    /* ============================================================
+       9. STYLE INFO PANEL
+       ============================================================ */
+    .info-panel {
+      background: var(--dark-panel);
+      border: 1px solid var(--border-color);
+      padding: 32px;
+      position: relative;
+      animation: borderPulse 4s ease-in-out infinite;
+    }
+
+    .info-panel::before {
+      content: '';
+      position: absolute;
+      top: 6px; left: 6px;
+      width: 20px; height: 20px;
+      border-top: 1px solid var(--cyan);
+      border-left: 1px solid var(--cyan);
+      opacity: 0.5;
+    }
+    .info-panel::after {
+      content: '';
+      position: absolute;
+      bottom: 6px; right: 6px;
+      width: 20px; height: 20px;
+      border-bottom: 1px solid var(--cyan);
+      border-right: 1px solid var(--cyan);
+      opacity: 0.5;
+    }
+
+    .info-title {
+      font-family: var(--mono);
+      font-size: 14px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      text-shadow: var(--glow-cyan);
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .info-item {
+      padding: 16px;
+      border: 1px solid rgba(0,255,255,0.1);
+      background: rgba(0,255,255,0.02);
+      position: relative;
+    }
+
+    .info-item::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px;
+      width: 8px; height: 8px;
+      border-top: 1px solid var(--cyan);
+      border-left: 1px solid var(--cyan);
+      opacity: 0.5;
+    }
+
+    .info-item-label {
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(0,255,255,0.4);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .info-item-value {
+      font-size: 13px;
+      letter-spacing: 1px;
+      color: var(--cyan);
+      text-shadow: 0 0 4px rgba(0,255,255,0.3);
+    }
+
+    .info-item-value.red { color: var(--red); text-shadow: 0 0 4px rgba(255,0,0,0.3); }
+
+    /* ============================================================
+       UTILITY CLASSES
+       ============================================================ */
+    .mt-24 { margin-top: 24px; }
+    .mb-24 { margin-bottom: 24px; }
+    .mb-40 { margin-bottom: 40px; }
+    .text-cyan { color: var(--cyan); }
+    .text-red { color: var(--red); }
+    .text-green { color: var(--green); }
+    .text-blue { color: var(--blue); }
+    .glow-cyan { text-shadow: var(--glow-cyan); }
+    .glow-red { text-shadow: var(--glow-red); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .hero { min-height: 400px; padding: 48px 20px;  text-align: center;}
+      .hero-data { flex-direction: column; gap: 16px; }
+      .hero-status { flex-direction: column; gap: 8px; align-items: center; }
+      .hero .marker { display: none; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .nav-hud { flex-direction: column; }
+      .nav-hud a { border-right: none; border-bottom: 1px solid var(--border-color); }
+      .nav-hud a:last-child { border-bottom: none; }
+      .typo-row { flex-direction: column; gap: 8px; }
+      .swatches-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- VIEWPORT BAR -->
+  <div class="vp-bar">
+    <span class="vp-label">Viewprot:</span>
+    <button class="vp-btn" data-size="1920">1920</button>
+    <button class="vp-btn" data-size="1440">1440</button>
+    <button class="vp-btn" data-size="1024">1024</button>
+    <button class="vp-btn" data-size="768">768</button>
+    <button class="vp-btn" data-size="375">375</button>
+    <button class="vp-btn" data-size="320">320</button>
+    <span id="vp-width" class="vp-width">Full</span>
+    <a href="index.html" class="vp-back">&larr; Back to All Styles</a>
+  </div>
+
+  <div class="vp-frame">
+
+    <!-- ============================================================
+         1. HERO
+         ============================================================ -->
+    <section>
+      <div class="hero">
+        <!-- HUD Corners -->
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+
+        <!-- Crosshair -->
+        <div class="crosshair"></div>
+
+        <!-- Technical Markers -->
+        <span class="marker top-left"><span class="blink-dot"></span>SYS::INIT</span>
+        <span class="marker top-right">SECTOR 7 // 0x4F2A</span>
+        <span class="marker mid-left">TAC-OV</span>
+        <span class="marker mid-right">FREQ::142.8</span>
+        <span class="marker bottom-left"><span class="blink-dot"></span>NET::ACTIVE</span>
+        <span class="marker bottom-right">NODE::07 // PING 12ms</span>
+
+        <!-- Content -->
+        <h1 class="hero-title">TACTICAL OVERLAY</h1>
+        <p class="hero-subtitle">// Heads-Up Display Interface v4.2.1 //</p>
+
+        <div class="hero-data">
+          <div class="hero-data-item">
+            <span class="hero-data-value">98.7%</span>
+            <span class="hero-data-label">System Integrity</span>
+          </div>
+          <div class="hero-data-item">
+            <span class="hero-data-value">142ms</span>
+            <span class="hero-data-label">Latency</span>
+          </div>
+          <div class="hero-data-item">
+            <span class="hero-data-value">2,847</span>
+            <span class="hero-data-label">Active Nodes</span>
+          </div>
+        </div>
+
+        <div class="hero-status">
+          <span class="hero-status-item"><span class="dot green"></span>Shield: Nominal</span>
+          <span class="hero-status-item"><span class="dot cyan"></span>Comms: Encrypted</span>
+          <span class="hero-status-item"><span class="dot green"></span>Power: Stable</span>
+        </div>
+
+        <!-- Ticker -->
+        <div class="hero-ticker">
+          <span class="hero-ticker-label">FEED</span>
+          <span class="hero-ticker-text">
+            // SYS::ALERT Clear pending directives from node 7F-Alpha &nbsp;&nbsp;|&nbsp;&nbsp;
+            SECTOR 47 reports nominal shield integrity at 99.2% &nbsp;&nbsp;|&nbsp;&nbsp;
+            INCOMING:: Priority transmission from CIC-Command &nbsp;&nbsp;|&nbsp;&nbsp;
+            TACTICAL: Engage stealth protocol on grid 12-X &nbsp;&nbsp;|&nbsp;&nbsp;
+            DIAGNOSTIC: Subroutine v2.1 loaded successfully &nbsp;&nbsp;|&nbsp;&nbsp;
+            NETWORK: 2,847 nodes synchronized across 12 sectors &nbsp;&nbsp;|&nbsp;&nbsp;
+            WARNING: Elevated thermal readings detected in sector 9
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         2. NAVIGATION
+         ============================================================ -->
+    <section>
+      <span class="section-tag">Navigation</span>
+      <nav class="nav-hud">
+        <a href="#" class="active">[HOME]</a>
+        <a href="#">[SYSTEMS]</a>
+        <a href="#">[DIAGNOSTIC]</a>
+        <a href="#">[COMMS]</a>
+        <a href="#">[TACTICAL]</a>
+      </nav>
+    </section>
+
+    <!-- ============================================================
+         3. BUTTONS
+         ============================================================ -->
+    <section>
+      <span class="section-tag">Buttons</span>
+      <div class="btn-group mb-24">
+        <button class="btn btn-primary">[ ENGAGE ]</button>
+        <button class="btn btn-secondary">[ ABORT ]</button>
+        <button class="btn btn-ghost">[ STANDBY ]</button>
+        <button class="btn btn-disabled">[ OFFLINE ]</button>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary">INITIALIZE</button>
+        <button class="btn btn-primary">DEPLOY</button>
+        <button class="btn btn-secondary">TERMINATE</button>
+        <button class="btn btn-secondary">LOCKOUT</button>
+        <button class="btn btn-ghost">SCAN</button>
+        <button class="btn btn-ghost">OVERRIDE</button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         4. FORMS
+         ============================================================ -->
+    <section>
+      <span class="section-tag">Forms</span>
+      <div class="hud-form">
+        <div class="form-group">
+          <label class="form-label">Operator_ID</label>
+          <input type="text" class="form-input" placeholder="Enter operator identifier...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Access Code</label>
+          <input type="password" class="form-input" placeholder="Enter clearance code...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sector Assignment</label>
+          <select class="form-select">
+            <option value="">-- SELECT SECTOR --</option>
+            <option value="alpha">ALPHA // Grid 01</option>
+            <option value="bravo">BRAVO // Grid 02</option>
+            <option value="charlie">CHARLIE // Grid 03</option>
+            <option value="delta">DELTA // Grid 04</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Transmission Log</label>
+          <textarea class="form-textarea" placeholder="Enter transmission data..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Protocol Options</label>
+          <div class="form-check-group">
+            <label class="form-check">
+              <input type="checkbox" checked> Enable encryption layer
+            </label>
+            <label class="form-check">
+              <input type="checkbox"> Activate stealth mode
+            </label>
+            <label class="form-check">
+              <input type="checkbox"> Force relay broadcast
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Alert Level</label>
+          <div class="form-check-group">
+            <label class="form-check">
+              <input type="radio" name="alert" checked> CONDITION GREEN // Nominal
+            </label>
+            <label class="form-check">
+              <input type="radio" name="alert"> CONDITION YELLOW // Elevated
+            </label>
+            <label class="form-check">
+              <input type="radio" name="alert"> CONDITION RED // Critical
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         5. CARDS
+         ============================================================ -->
+    <section>
+      <span class="section-tag">Cards</span>
+      <div class="cards-grid">
+
+        <!-- Card 1: Tactical Analysis -->
+        <div class="hud-card">
+          <div class="scan-line"></div>
+          <span class="card-icon">&#9881;</span>
+          <h3 class="card-title">Tactical Analysis</h3>
+          <p class="card-desc">
+            Real-time threat assessment engine processing 14.2TB of sensor data.
+            Adaptive algorithms recalibrate every 400ms to maintain optimal detection patterns.
+          </p>
+          <div class="card-meta">
+            <span class="card-meta-item">Updated: 12:42:07 UTC</span>
+            <span class="card-status online">ONLINE</span>
+          </div>
+        </div>
+
+        <!-- Card 2: Neural Interface -->
+        <div class="hud-card">
+          <div class="scan-line"></div>
+          <span class="card-icon">&#9883;</span>
+          <h3 class="card-title">Neural Interface</h3>
+          <p class="card-desc">
+            Direct cognitive link established between operator and command matrix.
+            Latency below threshold at 8ms round-trip. Synaptic bridge stable.
+          </p>
+          <div class="card-meta">
+            <span class="card-meta-item">Sync: 99.97%</span>
+            <span class="card-status active">ACTIVE</span>
+          </div>
+        </div>
+
+        <!-- Card 3: Threat Matrix -->
+        <div class="hud-card">
+          <div class="scan-line"></div>
+          <span class="card-icon">&#9888;</span>
+          <h3 class="card-title">Threat Matrix</h3>
+          <p class="card-desc">
+            Cross-referencing 2,847 active threat vectors across 12 sectors.
+            Anomaly detection flagged 3 irregularities in the last 60 seconds.
+          </p>
+          <div class="card-meta">
+            <span class="card-meta-item">Threats: 3 flagged</span>
+            <span class="card-status warning">WARNING</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         6. TYPOGRAPHY
+         ============================================================ -->
+    <section>
+      <span class="section-tag">Typography</span>
+      <div class="typo-section">
+        <div class="typo-row">
+          <span class="typo-label">H1</span>
+          <h1 class="typo-h1">TACTICAL COMMAND</h1>
+        </div>
+        <div class="typo-row">
+          <span class="typo-label">H2</span>
+          <h2 class="typo-h2">SYSTEMS ONLINE</h2>
+        </div>
+        <div class="typo-row">
+          <span class="typo-label">H3</span>
+          <h3 class="typo-h3">// NEURAL INTERFACE v3.1</h3>
+        </div>
+        <div class="typo-row">
+          <span class="typo-label">H4</span>
+          <h4 class="typo-h4">Sector Diagnostics Report</h4>
+        </div>
+        <div class="typo-row">
+          <span class="typo-label">H5</span>
+          <h5 class="typo-h5">Operational Status Matrix</h5>
+        </div>
+        <div class="typo-row">
+          <span class="typo-label">H6</span>
+          <h6 class="typo-h6">Subroutine Alpha-7 // Classification: Restricted</h6>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         7. COLOR SWATCHES
+         ============================================================ -->
+    <section>
+      <span class="section-tag">Color Palette</span>
+      <div class="swatches-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background:#00FFFF;"></div>
+          <div class="swatch-info">
+            <span class="swatch-hex">#00FFFF</span>
+            <span class="swatch-name">Neon Cyan</span>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#0080FF;"></div>
+          <div class="swatch-info">
+            <span class="swatch-hex">#0080FF</span>
+            <span class="swatch-name">Holographic Blue</span>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#FF0000;"></div>
+          <div class="swatch-info">
+            <span class="swatch-hex">#FF0000</span>
+            <span class="swatch-name">Alert Red</span>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#0A0A14;"></div>
+          <div class="swatch-info">
+            <span class="swatch-hex">#0A0A14</span>
+            <span class="swatch-name">Deep Black</span>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#1A2A3A;"></div>
+          <div class="swatch-info">
+            <span class="swatch-hex">#1A2A3A</span>
+            <span class="swatch-name">Panel Blue</span>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#00FF41;"></div>
+          <div class="swatch-info">
+            <span class="swatch-hex">#00FF41</span>
+            <span class="swatch-name">Matrix Green</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         8. MODAL
+         ============================================================ -->
+    <section>
+      <span class="section-tag">Modal</span>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">[ TRIGGER ALERT ]</button>
+
+      <div id="demo-modal" class="modal-overlay" onclick="if(event.target===this)toggleModal('demo-modal')">
+        <div class="modal-box">
+          <div class="modal-header">
+            <span class="modal-title">&#9888; ALERT: SYSTEM BREACH</span>
+            <button class="modal-close" onclick="toggleModal('demo-modal')">&#10005;</button>
+          </div>
+          <div class="modal-body">
+            <p style="color: rgba(255,0,0,0.7); margin-bottom: 16px; letter-spacing: 2px; font-size: 11px;">
+              // SECURITY VIOLATION DETECTED // SECTOR 7-ALPHA
+            </p>
+            <p>
+              Unauthorized access attempt identified at node 14-C. Intrusion vectors
+              have been isolated and quarantined. Operator action required to
+              re-establish perimeter defenses. All secondary systems remain nominal.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="toggleModal('demo-modal')">DISMISS</button>
+            <button class="btn btn-secondary">LOCKDOWN</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         9. STYLE INFO PANEL
+         ============================================================ -->
+    <section>
+      <span class="section-tag">Style Info</span>
+      <div class="info-panel">
+        <h2 class="info-title">// HUD / Sci-Fi // Style Profile</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-item-label">Era</span>
+            <span class="info-item-value">2010s Sci-Fi</span>
+          </div>
+          <div class="info-item">
+            <span class="info-item-label">Complexity</span>
+            <span class="info-item-value red">High</span>
+          </div>
+          <div class="info-item">
+            <span class="info-item-label">Best For</span>
+            <span class="info-item-value">Sci-fi games, space tech, cybersecurity, movie props</span>
+          </div>
+          <div class="info-item">
+            <span class="info-item-label">Primary Font</span>
+            <span class="info-item-value">Monospace (Courier New)</span>
+          </div>
+          <div class="info-item">
+            <span class="info-item-label">Effects</span>
+            <span class="info-item-value">Glow, Scanning, Ticker, Blink</span>
+          </div>
+          <div class="info-item">
+            <span class="info-item-label">Key Colors</span>
+            <span class="info-item-value">#00FFFF &bull; #0080FF &bull; #FF0000</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="shared.js"></script>
+</body>
+</html>

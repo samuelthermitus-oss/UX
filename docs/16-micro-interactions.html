@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Micro-Interactions - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #FAFAFA;
+  --text-color: #1F2937;
+  --surface: #FFFFFF;
+  --border: #E5E7EB;
+  --text-secondary: #6B7280;
+  --green: #22C55E;
+  --red: #EF4444;
+  --amber: #F59E0B;
+  --blue: #3B82F6;
+  --purple: #8B5CF6;
+  --bg-subtle: #F3F4F6;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+/* Hero */
+.micro-hero {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 20px;
+  background: linear-gradient(180deg, #F8FAFF, var(--page-bg));
+  position: relative;
+}
+
+.micro-hero h1 {
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  color: var(--text-color);
+}
+
+.micro-hero .subtitle {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  max-width: 520px;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+/* Interactive hero elements */
+.hero-interactions {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.hero-pill {
+  padding: 48px 24px;
+  border-radius: 100px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: all 0.08s ease;
+  user-select: none;
+}
+
+.hero-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.hero-pill:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* Navigation */
+.micro-nav {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 20px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.micro-nav a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 10px 18px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.08s ease;
+}
+
+.micro-nav a:hover {
+  color: var(--text-color);
+  background: var(--bg-subtle);
+}
+
+/* Buttons */
+.micro-buttons {
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.micro-buttons h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+
+.btn-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.micro-btn {
+  font-family: system-ui;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.08s ease;
+  border: 1px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.micro-btn:active {
+  transform: scale(0.97);
+}
+
+.micro-btn.btn-green {
+  background: var(--green);
+  color: #fff;
+}
+
+.micro-btn.btn-green:hover {
+  background: #16A34A;
+  box-shadow: 0 2px 8px rgba(34,197,94,0.3);
+}
+
+.micro-btn.btn-red {
+  background: var(--red);
+  color: #fff;
+}
+
+.micro-btn.btn-red:hover {
+  background: #DC2626;
+  box-shadow: 0 2px 8px rgba(239,68,68,0.3);
+}
+
+.micro-btn.btn-blue {
+  background: var(--blue);
+  color: #fff;
+}
+
+.micro-btn.btn-blue:hover {
+  background: #2563EB;
+  box-shadow: 0 2px 8px rgba(59,130,246,0.3);
+}
+
+.micro-btn.btn-amber {
+  background: var(--amber);
+  color: #fff;
+}
+
+.micro-btn.btn-amber:hover {
+  background: #D97706;
+  box-shadow: 0 2px 8px rgba(245,158,11,0.3);
+}
+
+.micro-btn.btn-outline {
+  background: var(--surface);
+  color: var(--text-color);
+  border-color: var(--border);
+}
+
+.micro-btn.btn-outline:hover {
+  border-color: #D1D5DB;
+  background: var(--bg-subtle);
+}
+
+/* Loading spinner button */
+.micro-btn.btn-loading {
+  color: transparent;
+  pointer-events: none;
+  position: relative;
+}
+
+.micro-btn.btn-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 20px; height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Success state */
+.micro-btn.btn-success {
+  background: var(--green);
+  color: #fff;
+  min-width: 120px;
+}
+
+/* Forms */
+.micro-forms {
+  padding: 64px 20px;
+  max-width: 550px;
+  margin: 0 auto;
+}
+
+.micro-forms h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 20px;
+}
+
+.form-group label .label-icon {
+  font-size: 0.8rem;
+}
+
+.micro-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-family: system-ui;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-color);
+  background: var(--surface);
+  outline: none;
+  transition: all 0.08s ease;
+}
+
+.micro-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+}
+
+.micro-input.error {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.1);
+}
+
+.micro-input.success {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(34,197,94,0.1);
+}
+
+.micro-input::placeholder {
+  color: #D1D5DB;
+}
+
+textarea.micro-input {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.input-feedback {
+  font-size: 0.8rem;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.input-feedback.error { color: var(--red); }
+.input-feedback.success { color: var(--green); }
+.input-feedback.warning { color: var(--amber); }
+
+/* Toggle switch */
+.toggle-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.toggle-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.toggle {
+  width: 48px;
+  height: 26px;
+  background: #D1D5DB;
+  border-radius: 13px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.toggle.active {
+  background: var(--green);
+}
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.15s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.toggle.active::after {
+  transform: translateX(22px);
+}
+
+/* Cards */
+.micro-cards {
+  padding: 64px 20px;
+}
+
+.micro-cards h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.micro-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  transition: all 0.08s ease;
+  cursor: default;
+}
+
+.micro-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  border-color: #D1D5DB;
+}
+
+.micro-card .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.micro-card .card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+
+.micro-card .card-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.micro-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.micro-card p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Like button interaction */
+.like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: all 0.08s ease;
+  margin-top: 16px;
+}
+
+.like-btn:hover {
+  border-color: #FCA5A5;
+  color: var(--red);
+}
+
+.like-btn.liked {
+  background: #FEF2F2;
+  border-color: #FCA5A5;
+  color: var(--red);
+}
+
+/* Typography */
+.micro-typography {
+  padding: 64px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.micro-typography h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.type-sample {
+  margin-bottom: 20px;
+  padding: 20px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: all 0.08s;
+}
+
+.type-sample:hover {
+  border-color: #D1D5DB;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.type-sample .label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 8px;
+}
+
+.type-sample h1 { font-size: 2.2rem; font-weight: 800; }
+.type-sample h2 { font-size: 1.6rem; font-weight: 700; }
+.type-sample h3 { font-size: 1.2rem; font-weight: 600; }
+.type-sample p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7; }
+
+/* Color Palette */
+.micro-palette {
+  padding: 64px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.micro-palette h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.swatch {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px;
+  transition: all 0.08s;
+  border: 1px solid var(--border);
+}
+
+.swatch:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+
+.swatch .swatch-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  background: rgba(255,255,255,0.9);
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: #333;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+/* Modal */
+.micro-modal-section {
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.micro-modal-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+
+.modal-trigger {
+  padding: 12px 28px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.08s;
+  font-family: system-ui;
+}
+
+.modal-trigger:hover {
+  background: #2563EB;
+  box-shadow: 0 2px 8px rgba(59,130,246,0.3);
+}
+
+.modal-trigger:active {
+  transform: scale(0.97);
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.active { display: flex; }
+
+.micro-modal {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 32px;
+  max-width: 440px;
+  width: 90%;
+  position: relative;
+  animation: modalIn 0.15s ease;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.micro-modal h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.micro-modal p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 20px;
+  font-size: 0.92rem;
+}
+
+.micro-modal .modal-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: var(--bg-subtle);
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.08s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.micro-modal .modal-close:hover {
+  background: #E5E7EB;
+  color: var(--text-color);
+}
+
+/* Style Info */
+.micro-info {
+  padding: 64px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.micro-info h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.info-item {
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: all 0.08s;
+}
+
+.info-item:hover {
+  border-color: #D1D5DB;
+}
+
+.info-item .info-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 4px;
+}
+
+.info-item .info-value {
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .micro-hero h1 { font-size: 2rem; }
+  .card-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+<div class="vp-frame">
+
+<!-- Hero -->
+<section class="micro-hero">
+  <h1>Micro-Interactions</h1>
+  <p class="subtitle">Small details, big impact. Every hover, click, and state change provides instant feedback that makes interfaces feel alive.</p>
+  <div class="hero-interactions">
+    <span class="hero-pill">Hover me</span>
+    <span class="hero-pill">Click me</span>
+    <span class="hero-pill">Try me</span>
+    <span class="hero-pill">Touch me</span>
+  </div>
+</section>
+
+<!-- Navigation -->
+<nav class="micro-nav">
+  <a href="#">Dashboard</a>
+  <a href="#">Projects</a>
+  <a href="#">Team</a>
+  <a href="#">Settings</a>
+</nav>
+
+<!-- Buttons -->
+<section class="micro-buttons">
+  <h2>Interactive States</h2>
+  <div class="btn-grid">
+    <button class="micro-btn btn-green" onclick="showSuccess(this)">Save</button>
+    <button class="micro-btn btn-red" onclick="showLoading(this)">Delete</button>
+    <button class="micro-btn btn-blue" onclick="showLoading(this)">Submit</button>
+    <button class="micro-btn btn-amber">Warning</button>
+    <button class="micro-btn btn-outline">Cancel</button>
+  </div>
+</section>
+
+<!-- Forms -->
+<section class="micro-forms">
+  <h2>Smart Form</h2>
+  <div class="form-group">
+    <label><span class="label-icon">&#9993;</span> Email</label>
+    <input type="email" class="micro-input success" value="user@example.com">
+    <div class="input-feedback success">&#10003; Email looks good</div>
+  </div>
+  <div class="form-group">
+    <label><span class="label-icon">&#128274;</span> Password</label>
+    <input type="password" class="micro-input error" value="123">
+    <div class="input-feedback error">&#10007; Password too short (min 8 characters)</div>
+  </div>
+  <div class="form-group">
+    <label><span class="label-icon">&#128100;</span> Username</label>
+    <input type="text" class="micro-input" placeholder="Choose a username...">
+    <div class="input-feedback warning">&#9888; Username is available</div>
+  </div>
+  <div class="toggle-group">
+    <span class="toggle-label">Email notifications</span>
+    <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+  </div>
+  <div class="toggle-group">
+    <span class="toggle-label">Dark mode</span>
+    <div class="toggle" onclick="this.classList.toggle('active')"></div>
+  </div>
+  <div class="toggle-group" style="border:none;">
+    <span class="toggle-label">Two-factor auth</span>
+    <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+  </div>
+</section>
+
+<!-- Cards -->
+<section class="micro-cards">
+  <h2>Activity Feed</h2>
+  <div class="card-grid">
+    <div class="micro-card">
+      <div class="card-header">
+        <div class="card-icon" style="background:#EFF6FF;color:#3B82F6;">&#128640;</div>
+        <div class="card-status" style="background:var(--green);"></div>
+      </div>
+      <h3>Deployment Complete</h3>
+      <p>v2.4.1 successfully deployed to production. All health checks passing.</p>
+      <button class="like-btn" onclick="this.classList.toggle('liked')">&#9825; <span>Like</span></button>
+    </div>
+    <div class="micro-card">
+      <div class="card-header">
+        <div class="card-icon" style="background:#FEF3C7;color:#F59E0B;">&#9888;</div>
+        <div class="card-status" style="background:var(--amber);"></div>
+      </div>
+      <h3>Performance Warning</h3>
+      <p>API response time increased by 15% over the last hour. Monitor recommended.</p>
+      <button class="like-btn" onclick="this.classList.toggle('liked')">&#9825; <span>Like</span></button>
+    </div>
+    <div class="micro-card">
+      <div class="card-header">
+        <div class="card-icon" style="background:#FEF2F2;color:#EF4444;">&#128680;</div>
+        <div class="card-status" style="background:var(--red);"></div>
+      </div>
+      <h3>Error Detected</h3>
+      <p>3 failed login attempts from unknown IP. Security team has been notified.</p>
+      <button class="like-btn" onclick="this.classList.toggle('liked')">&#9825; <span>Like</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- Typography -->
+<section class="micro-typography">
+  <h2>Typography</h2>
+  <div class="type-sample">
+    <div class="label">Heading 1</div>
+    <h1>Details Matter</h1>
+  </div>
+  <div class="type-sample">
+    <div class="label">Heading 2</div>
+    <h2>Feedback Is Everything</h2>
+  </div>
+  <div class="type-sample">
+    <div class="label">Heading 3</div>
+    <h3>Every Interaction Tells a Story</h3>
+  </div>
+  <div class="type-sample">
+    <div class="label">Body</div>
+    <p>Micro-interactions are the subtle moments that make digital products feel responsive and alive. A button that depresses on click, a toggle that slides smoothly, a form field that validates in real-time -- these tiny details accumulate into an experience that feels polished and trustworthy.</p>
+  </div>
+</section>
+
+<!-- Color Palette -->
+<section class="micro-palette">
+  <h2>Feedback Palette</h2>
+  <div class="palette-grid">
+    <div class="swatch" style="background:#22C55E;"><span class="swatch-label">#22C55E</span></div>
+    <div class="swatch" style="background:#EF4444;"><span class="swatch-label">#EF4444</span></div>
+    <div class="swatch" style="background:#F59E0B;"><span class="swatch-label">#F59E0B</span></div>
+    <div class="swatch" style="background:#3B82F6;"><span class="swatch-label">#3B82F6</span></div>
+    <div class="swatch" style="background:#8B5CF6;"><span class="swatch-label">#8B5CF6</span></div>
+    <div class="swatch" style="background:#FAFAFA;"><span class="swatch-label" style="color:#333;">#FAFAFA</span></div>
+  </div>
+</section>
+
+<!-- Modal -->
+<section class="micro-modal-section">
+  <h2>Quick Dialog</h2>
+  <button class="modal-trigger" onclick="document.getElementById('micro-modal').classList.add('active')">Open Dialog</button>
+  <div id="micro-modal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('active')">
+    <div class="micro-modal">
+      <button class="modal-close" onclick="document.getElementById('micro-modal').classList.remove('active')">&times;</button>
+      <h3>Confirm Action</h3>
+      <p>Are you sure? This dialog uses quick 150ms transitions for snappy micro-interaction feedback.</p>
+      <div style="display:flex;gap:10px;justify-content:flex-end;">
+        <button class="micro-btn btn-outline" onclick="document.getElementById('micro-modal').classList.remove('active')">Cancel</button>
+        <button class="micro-btn btn-green" onclick="document.getElementById('micro-modal').classList.remove('active')">Confirm</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Style Info -->
+<section class="micro-info">
+  <h2>Style Information</h2>
+  <div class="info-grid">
+    <div class="info-item">
+      <div class="info-label">Era</div>
+      <div class="info-value">2020s Modern</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Complexity</div>
+      <div class="info-value">Medium</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Best For</div>
+      <div class="info-value">Mobile Apps, Productivity, Consumer</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Font</div>
+      <div class="info-value">System-UI</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Border Radius</div>
+      <div class="info-value">8-12px</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Effects</div>
+      <div class="info-value">Hover (50-100ms), Spinners, State Anim</div>
+    </div>
+  </div>
+</section>
+
+</div>
+<script src="shared.js"></script>
+<script>
+function showLoading(btn) {
+  const orig = btn.innerHTML;
+  btn.classList.add('btn-loading');
+  btn.style.color = 'transparent';
+  setTimeout(() => {
+    btn.classList.remove('btn-loading');
+    btn.style.color = '';
+    btn.innerHTML = '&#10003; Done';
+    btn.style.background = '#22C55E';
+    setTimeout(() => {
+      btn.innerHTML = orig;
+      btn.style.background = '';
+    }, 1500);
+  }, 1200);
+}
+
+function showSuccess(btn) {
+  const orig = btn.innerHTML;
+  btn.innerHTML = '&#10003; Saved';
+  btn.style.background = '#22C55E';
+  setTimeout(() => {
+    btn.innerHTML = orig;
+    btn.style.background = '';
+  }, 1500);
+}
+</script>
+</body>
+</html>

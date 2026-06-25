@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales Intelligence Dashboard - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root { --page-bg: #FFFFFF; --text-color: #111827; --won: #22C55E; --lost: #EF4444; --in-progress: #3B82F6; --blocked: #F97316; --quota-gold: #EAB308; --surface: #FFFFFF; --surface-alt: #F9FAFB; --border: #E5E7EB; --text-muted: #6B7280; }
+body { background: var(--page-bg); color: var(--text-color); font-family: 'system-ui', -apple-system, sans-serif; font-size: 14px; line-height: 1.5; }
+
+/* Nav */
+.sal-nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 0; display: flex; align-items: center; justify-content: center; gap: 24px; }
+.sal-nav a { color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 500; }
+.sal-nav a:hover { color: var(--text-color); }
+.sal-nav a.active { color: var(--in-progress); font-weight: 600; }
+
+/* Hero */
+.sal-hero { background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); padding: 60px 0 40px; color: white; text-align: center; }
+.sal-hero h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 700; letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 12px; color: white; }
+.sal-hero .subtitle { font-size: 16px; color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto 24px; }
+
+/* Pipeline Funnel */
+.pipeline { display: flex; gap: 4px; max-width: 600px; margin: 0 auto; align-items: flex-end; height: 120px; }
+.pipeline-stage { flex: 1; border-radius: 6px 6px 0 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 8px; transition: all 0.3s; cursor: pointer; }
+.pipeline-stage:hover { filter: brightness(1.1); }
+.pipeline-stage.stage-1 { background: rgba(59,130,246,0.3); height: 100%; }
+.pipeline-stage.stage-2 { background: rgba(59,130,246,0.5); height: 85%; }
+.pipeline-stage.stage-3 { background: rgba(59,130,246,0.7); height: 68%; }
+.pipeline-stage.stage-4 { background: rgba(34,197,94,0.6); height: 50%; }
+.pipeline-stage.stage-5 { background: rgba(34,197,94,0.8); height: 32%; }
+.pipeline-label { font-size: 10px; color: rgba(255,255,255,0.8); text-align: center; font-weight: 500; padding: 0 4px; }
+.pipeline-value { font-size: 12px; font-weight: 700; color: white; font-family: 'SF Mono', monospace; }
+
+/* Gauges */
+.gauge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 600px; margin: 32px auto 0; }
+.gauge-card { background: rgba(255,255,255,0.1); border-radius: 12px; padding: 24px; border: 1px solid rgba(255,255,255,0.1); text-align: center; }
+.gauge-ring { width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 16px; position: relative; display: flex; align-items: center; justify-content: center; }
+.gauge-ring svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+.gauge-ring circle { fill: none; stroke-width: 8; }
+.gauge-ring .bg { stroke: rgba(255,255,255,0.1); }
+.gauge-ring .fill { stroke-linecap: round; }
+.gauge-value { font-size: 20px; font-weight: 700; color: white; font-family: 'SF Mono', monospace; z-index: 1; }
+.gauge-label { font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
+.gauge-target { font-size: 11px; color: rgba(255,255,255,0.5); }
+
+/* Buttons */
+.sal-btn-row { display: flex; gap: 8px; justify-content: center; padding: 16px 0; background: var(--surface); border-bottom: 1px solid var(--border); }
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; font-size: 13px; font-weight: 500; border: none; cursor: pointer; transition: all 0.2s; border-radius: 8px; font-family: inherit; }
+.btn-primary { background: var(--in-progress); color: white; }
+.btn-primary:hover { background: #2563EB; box-shadow: 0 4px 12px rgba(59,130,246,0.25); }
+.btn-secondary { background: var(--surface); color: var(--text-color); border: 1px solid var(--border); }
+
+/* Kanban */
+.section { padding: 32px 0; }
+.section-title { font-size: 18px; font-weight: 600; margin-bottom: 24px; text-align: center; }
+.kanban { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 900px; margin: 0 auto; }
+.kanban-col { background: var(--surface-alt); border-radius: 12px; padding: 16px; min-height: 200px; }
+.kanban-col-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid var(--border); }
+.kanban-col-title { font-size: 13px; font-weight: 600; }
+.kanban-count { width: 22px; height: 22px; border-radius: 6px; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--text-muted); }
+.kanban-card { background: var(--surface); border-radius: 8px; padding: 12px; margin-bottom: 8px; border: 1px solid var(--border); border-left: 3px solid transparent; transition: all 0.2s; cursor: pointer; }
+.kanban-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-1px); }
+.kanban-card.deal-won { border-left-color: var(--won); }
+.kanban-card.deal-prospect { border-left-color: var(--in-progress); }
+.kanban-card.deal-negotiation { border-left-color: var(--blocked); }
+.kanban-card.deal-closed { border-left-color: var(--lost); }
+.kanban-card-name { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.kanban-card-amount { font-size: 14px; font-weight: 700; font-family: 'SF Mono', monospace; }
+.kanban-card-meta { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+
+/* Leaderboard */
+.leaderboard { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; max-width: 600px; margin: 0 auto; }
+.leaderboard-header { padding: 16px 20px; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 600; }
+.leaderboard-row { display: flex; align-items: center; gap: 16px; padding: 12px 20px; border-bottom: 1px solid var(--border); transition: background 0.2s; }
+.leaderboard-row:last-child { border-bottom: none; }
+.leaderboard-row:hover { background: var(--surface-alt); }
+.rank { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.rank.gold { background: #FEF3C7; color: #D97706; }
+.rank.silver { background: #F1F5F9; color: #64748B; }
+.rank.bronze { background: #FED7AA; color: #C2410C; }
+.rank.normal { background: var(--surface-alt); color: var(--text-muted); }
+.lb-name { flex: 1; font-size: 14px; font-weight: 500; }
+.lb-deal { font-size: 13px; color: var(--text-muted); }
+.lb-amount { font-size: 14px; font-weight: 700; font-family: 'SF Mono', monospace; color: var(--won); }
+
+/* Config Form */
+.config-panel { max-width: 500px; margin: 0 auto; background: var(--surface-alt); border-radius: 12px; padding: 24px; }
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.form-input, .form-select { width: 100%; padding: 10px 14px; font-size: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; outline: none; }
+.form-input:focus, .form-select:focus { border-color: var(--in-progress); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+.form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+.form-checkbox { width: 14px; height: 14px; accent-color: var(--in-progress); }
+.form-row { display: flex; gap: 20px; align-items: center; }
+.form-row label { display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; }
+
+/* Metric Cards */
+.metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 900px; margin: 0 auto; }
+.metric-card { background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+.metric-card-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.metric-card-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; }
+.metric-stat { display: flex; align-items: baseline; gap: 6px; padding-top: 12px; border-top: 1px solid var(--border); }
+.stat-value { font-size: 24px; font-weight: 700; font-family: 'SF Mono', monospace; }
+.stat-label { font-size: 12px; color: var(--text-muted); }
+
+/* Swatches */
+.swatch-row { display: flex; gap: 8px; justify-content: center; }
+.swatch { width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; transition: transform 0.15s; }
+.swatch:hover { transform: scale(1.1); }
+
+/* Modal */
+.modal-overlay { display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.4); align-items:center; justify-content:center; }
+.modal-content { background: var(--surface); border-radius: 16px; padding: 32px; max-width: 440px; width: 90%; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
+.modal-content h3 { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+.modal-content p { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
+
+/* Style Info */
+.style-info { background: var(--surface-alt); border-radius: 12px; padding: 24px; border: 1px solid var(--border); text-align: center; max-width: 900px; margin: 0 auto; }
+.style-info h3 { font-size: 16px; font-weight: 600; margin-bottom: 20px; }
+.style-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.style-info-item .label { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.style-info-item .value { color: var(--text-color); font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="vp-bar"><span class="vp-label">📐 Viewport:</span><button class="vp-btn" data-size="1920">1920</button><button class="vp-btn" data-size="1440">1440</button><button class="vp-btn" data-size="1024">1024</button><button class="vp-btn" data-size="768">768</button><button class="vp-btn" data-size="375">375</button><button class="vp-btn" data-size="320">320</button><span id="vp-width" class="vp-width">Full</span><a href="index.html" class="vp-back">← Back to All Styles</a></div>
+<div class="vp-frame">
+  <div style="background:var(--surface-alt);padding:6px 24px;border-bottom:1px solid var(--border);display:flex;gap:8px;justify-content:center;"><span class="tag tag-era">2020s Modern</span><span class="tag tag-complexity-medium">Medium Complexity</span><span class="tag tag-type">BI/Analytics</span></div>
+  <nav class="sal-nav"><a href="#" class="active">Dashboard</a><a href="#">Pipeline</a><a href="#">Deals</a><a href="#">Leaderboard</a><a href="#">Forecasts</a></nav>
+
+  <section class="sal-hero">
+    <h1>Sales Intelligence</h1>
+    <p class="subtitle">Pipeline funnel, deal kanban, quota gauges, and rep leaderboard. Real-time sales performance at your fingertips.</p>
+    <div class="pipeline">
+      <div class="pipeline-stage stage-1"><div class="pipeline-value">248</div><div class="pipeline-label">Prospects</div></div>
+      <div class="pipeline-stage stage-2"><div class="pipeline-value">186</div><div class="pipeline-label">Qualified</div></div>
+      <div class="pipeline-stage stage-3"><div class="pipeline-value">124</div><div class="pipeline-label">Proposal</div></div>
+      <div class="pipeline-stage stage-4"><div class="pipeline-value">89</div><div class="pipeline-label">Negotiation</div></div>
+      <div class="pipeline-stage stage-5"><div class="pipeline-value">67</div><div class="pipeline-label">Closed Won</div></div>
+    </div>
+    <div class="gauge-grid">
+      <div class="gauge-card">
+        <div class="gauge-label">Team Quota</div>
+        <div class="gauge-ring"><svg width="100" height="100"><circle class="bg" cx="50" cy="50" r="42"/><circle class="fill" cx="50" cy="50" r="42" stroke="var(--won)" stroke-dasharray="264" stroke-dashoffset="66"/></svg><div class="gauge-value">75%</div></div>
+        <div class="gauge-target">Target: $2.4M</div>
+      </div>
+      <div class="gauge-card">
+        <div class="gauge-label">Win Rate</div>
+        <div class="gauge-ring"><svg width="100" height="100"><circle class="bg" cx="50" cy="50" r="42"/><circle class="fill" cx="50" cy="50" r="42" stroke="var(--in-progress)" stroke-dasharray="264" stroke-dashoffset="119"/></svg><div class="gauge-value">55%</div></div>
+        <div class="gauge-target">Target: 60%</div>
+      </div>
+      <div class="gauge-card">
+        <div class="gauge-label">Avg Deal Size</div>
+        <div class="gauge-ring"><svg width="100" height="100"><circle class="bg" cx="50" cy="50" r="42"/><circle class="fill" cx="50" cy="50" r="42" stroke="var(--quota-gold)" stroke-dasharray="264" stroke-dashoffset="33"/></svg><div class="gauge-value">$34K</div></div>
+        <div class="gauge-target">Target: $30K</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sal-btn-row"><button class="btn btn-primary">Add Deal</button><button class="btn btn-secondary">Export Pipeline</button></div>
+
+  <section class="section">
+    <div class="container"><h2 class="section-title">Deal Kanban</h2>
+      <div class="kanban">
+        <div class="kanban-col"><div class="kanban-col-header"><div class="kanban-col-title">Prospecting</div><div class="kanban-count">4</div></div><div class="kanban-card deal-prospect"><div class="kanban-card-name">Acme Corp</div><div class="kanban-card-amount">$85,000</div><div class="kanban-card-meta">Sarah M. · 3 days ago</div></div><div class="kanban-card deal-prospect"><div class="kanban-card-name">TechFlow Inc</div><div class="kanban-card-amount">$42,000</div><div class="kanban-card-meta">James K. · 1 week ago</div></div></div>
+        <div class="kanban-col"><div class="kanban-col-header"><div class="kanban-col-title">Negotiation</div><div class="kanban-count">3</div></div><div class="kanban-card deal-negotiation"><div class="kanban-card-name">GlobalScale</div><div class="kanban-card-amount">$120,000</div><div class="kanban-card-meta">Mike R. · 2 days ago</div></div><div class="kanban-card deal-negotiation"><div class="kanban-card-name">DataPrime</div><div class="kanban-card-amount">$67,000</div><div class="kanban-card-meta">Lisa W. · 4 days ago</div></div></div>
+        <div class="kanban-col"><div class="kanban-col-header"><div class="kanban-col-title">Proposal Sent</div><div class="kanban-count">3</div></div><div class="kanban-card deal-prospect"><div class="kanban-card-name">NovaTech</div><div class="kanban-card-amount">$95,000</div><div class="kanban-card-meta">Sarah M. · 1 day ago</div></div><div class="kanban-card deal-prospect"><div class="kanban-card-name">CloudBase</div><div class="kanban-card-amount">$38,000</div><div class="kanban-card-meta">James K. · 5 days ago</div></div></div>
+        <div class="kanban-col"><div class="kanban-col-header"><div class="kanban-col-title">Closed Won</div><div class="kanban-count">2</div></div><div class="kanban-card deal-won"><div class="kanban-card-name">SecureNet</div><div class="kanban-card-amount">$156,000</div><div class="kanban-card-meta">Mike R. · Today</div></div><div class="kanban-card deal-won"><div class="kanban-card-name">BrightAI</div><div class="kanban-card-amount">$72,000</div><div class="kanban-card-meta">Lisa W. · Yesterday</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-alt);">
+    <div class="container"><h2 class="section-title">Rep Leaderboard</h2>
+      <div class="leaderboard">
+        <div class="leaderboard-header">Top Performers — Q4 2024</div>
+        <div class="leaderboard-row"><div class="rank gold">1</div><div class="lb-name">Sarah Mitchell</div><div class="lb-deal">12 deals closed</div><div class="lb-amount">$487,200</div></div>
+        <div class="leaderboard-row"><div class="rank silver">2</div><div class="lb-name">James Kim</div><div class="lb-deal">10 deals closed</div><div class="lb-amount">$398,500</div></div>
+        <div class="leaderboard-row"><div class="rank bronze">3</div><div class="lb-name">Mike Rodriguez</div><div class="lb-deal">9 deals closed</div><div class="lb-amount">$356,800</div></div>
+        <div class="leaderboard-row"><div class="rank normal">4</div><div class="lb-name">Lisa Wang</div><div class="lb-deal">8 deals closed</div><div class="lb-amount">$298,100</div></div>
+        <div class="leaderboard-row"><div class="rank normal">5</div><div class="lb-name">David Chen</div><div class="lb-deal">7 deals closed</div><div class="lb-amount">$245,600</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container"><h2 class="section-title">New Deal Form</h2>
+      <div class="config-panel">
+        <div class="form-group"><label class="form-label">Company Name</label><input type="text" class="form-input" placeholder="Enter company name"></div>
+        <div class="form-group"><label class="form-label">Deal Value</label><input type="text" class="form-input" placeholder="$0.00"></div>
+        <div class="form-group"><label class="form-label">Stage</label><select class="form-select"><option>Prospecting</option><option>Qualification</option><option>Proposal</option><option>Negotiation</option><option>Closed Won</option></select></div>
+        <div class="form-row"><label><input type="checkbox" class="form-checkbox"> Mark as priority</label><label><input type="radio" name="type" class="form-checkbox"> New business</label><label><input type="radio" name="type" class="form-checkbox"> Expansion</label></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-alt);">
+    <div class="container"><h2 class="section-title">Sales Metrics</h2>
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="metric-card-title">Pipeline Value</div><div class="metric-card-text">Total value of all active deals across the team pipeline.</div><div class="metric-stat"><span class="stat-value">$3.2M</span><span class="stat-label">total pipeline</span></div></div>
+        <div class="metric-card"><div class="metric-card-title">Avg Sales Cycle</div><div class="metric-card-text">Average time from first contact to closed deal.</div><div class="metric-stat"><span class="stat-value">28d</span><span class="stat-label">avg cycle</span></div></div>
+        <div class="metric-card"><div class="metric-card-title">Conversion Rate</div><div class="metric-card-text">Percentage of qualified leads that convert to closed-won.</div><div class="metric-stat"><span class="stat-value" style="color:var(--won);">36%</span><span class="stat-label">conversion</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section"><div class="container"><h2 class="section-title">Color Palette</h2><div class="swatch-row">
+    <div class="swatch" style="background:#22C55E;" data-hex="#22C55E"></div><div class="swatch" style="background:#EF4444;" data-hex="#EF4444"></div><div class="swatch" style="background:#3B82F6;" data-hex="#3B82F6"></div><div class="swatch" style="background:#F97316;" data-hex="#F97316"></div><div class="swatch" style="background:#EAB308;" data-hex="#EAB308"></div><div class="swatch" style="background:#0F172A;" data-hex="#0F172A"></div>
+  </div></div></section>
+
+  <div id="demo-modal" class="modal-overlay"><div class="modal-content"><h3>Add New Deal</h3><p>Create a new deal entry in the pipeline. The deal will be assigned to the selected rep.</p><button class="btn btn-primary" style="width:100%;" onclick="toggleModal('demo-modal')">Create Deal</button></div></div>
+  <div style="text-align:center;padding:24px;"><button class="btn btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button></div>
+
+  <div style="padding:0 32px 32px;"><div class="style-info"><h3>Style Information</h3><div class="style-info-grid">
+    <div class="style-info-item"><div class="label">Era/Origin</div><div class="value">2020s Modern, BI/Analytics</div></div>
+    <div class="style-info-item"><div class="label">Best For</div><div class="value">CRM dashboards, sales management, opportunity tracking</div></div>
+    <div class="style-info-item"><div class="label">Avoid For</div><div class="value">Non-sales analytics, consumer products</div></div>
+    <div class="style-info-item"><div class="label">Complexity</div><div class="value">Medium — pipeline charts, kanban boards, gauge rings</div></div>
+    <div class="style-info-item"><div class="label">CSS Keywords</div><div class="value">SVG gauges, kanban grid, pipeline bars, leaderboard rows</div></div>
+    <div class="style-info-item"><div class="label">Design Variables</div><div class="value">--won:#22C55E, --lost:#EF4444, --in-progress:#3B82F6, --quota-gold:#EAB308</div></div>
+  </div></div></div>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

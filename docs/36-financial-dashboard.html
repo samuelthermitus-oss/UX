@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Dashboard - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root { --page-bg: #F8FAFC; --text-color: #0F172A; --profit: #22C55E; --loss: #EF4444; --trust: #003366; --surface: #FFFFFF; --surface-alt: #F1F5F9; --border: #E2E8F0; --text-muted: #64748B; --primary: #1E40AF; }
+body { background: var(--page-bg); color: var(--text-color); font-family: 'system-ui', -apple-system, sans-serif; font-size: 14px; line-height: 1.5; }
+
+/* Nav */
+.fin-nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 0; display: flex; align-items: center; justify-content: center; gap: 24px; }
+.fin-nav a { color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 500; }
+.fin-nav a:hover { color: var(--text-color); }
+.fin-nav a.active { color: var(--primary); font-weight: 600; }
+
+/* Hero */
+.fin-hero { background: linear-gradient(135deg, var(--trust) 0%, #001A33 100%); padding: 48px 0 32px; color: white; text-align: center; }
+.fin-hero h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 700; letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 12px; color: white; }
+.fin-hero .subtitle { font-size: 16px; color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto 24px; }
+
+/* KPI Strip */
+.kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 900px; margin: 0 auto; }
+.kpi-card { background: rgba(255,255,255,0.1); border-radius: 8px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); text-align: center; }
+.kpi-label { font-size: 12px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.kpi-value { font-size: 28px; font-weight: 700; font-family: 'SF Mono', Consolas, monospace; color: white; }
+.kpi-change { font-size: 12px; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+.kpi-change.positive { color: var(--profit); }
+.kpi-change.negative { color: var(--loss); }
+
+/* Buttons */
+.fin-btn-row { display: flex; gap: 8px; justify-content: center; padding: 16px 0; background: var(--surface); border-bottom: 1px solid var(--border); }
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; font-size: 13px; font-weight: 500; border: none; cursor: pointer; transition: all 0.2s; border-radius: 8px; font-family: inherit; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: #1E3A8A; box-shadow: 0 4px 12px rgba(30,64,175,0.25); }
+.btn-secondary { background: var(--surface); color: var(--text-color); border: 1px solid var(--border); }
+
+/* P&L Table */
+.section { padding: 32px 0; }
+.section-title { font-size: 18px; font-weight: 600; margin-bottom: 24px; text-align: center; }
+.fin-table-wrapper { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; max-width: 900px; margin: 0 auto; }
+.fin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.fin-table th { background: var(--surface-alt); padding: 12px 16px; text-align: left; font-weight: 600; color: var(--text-muted); text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+.fin-table td { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+.fin-table tr:last-child td { border-bottom: none; }
+.fin-table tr:hover { background: var(--surface-alt); }
+.fin-table .amount { font-family: 'SF Mono', Consolas, monospace; font-weight: 600; text-align: right; }
+.fin-table .amount.positive { color: var(--profit); }
+.fin-table .amount.negative { color: var(--loss); }
+.fin-table .total-row { font-weight: 700; background: var(--surface-alt); }
+
+/* Budget vs Actual */
+.budget-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 900px; margin: 0 auto; }
+.budget-card { background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+.budget-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.budget-title { font-size: 14px; font-weight: 600; }
+.budget-pct { font-size: 13px; font-weight: 600; font-family: 'SF Mono', monospace; }
+.budget-pct.on-track { color: var(--profit); }
+.budget-pct.over { color: var(--loss); }
+.budget-bar-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+.budget-bar-fill { height: 100%; border-radius: 4px; }
+.budget-bar-fill.green { background: var(--profit); }
+.budget-bar-fill.red { background: var(--loss); }
+.budget-details { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); }
+
+/* Config Form */
+.config-panel { max-width: 500px; margin: 0 auto; background: var(--surface-alt); border-radius: 12px; padding: 24px; }
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.form-input, .form-select { width: 100%; padding: 10px 14px; font-size: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; outline: none; }
+.form-input:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30,64,175,0.1); }
+.form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748B' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+.form-checkbox { width: 14px; height: 14px; accent-color: var(--primary); }
+.form-row { display: flex; gap: 20px; align-items: center; }
+.form-row label { display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; }
+
+/* Insight Cards */
+.cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 900px; margin: 0 auto; }
+.fin-card { background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+.fin-card-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.fin-card-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; }
+.fin-stat { display: flex; align-items: baseline; gap: 6px; padding-top: 12px; border-top: 1px solid var(--border); }
+.stat-value { font-size: 24px; font-weight: 700; font-family: 'SF Mono', monospace; }
+.stat-label { font-size: 12px; color: var(--text-muted); }
+
+/* Monospace */
+.typo-mono { font-family: 'SF Mono', Consolas, monospace; font-size: 13px; color: var(--text-muted); text-align: center; padding: 16px; background: var(--surface); border-radius: 8px; max-width: 900px; margin: 0 auto; }
+
+/* Swatches */
+.swatch-row { display: flex; gap: 8px; justify-content: center; }
+.swatch { width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; transition: transform 0.15s; }
+.swatch:hover { transform: scale(1.1); }
+
+/* Modal */
+.modal-overlay { display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.4); align-items:center; justify-content:center; }
+.modal-content { background: var(--surface); border-radius: 16px; padding: 32px; max-width: 440px; width: 90%; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
+.modal-content h3 { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+.modal-content p { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
+
+/* Style Info */
+.style-info { background: var(--surface-alt); border-radius: 12px; padding: 24px; border: 1px solid var(--border); text-align: center; max-width: 900px; margin: 0 auto; }
+.style-info h3 { font-size: 16px; font-weight: 600; margin-bottom: 20px; }
+.style-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.style-info-item .label { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.style-info-item .value { color: var(--text-color); font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="vp-bar"><span class="vp-label">📐 Viewport:</span><button class="vp-btn" data-size="1920">1920</button><button class="vp-btn" data-size="1440">1440</button><button class="vp-btn" data-size="1024">1024</button><button class="vp-btn" data-size="768">768</button><button class="vp-btn" data-size="375">375</button><button class="vp-btn" data-size="320">320</button><span id="vp-width" class="vp-width">Full</span><a href="index.html" class="vp-back">← Back to All Styles</a></div>
+<div class="vp-frame">
+  <div style="background:var(--surface-alt);padding:6px 24px;border-bottom:1px solid var(--border);display:flex;gap:8px;justify-content:center;"><span class="tag tag-era">2020s Modern</span><span class="tag tag-complexity-medium">Medium Complexity</span><span class="tag tag-type">BI/Analytics</span></div>
+  <nav class="fin-nav"><a href="#" class="active">Overview</a><a href="#">P&L</a><a href="#">Budget</a><a href="#">Cash Flow</a><a href="#">Reports</a></nav>
+
+  <section class="fin-hero">
+    <h1>Financial Dashboard</h1>
+    <p class="subtitle">Revenue, expenses, P&L statements, and budget tracking. Monospace numerals for precision financial reporting.</p>
+    <div class="kpi-strip">
+      <div class="kpi-card"><div class="kpi-label">Total Revenue</div><div class="kpi-value">$4,287,650</div><div class="kpi-change positive">▲ +12.4% YoY</div></div>
+      <div class="kpi-card"><div class="kpi-label">Total Expenses</div><div class="kpi-value">$3,142,890</div><div class="kpi-change negative">▲ +8.2% YoY</div></div>
+      <div class="kpi-card"><div class="kpi-label">Net Income</div><div class="kpi-value" style="color:var(--profit);">$1,144,760</div><div class="kpi-change positive">▲ +22.1% YoY</div></div>
+      <div class="kpi-card"><div class="kpi-label">Profit Margin</div><div class="kpi-value">26.7%</div><div class="kpi-change positive">▲ +2.3pp YoY</div></div>
+    </div>
+  </section>
+
+  <div class="fin-btn-row"><button class="btn btn-primary">Generate Report</button><button class="btn btn-secondary">Export PDF</button></div>
+
+  <section class="section">
+    <div class="container"><h2 class="section-title">Profit & Loss Statement</h2>
+      <div class="fin-table-wrapper">
+        <table class="fin-table">
+          <thead><tr><th>Account</th><th style="text-align:right;">Q3 2024</th><th style="text-align:right;">Q4 2024</th><th style="text-align:right;">Change</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Revenue</strong></td><td class="amount">$1,892,400</td><td class="amount">$2,134,200</td><td class="amount positive">+12.8%</td></tr>
+            <tr><td>&nbsp;&nbsp;Product Sales</td><td class="amount">$1,340,000</td><td class="amount">$1,520,000</td><td class="amount positive">+13.4%</td></tr>
+            <tr><td>&nbsp;&nbsp;Service Revenue</td><td class="amount">$552,400</td><td class="amount">$614,200</td><td class="amount positive">+11.2%</td></tr>
+            <tr><td><strong>Cost of Goods</strong></td><td class="amount negative">($756,960)</td><td class="amount negative">($832,338)</td><td class="amount negative">+10.0%</td></tr>
+            <tr><td><strong>Gross Profit</strong></td><td class="amount">$1,135,440</td><td class="amount">$1,301,862</td><td class="amount positive">+14.7%</td></tr>
+            <tr><td><strong>Operating Expenses</strong></td><td class="amount negative">($623,200)</td><td class="amount negative">($698,400)</td><td class="amount negative">+12.1%</td></tr>
+            <tr><td>&nbsp;&nbsp;Salaries</td><td class="amount negative">($420,000)</td><td class="amount negative">($465,000)</td><td class="amount negative">+10.7%</td></tr>
+            <tr><td>&nbsp;&nbsp;Marketing</td><td class="amount negative">($120,000)</td><td class="amount negative">($145,000)</td><td class="amount negative">+20.8%</td></tr>
+            <tr><td>&nbsp;&nbsp;Other</td><td class="amount negative">($83,200)</td><td class="amount negative">($88,400)</td><td class="amount negative">+6.2%</td></tr>
+            <tr class="total-row"><td><strong>Net Income</strong></td><td class="amount">$512,240</td><td class="amount">$603,462</td><td class="amount positive">+17.8%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-alt);">
+    <div class="container"><h2 class="section-title">Budget vs Actual</h2>
+      <div class="budget-grid">
+        <div class="budget-card"><div class="budget-header"><span class="budget-title">Revenue</span><span class="budget-pct on-track">106.7%</span></div><div class="budget-bar-track"><div class="budget-bar-fill green" style="width:100%;"></div></div><div class="budget-details"><span>Budget: $2,000,000</span><span>Actual: $2,134,200</span></div></div>
+        <div class="budget-card"><div class="budget-header"><span class="budget-title">Marketing Spend</span><span class="budget-pct over">115.4%</span></div><div class="budget-bar-track"><div class="budget-bar-fill red" style="width:100%;"></div></div><div class="budget-details"><span>Budget: $125,600</span><span>Actual: $145,000</span></div></div>
+        <div class="budget-card"><div class="budget-header"><span class="budget-title">Headcount</span><span class="budget-pct on-track">97.2%</span></div><div class="budget-bar-track"><div class="budget-bar-fill green" style="width:97%;"></div></div><div class="budget-details"><span>Budget: $478,000</span><span>Actual: $465,000</span></div></div>
+        <div class="budget-card"><div class="budget-header"><span class="budget-title">Infrastructure</span><span class="budget-pct over">108.3%</span></div><div class="budget-bar-track"><div class="budget-bar-fill red" style="width:100%;"></div></div><div class="budget-details"><span>Budget: $85,000</span><span>Actual: $92,000</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container"><h2 class="section-title">Report Configuration</h2>
+      <div class="config-panel">
+        <div class="form-group"><label class="form-label">Fiscal Period</label><select class="form-select"><option>Q1 2024</option><option>Q2 2024</option><option>Q3 2024</option><option selected>Q4 2024</option></select></div>
+        <div class="form-group"><label class="form-label">Department</label><input type="text" class="form-input" placeholder="All departments"></div>
+        <div class="form-row"><label><input type="checkbox" class="form-checkbox"> Include projections</label><label><input type="radio" name="currency" class="form-checkbox"> USD</label><label><input type="radio" name="currency" class="form-checkbox"> EUR</label></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-alt);">
+    <div class="container"><h2 class="section-title">Financial Highlights</h2>
+      <div class="cards-grid">
+        <div class="fin-card"><div class="fin-card-title">Cash Position</div><div class="fin-card-text">Strong cash reserves with 4.2 months of runway.</div><div class="fin-stat"><span class="stat-value">$2.8M</span><span class="stat-label">cash on hand</span></div></div>
+        <div class="fin-card"><div class="fin-card-title">Accounts Receivable</div><div class="fin-card-text">Average collection period improved to 32 days.</div><div class="fin-stat"><span class="stat-value">$892K</span><span class="stat-label">outstanding</span></div></div>
+        <div class="fin-card"><div class="fin-card-title">Operating Leverage</div><div class="fin-card-text">Revenue growing faster than expenses.</div><div class="fin-stat"><span class="stat-value" style="color:var(--profit);">1.5x</span><span class="stat-label">leverage ratio</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section"><div class="typo-mono">$1,234,567.89 &mdash; 12.4% YoY &mdash; Margin: 26.7%</div></section>
+
+  <section class="section" style="background:var(--surface-alt);"><div class="container"><h2 class="section-title">Color Palette</h2><div class="swatch-row">
+    <div class="swatch" style="background:#22C55E;" data-hex="#22C55E"></div><div class="swatch" style="background:#EF4444;" data-hex="#EF4444"></div><div class="swatch" style="background:#003366;" data-hex="#003366"></div><div class="swatch" style="background:#1E40AF;" data-hex="#1E40AF"></div><div class="swatch" style="background:#0F172A;" data-hex="#0F172A"></div><div class="swatch" style="background:#F8FAFC;" data-hex="#F8FAFC"></div>
+  </div></div></section>
+
+  <div id="demo-modal" class="modal-overlay"><div class="modal-content"><h3>Generate Financial Report</h3><p>This will compile the P&L statement, budget variance analysis, and cash flow projection into a PDF report.</p><button class="btn btn-primary" style="width:100%;" onclick="toggleModal('demo-modal')">Generate Report</button></div></div>
+  <div style="text-align:center;padding:24px;"><button class="btn btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button></div>
+
+  <div style="padding:0 32px 32px;"><div class="style-info"><h3>Style Information</h3><div class="style-info-grid">
+    <div class="style-info-item"><div class="label">Era/Origin</div><div class="value">2020s Modern, BI/Analytics</div></div>
+    <div class="style-info-item"><div class="label">Best For</div><div class="value">Financial reporting, accounting, portfolio tracking</div></div>
+    <div class="style-info-item"><div class="label">Avoid For</div><div class="value">Consumer apps, creative portfolios</div></div>
+    <div class="style-info-item"><div class="label">Complexity</div><div class="value">Medium — financial tables, budget bars, monospace numerals</div></div>
+    <div class="style-info-item"><div class="label">CSS Keywords</div><div class="value">monospace font, financial tables, budget bars, trust colors</div></div>
+    <div class="style-info-item"><div class="label">Design Variables</div><div class="value">--profit:#22C55E, --loss:#EF4444, --trust:#003366, --primary:#1E40AF</div></div>
+  </div></div></div>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soft UI Evolution - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #E8EDF2;
+  --text-color: #2D3748;
+  --surface: #E8EDF2;
+  --text-secondary: #718096;
+  --blue: #87CEEB;
+  --pink: #FFB6C1;
+  --green: #90EE90;
+  --accent: #6C63FF;
+  --accent-light: #8B85FF;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+/* Soft shadow mixin via classes */
+.soft-elevated {
+  background: var(--page-bg);
+  border-radius: 12px;
+  box-shadow:
+    8px 8px 16px rgba(163, 177, 198, 0.6),
+    -8px -8px 16px rgba(255, 255, 255, 0.8);
+}
+
+.soft-inset {
+  background: var(--page-bg);
+  border-radius: 12px;
+  box-shadow:
+    inset 4px 4px 8px rgba(163, 177, 198, 0.5),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.7);
+}
+
+/* Hero */
+.soft-hero {
+  min-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 20px;
+  position: relative;
+}
+
+.soft-hero-card {
+  padding: 60px;
+  max-width: 650px;
+  width: 90%;
+  text-align: center;
+  background: var(--page-bg);
+  border-radius: 24px;
+  box-shadow:
+    12px 12px 24px rgba(163, 177, 198, 0.6),
+    -12px -12px 24px rgba(255, 255, 255, 0.8);
+}
+
+.soft-hero h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, var(--accent), #FF6B9D);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.soft-hero .subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 480px;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+/* Decorative soft circles */
+.soft-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--page-bg);
+  box-shadow:
+    8px 8px 16px rgba(163, 177, 198, 0.4),
+    -8px -8px 16px rgba(255, 255, 255, 0.6);
+  opacity: 0.6;
+}
+
+/* Navigation */
+.soft-nav {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 20px;
+  flex-wrap: wrap;
+}
+
+.soft-nav a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 12px 22px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: all 0.25s;
+  background: var(--page-bg);
+  box-shadow:
+    4px 4px 8px rgba(163, 177, 198, 0.4),
+    -4px -4px 8px rgba(255, 255, 255, 0.7);
+}
+
+.soft-nav a:hover {
+  color: var(--accent);
+  box-shadow:
+    inset 3px 3px 6px rgba(163, 177, 198, 0.4),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.7);
+}
+
+/* Buttons */
+.soft-buttons {
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.soft-buttons h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  color: var(--text-color);
+}
+
+.btn-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.soft-btn {
+  font-family: system-ui;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 14px 30px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: none;
+  background: var(--page-bg);
+  color: var(--text-color);
+  box-shadow:
+    6px 6px 12px rgba(163, 177, 198, 0.5),
+    -6px -6px 12px rgba(255, 255, 255, 0.7);
+  transition: all 0.25s;
+}
+
+.soft-btn:hover {
+  box-shadow:
+    4px 4px 8px rgba(163, 177, 198, 0.5),
+    -4px -4px 8px rgba(255, 255, 255, 0.7);
+  transform: translateY(-1px);
+}
+
+.soft-btn:active {
+  box-shadow:
+    inset 4px 4px 8px rgba(163, 177, 198, 0.5),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.7);
+  transform: translateY(0);
+}
+
+.soft-btn.btn-accent {
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  color: #fff;
+  box-shadow:
+    6px 6px 12px rgba(163, 177, 198, 0.5),
+    -6px -6px 12px rgba(255, 255, 255, 0.7);
+}
+
+.soft-btn.btn-accent:hover {
+  box-shadow:
+    6px 6px 16px rgba(108,99,255,0.3),
+    -4px -4px 8px rgba(255, 255, 255, 0.7);
+}
+
+.soft-btn.btn-accent:active {
+  box-shadow:
+    inset 3px 3px 6px rgba(80,70,200,0.4),
+    inset -3px -3px 6px rgba(140,130,255,0.3);
+}
+
+.soft-btn.btn-pink {
+  background: linear-gradient(135deg, var(--pink), #FFC1CC);
+  color: #8B4060;
+  box-shadow:
+    6px 6px 12px rgba(163, 177, 198, 0.5),
+    -6px -6px 12px rgba(255, 255, 255, 0.7);
+}
+
+.soft-btn.btn-green {
+  background: linear-gradient(135deg, var(--green), #A8F0A8);
+  color: #2D6B2D;
+  box-shadow:
+    6px 6px 12px rgba(163, 177, 198, 0.5),
+    -6px -6px 12px rgba(255, 255, 255, 0.7);
+}
+
+/* Forms */
+.soft-forms {
+  padding: 64px 20px;
+  max-width: 550px;
+  margin: 0 auto;
+}
+
+.soft-forms h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.soft-input {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 1rem;
+  font-family: system-ui;
+  border: none;
+  border-radius: 12px;
+  color: var(--text-color);
+  background: var(--page-bg);
+  outline: none;
+  box-shadow:
+    inset 4px 4px 8px rgba(163, 177, 198, 0.5),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.7);
+  transition: all 0.25s;
+}
+
+.soft-input:focus {
+  box-shadow:
+    inset 4px 4px 8px rgba(163, 177, 198, 0.5),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.7),
+    0 0 0 3px rgba(108,99,255,0.15);
+}
+
+.soft-input::placeholder {
+  color: #B0B8C4;
+}
+
+textarea.soft-input {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Cards */
+.soft-cards {
+  padding: 64px 20px;
+}
+
+.soft-cards h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.soft-card {
+  padding: 32px;
+  border-radius: 16px;
+  background: var(--page-bg);
+  box-shadow:
+    8px 8px 16px rgba(163, 177, 198, 0.5),
+    -8px -8px 16px rgba(255, 255, 255, 0.7);
+  transition: all 0.3s;
+}
+
+.soft-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    10px 10px 20px rgba(163, 177, 198, 0.6),
+    -10px -10px 20px rgba(255, 255, 255, 0.8);
+}
+
+.soft-card .card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 18px;
+  box-shadow:
+    4px 4px 8px rgba(163, 177, 198, 0.4),
+    -4px -4px 8px rgba(255, 255, 255, 0.6);
+}
+
+.soft-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.soft-card p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* Toggle switch */
+.soft-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(163,177,198,0.3);
+}
+
+.soft-toggle-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.toggle-switch {
+  width: 52px;
+  height: 28px;
+  border-radius: 14px;
+  background: var(--page-bg);
+  box-shadow:
+    inset 3px 3px 6px rgba(163, 177, 198, 0.5),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.7);
+  position: relative;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--page-bg);
+  box-shadow:
+    2px 2px 4px rgba(163, 177, 198, 0.5),
+    -2px -2px 4px rgba(255, 255, 255, 0.7);
+  transition: all 0.25s;
+}
+
+.toggle-switch.active::after {
+  transform: translateX(24px);
+  background: var(--accent);
+  box-shadow:
+    2px 2px 4px rgba(163, 177, 198, 0.5),
+    -2px -2px 4px rgba(255, 255, 255, 0.7),
+    0 0 8px rgba(108,99,255,0.3);
+}
+
+/* Typography */
+.soft-typography {
+  padding: 64px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.soft-typography h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.type-sample {
+  margin-bottom: 24px;
+  padding: 24px;
+  border-radius: 14px;
+  background: var(--page-bg);
+  box-shadow:
+    6px 6px 12px rgba(163, 177, 198, 0.4),
+    -6px -6px 12px rgba(255, 255, 255, 0.7);
+}
+
+.type-sample .label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 10px;
+}
+
+.type-sample h1 { font-size: 2.2rem; font-weight: 800; }
+.type-sample h2 { font-size: 1.6rem; font-weight: 700; }
+.type-sample h3 { font-size: 1.2rem; font-weight: 600; }
+.type-sample p { font-size: 1rem; color: var(--text-secondary); line-height: 1.8; }
+
+/* Color Palette */
+.soft-palette {
+  padding: 64px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.soft-palette h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+}
+
+.swatch {
+  aspect-ratio: 1;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px;
+  transition: all 0.3s;
+  box-shadow:
+    6px 6px 12px rgba(163, 177, 198, 0.4),
+    -6px -6px 12px rgba(255, 255, 255, 0.6);
+}
+
+.swatch:hover { transform: translateY(-3px); }
+
+.swatch .swatch-label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  background: rgba(255,255,255,0.85);
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: #333;
+}
+
+/* Modal */
+.soft-modal-section {
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.soft-modal-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+
+.modal-trigger {
+  padding: 14px 30px;
+  background: var(--page-bg);
+  color: var(--accent);
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s;
+  font-family: system-ui;
+  box-shadow:
+    6px 6px 12px rgba(163, 177, 198, 0.5),
+    -6px -6px 12px rgba(255, 255, 255, 0.7);
+}
+
+.modal-trigger:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    8px 8px 16px rgba(163, 177, 198, 0.5),
+    -8px -8px 16px rgba(255, 255, 255, 0.7);
+}
+
+.modal-trigger:active {
+  box-shadow:
+    inset 4px 4px 8px rgba(163, 177, 198, 0.5),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.7);
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(200, 210, 225, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.active { display: flex; }
+
+.soft-modal {
+  background: var(--page-bg);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 460px;
+  width: 90%;
+  position: relative;
+  box-shadow:
+    12px 12px 24px rgba(163, 177, 198, 0.6),
+    -12px -12px 24px rgba(255, 255, 255, 0.8);
+}
+
+.soft-modal h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.soft-modal p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.soft-modal .modal-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: none;
+  background: var(--page-bg);
+  box-shadow:
+    3px 3px 6px rgba(163, 177, 198, 0.4),
+    -3px -3px 6px rgba(255, 255, 255, 0.6);
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.soft-modal .modal-close:hover {
+  box-shadow:
+    inset 3px 3px 6px rgba(163, 177, 198, 0.4),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.6);
+}
+
+/* Style Info */
+.soft-info {
+  padding: 64px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.soft-info h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.info-item {
+  padding: 20px;
+  border-radius: 14px;
+  background: var(--page-bg);
+  box-shadow:
+    6px 6px 12px rgba(163, 177, 198, 0.4),
+    -6px -6px 12px rgba(255, 255, 255, 0.7);
+}
+
+.info-item .info-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 4px;
+}
+
+.info-item .info-value {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+@media (max-width: 768px) {
+  .soft-hero h1 { font-size: 2rem; }
+  .soft-hero-card { padding: 30px 20px; }
+  .card-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+<div class="vp-frame">
+
+<!-- Hero -->
+<section class="soft-hero">
+  <div class="soft-circle" style="width:200px;height:200px;top:10%;left:5%;"></div>
+  <div class="soft-circle" style="width:150px;height:150px;bottom:15%;right:10%;"></div>
+  <div class="soft-circle" style="width:100px;height:100px;top:30%;right:20%;"></div>
+  <div class="soft-hero-card">
+    <h1>Soft UI Evolution</h1>
+    <p class="subtitle">Improved contrast, better accessibility, and modern refinement. Soft shadows that feel elevated without sacrificing usability.</p>
+  </div>
+</section>
+
+<!-- Navigation -->
+<nav class="soft-nav">
+  <a href="#">Home</a>
+  <a href="#">Dashboard</a>
+  <a href="#">Analytics</a>
+  <a href="#">Settings</a>
+</nav>
+
+<!-- Buttons -->
+<section class="soft-buttons">
+  <h2>Elevated Controls</h2>
+  <div class="btn-grid">
+    <button class="soft-btn btn-accent">Primary</button>
+    <button class="soft-btn">Default</button>
+    <button class="soft-btn btn-pink">Soft Pink</button>
+    <button class="soft-btn btn-green">Success</button>
+  </div>
+</section>
+
+<!-- Forms -->
+<section class="soft-forms">
+  <h2>Profile Settings</h2>
+  <div class="form-group">
+    <label>Display Name</label>
+    <input type="text" class="soft-input" placeholder="Enter your name...">
+  </div>
+  <div class="form-group">
+    <label>Email</label>
+    <input type="email" class="soft-input" placeholder="you@example.com">
+  </div>
+  <div class="form-group">
+    <label>Bio</label>
+    <textarea class="soft-input" placeholder="Tell us about yourself..."></textarea>
+  </div>
+  <div style="margin-top:24px;">
+    <div class="soft-toggle">
+      <span class="soft-toggle-label">Email Notifications</span>
+      <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+    </div>
+    <div class="soft-toggle">
+      <span class="soft-toggle-label">Dark Mode</span>
+      <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+    </div>
+    <div class="soft-toggle" style="border:none;">
+      <span class="soft-toggle-label">Two-Factor Auth</span>
+      <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Cards -->
+<section class="soft-cards">
+  <h2>Services</h2>
+  <div class="card-grid">
+    <article class="soft-card">
+      <div class="card-icon" style="background:linear-gradient(135deg,var(--blue),#A8D8EA);">&#9889;</div>
+      <h3>Cloud Sync</h3>
+      <p>Seamlessly sync your data across all devices with end-to-end encryption.</p>
+    </article>
+    <article class="soft-card">
+      <div class="card-icon" style="background:linear-gradient(135deg,var(--pink),#FFD1DC);">&#128150;</div>
+      <h3>Wellness</h3>
+      <p>Track your health metrics and receive personalized wellness recommendations.</p>
+    </article>
+    <article class="soft-card">
+      <div class="card-icon" style="background:linear-gradient(135deg,var(--green),#B8F0B8);">&#127793;</div>
+      <h3>Sustainability</h3>
+      <p>Monitor your carbon footprint and discover ways to reduce environmental impact.</p>
+    </article>
+  </div>
+</section>
+
+<!-- Typography -->
+<section class="soft-typography">
+  <h2>Typography</h2>
+  <div class="type-sample">
+    <div class="label">Display</div>
+    <h1>Soft Elevation</h1>
+  </div>
+  <div class="type-sample">
+    <div class="label">Heading</div>
+    <h2>Gentle Depth</h2>
+  </div>
+  <div class="type-sample">
+    <div class="label">Subheading</div>
+    <h3>Where Comfort Meets Clarity</h3>
+  </div>
+  <div class="type-sample">
+    <div class="label">Body</div>
+    <p>Soft UI Evolution refines the neumorphic concept with improved contrast ratios and clearer visual hierarchy. Elements feel gently raised from the surface, creating a sense of depth that is both inviting and functional.</p>
+  </div>
+</section>
+
+<!-- Color Palette -->
+<section class="soft-palette">
+  <h2>Soft Palette</h2>
+  <div class="palette-grid">
+    <div class="swatch" style="background:#87CEEB;"><span class="swatch-label">#87CEEB</span></div>
+    <div class="swatch" style="background:#FFB6C1;"><span class="swatch-label">#FFB6C1</span></div>
+    <div class="swatch" style="background:#90EE90;"><span class="swatch-label">#90EE90</span></div>
+    <div class="swatch" style="background:#6C63FF;"><span class="swatch-label" style="color:#fff;">#6C63FF</span></div>
+    <div class="swatch" style="background:#E8EDF2;"><span class="swatch-label">#E8EDF2</span></div>
+    <div class="swatch" style="background:#2D3748;"><span class="swatch-label" style="color:#fff;">#2D3748</span></div>
+  </div>
+</section>
+
+<!-- Modal -->
+<section class="soft-modal-section">
+  <h2>Soft Dialog</h2>
+  <button class="modal-trigger" onclick="document.getElementById('soft-modal').classList.add('active')">Open Dialog</button>
+  <div id="soft-modal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('active')">
+    <div class="soft-modal">
+      <button class="modal-close" onclick="document.getElementById('soft-modal').classList.remove('active')">&times;</button>
+      <h3>Soft Confirmation</h3>
+      <p>This dialog sits on a softly elevated surface, with gentle shadows creating a sense of depth and calm.</p>
+      <button class="soft-btn btn-accent" onclick="document.getElementById('soft-modal').classList.remove('active')">Got It</button>
+    </div>
+  </div>
+</section>
+
+<!-- Style Info -->
+<section class="soft-info">
+  <h2>Style Information</h2>
+  <div class="info-grid">
+    <div class="info-item">
+      <div class="info-label">Era</div>
+      <div class="info-value">2020s Modern</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Complexity</div>
+      <div class="info-value">Medium</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Best For</div>
+      <div class="info-value">Enterprise, SaaS, Health/Wellness</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Font</div>
+      <div class="info-value">System-UI</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Border Radius</div>
+      <div class="info-value">8-12px</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Effects</div>
+      <div class="info-value">Soft Shadows, Modern Transitions, Focus</div>
+    </div>
+  </div>
+</section>
+
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

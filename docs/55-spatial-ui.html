@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spatial UI (VisionOS) - UI Style Showcase</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    :root {
+      --page-bg: #0a0a1a;
+      --text-color: #ffffff;
+      --accent-blue: #007AFF;
+      --accent-purple: #5856D6;
+      --accent-pink: #FF2D55;
+      --accent-green: #34C759;
+      --glass-white-15: rgba(255,255,255,0.15);
+      --glass-white-20: rgba(255,255,255,0.20);
+      --glass-white-25: rgba(255,255,255,0.25);
+      --glass-white-30: rgba(255,255,255,0.30);
+      --glass-border: rgba(255,255,255,0.3);
+      --glass-blur: blur(40px) saturate(180%);
+      --glass-blur-sm: blur(20px) saturate(160%);
+      --glass-blur-lg: blur(60px) saturate(200%);
+      --radius-lg: 28px;
+      --radius-md: 24px;
+      --radius-sm: 20px;
+      --radius-xs: 16px;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1a0a2e 0%, #16213e 30%, #0a2a3e 60%, #0a3a3a 100%);
+      color: var(--text-color);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      perspective: 1000px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .vp-frame {
+      position: relative;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+      background: linear-gradient(160deg, #12082a 0%, #0f1a3a 25%, #0a2540 50%, #0a3a38 75%, #0a2a30 100%);
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .vp-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 800px 600px at 20% 30%, rgba(88,86,214,0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 600px 500px at 80% 60%, rgba(0,122,255,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 500px 400px at 50% 80%, rgba(52,199,89,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Floating Animation */
+    @keyframes float {
+      0%, 100% { transform: translateZ(var(--tz, 0px)) translateY(0px); }
+      50% { transform: translateZ(var(--tz, 0px)) translateY(-12px); }
+    }
+
+    @keyframes floatSlow {
+      0%, 100% { transform: translateZ(var(--tz, 0px)) translateY(0px) rotate(0deg); }
+      33% { transform: translateZ(var(--tz, 0px)) translateY(-8px) rotate(1deg); }
+      66% { transform: translateZ(var(--tz, 0px)) translateY(4px) rotate(-0.5deg); }
+    }
+
+    @keyframes ambientGlow {
+      0%, 100% { opacity: 0.4; transform: scale(1) translateZ(0px); }
+      50% { opacity: 0.8; transform: scale(1.05) translateZ(0px); }
+    }
+
+    @keyframes floatOrb {
+      0%, 100% { transform: translateZ(var(--tz, 0px)) translate(0, 0) scale(1); }
+      25% { transform: translateZ(var(--tz, 0px)) translate(10px, -15px) scale(1.02); }
+      50% { transform: translateZ(var(--tz, 0px)) translate(-5px, -20px) scale(1.05); }
+      75% { transform: translateZ(var(--tz, 0px)) translate(-10px, -5px) scale(1.01); }
+    }
+
+    @keyframes ambientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    @keyframes glassPulse {
+      0%, 100% { box-shadow: 0 8px 32px rgba(0,122,255,0.1), inset 0 1px 0 rgba(255,255,255,0.15); }
+      50% { box-shadow: 0 12px 48px rgba(88,86,214,0.2), inset 0 1px 0 rgba(255,255,255,0.25); }
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative;
+      padding: 100px 40px 120px;
+      text-align: center;
+      transform-style: preserve-3d;
+      overflow: hidden;
+      min-height: 700px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, rgba(26,10,46,0.6) 0%, rgba(15,26,58,0.4) 50%, rgba(10,42,62,0.3) 100%);
+    }
+
+    .hero-bg-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg,
+        rgba(88,86,214,0.25) 0%,
+        rgba(0,122,255,0.20) 40%,
+        rgba(52,199,89,0.15) 70%,
+        rgba(0,122,255,0.10) 100%);
+      background-size: 200% 200%;
+      animation: ambientShift 8s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    /* Floating ambient light orbs */
+    .hero-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: floatOrb var(--dur, 6s) ease-in-out infinite;
+    }
+
+    .hero-orb-1 {
+      width: 300px; height: 300px;
+      top: 5%; left: 10%;
+      background: radial-gradient(circle, rgba(88,86,214,0.35) 0%, transparent 70%);
+      --tz: 40px;
+      --dur: 7s;
+      animation: ambientGlow 5s ease-in-out infinite, floatOrb 7s ease-in-out infinite;
+    }
+
+    .hero-orb-2 {
+      width: 200px; height: 200px;
+      top: 30%; right: 15%;
+      background: radial-gradient(circle, rgba(0,122,255,0.3) 0%, transparent 70%);
+      --tz: 60px;
+      --dur: 8s;
+      animation: ambientGlow 6s ease-in-out 1s infinite, floatOrb 8s ease-in-out infinite;
+    }
+
+    .hero-orb-3 {
+      width: 150px; height: 150px;
+      bottom: 15%; left: 20%;
+      background: radial-gradient(circle, rgba(52,199,89,0.25) 0%, transparent 70%);
+      --tz: 20px;
+      --dur: 9s;
+      animation: ambientGlow 7s ease-in-out 2s infinite, floatOrb 9s ease-in-out infinite;
+    }
+
+    .hero-orb-4 {
+      width: 250px; height: 250px;
+      bottom: 5%; right: 10%;
+      background: radial-gradient(circle, rgba(255,45,85,0.15) 0%, transparent 70%);
+      --tz: 80px;
+      --dur: 10s;
+      animation: ambientGlow 4s ease-in-out 0.5s infinite, floatOrb 10s ease-in-out infinite;
+    }
+
+    /* Floating glass panels at different depths */
+    .hero-glass-panel {
+      position: absolute;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius-md);
+      pointer-events: none;
+    }
+
+    .hero-glass-panel-1 {
+      width: 220px; height: 140px;
+      top: 10%; left: 5%;
+      transform: translateZ(60px) rotateY(8deg) rotateX(-3deg);
+      animation: floatSlow 8s ease-in-out infinite;
+      box-shadow: 0 20px 60px rgba(88,86,214,0.15);
+    }
+
+    .hero-glass-panel-2 {
+      width: 180px; height: 120px;
+      top: 15%; right: 8%;
+      transform: translateZ(40px) rotateY(-6deg) rotateX(2deg);
+      animation: floatSlow 9s ease-in-out 1s infinite;
+      box-shadow: 0 16px 48px rgba(0,122,255,0.12);
+    }
+
+    .hero-glass-panel-3 {
+      width: 260px; height: 100px;
+      bottom: 20%; left: 8%;
+      transform: translateZ(80px) rotateY(4deg) rotateX(5deg);
+      animation: floatSlow 10s ease-in-out 2s infinite;
+      box-shadow: 0 24px 72px rgba(52,199,89,0.1);
+    }
+
+    .hero-glass-panel-4 {
+      width: 160px; height: 160px;
+      bottom: 25%; right: 5%;
+      transform: translateZ(30px) rotateY(-10deg) rotateX(-4deg);
+      animation: floatSlow 7s ease-in-out 0.5s infinite;
+      box-shadow: 0 12px 40px rgba(255,45,85,0.1);
+      border-radius: 50%;
+    }
+
+    .hero-glass-panel-5 {
+      width: 140px; height: 90px;
+      top: 50%; left: 15%;
+      transform: translateZ(50px) rotateY(12deg) rotateX(2deg);
+      animation: floatSlow 11s ease-in-out 3s infinite;
+      box-shadow: 0 18px 54px rgba(88,86,214,0.12);
+    }
+
+    .hero-glass-panel-6 {
+      width: 200px; height: 130px;
+      top: 45%; right: 12%;
+      transform: translateZ(70px) rotateY(-8deg) rotateX(-6deg);
+      animation: floatSlow 8.5s ease-in-out 1.5s infinite;
+      box-shadow: 0 22px 66px rgba(0,122,255,0.1);
+    }
+
+    /* Hero content */
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      transform: translateZ(100px);
+    }
+
+    .hero h1 {
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.85) 50%, rgba(200,210,255,0.9) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      filter: drop-shadow(0 2px 20px rgba(0,122,255,0.3));
+    }
+
+    .hero h1 .glass-text {
+      background: linear-gradient(135deg, rgba(0,122,255,0.9) 0%, rgba(88,86,214,0.9) 50%, rgba(52,199,89,0.8) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 4px 30px rgba(0,122,255,0.4));
+    }
+
+    .hero .subtitle {
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      font-weight: 400;
+      color: rgba(255,255,255,0.75);
+      max-width: 650px;
+      margin: 0 auto 24px;
+      line-height: 1.6;
+      letter-spacing: 0.01em;
+    }
+
+    .hero .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 24px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: var(--glass-blur-sm);
+      -webkit-backdrop-filter: var(--glass-blur-sm);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 100px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      animation: glassPulse 4s ease-in-out infinite;
+    }
+
+    /* Immersive floating windows in hero */
+    .hero-windows {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 48px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .hero-window {
+      width: 200px;
+      height: 140px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-sm);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transform: translateZ(var(--tz, 0px));
+      animation: float var(--dur, 6s) ease-in-out infinite;
+      box-shadow:
+        0 8px 32px rgba(0,0,0,0.2),
+        0 0 0 1px rgba(255,255,255,0.05) inset,
+        0 1px 0 rgba(255,255,255,0.15) inset;
+    }
+
+    .hero-window:nth-child(1) { --tz: 50px; --dur: 6s; }
+    .hero-window:nth-child(2) { --tz: 30px; --dur: 7s; animation-delay: 0.5s; }
+    .hero-window:nth-child(3) { --tz: 70px; --dur: 8s; animation-delay: 1s; }
+
+    .hero-window .icon {
+      font-size: 2rem;
+    }
+
+    .hero-window .label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.8);
+      letter-spacing: 0.02em;
+    }
+
+    /* ===== SECTION BASE ===== */
+    section {
+      position: relative;
+      padding: 64px 40px;
+      z-index: 1;
+      transform-style: preserve-3d;
+    }
+
+    section h2 {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      margin-bottom: 32px;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 0%, rgba(200,210,255,0.9) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 2px 12px rgba(0,122,255,0.2));
+    }
+
+    section .section-desc {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 48px;
+      max-width: 550px;
+      line-height: 1.6;
+    }
+
+    /* ===== NAVIGATION ===== */
+    .nav-section {
+      background: rgba(255,255,255,0.03);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .glass-nav {
+      position: sticky;
+      top: 60px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 14px 28px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 100px;
+      box-shadow:
+        0 8px 32px rgba(0,0,0,0.2),
+        0 0 0 1px rgba(255,255,255,0.05) inset,
+        0 1px 0 rgba(255,255,255,0.2) inset;
+    }
+
+    .nav-logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #007AFF, #5856D6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-items {
+      display: flex;
+      gap: 6px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-items a {
+      display: block;
+      padding: 8px 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      border-radius: 100px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      letter-spacing: 0.01em;
+    }
+
+    .nav-items a:hover {
+      background: rgba(255,255,255,0.12);
+      color: #ffffff;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .nav-items a.active {
+      background: rgba(0,122,255,0.3);
+      color: #ffffff;
+      box-shadow: 0 0 20px rgba(0,122,255,0.2);
+    }
+
+    /* ===== BUTTONS ===== */
+    .buttons-section {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .btn-showcase {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+     justify-content: center;}
+
+    .btn-group-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .spatial-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 32px;
+      font-family: system-ui, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      letter-spacing: 0.01em;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .spatial-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%);
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      pointer-events: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+      color: #ffffff;
+      backdrop-filter: var(--glass-blur-sm);
+      -webkit-backdrop-filter: var(--glass-blur-sm);
+      box-shadow:
+        0 8px 24px rgba(0,122,255,0.35),
+        0 0 0 1px rgba(255,255,255,0.1) inset,
+        0 1px 0 rgba(255,255,255,0.2) inset;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow:
+        0 12px 36px rgba(0,122,255,0.45),
+        0 0 0 1px rgba(255,255,255,0.15) inset,
+        0 1px 0 rgba(255,255,255,0.25) inset;
+    }
+
+    .btn-primary:active {
+      transform: translateY(0px) scale(0.98);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.15);
+      color: #ffffff;
+      backdrop-filter: var(--glass-blur-sm);
+      -webkit-backdrop-filter: var(--glass-blur-sm);
+      border: 1px solid rgba(255,255,255,0.25);
+      box-shadow:
+        0 8px 24px rgba(0,0,0,0.15),
+        0 0 0 1px rgba(255,255,255,0.08) inset,
+        0 1px 0 rgba(255,255,255,0.2) inset;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.22);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow:
+        0 12px 36px rgba(0,0,0,0.2),
+        0 0 0 1px rgba(255,255,255,0.12) inset,
+        0 1px 0 rgba(255,255,255,0.25) inset;
+    }
+
+    .btn-secondary:active {
+      transform: translateY(0px) scale(0.98);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: rgba(255,255,255,0.85);
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: none;
+    }
+
+    .btn-ghost::after {
+      display: none;
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.35);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost:active {
+      transform: translateY(0px);
+    }
+
+    .btn-disabled {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .btn-disabled::after {
+      display: none;
+    }
+
+    /* ===== FORMS ===== */
+    .forms-section {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .form-showcase {
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.02em;
+    }
+
+    .spatial-input,
+    .spatial-textarea,
+    .spatial-select {
+      padding: 14px 20px;
+      font-family: system-ui, sans-serif;
+      font-size: 0.95rem;
+      color: #ffffff;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-xs);
+      outline: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow:
+        0 4px 16px rgba(0,0,0,0.1),
+        0 0 0 1px rgba(255,255,255,0.05) inset;
+    }
+
+    .spatial-input::placeholder,
+    .spatial-textarea::placeholder {
+      color: rgba(255,255,255,0.35);
+    }
+
+    .spatial-input:focus,
+    .spatial-textarea:focus,
+    .spatial-select:focus {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(0,122,255,0.5);
+      box-shadow:
+        0 4px 16px rgba(0,0,0,0.1),
+        0 0 0 3px rgba(0,122,255,0.15),
+        0 0 24px rgba(0,122,255,0.1),
+        0 0 0 1px rgba(255,255,255,0.08) inset;
+    }
+
+    .spatial-textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .spatial-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' opacity='0.6' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+    }
+
+    .spatial-select option {
+      background: #1a1a2e;
+      color: #ffffff;
+    }
+
+    .checkbox-group,
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .checkbox-label,
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.8);
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      transition: all 0.25s ease;
+    }
+
+    .checkbox-label:hover,
+    .radio-label:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    .checkbox-label input[type="checkbox"],
+    .radio-label input[type="radio"] {
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border: 2px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.08);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      border-radius: 6px;
+    }
+
+    .radio-label input[type="radio"] {
+      border-radius: 50%;
+    }
+
+    .checkbox-label input[type="checkbox"]:checked {
+      background: linear-gradient(135deg, #007AFF, #5856D6);
+      border-color: transparent;
+    }
+
+    .checkbox-label input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .radio-label input[type="radio"]:checked {
+      border-color: #007AFF;
+      background: rgba(0,122,255,0.2);
+    }
+
+    .radio-label input[type="radio"]:checked::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px;
+      height: 10px;
+      background: #007AFF;
+      border-radius: 50%;
+    }
+
+    /* ===== CARDS ===== */
+    .cards-section {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+      max-width: 1000px;
+    }
+
+    .spatial-card {
+      position: relative;
+      padding: 36px 32px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: var(--radius-md);
+      transform: translateZ(var(--tz, 0px));
+      animation: float var(--dur, 6s) ease-in-out infinite;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+    }
+
+    .spatial-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+    }
+
+    .spatial-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-md);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+      pointer-events: none;
+    }
+
+    .spatial-card:hover {
+      transform: translateZ(var(--tz, 0px)) translateY(-4px) scale(1.02);
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.25),
+        0 0 0 1px rgba(255,255,255,0.1) inset;
+    }
+
+    .card-depth-1 {
+      --tz: 20px;
+      --dur: 6s;
+      box-shadow:
+        0 8px 32px rgba(0,122,255,0.12),
+        0 0 0 1px rgba(255,255,255,0.1) inset,
+        0 1px 0 rgba(255,255,255,0.2) inset;
+    }
+
+    .card-depth-2 {
+      --tz: 50px;
+      --dur: 7s;
+      animation-delay: 0.5s;
+      box-shadow:
+        0 16px 48px rgba(88,86,214,0.15),
+        0 0 0 1px rgba(255,255,255,0.12) inset,
+        0 1px 0 rgba(255,255,255,0.22) inset;
+    }
+
+    .card-depth-3 {
+      --tz: 80px;
+      --dur: 8s;
+      animation-delay: 1s;
+      box-shadow:
+        0 24px 64px rgba(52,199,89,0.12),
+        0 0 0 1px rgba(255,255,255,0.15) inset,
+        0 1px 0 rgba(255,255,255,0.25) inset;
+    }
+
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .spatial-card h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    .spatial-card p {
+      font-size: 0.92rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.65;
+    }
+
+    .card-depth-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 18px;
+      padding: 6px 14px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.6);
+      background: rgba(255,255,255,0.08);
+      border-radius: 100px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .depth-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--dot-color, #007AFF);
+    }
+
+    /* ===== TYPOGRAPHY ===== */
+    .typography-section {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .type-showcase {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      max-width: 700px;
+    }
+
+    .type-row {
+      padding: 24px 32px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: var(--glass-blur-sm);
+      -webkit-backdrop-filter: var(--glass-blur-sm);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .type-row:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    .type-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      min-width: 36px;
+      flex-shrink: 0;
+    }
+
+    .type-row h1 { font-size: 3rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+    .type-row h2 { font-size: 2.25rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+    .type-row h3 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.25; }
+    .type-row h4 { font-size: 1.35rem; font-weight: 600; line-height: 1.3; }
+    .type-row h5 { font-size: 1.1rem; font-weight: 600; line-height: 1.4; }
+    .type-row h6 { font-size: 0.95rem; font-weight: 600; line-height: 1.4; text-transform: uppercase; letter-spacing: 0.04em; color: rgba(255,255,255,0.7); }
+
+    /* ===== COLOR SWATCHES ===== */
+    .colors-section {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .swatches-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+    }
+
+    .swatch {
+      padding: 28px 20px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      backdrop-filter: var(--glass-blur-sm);
+      -webkit-backdrop-filter: var(--glass-blur-sm);
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .swatch::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-sm);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+      pointer-events: none;
+    }
+
+    .swatch:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.2);
+    }
+
+    .swatch-color {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.2);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+
+    .swatch-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.8);
+      letter-spacing: 0.02em;
+    }
+
+    .swatch-value {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.45);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      letter-spacing: 0.02em;
+    }
+
+    .swatch-glass-15 { background: rgba(255,255,255,0.15); }
+    .swatch-glass-30 { background: rgba(255,255,255,0.30); }
+    .swatch-blue { background: rgba(0,122,255,0.2); }
+    .swatch-purple { background: rgba(88,86,214,0.2); }
+    .swatch-pink { background: rgba(255,45,85,0.2); }
+    .swatch-green { background: rgba(52,199,89,0.2); }
+
+    /* ===== MODAL ===== */
+    .modal-section {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .modal-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      font-family: system-ui, sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #ffffff;
+      background: linear-gradient(135deg, #5856D6 0%, #007AFF 100%);
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: var(--glass-blur-sm);
+      -webkit-backdrop-filter: var(--glass-blur-sm);
+      box-shadow:
+        0 8px 32px rgba(88,86,214,0.3),
+        0 0 0 1px rgba(255,255,255,0.1) inset,
+        0 1px 0 rgba(255,255,255,0.2) inset;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal-trigger::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%);
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      pointer-events: none;
+    }
+
+    .modal-trigger:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow:
+        0 12px 40px rgba(88,86,214,0.4),
+        0 0 0 1px rgba(255,255,255,0.15) inset,
+        0 1px 0 rgba(255,255,255,0.25) inset;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px) saturate(120%);
+      -webkit-backdrop-filter: blur(8px) saturate(120%);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes modalFloat {
+      from { opacity: 0; transform: translateZ(100px) scale(0.9) translateY(20px); }
+      to { opacity: 1; transform: translateZ(0px) scale(1) translateY(0); }
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 440px;
+      padding: 40px 36px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(60px) saturate(200%);
+      -webkit-backdrop-filter: blur(60px) saturate(200%);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: var(--radius-lg);
+      box-shadow:
+        0 32px 80px rgba(0,0,0,0.3),
+        0 0 0 1px rgba(255,255,255,0.08) inset,
+        0 1px 0 rgba(255,255,255,0.2) inset,
+        0 0 60px rgba(88,86,214,0.1);
+      text-align: center;
+      animation: modalFloat 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal-content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.5) 50%, transparent 100%);
+    }
+
+    .modal-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, rgba(88,86,214,0.4) 0%, rgba(0,122,255,0.4) 100%);
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 8px 24px rgba(0,122,255,0.2);
+    }
+
+    .modal-content h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    .modal-content p {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .modal-btn {
+      padding: 12px 28px;
+      font-family: system-ui, sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal-btn-primary {
+      background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 16px rgba(0,122,255,0.3);
+    }
+
+    .modal-btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(0,122,255,0.4);
+    }
+
+    .modal-btn-secondary {
+      background: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.85);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .modal-btn-secondary:hover {
+      background: rgba(255,255,255,0.18);
+    }
+
+    /* ===== STYLE INFO PANEL ===== */
+    .info-section {
+      background: rgba(255,255,255,0.02);
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .info-panel {
+      max-width: 700px;
+      padding: 40px 44px;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-lg);
+      box-shadow:
+        0 16px 48px rgba(0,0,0,0.15),
+        0 0 0 1px rgba(255,255,255,0.06) inset,
+        0 1px 0 rgba(255,255,255,0.15) inset;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .info-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+    }
+
+    .info-panel h3 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .info-value {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.5;
+    }
+
+    .info-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .info-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 100px;
+    }
+
+    /* ===== FOOTER SPACER ===== */
+    .footer-spacer {
+      height: 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      section {
+        padding: 60px 20px;
+      }
+
+      .hero {
+        padding: 60px 20px 80px;
+        min-height: 500px;
+       text-align: center;}
+
+      .glass-nav {
+        flex-direction: column;
+        gap: 12px;
+        border-radius: 20px;
+        padding: 16px 20px;
+        top: 60px;
+      }
+
+      .nav-items {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .btn-showcase {
+        flex-direction: column;
+      }
+
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .swatches-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hero-glass-panel {
+        opacity: 0.5;
+      }
+
+      .hero-windows {
+        gap: 16px;
+      }
+
+      .hero-window {
+        width: 150px;
+        height: 110px;
+      }
+
+      .type-row {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-glass-panel {
+        display: none;
+      }
+
+      .swatches-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-content {
+        padding: 32px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="vp-bar">
+    <span class="vp-label">&#x1F4D0; Viewport:</span>
+    <button class="vp-btn" data-size="1920">1920</button>
+    <button class="vp-btn" data-size="1440">1440</button>
+    <button class="vp-btn" data-size="1024">1024</button>
+    <button class="vp-btn" data-size="768">768</button>
+    <button class="vp-btn" data-size="375">375</button>
+    <button class="vp-btn" data-size="320">320</button>
+    <span id="vp-width" class="vp-width">Full</span>
+    <a href="index.html" class="vp-back">&larr; Back to All Styles</a>
+  </div>
+
+  <div class="vp-frame">
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+      <div class="hero-bg-gradient"></div>
+
+      <!-- Ambient light orbs -->
+      <div class="hero-orb hero-orb-1"></div>
+      <div class="hero-orb hero-orb-2"></div>
+      <div class="hero-orb hero-orb-3"></div>
+      <div class="hero-orb hero-orb-4"></div>
+
+      <!-- Floating glass panels at different z-depths -->
+      <div class="hero-glass-panel hero-glass-panel-1"></div>
+      <div class="hero-glass-panel hero-glass-panel-2"></div>
+      <div class="hero-glass-panel hero-glass-panel-3"></div>
+      <div class="hero-glass-panel hero-glass-panel-4"></div>
+      <div class="hero-glass-panel hero-glass-panel-5"></div>
+      <div class="hero-glass-panel hero-glass-panel-6"></div>
+
+      <div class="hero-content">
+        <div class="badge">&#10024; VisionOS Spatial Era</div>
+        <h1><span class="glass-text">Spatial</span> Computing</h1>
+        <p class="subtitle">Immersive interface design for the VisionOS era. Glass layers, depth perception, and ambient light converge to create experiences that transcend the flat screen.</p>
+
+        <div class="hero-windows">
+          <div class="hero-window">
+            <span class="icon">&#127912;</span>
+            <span class="label">Immersive</span>
+          </div>
+          <div class="hero-window">
+            <span class="icon">&#128065;</span>
+            <span class="label">Gaze Aware</span>
+          </div>
+          <div class="hero-window">
+            <span class="icon">&#9995;</span>
+            <span class="label">Spatial</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== NAVIGATION ===== -->
+    <section class="nav-section">
+      <h2>Navigation</h2>
+      <p class="section-desc">Frosted glass nav bar with deep blur, floating above content with ambient depth.</p>
+      <nav class="glass-nav">
+        <span class="nav-logo">Spatial</span>
+        <ul class="nav-items">
+          <li><a href="#" class="active">Home</a></li>
+          <li><a href="#">Explore</a></li>
+          <li><a href="#">Create</a></li>
+          <li><a href="#">Share</a></li>
+          <li><a href="#">Settings</a></li>
+        </ul>
+      </nav>
+    </section>
+
+    <!-- ===== BUTTONS ===== -->
+    <section class="buttons-section">
+      <h2>Buttons</h2>
+      <p class="section-desc">Glass-enhanced controls with vibrant gradients and frosted surfaces.</p>
+      <div class="btn-showcase">
+        <div class="btn-group">
+          <span class="btn-group-label">Primary</span>
+          <button class="spatial-btn btn-primary">Get Started</button>
+          <button class="spatial-btn btn-primary">Launch Spatial</button>
+        </div>
+        <div class="btn-group">
+          <span class="btn-group-label">Secondary</span>
+          <button class="spatial-btn btn-secondary">Learn More</button>
+          <button class="spatial-btn btn-secondary">View Details</button>
+        </div>
+        <div class="btn-group">
+          <span class="btn-group-label">Ghost</span>
+          <button class="spatial-btn btn-ghost">Cancel</button>
+          <button class="spatial-btn btn-ghost">Go Back</button>
+        </div>
+        <div class="btn-group">
+          <span class="btn-group-label">Disabled</span>
+          <button class="spatial-btn btn-disabled" disabled>Unavailable</button>
+          <button class="spatial-btn btn-disabled" disabled>Coming Soon</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FORMS ===== -->
+    <section class="forms-section">
+      <h2>Forms</h2>
+      <p class="section-desc">Frosted glass inputs with soft focus glow and ambient depth.</p>
+      <div class="form-showcase">
+        <div class="form-group">
+          <label for="spatial-name">Full Name</label>
+          <input type="text" id="spatial-name" class="spatial-input" placeholder="Enter your name">
+        </div>
+        <div class="form-group">
+          <label for="spatial-email">Email Address</label>
+          <input type="email" id="spatial-email" class="spatial-input" placeholder="you@spatial.app">
+        </div>
+        <div class="form-group">
+          <label for="spatial-textarea">Message</label>
+          <textarea id="spatial-textarea" class="spatial-textarea" placeholder="Describe your spatial experience..."></textarea>
+        </div>
+        <div class="form-group">
+          <label for="spatial-select">Experience Level</label>
+          <select id="spatial-select" class="spatial-select">
+            <option value="" disabled selected>Choose your level</option>
+            <option value="explorer">Explorer</option>
+            <option value="creator">Creator</option>
+            <option value="pioneer">Pioneer</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Preferences</label>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" checked> Enable spatial audio
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox"> Eye tracking feedback
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" checked> Hand gesture controls
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Interaction Mode</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="mode" checked> Gaze &amp; Tap
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="mode"> Hand Tracking
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="mode"> Voice Control
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CARDS ===== -->
+    <section class="cards-section">
+      <h2>Spatial Cards</h2>
+      <p class="section-desc">Glass layers at different z-depths, each floating with its own rhythm.</p>
+      <div class="cards-grid">
+        <div class="spatial-card card-depth-1">
+          <div class="card-icon">&#127925;</div>
+          <h3>Spatial Audio</h3>
+          <p>Three-dimensional sound that anchors to virtual objects, creating an immersive auditory landscape that responds to head movement.</p>
+          <div class="card-depth-indicator">
+            <span class="depth-dot" style="--dot-color: #007AFF;"></span>
+            Depth Level 1 &middot; Near Field
+          </div>
+        </div>
+        <div class="spatial-card card-depth-2">
+          <div class="card-icon">&#128065;</div>
+          <h3>Eye Tracking</h3>
+          <p>Precision gaze detection enables intuitive selection and attention-aware UI. The interface responds to where you look, not just what you touch.</p>
+          <div class="card-depth-indicator">
+            <span class="depth-dot" style="--dot-color: #5856D6;"></span>
+            Depth Level 2 &middot; Mid Field
+          </div>
+        </div>
+        <div class="spatial-card card-depth-3">
+          <div class="card-icon">&#9995;</div>
+          <h3>Hand Gestures</h3>
+          <p>Natural hand tracking with pinch, swipe, and point gestures. Manipulate virtual objects with the precision of real-world interaction.</p>
+          <div class="card-depth-indicator">
+            <span class="depth-dot" style="--dot-color: #34C759;"></span>
+            Depth Level 3 &middot; Far Field
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TYPOGRAPHY ===== -->
+    <section class="typography-section">
+      <h2>Typography</h2>
+      <p class="section-desc">System font stack with varying weights, rendered through frosted glass.</p>
+      <div class="type-showcase">
+        <div class="type-row">
+          <span class="type-label">H1</span>
+          <h1>Spatial Vision</h1>
+        </div>
+        <div class="type-row">
+          <span class="type-label">H2</span>
+          <h2>Depth Perception</h2>
+        </div>
+        <div class="type-row">
+          <span class="type-label">H3</span>
+          <h3>Glass Layers</h3>
+        </div>
+        <div class="type-row">
+          <span class="type-label">H4</span>
+          <h4>Ambient Light</h4>
+        </div>
+        <div class="type-row">
+          <span class="type-label">H5</span>
+          <h5>Frosted Surface</h5>
+        </div>
+        <div class="type-row">
+          <span class="type-label">H6</span>
+          <h6>System Label</h6>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== COLOR SWATCHES ===== -->
+    <section class="colors-section">
+      <h2>Color Palette</h2>
+      <p class="section-desc">Glass samples and vibrant spatial accent colors.</p>
+      <div class="swatches-grid">
+        <div class="swatch swatch-glass-15">
+          <div class="swatch-color" style="background: rgba(255,255,255,0.15);"></div>
+          <span class="swatch-label">Glass 15%</span>
+          <span class="swatch-value">rgba(255,255,255,0.15)</span>
+        </div>
+        <div class="swatch swatch-glass-30">
+          <div class="swatch-color" style="background: rgba(255,255,255,0.30);"></div>
+          <span class="swatch-label">Glass 30%</span>
+          <span class="swatch-value">rgba(255,255,255,0.30)</span>
+        </div>
+        <div class="swatch swatch-blue">
+          <div class="swatch-color" style="background: #007AFF;"></div>
+          <span class="swatch-label">System Blue</span>
+          <span class="swatch-value">#007AFF</span>
+        </div>
+        <div class="swatch swatch-purple">
+          <div class="swatch-color" style="background: #5856D6;"></div>
+          <span class="swatch-label">System Purple</span>
+          <span class="swatch-value">#5856D6</span>
+        </div>
+        <div class="swatch swatch-pink">
+          <div class="swatch-color" style="background: #FF2D55;"></div>
+          <span class="swatch-label">System Pink</span>
+          <span class="swatch-value">#FF2D55</span>
+        </div>
+        <div class="swatch swatch-green">
+          <div class="swatch-color" style="background: #34C759;"></div>
+          <span class="swatch-label">System Green</span>
+          <span class="swatch-value">#34C759</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== MODAL ===== -->
+    <section class="modal-section">
+      <h2>Modal</h2>
+      <p class="section-desc">Frosted glass modal with deep blur, floating feel and ambient backdrop.</p>
+      <button class="modal-trigger" onclick="toggleModal('demo-modal')">&#9889; Open Spatial Alert</button>
+    </section>
+
+    <!-- ===== STYLE INFO PANEL ===== -->
+    <section class="info-section">
+      <div class="info-panel">
+        <h3>&#128161; Style Information</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Era</span>
+            <span class="info-value">2024 Spatial Era</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Complexity</span>
+            <span class="info-value">High</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Best For</span>
+            <span class="info-value">Spatial computing, VR/AR, immersive media</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Font</span>
+            <span class="info-value">system-ui (SF Pro)</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Effects</span>
+            <div class="info-tags">
+              <span class="info-tag">&#127922; Parallax</span>
+              <span class="info-tag">&#128167; Blur</span>
+              <span class="info-tag">&#128207; Depth Layers</span>
+              <span class="info-tag">&#128065; Gaze Hover</span>
+              <span class="info-tag">&#10024; Ambient Glow</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Key Features</span>
+            <div class="info-tags">
+              <span class="info-tag">backdrop-filter: blur(40px) saturate(180%)</span>
+              <span class="info-tag">translateZ depth</span>
+              <span class="info-tag">preserve-3d</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-spacer"></div>
+  </div>
+
+  <!-- ===== MODAL OVERLAY ===== -->
+  <div class="modal-overlay" id="demo-modal">
+    <div class="modal-content">
+      <div class="modal-icon">&#9889;</div>
+      <h3>Spatial Alert</h3>
+      <p>This modal floats in spatial depth with a frosted glass surface. The backdrop dims the entire scene while maintaining the immersive feel of the VisionOS era.</p>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-primary" onclick="toggleModal('demo-modal')">Acknowledge</button>
+        <button class="modal-btn modal-btn-secondary" onclick="toggleModal('demo-modal')">Dismiss</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+  <script>
+    function toggleModal(id) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.classList.toggle('active');
+      }
+    }
+
+    // Close modal on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) {
+          overlay.classList.remove('active');
+        }
+      });
+    });
+
+    // Gaze-hover simulation: subtle scale on mouse proximity
+    document.querySelectorAll('.spatial-card').forEach(function(card) {
+      card.addEventListener('mousemove', function(e) {
+        var rect = card.getBoundingClientRect();
+        var x = (e.clientX - rect.left) / rect.width - 0.5;
+        var y = (e.clientY - rect.top) / rect.height - 0.5;
+        var tz = parseInt(getComputedStyle(card).getPropertyValue('--tz')) || 0;
+        card.style.transform = 'translateZ(' + tz + 'px) rotateY(' + (x * 4) + 'deg) rotateX(' + (-y * 4) + 'deg)';
+      });
+      card.addEventListener('mouseleave', function() {
+        card.style.transform = '';
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyberpunk - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #0D0D0D;
+  --text-color: #00FF00;
+  --neon-green: #00FF00;
+  --neon-magenta: #FF00FF;
+  --neon-cyan: #00FFFF;
+  --dark-bg: #0D0D0D;
+  --dark-surface: #1A1A1A;
+  --dark-border: #333333;
+  --text-secondary: #888888;
+  --font-mono: 'Courier New', 'Consolas', monospace;
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--neon-green);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Scanline overlay */
+.vp-frame::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 0, 0.03) 2px,
+    rgba(0, 255, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* Glitch animation */
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+@keyframes glitchText {
+  0% { text-shadow: 2px 0 var(--neon-magenta), -2px 0 var(--neon-cyan); }
+  25% { text-shadow: -2px 0 var(--neon-magenta), 2px 0 var(--neon-cyan); }
+  50% { text-shadow: 2px 2px var(--neon-magenta), -2px -2px var(--neon-cyan); }
+  75% { text-shadow: -2px 2px var(--neon-magenta), 2px -2px var(--neon-cyan); }
+  100% { text-shadow: 2px 0 var(--neon-magenta), -2px 0 var(--neon-cyan); }
+}
+@keyframes neonPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+@keyframes scanline {
+  0% { top: -10%; }
+  100% { top: 110%; }
+}
+
+/* Neon glow text utility */
+.neon-green { text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green), 0 0 40px rgba(0,255,0,0.3); }
+.neon-magenta { text-shadow: 0 0 10px var(--neon-magenta), 0 0 20px var(--neon-magenta), 0 0 40px rgba(255,0,255,0.3); }
+.neon-cyan { text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan), 0 0 40px rgba(0,255,255,0.3); }
+
+/* Hero Section */
+.hero {
+  background: var(--dark-bg);
+  padding: 120px 0 80px;
+  border-bottom: 1px solid var(--dark-border);
+  position: relative;
+  overflow: hidden;
+ text-align: center;}
+.hero::after {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--neon-green);
+  box-shadow: 0 0 20px var(--neon-green);
+  animation: scanline 4s linear infinite;
+  opacity: 0.4;
+}
+.hero h1 {
+  font-size: clamp(36px, 7vw, 80px);
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 20px;
+  animation: glitchText 3s infinite;
+  color: var(--neon-green);
+}
+.hero .subtitle {
+  font-size: 18px;
+  color: var(--neon-cyan);
+  max-width: 600px;
+  margin-bottom: 24px;
+  text-shadow: 0 0 8px rgba(0,255,255,0.3);
+ margin-left: auto; margin-right: auto;}
+.hero .terminal-line {
+  margin-top: 24px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+.hero .terminal-line span {
+  color: var(--neon-green);
+}
+.hero .cursor {
+  display: inline-block;
+  width: 10px;
+  height: 18px;
+  background: var(--neon-green);
+  animation: cursorBlink 1s infinite;
+  vertical-align: middle;
+  margin-left: 2px;
+}
+
+/* Navigation */
+.demo-nav {
+  background: #111111;
+  border-bottom: 1px solid var(--neon-green);
+  box-shadow: 0 1px 10px rgba(0,255,0,0.1);
+  padding: 16px 0;
+}
+.demo-nav .container {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+ justify-content: center;}
+.demo-nav a {
+  color: var(--neon-green);
+  text-decoration: none;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.2s;
+  text-shadow: 0 0 5px rgba(0,255,0,0.3);
+}
+.demo-nav a:hover {
+  color: var(--neon-magenta);
+  text-shadow: 0 0 10px var(--neon-magenta);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 28px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border: 1px solid;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-mono);
+  position: relative;
+  overflow: hidden;
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.4s;
+}
+.btn:hover::before {
+  left: 100%;
+}
+.btn-primary {
+  background: transparent;
+  color: var(--neon-green);
+  border-color: var(--neon-green);
+  box-shadow: 0 0 10px rgba(0,255,0,0.2), inset 0 0 10px rgba(0,255,0,0.05);
+}
+.btn-primary:hover {
+  background: var(--neon-green);
+  color: #0D0D0D;
+  box-shadow: 0 0 20px var(--neon-green), 0 0 40px rgba(0,255,0,0.3);
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--neon-magenta);
+  border-color: var(--neon-magenta);
+  box-shadow: 0 0 10px rgba(255,0,255,0.2), inset 0 0 10px rgba(255,0,255,0.05);
+}
+.btn-secondary:hover {
+  background: var(--neon-magenta);
+  color: #0D0D0D;
+  box-shadow: 0 0 20px var(--neon-magenta), 0 0 40px rgba(255,0,255,0.3);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--neon-cyan);
+  border-color: transparent;
+}
+.btn-ghost:hover {
+  background: rgba(0,255,255,0.1);
+  border-color: var(--neon-cyan);
+  text-shadow: 0 0 8px var(--neon-cyan);
+}
+.btn-disabled {
+  background: transparent;
+  color: #444;
+  border-color: #333;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 20px;
+}
+.form-label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 5px rgba(0,255,255,0.3);
+}
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-family: var(--font-mono);
+  border: 1px solid var(--dark-border);
+  background: var(--dark-surface);
+  color: var(--neon-green);
+  border-radius: 0;
+  outline: none;
+  transition: all 0.2s;
+}
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  border-color: var(--neon-green);
+  box-shadow: 0 0 10px rgba(0,255,0,0.2), inset 0 0 10px rgba(0,255,0,0.05);
+}
+.form-input::placeholder { color: #555; }
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2300FF00' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+.form-checkbox,
+.form-radio {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--neon-green);
+  cursor: pointer;
+}
+.form-row {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.form-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+/* Cards */
+.card {
+  border: 1px solid var(--dark-border);
+  padding: 24px;
+  background: var(--dark-surface);
+  transition: all 0.3s;
+  position: relative;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, var(--neon-green), var(--neon-magenta), var(--neon-cyan));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.card:hover {
+  border-color: var(--neon-green);
+  box-shadow: 0 0 20px rgba(0,255,0,0.1), inset 0 0 20px rgba(0,255,0,0.02);
+  transform: translateY(-2px);
+}
+.card:hover::before {
+  opacity: 1;
+}
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--neon-green);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.card-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.card-magenta { border-left: 3px solid var(--neon-magenta); }
+.card-cyan { border-left: 3px solid var(--neon-cyan); }
+
+/* Typography */
+.typo-h1 { font-size: 48px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; color: var(--neon-green); text-shadow: 0 0 10px rgba(0,255,0,0.3); }
+.typo-h2 { font-size: 36px; font-weight: 700; line-height: 1.2; margin-bottom: 20px; color: var(--neon-cyan); }
+.typo-h3 { font-size: 28px; font-weight: 600; line-height: 1.3; margin-bottom: 20px; color: var(--neon-magenta); }
+.typo-h4 { font-size: 22px; font-weight: 600; line-height: 1.3; margin-bottom: 20px; color: var(--neon-green); }
+.typo-h5 { font-size: 18px; font-weight: 600; line-height: 1.4; margin-bottom: 20px; color: var(--text-secondary); }
+.typo-h6 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 12px; color: var(--neon-cyan); }
+.typo-body { font-size: 15px; line-height: 1.6; margin-bottom: 16px; color: var(--text-secondary); }
+.typo-caption { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 2px; }
+
+/* Modal */
+.modal-content {
+  background: var(--dark-surface);
+  border: 1px solid var(--neon-green);
+  padding: 40px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: 0 0 40px rgba(0,255,0,0.2);
+}
+.modal-content h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--neon-green);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+.modal-content p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+.modal-content .btn { width: 100%; }
+
+/* Color Palette */
+.palette-card {
+  background: var(--dark-surface);
+  padding: 32px;
+  border: 1px solid var(--dark-border);
+}
+
+/* Style Info */
+.style-info {
+  border: 1px solid var(--dark-border);
+  border-radius: 0;
+  background: var(--dark-surface);
+ text-align: center;}
+.style-info h3 { color: var(--neon-green); }
+</style>
+</head>
+<body>
+<!-- Viewport Switcher Bar -->
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+
+<div class="vp-frame">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <span class="tag tag-era">2020s Cyberpunk</span>
+      <span class="tag tag-complexity-medium">Complexity: Medium</span>
+      <h1>CYBERPUNK</h1>
+      <p class="subtitle">High-contrast neon aesthetics meets terminal minimalism. Glitch effects, scanlines, and cybernetic visual language.</p>
+      <div class="terminal-line">root@cyberdeck:~$ <span>initialize_interface</span> --mode=neon<span class="cursor"></span></div>
+    </div>
+  </section>
+
+  <!-- Navigation Demo -->
+  <nav class="demo-nav">
+    <div class="container">
+      <a href="#">&#9632; Systems</a>
+      <a href="#">&#9654; Neural Net</a>
+      <a href="#">&#9670; Implants</a>
+      <a href="#">&#9733; Upgrades</a>
+      <a href="#">&#9881; Console</a>
+    </div>
+  </nav>
+
+  <!-- Buttons Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title neon-green">Buttons</h2>
+      <div class="flex-gap">
+        <button class="btn btn-primary">Primary</button>
+        <button class="btn btn-secondary">Secondary</button>
+        <button class="btn btn-ghost">Ghost</button>
+        <button class="btn btn-disabled" disabled>Disabled</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Forms Section -->
+  <section class="section" style="background: var(--dark-surface); border-top: 1px solid var(--dark-border); border-bottom: 1px solid var(--dark-border);">
+    <div class="container">
+      <h2 class="section-title neon-cyan">Form Elements</h2>
+      <div style="max-width: 600px; margin: 0 auto;">
+        <div class="form-group">
+          <label class="form-label">User Handle</label>
+          <input type="text" class="form-input" placeholder="Enter your handle...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Uplink Address</label>
+          <input type="email" class="form-input" placeholder="user@net.arasaka">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Transmission</label>
+          <textarea class="form-textarea" placeholder="Encode your message..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sector</label>
+          <select class="form-select">
+            <option>Select sector</option>
+            <option>Night City - Watson</option>
+            <option>Night City - Westbrook</option>
+            <option>Night City - Pacifica</option>
+            <option>NET - Deep Space</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label><input type="checkbox" class="form-checkbox"> Accept protocol</label>
+          <label><input type="radio" name="implant" class="form-radio"> Basic OS</label>
+          <label><input type="radio" name="implant" class="form-radio"> Military grade</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cards Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title neon-magenta">Cards</h2>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">Neural Interface</div>
+          <p class="card-text">Direct brain-computer link. Latency: 0.003ms. Bandwidth: 10Tb/s. Requires chrome-level implant.</p>
+        </div>
+        <div class="card card-magenta">
+          <div class="card-title">Cyber Deck</div>
+          <p class="card-text">Portable hacking rig. 128-core quantum processor. Encrypted mesh networking. Ghost protocol enabled.</p>
+        </div>
+        <div class="card card-cyan">
+          <div class="card-title">Optic Scanner</div>
+          <p class="card-text">Military-grade optical implant. Thermal, night vision, threat detection. Firmware v7.2.1 stable.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typography Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title neon-green">Typography</h2>
+      <div class="typo-h1">Heading 1 // NEURAL</div>
+      <div class="typo-h2">Heading 2 // INTERFACE</div>
+      <div class="typo-h3">Heading 3 // PROTOCOL</div>
+      <div class="typo-h4">Heading 4 // CYBERDECK</div>
+      <div class="typo-h5">Heading 5 // SYSTEM</div>
+      <div class="typo-h6">Heading 6 // STATUS: ACTIVE</div>
+      <p class="typo-body">Monospace terminal fonts for that authentic hacker aesthetic. Every character occupies equal space — machine-readable, data-driven, zero compromise.</p>
+      <p class="typo-caption">End transmission // timestamp: 2077.03.15</p>
+    </div>
+  </section>
+
+  <!-- Color Palette -->
+  <section class="section" style="background: var(--dark-surface); border-top: 1px solid var(--dark-border); border-bottom: 1px solid var(--dark-border);">
+    <div class="container">
+      <h2 class="section-title neon-cyan">Color Palette</h2>
+      <div class="swatch-row">
+        <div class="swatch" style="background: #00FF00; box-shadow: 0 0 10px rgba(0,255,0,0.5);" data-hex="#00FF00"></div>
+        <div class="swatch" style="background: #FF00FF; box-shadow: 0 0 10px rgba(255,0,255,0.5);" data-hex="#FF00FF"></div>
+        <div class="swatch" style="background: #00FFFF; box-shadow: 0 0 10px rgba(0,255,255,0.5);" data-hex="#00FFFF"></div>
+        <div class="swatch" style="background: #0D0D0D;" data-hex="#0D0D0D"></div>
+        <div class="swatch" style="background: #1A1A1A;" data-hex="#1A1A1A"></div>
+        <div class="swatch" style="background: #333333;" data-hex="#333333"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal Demo -->
+  <div id="demo-modal" class="modal-overlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.8); align-items:center; justify-content:center;">
+    <div class="modal-content">
+      <h3>&#9888; ALERT</h3>
+      <p>Unauthorized access detected. Trace initiated. You have 30 seconds to disconnect before ICE countermeasure deploys.</p>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Disconnect</button>
+    </div>
+  </div>
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title neon-green">Modal Dialog</h2>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button>
+    </div>
+  </section>
+
+  <!-- Style Info Panel -->
+  <section class="section" style="background: var(--dark-surface); border-top: 1px solid var(--dark-border);">
+    <div class="container">
+      <div class="style-info">
+        <h3>&#9881; Style Information</h3>
+        <div class="style-info-grid">
+          <div class="style-info-item">
+            <div class="label">Era/Origin</div>
+            <div class="value">2020s Cyberpunk</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Best For</div>
+            <div class="value">Gaming, crypto, sci-fi, developer tools</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Avoid For</div>
+            <div class="value">Corporate, healthcare, children's products</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Complexity</div>
+            <div class="value">Medium — relies on glow effects and animations</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">CSS Keywords</div>
+            <div class="value">text-shadow:glow, @keyframes, font-family:monospace, neon colors on dark</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Design Variables</div>
+            <div class="value">--neon-green:#00FF00, --neon-magenta:#FF00FF, --neon-cyan:#00FFFF, --dark:#0D0D0D</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="shared.js"></script>
+</body>
+</html>

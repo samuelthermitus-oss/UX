@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixel Art - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root {
+  --page-bg: #0D0D0D;
+  --text-color: #FCFCFC;
+  --nes-black: #0D0D0D;
+  --nes-white: #FCFCFC;
+  --nes-red: #F83800;
+  --nes-blue: #6844FC;
+  --nes-green: #00A800;
+  --nes-yellow: #FCFC00;
+  --nes-bright-blue: #0058F8;
+  --nes-pink: #F87858;
+  --nes-dark-bg: #1A1A1A;
+  --nes-border: #383838;
+  --nes-grey: #7C7C7C;
+  --font-pixel: 'Press Start 2P', 'Courier New', monospace;
+  --pixel-shadow: 4px 4px 0px #000000;
+  --pixel-border: 2px solid;
+}
+
+@font-face {
+  font-family: 'Press Start 2P Fallback';
+  src: local('Courier New'), local('Consolas'), local('monospace');
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--nes-white);
+  font-family: var(--font-pixel);
+  font-size: 16px;
+  line-height: 1.8;
+  image-rendering: pixelated;
+}
+
+/* Pixel grid background pattern */
+.vp-frame {
+  background:
+    linear-gradient(rgba(56,56,56,0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,56,56,0.15) 1px, transparent 1px),
+    var(--page-bg);
+  background-size: 16px 16px;
+}
+
+/* Animations */
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes spriteAnimation {
+  0%   { background-position: 0 0; }
+  25%  { background-position: -32px 0; }
+  50%  { background-position: -64px 0; }
+  75%  { background-position: -96px 0; }
+  100% { background-position: 0 0; }
+}
+
+@keyframes marqueeScroll {
+  0%   { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes pixelStar {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.4; transform: scale(0.6); }
+}
+
+@keyframes coinSpin {
+  0%, 100% { transform: scaleX(1); }
+  50%      { transform: scaleX(0.2); }
+}
+
+@keyframes floatUp {
+  0%   { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-20px); opacity: 0; }
+}
+
+/* Hero Section */
+.hero {
+  background: var(--nes-black);
+  padding: 100px 0 60px;
+  border-bottom: 4px solid var(--nes-border);
+  position: relative;
+  overflow: hidden;
+ text-align: center;}
+
+/* Pixel grid overlay on hero */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    linear-gradient(rgba(56,56,56,0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,56,56,0.1) 1px, transparent 1px);
+  background-size: 8px 8px;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.hero .era-tags {
+  margin-bottom: 24px;
+}
+
+.hero .score-bar {
+  font-size: 10px;
+  color: var(--nes-white);
+  margin-bottom: 16px;
+  letter-spacing: 1px;
+}
+
+.hero .score-bar .score-num {
+  color: var(--nes-yellow);
+}
+
+.hero h1 {
+  font-size: clamp(24px, 5vw, 56px);
+  color: var(--nes-yellow);
+  text-shadow:
+    4px 4px 0 var(--nes-red),
+    8px 8px 0 var(--nes-black);
+  letter-spacing: 4px;
+  line-height: 1.3;
+  margin-bottom: 20px;
+}
+
+.hero .hero-subtitle {
+  font-size: clamp(8px, 1.5vw, 12px);
+  color: var(--nes-white);
+  max-width: 600px;
+  margin: 0 auto 24px;
+  line-height: 1.8;
+}
+
+/* Pixel stars decoration */
+.hero .pixel-stars {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.hero .pixel-star {
+  width: 8px;
+  height: 8px;
+  background: var(--nes-yellow);
+  animation: pixelStar 1.5s infinite;
+}
+
+.hero .pixel-star:nth-child(2) { animation-delay: 0.3s; }
+.hero .pixel-star:nth-child(3) { animation-delay: 0.6s; }
+.hero .pixel-star:nth-child(4) { animation-delay: 0.9s; }
+.hero .pixel-star:nth-child(5) { animation-delay: 1.2s; }
+
+/* Blinking press start */
+.hero .press-start {
+  font-size: 14px;
+  color: var(--nes-white);
+  animation: blink 1s infinite steps(1);
+  margin-top: 16px;
+  letter-spacing: 2px;
+}
+
+/* Coin ASCII art */
+.hero .pixel-ascii {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  line-height: 1.2;
+  color: var(--nes-yellow);
+  margin-top: 24px;
+  white-space: pre;
+  animation: coinSpin 2s infinite steps(1);
+}
+
+/* Decorative pixel blocks */
+.hero .pixel-blocks {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.hero .p-block {
+  width: 16px;
+  height: 16px;
+  image-rendering: pixelated;
+}
+
+/* Sprite character */
+.hero .sprite-container {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  align-items: flex-end;
+}
+
+.hero .sprite-char {
+  width: 32px;
+  height: 32px;
+  background: var(--nes-red);
+  image-rendering: pixelated;
+  position: relative;
+  animation: spriteAnimation 0.8s infinite steps(1);
+}
+
+.hero .sprite-char::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 4px;
+  width: 24px;
+  height: 4px;
+  background: rgba(0,0,0,0.3);
+}
+
+/* Marquee ticker */
+.hero .marquee-wrap {
+  overflow: hidden;
+  width: 100%;
+  margin-top: 24px;
+  border-top: 2px solid var(--nes-border);
+  border-bottom: 2px solid var(--nes-border);
+  padding: 48px 0;
+}
+
+.hero .marquee-text {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: 10px;
+  color: var(--nes-green);
+  animation: marqueeScroll 12s linear infinite;
+  letter-spacing: 2px;
+}
+
+/* Navigation */
+.demo-nav {
+  background: var(--nes-black);
+  border-bottom: 4px solid var(--nes-border);
+  padding: 0;
+}
+
+.demo-nav .container {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+ justify-content: center;}
+
+.demo-nav a {
+  color: var(--nes-white);
+  text-decoration: none;
+  font-size: 11px;
+  padding: 14px 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: none;
+  border-right: 2px solid var(--nes-border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.demo-nav a:first-child {
+  border-left: 2px solid var(--nes-border);
+}
+
+.demo-nav a:hover {
+  background: var(--nes-bright-blue);
+  color: var(--nes-white);
+}
+
+.demo-nav a .nav-arrow {
+  color: var(--nes-green);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  font-size: 12px;
+  font-family: var(--font-pixel);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: none;
+  cursor: pointer;
+  transition: none;
+  position: relative;
+  image-rendering: pixelated;
+}
+
+.btn-primary {
+  background: var(--nes-green);
+  color: var(--nes-black);
+  box-shadow: var(--pixel-shadow);
+}
+.btn-primary:hover {
+  background: #00D800;
+  box-shadow: 2px 2px 0px #000000;
+  transform: translate(2px, 2px);
+}
+.btn-primary:active {
+  box-shadow: none;
+  transform: translate(4px, 4px);
+}
+
+.btn-secondary {
+  background: var(--nes-bright-blue);
+  color: var(--nes-white);
+  box-shadow: var(--pixel-shadow);
+}
+.btn-secondary:hover {
+  background: #0070FF;
+  box-shadow: 2px 2px 0px #000000;
+  transform: translate(2px, 2px);
+}
+.btn-secondary:active {
+  box-shadow: none;
+  transform: translate(4px, 4px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--nes-white);
+  border: 2px solid var(--nes-white);
+  box-shadow: 4px 4px 0px var(--nes-border);
+}
+.btn-ghost:hover {
+  background: rgba(252,252,252,0.1);
+  box-shadow: 2px 2px 0px var(--nes-border);
+  transform: translate(2px, 2px);
+}
+.btn-ghost:active {
+  box-shadow: none;
+  transform: translate(4px, 4px);
+}
+
+.btn-disabled {
+  background: var(--nes-grey);
+  color: #585858;
+  box-shadow: 4px 4px 0px #2A2A2A;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  color: var(--nes-yellow);
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 12px;
+  font-family: var(--font-pixel);
+  border: 2px solid var(--nes-border);
+  background: var(--nes-dark-bg);
+  color: var(--nes-white);
+  border-radius: 0;
+  outline: none;
+  transition: none;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.5);
+  caret-color: var(--nes-green);
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  border-color: var(--nes-green);
+  box-shadow: 4px 4px 0px rgba(0,168,0,0.3);
+}
+
+.form-input::placeholder {
+  color: var(--nes-grey);
+  font-family: var(--font-pixel);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Crect fill='%23FCFC00' x='2' y='2' width='8' height='8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px;
+}
+
+.form-checkbox,
+.form-radio {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--nes-green);
+  cursor: pointer;
+  image-rendering: pixelated;
+}
+
+.form-row {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.form-row label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px;
+  cursor: pointer;
+  color: var(--nes-white);
+}
+
+/* Cards */
+.card {
+  background: var(--nes-black);
+  padding: 24px;
+  position: relative;
+  transition: none;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+}
+
+.card-red::after {
+  box-shadow:
+    inset 0 0 0 2px var(--nes-red),
+    4px 4px 0 0 var(--nes-red);
+}
+.card-blue::after {
+  box-shadow:
+    inset 0 0 0 2px var(--nes-bright-blue),
+    4px 4px 0 0 var(--nes-bright-blue);
+}
+.card-yellow::after {
+  box-shadow:
+    inset 0 0 0 2px var(--nes-yellow),
+    4px 4px 0 0 var(--nes-yellow);
+}
+
+.card-icon {
+  font-size: 24px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--nes-yellow);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.card-text {
+  font-size: 9px;
+  color: var(--nes-white);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+.card-score {
+  font-size: 18px;
+  color: var(--nes-green);
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+}
+
+.card-label {
+  font-size: 8px;
+  color: var(--nes-grey);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+
+/* Typography */
+.typo-h1 { font-size: clamp(18px, 3vw, 36px); font-weight: 700; line-height: 1.4; margin-bottom: 20px; color: var(--nes-red); }
+.typo-h2 { font-size: clamp(16px, 2.5vw, 28px); font-weight: 700; line-height: 1.4; margin-bottom: 20px; color: var(--nes-yellow); }
+.typo-h3 { font-size: clamp(14px, 2vw, 22px); font-weight: 700; line-height: 1.4; margin-bottom: 20px; color: var(--nes-green); }
+.typo-h4 { font-size: clamp(12px, 1.8vw, 18px); font-weight: 700; line-height: 1.4; margin-bottom: 20px; color: var(--nes-bright-blue); }
+.typo-h5 { font-size: clamp(10px, 1.5vw, 14px); font-weight: 700; line-height: 1.5; margin-bottom: 20px; color: var(--nes-pink); }
+.typo-h6 { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 12px; color: var(--nes-blue); }
+.typo-body { font-size: 10px; line-height: 1.6; margin-bottom: 16px; color: var(--nes-white); }
+.typo-caption { font-size: 8px; color: var(--nes-grey); text-transform: uppercase; letter-spacing: 2px; }
+
+/* Color Palette */
+.palette-card {
+  background: var(--nes-black);
+  padding: 0;
+  border: none;
+}
+
+.swatch-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.swatch {
+  width: 80px;
+  height: 80px;
+  border: 2px solid var(--nes-border);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+  position: relative;
+}
+
+/* Modal */
+.modal-content {
+  background: var(--nes-black);
+  padding: 0;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.8);
+  border: 4px solid var(--nes-red);
+  font-family: var(--font-pixel);
+}
+
+.modal-header {
+  background: var(--nes-red);
+  padding: 16px 20px;
+  text-align: center;
+}
+
+.modal-header h3 {
+  font-size: 16px;
+  color: var(--nes-white);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+}
+
+.modal-body {
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.modal-body p {
+  font-size: 10px;
+  color: var(--nes-white);
+  line-height: 1.8;
+  margin-bottom: 8px;
+}
+
+.modal-body .continue-text {
+  font-size: 14px;
+  color: var(--nes-yellow);
+  margin-bottom: 20px;
+  animation: blink 1.2s infinite steps(1);
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.modal-buttons .btn {
+  min-width: 100px;
+}
+
+/* Style Info */
+.style-info {
+  border: 2px solid var(--nes-border);
+  border-radius: 0;
+  background: var(--nes-black);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+ text-align: center;}
+
+.style-info h3 {
+  color: var(--nes-yellow);
+}
+
+/* Section borders for retro feel */
+.section {
+  border-bottom: 2px solid var(--nes-border);
+}
+
+.section-title {
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 32px;
+}
+
+/* Pixelated divider */
+.pixel-divider {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 0;
+}
+
+.pixel-divider span {
+  width: 8px;
+  height: 8px;
+}
+</style>
+</head>
+<body>
+<!-- Viewport Switcher Bar -->
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+
+<div class="vp-frame">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-content">
+      <div class="era-tags">
+        <span class="tag tag-era">1980s Arcade</span>
+        <span class="tag tag-complexity-medium">Complexity: Medium</span>
+      </div>
+
+      <div class="score-bar">
+        HI-SCORE: <span class="score-num">9999999</span> &nbsp;&nbsp;|&nbsp;&nbsp; 1UP: <span class="score-num">SCORE: 0042800</span>
+      </div>
+
+      <div class="pixel-stars">
+        <div class="pixel-star"></div>
+        <div class="pixel-star"></div>
+        <div class="pixel-star"></div>
+        <div class="pixel-star"></div>
+        <div class="pixel-star"></div>
+      </div>
+
+      <h1>PIXEL QUEST</h1>
+
+      <p class="hero-subtitle">8-BIT AESTHETIC WITH SHARP EDGES AND BLOCKY ELEMENTS. RETRO GAMING FEEL WITH PIXELATED FONTS AND NES COLOR PALETTE.</p>
+
+      <div class="pixel-blocks">
+        <div class="p-block" style="background: var(--nes-red);"></div>
+        <div class="p-block" style="background: var(--nes-blue);"></div>
+        <div class="p-block" style="background: var(--nes-green);"></div>
+        <div class="p-block" style="background: var(--nes-yellow);"></div>
+        <div class="p-block" style="background: var(--nes-bright-blue);"></div>
+        <div class="p-block" style="background: var(--nes-pink);"></div>
+        <div class="p-block" style="background: var(--nes-red);"></div>
+        <div class="p-block" style="background: var(--nes-blue);"></div>
+        <div class="p-block" style="background: var(--nes-green);"></div>
+        <div class="p-block" style="background: var(--nes-yellow);"></div>
+        <div class="p-block" style="background: var(--nes-bright-blue);"></div>
+        <div class="p-block" style="background: var(--nes-pink);"></div>
+      </div>
+
+      <div class="pixel-ascii">
+     ______
+    /      \
+   |  $$$$$ |
+   |  $$$$$ |
+    \______/
+      ||||
+      ||||
+      </div>
+
+      <div class="sprite-container">
+        <div class="sprite-char" style="background: var(--nes-red);"></div>
+        <div class="sprite-char" style="background: var(--nes-bright-blue);"></div>
+        <div class="sprite-char" style="background: var(--nes-green);"></div>
+      </div>
+
+      <div class="press-start">▶ PRESS START ◀</div>
+
+      <div class="marquee-wrap">
+        <span class="marquee-text">★ HIGH SCORE: PLAYER1 9999999 ★ PLAYER2 8888888 ★ PLAYER3 7777777 ★ INSERT COIN TO CONTINUE ★ STAGE 1 CLEAR! ★ BONUS STAGE UNLOCKED ★ SECRET LEVEL FOUND ★ ALL HIGH SCORES BEATEN ★</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation Demo -->
+  <nav class="demo-nav">
+    <div class="container">
+      <a href="#"><span class="nav-arrow">></span> START</a>
+      <a href="#"><span class="nav-arrow">></span> LEVELS</a>
+      <a href="#"><span class="nav-arrow">></span> SCORES</a>
+      <a href="#"><span class="nav-arrow">></span> OPTIONS</a>
+      <a href="#"><span class="nav-arrow">></span> CREDITS</a>
+    </div>
+  </nav>
+
+  <!-- Buttons Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title" style="color: var(--nes-yellow);">Buttons</h2>
+      <div class="flex-gap" style="flex-wrap: wrap;">
+        <button class="btn btn-primary">START GAME</button>
+        <button class="btn btn-secondary">CONTINUE</button>
+        <button class="btn btn-ghost">SOUND FX</button>
+        <button class="btn btn-disabled" disabled>LOCKED</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Forms Section -->
+  <section class="section" style="background: var(--nes-dark-bg);">
+    <div class="container">
+      <h2 class="section-title" style="color: var(--nes-green);">Form Elements</h2>
+      <div style="max-width: 600px; margin: 0 auto;">
+        <div class="form-group">
+          <label class="form-label">Player Name</label>
+          <input type="text" class="form-input" placeholder="ENTER NAME...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password Code</label>
+          <input type="password" class="form-input" placeholder="ENTER CODE...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Quest Log</label>
+          <textarea class="form-textarea" placeholder="DESCRIBE YOUR QUEST..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Select Stage</label>
+          <select class="form-select">
+            <option>CHOOSE LEVEL</option>
+            <option>WORLD 1 - GREEN PLAINS</option>
+            <option>WORLD 2 - ICE CAVERN</option>
+            <option>WORLD 3 - FIRE FORTRESS</option>
+            <option>WORLD 4 - DARK CASTLE</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label><input type="checkbox" class="form-checkbox"> SOUND ON</label>
+          <label><input type="radio" name="difficulty" class="form-radio"> EASY</label>
+          <label><input type="radio" name="difficulty" class="form-radio"> HARD</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cards Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title" style="color: var(--nes-red);">Cards</h2>
+      <div class="grid-3">
+        <div class="card card-red">
+          <span class="card-icon">&#9889;</span>
+          <div class="card-title">Power Up</div>
+          <p class="card-text">Collected: 12/50. Speed boost activated. Jump height increased by 2x. Duration: 30 seconds.</p>
+          <div class="card-score">x12</div>
+          <div class="card-label">Collected</div>
+        </div>
+        <div class="card card-blue">
+          <span class="card-icon">&#9733;</span>
+          <div class="card-title">High Score</div>
+          <p class="card-text">Current rank: #1. Total points: 9,999,999. Coins collected: 128. Stages cleared: 8/8.</p>
+          <div class="card-score">9999999</div>
+          <div class="card-label">Points</div>
+        </div>
+        <div class="card card-yellow">
+          <span class="card-icon">&#127942;</span>
+          <div class="card-title">Achievement Unlocked</div>
+          <p class="card-text">Speed Demon: Complete World 1 in under 60 seconds. Only 2% of players earned this badge.</p>
+          <div class="card-score">1/100</div>
+          <div class="card-label">Unlocked</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typography Section -->
+  <section class="section" style="background: var(--nes-dark-bg);">
+    <div class="container">
+      <h2 class="section-title" style="color: var(--nes-bright-blue);">Typography</h2>
+      <div class="typo-h1">Heading 1 - QUEST BEGINS</div>
+      <div class="typo-h2">Heading 2 - DUNGEON CRAWL</div>
+      <div class="typo-h3">Heading 3 - BOSS FIGHT</div>
+      <div class="typo-h4">Heading 4 - EXTRA LIFE</div>
+      <div class="typo-h5">Heading 5 - GAME OVER</div>
+      <div class="typo-h6">Heading 6 - INSERT COIN</div>
+      <p class="typo-body">Every pixel tells a story. From the NES era to modern indie games, the 8-bit aesthetic remains timeless. Sharp edges, limited palettes, and creative constraint breed iconic design.</p>
+      <p class="typo-caption">// STAGE 1 - WORLD 1-1 //</p>
+    </div>
+  </section>
+
+  <!-- Color Palette -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title" style="color: var(--nes-pink);">Color Palette - NES</h2>
+      <div class="swatch-row">
+        <div class="swatch" style="background: #0D0D0D; box-shadow: 4px 4px 0 #000;" data-hex="#0D0D0D"></div>
+        <div class="swatch" style="background: #FCFCFC; box-shadow: 4px 4px 0 #000;" data-hex="#FCFCFC"></div>
+        <div class="swatch" style="background: #F83800; box-shadow: 4px 4px 0 #000;" data-hex="#F83800"></div>
+        <div class="swatch" style="background: #6844FC; box-shadow: 4px 4px 0 #000;" data-hex="#6844FC"></div>
+        <div class="swatch" style="background: #00A800; box-shadow: 4px 4px 0 #000;" data-hex="#00A800"></div>
+        <div class="swatch" style="background: #FCFC00; box-shadow: 4px 4px 0 #000;" data-hex="#FCFC00"></div>
+        <div class="swatch" style="background: #0058F8; box-shadow: 4px 4px 0 #000;" data-hex="#0058F8"></div>
+        <div class="swatch" style="background: #F87858; box-shadow: 4px 4px 0 #000;" data-hex="#F87858"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal Demo -->
+  <div id="demo-modal" class="modal-overlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.85); align-items:center; justify-content:center;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>GAME OVER</h3>
+      </div>
+      <div class="modal-body">
+        <p>CONTINUE?</p>
+        <div class="continue-text">PUSH BUTTON TO CONTINUE</div>
+        <div class="modal-buttons">
+          <button class="btn btn-primary" onclick="toggleModal('demo-modal')">YES</button>
+          <button class="btn btn-ghost" onclick="toggleModal('demo-modal')">NO</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <section class="section" style="background: var(--nes-dark-bg);">
+    <div class="container">
+      <h2 class="section-title" style="color: var(--nes-yellow);">Modal Dialog</h2>
+      <button class="btn btn-primary" onclick="toggleModal('demo-modal')">OPEN MODAL</button>
+    </div>
+  </section>
+
+  <!-- Style Info Panel -->
+  <section class="section">
+    <div class="container">
+      <div class="style-info">
+        <h3>&#9881; Style Information</h3>
+        <div class="style-info-grid">
+          <div class="style-info-item">
+            <div class="label">Era/Origin</div>
+            <div class="value">1980s Arcade</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Best For</div>
+            <div class="value">Indie games, retro tools, creative portfolios, nostalgia marketing</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Avoid For</div>
+            <div class="value">Corporate dashboards, enterprise SaaS, medical, legal</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Complexity</div>
+            <div class="value">Medium - relies on pixel fonts, box-shadow borders, and sprite animations</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">CSS Keywords</div>
+            <div class="value">box-shadow:pixel-border, image-rendering:pixelated, steps(), NES palette, no border-radius</div>
+          </div>
+          <div class="style-info-item">
+            <div class="label">Design Variables</div>
+            <div class="value">--nes-red:#F83800, --nes-green:#00A800, --nes-yellow:#FCFC00, --nes-blue:#6844FC</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="shared.js"></script>
+</body>
+</html>

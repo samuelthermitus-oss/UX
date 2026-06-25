@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zero Interface - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #FAFAFA;
+  --text-color: #1A1A1A;
+  --surface: #FFFFFF;
+  --border: #F0F0F0;
+  --text-secondary: #888888;
+  --text-tertiary: #BBBBBB;
+  --warm-bg: #F5F1E8;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+/* Hero */
+.zero-hero {
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px;
+  background: var(--page-bg);
+  position: relative;
+}
+
+.zero-hero h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  color: var(--text-color);
+}
+
+.zero-hero .subtitle {
+  font-size: 1.15rem;
+  color: var(--text-tertiary);
+  max-width: 480px;
+  line-height: 1.8;
+  margin-bottom: 24px;
+  font-weight: 300;
+}
+
+/* AI Prediction bubble */
+.ai-prediction {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 32px;
+  max-width: 400px;
+  width: 90%;
+  opacity: 0.7;
+  transition: all 0.4s;
+  position: relative;
+}
+
+.ai-prediction:hover {
+  opacity: 1;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+}
+
+.ai-prediction .ai-label {
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-prediction .ai-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22C55E;
+  animation: aiPulse 2s ease-in-out infinite;
+}
+
+@keyframes aiPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.ai-prediction .ai-text {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.ai-prediction .ai-text strong {
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+/* Voice input visualizer */
+.voice-input {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  margin-top: 16px;
+  justify-content: center;
+}
+
+.voice-bar {
+  width: 3px;
+  background: var(--text-tertiary);
+  border-radius: 2px;
+  animation: voiceWave 1.2s ease-in-out infinite;
+}
+
+.voice-bar:nth-child(1) { height: 8px; animation-delay: 0s; }
+.voice-bar:nth-child(2) { height: 16px; animation-delay: 0.1s; }
+.voice-bar:nth-child(3) { height: 24px; animation-delay: 0.2s; }
+.voice-bar:nth-child(4) { height: 16px; animation-delay: 0.3s; }
+.voice-bar:nth-child(5) { height: 8px; animation-delay: 0.4s; }
+.voice-bar:nth-child(6) { height: 20px; animation-delay: 0.15s; }
+.voice-bar:nth-child(7) { height: 12px; animation-delay: 0.25s; }
+
+@keyframes voiceWave {
+  0%, 100% { transform: scaleY(0.5); opacity: 0.4; }
+  50% { transform: scaleY(1); opacity: 0.8; }
+}
+
+/* Navigation - minimal */
+.zero-nav {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.zero-nav a {
+  color: var(--text-tertiary);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  transition: color 0.3s;
+  position: relative;
+}
+
+.zero-nav a:hover {
+  color: var(--text-color);
+}
+
+.zero-nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--text-color);
+  transition: width 0.3s;
+}
+
+.zero-nav a:hover::after {
+  width: 100%;
+}
+
+/* Buttons - ghost/minimal */
+.zero-buttons {
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.zero-buttons h2 {
+  font-size: 1.3rem;
+  font-weight: 300;
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+}
+
+.zero-buttons .section-desc {
+  color: var(--text-tertiary);
+  margin-bottom: 32px;
+  font-size: 0.9rem;
+}
+
+.btn-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.zero-btn {
+  font-family: system-ui;
+  font-size: 0.9rem;
+  font-weight: 400;
+  padding: 12px 28px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.zero-btn:hover {
+  background: var(--surface);
+  border-color: var(--text-tertiary);
+  color: var(--text-color);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+.zero-btn.btn-subtle {
+  background: var(--warm-bg);
+  border-color: transparent;
+  color: var(--text-secondary);
+}
+
+.zero-btn.btn-subtle:hover {
+  background: #EDE8DC;
+  color: var(--text-color);
+}
+
+.zero-btn.btn-minimal {
+  border: none;
+  padding: 12px 20px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  color: var(--text-tertiary);
+}
+
+.zero-btn.btn-minimal:hover {
+  color: var(--text-color);
+}
+
+/* Forms - ultra minimal */
+.zero-forms {
+  padding: 64px 20px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.zero-forms h2 {
+  font-size: 1.3rem;
+  font-weight: 300;
+  margin-bottom: 8px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.zero-forms .section-desc {
+  color: var(--text-tertiary);
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 0.9rem;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  margin-bottom: 20px;
+  font-weight: 400;
+}
+
+.zero-input {
+  width: 100%;
+  padding: 14px 0;
+  font-size: 1.1rem;
+  font-family: system-ui;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-color);
+  background: transparent;
+  outline: none;
+  transition: border-color 0.3s;
+  font-weight: 300;
+}
+
+.zero-input:focus {
+  border-bottom-color: var(--text-color);
+}
+
+.zero-input::placeholder {
+  color: var(--text-tertiary);
+  font-weight: 300;
+}
+
+textarea.zero-input {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.zero-submit {
+  width: 100%;
+  padding: 16px;
+  background: var(--text-color);
+  color: var(--page-bg);
+  border: none;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-family: system-ui;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 8px;
+}
+
+.zero-submit:hover {
+  background: #333;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+/* Cards - floating */
+.zero-cards {
+  padding: 64px 20px;
+}
+
+.zero-cards h2 {
+  font-size: 1.3rem;
+  font-weight: 300;
+  margin-bottom: 12px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.zero-cards .section-desc {
+  color: var(--text-tertiary);
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 0.9rem;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.zero-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  transition: all 0.4s;
+  opacity: 0.7;
+}
+
+.zero-card:hover {
+  opacity: 1;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+  transform: translateY(-2px);
+}
+
+.zero-card .card-icon {
+  font-size: 1.8rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
+.zero-card:hover .card-icon {
+  opacity: 1;
+}
+
+.zero-card h3 {
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.zero-card p {
+  font-size: 0.88rem;
+  color: var(--text-tertiary);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+/* Typography */
+.zero-typography {
+  padding: 64px 20px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.zero-typography h2 {
+  font-size: 1.3rem;
+  font-weight: 300;
+  margin-bottom: 32px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.type-sample {
+  margin-bottom: 32px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.type-sample:last-child { border-bottom: none; }
+
+.type-sample .label {
+  font-size: 0.65rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 10px;
+}
+
+.type-sample h1 { font-size: 2.2rem; font-weight: 200; letter-spacing: -0.02em; }
+.type-sample h2 { font-size: 1.6rem; font-weight: 300; }
+.type-sample h3 { font-size: 1.2rem; font-weight: 400; }
+.type-sample p { font-size: 1rem; color: var(--text-secondary); line-height: 1.8; font-weight: 300; }
+
+/* Color Palette */
+.zero-palette {
+  padding: 64px 20px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.zero-palette h2 {
+  font-size: 1.3rem;
+  font-weight: 300;
+  margin-bottom: 32px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.swatch {
+  aspect-ratio: 1.3;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px;
+  transition: all 0.3s;
+  border: 1px solid var(--border);
+}
+
+.swatch:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.05); }
+
+.swatch .swatch-label {
+  font-size: 0.65rem;
+  font-weight: 400;
+  background: rgba(255,255,255,0.85);
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: var(--text-secondary);
+}
+
+/* Modal */
+.zero-modal-section {
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.zero-modal-section h2 {
+  font-size: 1.3rem;
+  font-weight: 300;
+  margin-bottom: 32px;
+  color: var(--text-secondary);
+}
+
+.modal-trigger {
+  padding: 12px 24px;
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: 0.9rem;
+  font-weight: 400;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: system-ui;
+}
+
+.modal-trigger:hover {
+  background: var(--surface);
+  border-color: var(--text-tertiary);
+  color: var(--text-color);
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(250,250,250,0.85);
+  backdrop-filter: blur(20px);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.active { display: flex; }
+
+.zero-modal {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 440px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+  border: 1px solid var(--border);
+}
+
+.zero-modal h3 {
+  font-size: 1.2rem;
+  font-weight: 400;
+  margin-bottom: 12px;
+  color: var(--text-color);
+}
+
+.zero-modal p {
+  color: var(--text-tertiary);
+  line-height: 1.7;
+  margin-bottom: 24px;
+  font-size: 0.92rem;
+  font-weight: 300;
+}
+
+.zero-modal .modal-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.zero-modal .modal-close:hover {
+  color: var(--text-color);
+}
+
+/* Style Info */
+.zero-info {
+  padding: 64px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.zero-info h2 {
+  font-size: 1.3rem;
+  font-weight: 300;
+  margin-bottom: 32px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.info-item {
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: all 0.3s;
+}
+
+.info-item:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+
+.info-item .info-label {
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 4px;
+}
+
+.info-item .info-value {
+  font-weight: 400;
+  color: var(--text-color);
+}
+
+@media (max-width: 768px) {
+  .zero-hero h1 { font-size: 2rem; }
+  .card-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+<div class="vp-frame">
+
+<!-- Hero -->
+<section class="zero-hero">
+  <h1>Zero Interface</h1>
+  <p class="subtitle">The best interface is almost no interface. Elements fade in only when needed and disappear when not.</p>
+  <div class="ai-prediction">
+    <div class="ai-label"><span class="ai-dot"></span> AI Suggestion</div>
+    <div class="ai-text">Based on your recent activity, you might want to <strong>continue editing your draft</strong> or <strong>review pending approvals</strong>.</div>
+    <div class="voice-input">
+      <div class="voice-bar"></div>
+      <div class="voice-bar"></div>
+      <div class="voice-bar"></div>
+      <div class="voice-bar"></div>
+      <div class="voice-bar"></div>
+      <div class="voice-bar"></div>
+      <div class="voice-bar"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Navigation - ultra minimal -->
+<nav class="zero-nav">
+  <a href="#">Home</a>
+  <a href="#">Explore</a>
+  <a href="#">Create</a>
+  <a href="#">Settings</a>
+</nav>
+
+<!-- Buttons -->
+<section class="zero-buttons">
+  <h2>Almost Invisible</h2>
+  <p class="section-desc">Buttons that appear only when relevant and fade when not in use.</p>
+  <div class="btn-grid">
+    <button class="zero-btn">Continue</button>
+    <button class="zero-btn btn-subtle">Save Draft</button>
+    <button class="zero-btn">Discard</button>
+    <button class="zero-btn btn-minimal">Skip for now</button>
+  </div>
+</section>
+
+<!-- Forms -->
+<section class="zero-forms">
+  <h2>Minimal Input</h2>
+  <p class="section-desc">Form fields that reveal themselves only when focus enters.</p>
+  <div class="form-group">
+    <label>What's on your mind?</label>
+    <input type="text" class="zero-input" placeholder="Start typing...">
+  </div>
+  <div class="form-group">
+    <label>Email</label>
+    <input type="email" class="zero-input" placeholder="you@example.com">
+  </div>
+  <div class="form-group">
+    <label>Details</label>
+    <textarea class="zero-input" placeholder="Tell us more..."></textarea>
+  </div>
+  <button class="zero-submit">Send</button>
+</section>
+
+<!-- Cards -->
+<section class="zero-cards">
+  <h2>Gentle Discoveries</h2>
+  <p class="section-desc">Content that reveals itself with gentle hover interactions.</p>
+  <div class="card-grid">
+    <article class="zero-card">
+      <div class="card-icon">&#128247;</div>
+      <h3>Capture Moments</h3>
+      <p>An intelligent camera that anticipates the perfect shot and captures it without prompting.</p>
+    </article>
+    <article class="zero-card">
+      <div class="card-icon">&#128161;</div>
+      <h3>Anticipate Needs</h3>
+      <p>AI-powered suggestions appear only when you might need them, invisible otherwise.</p>
+    </article>
+    <article class="zero-card">
+      <div class="card-icon">&#127912;</div>
+      <h3>Flow State</h3>
+      <p>The interface disappears when you are focused, returning only when you signal for help.</p>
+    </article>
+  </div>
+</section>
+
+<!-- Typography -->
+<section class="zero-typography">
+  <h2>Typography</h2>
+  <div class="type-sample">
+    <div class="label">Display</div>
+    <h1>Invisible by Design</h1>
+  </div>
+  <div class="type-sample">
+    <div class="label">Heading</div>
+    <h2>The Interface Vanishes</h2>
+  </div>
+  <div class="type-sample">
+    <div class="label">Subheading</div>
+    <h3>Technology Should Be Invisible</h3>
+  </div>
+  <div class="type-sample">
+    <div class="label">Body</div>
+    <p>Zero interface design removes every unnecessary element. The goal is not minimalism for its own sake, but the elimination of friction. When the UI disappears, the user focuses entirely on their task, not the tool.</p>
+  </div>
+</section>
+
+<!-- Color Palette -->
+<section class="zero-palette">
+  <h2>Neutral Palette</h2>
+  <div class="palette-grid">
+    <div class="swatch" style="background:#FAFAFA;"><span class="swatch-label">#FAFAFA</span></div>
+    <div class="swatch" style="background:#F0F0F0;"><span class="swatch-label">#F0F0F0</span></div>
+    <div class="swatch" style="background:#F5F1E8;"><span class="swatch-label">#F5F1E8</span></div>
+    <div class="swatch" style="background:#FFFFFF;border:1px solid #E5E5E5;"><span class="swatch-label">#FFFFFF</span></div>
+    <div class="swatch" style="background:#1A1A1A;"><span class="swatch-label" style="color:#fff;">#1A1A1A</span></div>
+    <div class="swatch" style="background:#888888;"><span class="swatch-label" style="color:#fff;">#888888</span></div>
+  </div>
+</section>
+
+<!-- Modal -->
+<section class="zero-modal-section">
+  <h2>Gentle Dialog</h2>
+  <button class="modal-trigger" onclick="document.getElementById('zero-modal').classList.add('active')">Show Dialog</button>
+  <div id="zero-modal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('active')">
+    <div class="zero-modal">
+      <button class="modal-close" onclick="document.getElementById('zero-modal').classList.remove('active')">&times;</button>
+      <h3>A Gentle Reminder</h3>
+      <p>This dialog appears softly, with a blurred backdrop that keeps you in context. It asks for your attention without demanding it.</p>
+      <button class="zero-submit" onclick="document.getElementById('zero-modal').classList.remove('active')" style="margin-top:0;">Understood</button>
+    </div>
+  </div>
+</section>
+
+<!-- Style Info -->
+<section class="zero-info">
+  <h2>Style Information</h2>
+  <div class="info-grid">
+    <div class="info-item">
+      <div class="info-label">Era</div>
+      <div class="info-value">2020s AI-Era</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Complexity</div>
+      <div class="info-value">Low</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Best For</div>
+      <div class="info-value">Voice Assistants, AI, Smart Home</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Font</div>
+      <div class="info-value">System-UI</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Border Radius</div>
+      <div class="info-value">12-16px</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">Effects</div>
+      <div class="info-value">Voice, Gestures, AI Predictions</div>
+    </div>
+  </div>
+</section>
+
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

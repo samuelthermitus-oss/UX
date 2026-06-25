@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motion-Driven - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root {
+  --page-bg: #0F0F14;
+  --text-color: #E8E8F0;
+  --accent: #FF4D6A;
+  --accent-blue: #4D7CFF;
+  --accent-green: #00E5A0;
+  --accent-yellow: #FFD93D;
+  --surface: #1A1A24;
+  --surface-light: #242432;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scroll animation base */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-60px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(60px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Stagger delay utility */
+.delay-1 { transition-delay: 0.1s; }
+.delay-2 { transition-delay: 0.2s; }
+.delay-3 { transition-delay: 0.3s; }
+.delay-4 { transition-delay: 0.4s; }
+
+/* Hero */
+.motion-hero {
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.motion-hero::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(255,77,106,0.15), transparent 70%);
+  top: -200px; right: -100px;
+  animation: floatOrb 10s ease-in-out infinite;
+}
+
+.motion-hero::after {
+  content: '';
+  position: absolute;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(77,124,255,0.12), transparent 70%);
+  bottom: -200px; left: -100px;
+  animation: floatOrb 12s ease-in-out infinite reverse;
+}
+
+@keyframes floatOrb {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(40px, -30px); }
+}
+
+.motion-hero h1 {
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.motion-hero h1 .highlight {
+  background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.motion-hero .subtitle {
+  font-size: 1.15rem;
+  color: rgba(255,255,255,0.6);
+  max-width: 550px;
+  line-height: 1.7;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.motion-hero .hero-cta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: relative;
+}
+
+/* Parallax scrolling indicator */
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.scroll-indicator span {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.scroll-indicator .arrow {
+  width: 24px; height: 24px;
+  border-right: 2px solid rgba(255,255,255,0.3);
+  border-bottom: 2px solid rgba(255,255,255,0.3);
+  transform: rotate(45deg);
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(10px); }
+}
+
+/* Navigation */
+.motion-nav {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 20px;
+  background: rgba(15,15,20,0.8);
+  backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  flex-wrap: wrap;
+}
+
+.motion-nav a {
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 10px;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.motion-nav a:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.06);
+}
+
+/* Buttons */
+.motion-buttons {
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.motion-buttons h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.motion-buttons .section-sub {
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 32px;
+}
+
+.btn-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.motion-btn {
+  font-family: system-ui;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.motion-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 0; height: 0;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.5s, height 0.5s;
+}
+
+.motion-btn:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+.motion-btn.btn-red {
+  background: var(--accent);
+  color: #fff;
+}
+
+.motion-btn.btn-red:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(255,77,106,0.35);
+}
+
+.motion-btn.btn-blue {
+  background: var(--accent-blue);
+  color: #fff;
+}
+
+.motion-btn.btn-blue:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(77,124,255,0.35);
+}
+
+.motion-btn.btn-green {
+  background: var(--accent-green);
+  color: #0F0F14;
+}
+
+.motion-btn.btn-green:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0,229,160,0.35);
+}
+
+.motion-btn.btn-outline {
+  background: transparent;
+  color: #fff;
+  border: 2px solid rgba(255,255,255,0.2);
+}
+
+.motion-btn.btn-outline:hover {
+  border-color: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.05);
+  transform: translateY(-3px);
+}
+
+/* Forms */
+.motion-forms {
+  padding: 64px 20px;
+  max-width: 550px;
+  margin: 0 auto;
+}
+
+.motion-forms h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.motion-forms .section-sub {
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.motion-input {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 1rem;
+  font-family: system-ui;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  color: #fff;
+  background: var(--surface);
+  outline: none;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.motion-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255,77,106,0.15);
+  transform: translateY(-1px);
+}
+
+.motion-input::placeholder {
+  color: rgba(255,255,255,0.25);
+}
+
+textarea.motion-input {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Cards */
+.motion-cards {
+  padding: 64px 20px;
+}
+
+.motion-cards h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.motion-cards .section-sub {
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.motion-card {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 32px;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.motion-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-blue));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.motion-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255,255,255,0.12);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+}
+
+.motion-card:hover::before {
+  transform: scaleX(1);
+}
+
+.motion-card .card-number {
+  font-size: 3rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+}
+
+.motion-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.motion-card p {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.7;
+}
+
+/* Typography */
+.motion-typography {
+  padding: 64px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.motion-typography h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.type-sample {
+  margin-bottom: 24px;
+  padding: 24px;
+  background: var(--surface);
+  border-radius: 12px;
+  border-left: 3px solid var(--accent);
+  transition: all 0.35s;
+}
+
+.type-sample:hover {
+  border-left-color: var(--accent-blue);
+  background: var(--surface-light);
+}
+
+.type-sample .label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 10px;
+}
+
+.type-sample h1 { font-size: 2.5rem; font-weight: 900; color: #fff; }
+.type-sample h2 { font-size: 1.8rem; font-weight: 700; color: #fff; }
+.type-sample h3 { font-size: 1.3rem; font-weight: 600; color: rgba(255,255,255,0.8); }
+.type-sample p { font-size: 1rem; color: rgba(255,255,255,0.5); line-height: 1.8; }
+
+/* Color Palette */
+.motion-palette {
+  padding: 64px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.motion-palette h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 14px;
+}
+
+.swatch {
+  aspect-ratio: 1;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.swatch:hover { transform: scale(1.05) translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+
+.swatch .swatch-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  background: rgba(0,0,0,0.4);
+  padding: 4px 8px;
+  border-radius: 8px;
+  color: #fff;
+}
+
+/* Modal */
+.motion-modal-section {
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.motion-modal-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+
+.modal-trigger {
+  padding: 14px 32px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.35s;
+  font-family: system-ui;
+}
+
+.modal-trigger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255,77,106,0.35);
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(15,15,20,0.8);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.active { display: flex; }
+
+.motion-modal {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.08);
+  animation: modalIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.motion-modal h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.motion-modal p {
+  color: rgba(255,255,255,0.5);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.motion-modal .modal-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: rgba(255,255,255,0.08);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.motion-modal .modal-close:hover {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}
+
+/* Style Info */
+.motion-info {
+  padding: 64px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.motion-info h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.info-item {
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  transition: all 0.3s;
+}
+
+.info-item:hover {
+  border-color: rgba(255,255,255,0.12);
+}
+
+.info-item .info-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+
+.info-item .info-value {
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+}
+
+@media (max-width: 768px) {
+  .motion-hero h1 { font-size: 2rem; }
+  .card-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="vp-bar">
+  <span class="vp-label">📐 Viewport:</span>
+  <button class="vp-btn" data-size="1920">1920</button>
+  <button class="vp-btn" data-size="1440">1440</button>
+  <button class="vp-btn" data-size="1024">1024</button>
+  <button class="vp-btn" data-size="768">768</button>
+  <button class="vp-btn" data-size="375">375</button>
+  <button class="vp-btn" data-size="320">320</button>
+  <span id="vp-width" class="vp-width">Full</span>
+  <a href="index.html" class="vp-back">← Back to All Styles</a>
+</div>
+<div class="vp-frame">
+
+<!-- Hero -->
+<section class="motion-hero">
+  <h1 class="reveal"><span class="highlight">Motion</span> Drives<br>Everything</h1>
+  <p class="subtitle reveal delay-1">Every element moves with purpose. Scroll-triggered reveals, parallax depth, and choreographed entrances create an immersive storytelling experience.</p>
+  <div class="hero-cta reveal delay-2">
+    <button class="motion-btn btn-red">Explore</button>
+    <button class="motion-btn btn-outline">Watch Demo</button>
+  </div>
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <div class="arrow"></div>
+  </div>
+</section>
+
+<!-- Navigation -->
+<nav class="motion-nav">
+  <a href="#">Home</a>
+  <a href="#">Showcase</a>
+  <a href="#">About</a>
+  <a href="#">Process</a>
+  <a href="#">Contact</a>
+</nav>
+
+<!-- Buttons -->
+<section class="motion-buttons">
+  <h2 class="reveal">Animated Controls</h2>
+  <p class="section-sub reveal delay-1">Hover and click to see motion in action</p>
+  <div class="btn-grid reveal delay-2">
+    <button class="motion-btn btn-red">Action</button>
+    <button class="motion-btn btn-blue">Secondary</button>
+    <button class="motion-btn btn-green">Success</button>
+    <button class="motion-btn btn-outline">Ghost</button>
+  </div>
+</section>
+
+<!-- Forms -->
+<section class="motion-forms">
+  <h2 class="reveal">Get in Touch</h2>
+  <p class="section-sub reveal delay-1">Fill out the form below</p>
+  <div class="form-group reveal delay-2">
+    <label>Name</label>
+    <input type="text" class="motion-input" placeholder="Your name...">
+  </div>
+  <div class="form-group reveal delay-2">
+    <label>Email</label>
+    <input type="email" class="motion-input" placeholder="you@email.com">
+  </div>
+  <div class="form-group reveal delay-3">
+    <label>Message</label>
+    <textarea class="motion-input" placeholder="Tell us your story..."></textarea>
+  </div>
+  <button class="motion-btn btn-red reveal delay-4" style="width:100%;padding:14px;">Send Message</button>
+</section>
+
+<!-- Cards -->
+<section class="motion-cards">
+  <h2 class="reveal">The Process</h2>
+  <p class="section-sub reveal delay-1">How we bring motion to life</p>
+  <div class="card-grid">
+    <div class="motion-card reveal-left delay-1">
+      <div class="card-number">01</div>
+      <h3>Discover</h3>
+      <p>We research your audience, goals, and brand to craft a motion strategy that resonates and engages.</p>
+    </div>
+    <div class="motion-card reveal delay-2">
+      <div class="card-number">02</div>
+      <h3>Design</h3>
+      <p>Every animation is prototyped, refined, and choreographed to create seamless visual narratives.</p>
+    </div>
+    <div class="motion-card reveal-right delay-3">
+      <div class="card-number">03</div>
+      <h3>Deliver</h3>
+      <p>Performance-optimized animations that load fast and run smooth on every device and screen.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Typography -->
+<section class="motion-typography">
+  <h2 class="reveal">Typography</h2>
+  <div class="type-sample reveal delay-1">
+    <div class="label">Display</div>
+    <h1>Movement Is Meaning</h1>
+  </div>
+  <div class="type-sample reveal delay-2">
+    <div class="label">Heading</div>
+    <h2>Every Pixel in Motion</h2>
+  </div>
+  <div class="type-sample reveal delay-3">
+    <div class="label">Subheading</div>
+    <h3>Choreographed Interfaces</h3>
+  </div>
+  <div class="type-sample reveal delay-4">
+    <div class="label">Body</div>
+    <p>Motion-driven design transforms static interfaces into living experiences. Every transition tells a story, every animation guides the eye, and every scroll reveals something new.</p>
+  </div>
+</section>
+
+<!-- Color Palette -->
+<section class="motion-palette">
+  <h2 class="reveal">Dynamic Palette</h2>
+  <div class="palette-grid reveal delay-1">
+    <div class="swatch" style="background:#FF4D6A;"><span class="swatch-label">#FF4D6A</span></div>
+    <div class="swatch" style="background:#4D7CFF;"><span class="swatch-label">#4D7CFF</span></div>
+    <div class="swatch" style="background:#00E5A0;"><span class="swatch-label">#00E5A0</span></div>
+    <div class="swatch" style="background:#FFD93D;"><span class="swatch-label" style="color:#000;">#FFD93D</span></div>
+    <div class="swatch" style="background:#1A1A24;"><span class="swatch-label">#1A1A24</span></div>
+    <div class="swatch" style="background:#0F0F14;"><span class="swatch-label">#0F0F14</span></div>
+  </div>
+</section>
+
+<!-- Modal -->
+<section class="motion-modal-section">
+  <h2 class="reveal">Animated Modal</h2>
+  <button class="modal-trigger reveal delay-1" onclick="document.getElementById('motion-modal').classList.add('active')">Open Modal</button>
+  <div id="motion-modal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('active')">
+    <div class="motion-modal">
+      <button class="modal-close" onclick="document.getElementById('motion-modal').classList.remove('active')">&times;</button>
+      <h3>Motion in Action</h3>
+      <p>This modal enters with a choreographed animation -- scaling, fading, and sliding into view. Every transition is intentional and guides the user's attention.</p>
+      <button class="motion-btn btn-red" onclick="document.getElementById('motion-modal').classList.remove('active')">Got It</button>
+    </div>
+  </div>
+</section>
+
+<!-- Style Info -->
+<section class="motion-info">
+  <h2 class="reveal">Style Information</h2>
+  <div class="info-grid">
+    <div class="info-item reveal delay-1">
+      <div class="info-label">Era</div>
+      <div class="info-value">2020s Modern</div>
+    </div>
+    <div class="info-item reveal delay-1">
+      <div class="info-label">Complexity</div>
+      <div class="info-value">High</div>
+    </div>
+    <div class="info-item reveal delay-2">
+      <div class="info-label">Best For</div>
+      <div class="info-value">Portfolio, Storytelling, Interactive</div>
+    </div>
+    <div class="info-item reveal delay-2">
+      <div class="info-label">Font</div>
+      <div class="info-value">System-UI</div>
+    </div>
+    <div class="info-item reveal delay-3">
+      <div class="info-label">Border Radius</div>
+      <div class="info-value">8-16px</div>
+    </div>
+    <div class="info-item reveal delay-3">
+      <div class="info-label">Effects</div>
+      <div class="info-value">Scroll Anim, Parallax, Hover, Entrance</div>
+    </div>
+  </div>
+</section>
+
+</div>
+<script src="shared.js"></script>
+<script>
+// Intersection Observer for scroll reveals
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

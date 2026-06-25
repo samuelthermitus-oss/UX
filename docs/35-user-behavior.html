@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Behavior Analytics - UI Style Showcase</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root { --page-bg: #FFFFFF; --text-color: #111827; --funnel-green: #22C55E; --dropoff-red: #EF4444; --conversion-blue: #3B82F6; --flow-grey: #9CA3AF; --surface: #FFFFFF; --surface-alt: #F9FAFB; --border: #E5E7EB; --text-muted: #6B7280; }
+body { background: var(--page-bg); color: var(--text-color); font-family: 'system-ui', -apple-system, sans-serif; font-size: 14px; line-height: 1.5; }
+
+/* Nav */
+.ub-nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 0; display: flex; align-items: center; justify-content: center; gap: 24px; }
+.ub-nav a { color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 500; }
+.ub-nav a:hover { color: var(--text-color); }
+.ub-nav a.active { color: var(--funnel-green); font-weight: 600; }
+
+/* Hero */
+.ub-hero { background: linear-gradient(180deg, #F0FDF4 0%, var(--surface) 100%); padding: 60px 0 40px; border-bottom: 1px solid var(--border); text-align: center; }
+.ub-hero h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 700; letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 12px; }
+.ub-hero .subtitle { font-size: 16px; color: var(--text-muted); max-width: 600px; margin: 0 auto 24px; }
+
+/* Funnel */
+.funnel-container { max-width: 600px; margin: 0 auto; }
+.funnel-step { position: relative; margin-bottom: 4px; animation: fillDown 0.8s ease-out forwards; opacity: 0; }
+.funnel-step:nth-child(1) { animation-delay: 0.1s; } .funnel-step:nth-child(2) { animation-delay: 0.2s; } .funnel-step:nth-child(3) { animation-delay: 0.3s; } .funnel-step:nth-child(4) { animation-delay: 0.4s; } .funnel-step:nth-child(5) { animation-delay: 0.5s; }
+@keyframes fillDown { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.funnel-bar { height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; color: white; font-weight: 500; transition: all 0.3s; }
+.funnel-bar:hover { transform: scaleX(1.02); transform-origin: left; }
+.funnel-bar.step-1 { background: var(--funnel-green); width: 100%; }
+.funnel-bar.step-2 { background: #16A34A; width: 78%; }
+.funnel-bar.step-3 { background: var(--conversion-blue); width: 56%; }
+.funnel-bar.step-4 { background: #8B5CF6; width: 38%; }
+.funnel-bar.step-5 { background: #06B6D4; width: 24%; }
+.funnel-label { font-size: 13px; }
+.funnel-value { font-size: 14px; font-weight: 700; font-family: 'SF Mono', monospace; }
+.funnel-drop { display: flex; align-items: center; gap: 8px; padding: 6px 0 6px 20px; font-size: 12px; color: var(--dropoff-red); }
+.drop-arrow { display: inline-block; width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 6px solid var(--dropoff-red); }
+
+/* Conversion Grid */
+.conversion-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 800px; margin: 32px auto 0; }
+.conv-card { background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); text-align: center; transition: transform 0.2s; }
+.conv-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+.conv-value { font-size: 28px; font-weight: 700; font-family: 'SF Mono', monospace; margin-bottom: 4px; }
+.conv-value.green { color: var(--funnel-green); }
+.conv-value.blue { color: var(--conversion-blue); }
+.conv-value.red { color: var(--dropoff-red); }
+.conv-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.conv-trend { font-size: 11px; margin-top: 8px; padding: 2px 8px; border-radius: 4px; display: inline-block; }
+.conv-trend.up { background: rgba(34,197,94,0.1); color: var(--funnel-green); }
+.conv-trend.down { background: rgba(239,68,68,0.1); color: var(--dropoff-red); }
+
+/* Flow Diagram */
+.flow-container { display: flex; align-items: center; gap: 16px; max-width: 800px; margin: 0 auto; overflow-x: auto; padding: 16px 0; }
+.flow-node { flex-shrink: 0; background: var(--surface); border: 2px solid var(--border); border-radius: 12px; padding: 16px 20px; text-align: center; min-width: 120px; transition: all 0.2s; }
+.flow-node:hover { border-color: var(--conversion-blue); box-shadow: 0 4px 12px rgba(59,130,246,0.15); }
+.flow-node.active { border-color: var(--funnel-green); background: #F0FDF4; }
+.flow-node-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.flow-node-count { font-size: 18px; font-weight: 700; font-family: 'SF Mono', monospace; color: var(--conversion-blue); }
+.flow-arrow { flex-shrink: 0; color: var(--flow-grey); font-size: 20px; }
+
+/* Buttons */
+.section { padding: 48px 0; }
+.section-title { font-size: 18px; font-weight: 600; margin-bottom: 24px; text-align: center; }
+.btn-group { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; font-size: 13px; font-weight: 500; border: none; cursor: pointer; transition: all 0.2s; border-radius: 8px; font-family: inherit; }
+.btn-primary { background: var(--funnel-green); color: white; }
+.btn-primary:hover { background: #16A34A; box-shadow: 0 4px 12px rgba(34,197,94,0.25); }
+.btn-secondary { background: var(--surface); color: var(--text-color); border: 1px solid var(--border); }
+
+/* Config Form */
+.config-panel { max-width: 500px; margin: 0 auto; background: var(--surface-alt); border-radius: 12px; padding: 24px; }
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.form-input, .form-select { width: 100%; padding: 10px 14px; font-size: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; outline: none; }
+.form-input:focus, .form-select:focus { border-color: var(--funnel-green); box-shadow: 0 0 0 3px rgba(34,197,94,0.1); }
+.form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+.form-checkbox { width: 14px; height: 14px; accent-color: var(--funnel-green); }
+.form-row { display: flex; gap: 20px; align-items: center; }
+.form-row label { display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; }
+
+/* Insight Cards */
+.insights-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 800px; margin: 0 auto; }
+.insight-card { background: var(--surface); border-radius: 12px; padding: 20px; border: 1px solid var(--border); }
+.insight-card-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.insight-card-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; }
+.insight-stat { display: flex; align-items: baseline; gap: 6px; padding-top: 12px; border-top: 1px solid var(--border); }
+.stat-value { font-size: 24px; font-weight: 700; font-family: 'SF Mono', monospace; }
+.stat-label { font-size: 12px; color: var(--text-muted); }
+
+/* Swatches */
+.swatch-row { display: flex; gap: 8px; justify-content: center; }
+.swatch { width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; transition: transform 0.15s; }
+.swatch:hover { transform: scale(1.1); }
+
+/* Modal */
+.modal-overlay { display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.4); align-items:center; justify-content:center; }
+.modal-content { background: var(--surface); border-radius: 16px; padding: 32px; max-width: 440px; width: 90%; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
+.modal-content h3 { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+.modal-content p { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
+
+/* Style Info */
+.style-info { background: var(--surface-alt); border-radius: 12px; padding: 24px; border: 1px solid var(--border); text-align: center; max-width: 800px; margin: 0 auto; }
+.style-info h3 { font-size: 16px; font-weight: 600; margin-bottom: 20px; }
+.style-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.style-info-item .label { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.style-info-item .value { color: var(--text-color); font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="vp-bar"><span class="vp-label">📐 Viewport:</span><button class="vp-btn" data-size="1920">1920</button><button class="vp-btn" data-size="1440">1440</button><button class="vp-btn" data-size="1024">1024</button><button class="vp-btn" data-size="768">768</button><button class="vp-btn" data-size="375">375</button><button class="vp-btn" data-size="320">320</button><span id="vp-width" class="vp-width">Full</span><a href="index.html" class="vp-back">← Back to All Styles</a></div>
+<div class="vp-frame">
+  <div style="background:var(--surface-alt);padding:6px 24px;border-bottom:1px solid var(--border);display:flex;gap:8px;justify-content:center;"><span class="tag tag-era">2020s Modern</span><span class="tag tag-complexity-medium">Medium Complexity</span><span class="tag tag-type">BI/Analytics</span></div>
+  <nav class="ub-nav"><a href="#" class="active">Funnels</a><a href="#">User Flow</a><a href="#">Cohorts</a><a href="#">Events</a><a href="#">Segments</a></nav>
+
+  <section class="ub-hero">
+    <h1>User Behavior Analytics</h1>
+    <p class="subtitle">Funnel visualizations, user flow diagrams, and conversion metrics. Understand every step of the user journey.</p>
+    <div class="funnel-container">
+      <div class="funnel-step"><div class="funnel-bar step-1"><span class="funnel-label">Site Visitors</span><span class="funnel-value">124,891</span></div></div>
+      <div class="funnel-drop"><span class="drop-arrow"></span> -22% drop-off (27,476 users)</div>
+      <div class="funnel-step"><div class="funnel-bar step-2"><span class="funnel-label">Product Views</span><span class="funnel-value">97,415</span></div></div>
+      <div class="funnel-drop"><span class="drop-arrow"></span> -28% drop-off (27,412 users)</div>
+      <div class="funnel-step"><div class="funnel-bar step-3"><span class="funnel-label">Add to Cart</span><span class="funnel-value">69,937</span></div></div>
+      <div class="funnel-drop"><span class="drop-arrow"></span> -32% drop-off (22,380 users)</div>
+      <div class="funnel-step"><div class="funnel-bar step-4"><span class="funnel-label">Checkout</span><span class="funnel-value">47,557</span></div></div>
+      <div class="funnel-drop"><span class="drop-arrow"></span> -37% drop-off (17,596 users)</div>
+      <div class="funnel-step"><div class="funnel-bar step-5"><span class="funnel-label">Purchase</span><span class="funnel-value">29,961</span></div></div>
+    </div>
+    <div class="conversion-grid">
+      <div class="conv-card"><div class="conv-value green">24.0%</div><div class="conv-label">Overall Conversion</div><div class="conv-trend up">+2.3% vs last month</div></div>
+      <div class="conv-card"><div class="conv-value blue">78.0%</div><div class="conv-label">View-to-Cart Rate</div><div class="conv-trend up">+1.8% vs last month</div></div>
+      <div class="conv-card"><div class="conv-value red">37.0%</div><div class="conv-label">Cart Abandonment</div><div class="conv-trend down">+3.2% vs last month</div></div>
+      <div class="conv-card"><div class="conv-value" style="color:#8B5CF6;">$127</div><div class="conv-label">Avg Order Value</div><div class="conv-trend up">+8.4% vs last month</div></div>
+    </div>
+  </section>
+
+  <div class="btn-group" style="padding:16px 0;"><button class="btn btn-primary">Analyze Funnel</button><button class="btn btn-secondary">Export Data</button></div>
+
+  <section class="section">
+    <div class="container"><h2 class="section-title">User Flow Diagram</h2>
+      <div class="flow-container">
+        <div class="flow-node active"><div class="flow-node-name">Homepage</div><div class="flow-node-count">124,891</div></div><div class="flow-arrow">&rarr;</div>
+        <div class="flow-node"><div class="flow-node-name">Category</div><div class="flow-node-count">89,234</div></div><div class="flow-arrow">&rarr;</div>
+        <div class="flow-node"><div class="flow-node-name">Product</div><div class="flow-node-count">67,891</div></div><div class="flow-arrow">&rarr;</div>
+        <div class="flow-node"><div class="flow-node-name">Cart</div><div class="flow-node-count">34,567</div></div><div class="flow-arrow">&rarr;</div>
+        <div class="flow-node"><div class="flow-node-name">Checkout</div><div class="flow-node-count">22,345</div></div><div class="flow-arrow">&rarr;</div>
+        <div class="flow-node active"><div class="flow-node-name">Purchase</div><div class="flow-node-count">18,234</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-alt);">
+    <div class="container"><h2 class="section-title">Funnel Configuration</h2>
+      <div class="config-panel">
+        <div class="form-group"><label class="form-label">Funnel Name</label><input type="text" class="form-input" placeholder="e.g. E-commerce Purchase Funnel"></div>
+        <div class="form-group"><label class="form-label">Date Range</label><select class="form-select"><option>Last 7 days</option><option selected>Last 30 days</option><option>Last 90 days</option></select></div>
+        <div class="form-row"><label><input type="checkbox" class="form-checkbox"> Include anonymous users</label><label><input type="radio" name="view" class="form-checkbox"> By count</label><label><input type="radio" name="view" class="form-checkbox"> By rate</label></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container"><h2 class="section-title">Behavior Insights</h2>
+      <div class="insights-grid">
+        <div class="insight-card"><div class="insight-card-title">Top Exit Page</div><div class="insight-card-text">Cart page has highest exit rate at 42%.</div><div class="insight-stat"><span class="stat-value" style="color:var(--dropoff-red);">42%</span><span class="stat-label">exit rate</span></div></div>
+        <div class="insight-card"><div class="insight-card-title">Best Conversion Path</div><div class="insight-card-text">Homepage > Search > Product > Cart converts 3.2x better.</div><div class="insight-stat"><span class="stat-value" style="color:var(--funnel-green);">3.2x</span><span class="stat-label">conversion lift</span></div></div>
+        <div class="insight-card"><div class="insight-card-title">Avg Time to Convert</div><div class="insight-card-text">Users take 2.3 days from first visit to purchase.</div><div class="insight-stat"><span class="stat-value">2.3d</span><span class="stat-label">avg time</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-alt);"><div class="container"><h2 class="section-title">Color Palette</h2><div class="swatch-row">
+    <div class="swatch" style="background:#22C55E;" data-hex="#22C55E"></div><div class="swatch" style="background:#EF4444;" data-hex="#EF4444"></div><div class="swatch" style="background:#3B82F6;" data-hex="#3B82F6"></div><div class="swatch" style="background:#8B5CF6;" data-hex="#8B5CF6"></div><div class="swatch" style="background:#111827;" data-hex="#111827"></div><div class="swatch" style="background:#F9FAFB;" data-hex="#F9FAFB"></div>
+  </div></div></section>
+
+  <div id="demo-modal" class="modal-overlay"><div class="modal-content"><h3>Analyze Funnel</h3><p>This will process user behavior data and generate a detailed funnel analysis.</p><button class="btn btn-primary" style="width:100%;" onclick="toggleModal('demo-modal')">Start Analysis</button></div></div>
+  <div style="text-align:center;padding:24px;"><button class="btn btn-primary" onclick="toggleModal('demo-modal')">Open Modal</button></div>
+
+  <div style="padding:0 32px 32px;"><div class="style-info"><h3>Style Information</h3><div class="style-info-grid">
+    <div class="style-info-item"><div class="label">Era/Origin</div><div class="value">2020s Modern, BI/Analytics</div></div>
+    <div class="style-info-item"><div class="label">Best For</div><div class="value">Conversion funnels, user journey, cohort analysis</div></div>
+    <div class="style-info-item"><div class="label">Avoid For</div><div class="value">Non-transactional apps, simple page views</div></div>
+    <div class="style-info-item"><div class="label">Complexity</div><div class="value">Medium — funnel animations, flow diagrams, conversion tracking</div></div>
+    <div class="style-info-item"><div class="label">CSS Keywords</div><div class="value">@keyframes fillDown, gradient widths, flow nodes, drop-off indicators</div></div>
+    <div class="style-info-item"><div class="label">Design Variables</div><div class="value">--funnel-green:#22C55E, --dropoff-red:#EF4444, --conversion-blue:#3B82F6</div></div>
+  </div></div></div>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

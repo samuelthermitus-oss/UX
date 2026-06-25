@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neumorphism Mobile - Style Showcase</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    :root {
+      --page-bg: #E0E5EC;
+      --text-color: #31344B;
+      --accent: #6C63FF;
+      --base: #E0E5EC;
+      --shadow-light: rgba(255,255,255,0.6);
+      --shadow-dark: rgba(163,177,198,0.7);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--base);
+      color: var(--text-color);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    /* === HERO === */
+    .neu-hero {
+      min-height: 420px;
+      background: var(--base);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 60px 24px;
+      position: relative;
+    }
+    .neu-hero .neu-circle {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: var(--base);
+      box-shadow:
+        12px 12px 24px var(--shadow-dark),
+        -12px -12px 24px var(--shadow-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      margin-bottom: 28px;
+    }
+    .neu-hero h1 {
+      font-size: 40px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+    }
+    .neu-hero h1 .accent { color: var(--accent); }
+    .neu-hero p {
+      font-size: 15px;
+      color: rgba(49,52,75,0.5);
+      max-width: 280px;
+      margin-top: 12px;
+      margin-bottom: 20px;
+    }
+
+    /* === MOBILE NAV === */
+    .mobile-nav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: var(--base);
+      padding: 12px 16px 16px;
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+      box-shadow:
+        0 -6px 16px var(--shadow-dark),
+        0 -2px 6px var(--shadow-light);
+    }
+    .mobile-nav .tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: rgba(49,52,75,0.35);
+      font-size: 10px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .mobile-nav .tab.active { color: var(--accent); }
+    .mobile-nav .tab .tab-icon {
+      width: 40px; height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      border-radius: 14px;
+      background: var(--base);
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -4px -4px 8px var(--shadow-light);
+    }
+    .mobile-nav .tab.active .tab-icon {
+      box-shadow:
+        inset 3px 3px 6px var(--shadow-dark),
+        inset -3px -3px 6px var(--shadow-light);
+      color: var(--accent);
+    }
+
+    /* === SECTIONS === */
+    .section {
+      padding: 40px 20px;
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    /* === BUTTONS === */
+    .neu-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .neu-btn {
+      display: block;
+      width: 100%;
+      padding: 16px 24px;
+      font-family: system-ui, sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      text-align: center;
+      background: var(--base);
+      color: var(--text-color);
+      box-shadow:
+        6px 6px 12px var(--shadow-dark),
+        -6px -6px 12px var(--shadow-light);
+      transition: transform 180ms, box-shadow 180ms;
+    }
+    .neu-btn:active {
+      box-shadow:
+        inset 4px 4px 8px var(--shadow-dark),
+        inset -4px -4px 8px var(--shadow-light);
+      transform: scale(0.97);
+    }
+    .neu-btn.primary {
+      background: linear-gradient(135deg, var(--accent), #8B83FF);
+      color: #fff;
+      box-shadow:
+        6px 6px 14px rgba(108,99,255,0.3),
+        -6px -6px 12px var(--shadow-light);
+    }
+    .neu-btn.primary:active {
+      box-shadow:
+        inset 4px 4px 8px rgba(80,70,200,0.4),
+        inset -4px -4px 8px rgba(140,130,255,0.2);
+    }
+    .neu-btn.secondary {
+      background: var(--base);
+      color: var(--accent);
+    }
+    .neu-btn.ghost {
+      background: transparent;
+      color: var(--accent);
+      box-shadow: none;
+    }
+    .neu-btn.disabled {
+      background: #D5DAE1;
+      color: #B0B8C4;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* === FORMS === */
+    .neu-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .neu-field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--accent);
+    }
+    .neu-field input,
+    .neu-field textarea,
+    .neu-field select {
+      width: 100%;
+      padding: 14px 16px;
+      font-family: system-ui, sans-serif;
+      font-size: 15px;
+      border: none;
+      border-radius: 12px;
+      background: var(--base);
+      color: var(--text-color);
+      outline: none;
+      -webkit-appearance: none;
+      box-shadow:
+        inset 4px 4px 8px var(--shadow-dark),
+        inset -4px -4px 8px var(--shadow-light);
+    }
+    .neu-field input:focus,
+    .neu-field textarea:focus,
+    .neu-field select:focus {
+      box-shadow:
+        inset 4px 4px 8px var(--shadow-dark),
+        inset -4px -4px 8px var(--shadow-light),
+        0 0 0 3px rgba(108,99,255,0.15);
+    }
+    .neu-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+    .neu-checkbox input[type="checkbox"],
+    .neu-checkbox input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    /* === CARDS (Convex/Concave) === */
+    .neu-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .neu-card {
+      background: var(--base);
+      border-radius: 32px;
+      padding: 24px;
+      box-shadow:
+        8px 8px 16px var(--shadow-dark),
+        -8px -8px 16px var(--shadow-light);
+      transition: transform 180ms;
+    }
+    .neu-card:active { transform: scale(0.97); }
+    .neu-card .card-icon {
+      width: 48px; height: 48px;
+      border-radius: 16px;
+      background: var(--base);
+      box-shadow:
+        inset 3px 3px 6px var(--shadow-dark),
+        inset -3px -3px 6px var(--shadow-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 14px;
+    }
+    .neu-card h3 {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .neu-card p {
+      font-size: 13px;
+      color: rgba(49,52,75,0.5);
+      line-height: 1.5;
+    }
+    .neu-card .card-tag {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: var(--base);
+      box-shadow:
+        3px 3px 6px var(--shadow-dark),
+        -3px -3px 6px var(--shadow-light);
+      color: var(--accent);
+    }
+
+    /* === CONCAVE VARIANT === */
+    .neu-card.concave {
+      box-shadow:
+        inset 6px 6px 12px var(--shadow-dark),
+        inset -6px -6px 12px var(--shadow-light);
+    }
+
+    /* === TYPOGRAPHY === */
+    .neu-type {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .neu-type .type-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      padding: 8px 0;
+    }
+    .neu-type .type-label {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--accent);
+      min-width: 28px;
+      flex-shrink: 0;
+    }
+    .neu-type h1 { font-size: 42px; font-weight: 800; line-height: 1; }
+    .neu-type h2 { font-size: 32px; font-weight: 800; line-height: 1; }
+    .neu-type h3 { font-size: 24px; font-weight: 700; line-height: 1; }
+    .neu-type h4 { font-size: 20px; font-weight: 700; line-height: 1; }
+    .neu-type h5 { font-size: 16px; font-weight: 700; line-height: 1; }
+    .neu-type h6 { font-size: 13px; font-weight: 600; line-height: 1; color: rgba(49,52,75,0.4); }
+
+    /* === COLOR SWATCHES === */
+    .neu-swatches {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .neu-swatch {
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow:
+        6px 6px 12px var(--shadow-dark),
+        -6px -6px 12px var(--shadow-light);
+    }
+    .neu-swatch .swatch-color { height: 56px; }
+    .neu-swatch .swatch-info { padding: 10px 12px; background: var(--base); }
+    .neu-swatch .swatch-name { font-size: 12px; font-weight: 700; }
+    .neu-swatch .swatch-hex { font-size: 10px; color: rgba(49,52,75,0.4); font-family: monospace; }
+
+    /* === MODAL === */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(180,190,205,0.5);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-box {
+      background: var(--base);
+      border-radius: 32px;
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow:
+        16px 16px 32px var(--shadow-dark),
+        -16px -16px 32px var(--shadow-light);
+    }
+    .modal-box h3 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .modal-box p {
+      font-size: 14px;
+      color: rgba(49,52,75,0.5);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .modal-close {
+      background: linear-gradient(135deg, var(--accent), #8B83FF);
+      color: #fff;
+      border: none;
+      padding: 16px 24px;
+      border-radius: 16px;
+      font-family: system-ui, sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      box-shadow:
+        6px 6px 14px rgba(108,99,255,0.3),
+        -4px -4px 10px var(--shadow-light);
+    }
+
+    /* === STYLE INFO === */
+    .style-info {
+      padding: 40px 20px;
+     text-align: center;}
+    .style-info h3 {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+    .style-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .style-info-item {
+      background: var(--base);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -4px -4px 8px var(--shadow-light);
+    }
+    .style-info-item .info-label {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+    .style-info-item .info-value {
+      font-size: 13px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="vp-bar">
+    <span class="vp-label">Viewpoint:</span>
+    <button class="vp-btn" data-size="1920">1920</button>
+    <button class="vp-btn" data-size="1440">1440</button>
+    <button class="vp-btn" data-size="1024">1024</button>
+    <button class="vp-btn" data-size="768">768</button>
+    <button class="vp-btn" data-size="375">375</button>
+    <button class="vp-btn" data-size="320">320</button>
+    <span id="vp-width" class="vp-width">Full</span>
+    <a href="index.html" class="vp-back">← Back to All Styles</a>
+  </div>
+
+  <div class="vp-frame">
+    <!-- Hero -->
+    <section class="neu-hero">
+      <div class="neu-circle">&#9670;</div>
+      <h1>Soft <span class="accent">Depth</span><br>Real Touch</h1>
+      <p>Dual-layer shadows create extruded surfaces. Press to feel the concave indent.</p>
+    </section>
+
+    <!-- Bottom Nav -->
+    <nav class="mobile-nav">
+      <a class="tab active"><span class="tab-icon">&#9733;</span><span>Home</span></a>
+      <a class="tab"><span class="tab-icon">&#128269;</span><span>Search</span></a>
+      <a class="tab"><span class="tab-icon">&#9881;</span><span>Tools</span></a>
+      <a class="tab"><span class="tab-icon">&#9786;</span><span>Profile</span></a>
+    </nav>
+
+    <!-- Buttons -->
+    <section class="section">
+      <div class="section-title">Buttons</div>
+      <div class="neu-btns">
+        <button class="neu-btn primary">Extruded Primary</button>
+        <button class="neu-btn secondary">Convex Secondary</button>
+        <button class="neu-btn ghost">Flat Ghost</button>
+        <button class="neu-btn disabled" disabled>Disabled</button>
+      </div>
+    </section>
+
+    <!-- Forms -->
+    <section class="section">
+      <div class="section-title">Forms</div>
+      <div class="neu-form">
+        <div class="neu-field">
+          <label>Name</label>
+          <input type="text" placeholder="Your name">
+        </div>
+        <div class="neu-field">
+          <label>Email</label>
+          <input type="email" placeholder="you@email.com">
+        </div>
+        <div class="neu-field">
+          <label>Role</label>
+          <select>
+            <option>Designer</option>
+            <option>Developer</option>
+            <option>Manager</option>
+          </select>
+        </div>
+        <div class="neu-field">
+          <label>Bio</label>
+          <textarea rows="3" placeholder="Tell us about yourself"></textarea>
+        </div>
+        <div class="neu-checkbox"><input type="checkbox" id="ck1"><label for="ck1">I agree</label></div>
+        <div class="neu-checkbox"><input type="radio" name="r1" id="r1"><label for="r1">Light</label></div>
+        <div class="neu-checkbox"><input type="radio" name="r1" id="r2"><label for="r2">Dark</label></div>
+      </div>
+    </section>
+
+    <!-- Cards -->
+    <section class="section">
+      <div class="section-title">Cards</div>
+      <div class="neu-cards">
+        <div class="neu-card">
+          <div class="card-icon">&#9670;</div>
+          <h3>Extruded Convex</h3>
+          <p>Dual shadows (light top-left, dark bottom-right) create a raised, soft-touch surface.</p>
+          <span class="card-tag">Convex</span>
+        </div>
+        <div class="neu-card concave">
+          <div class="card-icon">&#9671;</div>
+          <h3>Inset Concave</h3>
+          <p>Inverted shadows push the surface inward. Inputs and pressed states use this depth.</p>
+          <span class="card-tag">Concave</span>
+        </div>
+        <div class="neu-card">
+          <div class="card-icon">&#128241;</div>
+          <h3>Single Base</h3>
+          <p>Every element shares the same #E0E5EC base. Depth is created purely through shadow.</p>
+          <span class="card-tag">Material</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Typography -->
+    <section class="section">
+      <div class="section-title">Typography</div>
+      <div class="neu-type">
+        <div class="type-row"><span class="type-label">H1</span><h1>Aa</h1></div>
+        <div class="type-row"><span class="type-label">H2</span><h2>Aa</h2></div>
+        <div class="type-row"><span class="type-label">H3</span><h3>Aa</h3></div>
+        <div class="type-row"><span class="type-label">H4</span><h4>Aa</h4></div>
+        <div class="type-row"><span class="type-label">H5</span><h5>Aa</h5></div>
+        <div class="type-row"><span class="type-label">H6</span><h6>Aa</h6></div>
+      </div>
+    </section>
+
+    <!-- Color Swatches -->
+    <section class="section">
+      <div class="section-title">Colors</div>
+      <div class="neu-swatches">
+        <div class="neu-swatch"><div class="swatch-color" style="background:#6C63FF"></div><div class="swatch-info"><div class="swatch-name">Accent Violet</div><div class="swatch-hex">#6C63FF</div></div></div>
+        <div class="neu-swatch"><div class="swatch-color" style="background:#E0E5EC"></div><div class="swatch-info"><div class="swatch-name">Clay Base</div><div class="swatch-hex">#E0E5EC</div></div></div>
+        <div class="neu-swatch"><div class="swatch-color" style="background:linear-gradient(135deg,#fff,rgba(255,255,255,0.6))"></div><div class="swatch-info"><div class="swatch-name">Shadow Light</div><div class="swatch-hex">rgba(255,255,255,0.6)</div></div></div>
+        <div class="neu-swatch"><div class="swatch-color" style="background:linear-gradient(135deg,#A3B1C6,#c0c8d4)"></div><div class="swatch-info"><div class="swatch-name">Shadow Dark</div><div class="swatch-hex">rgba(163,177,198,0.7)</div></div></div>
+      </div>
+    </section>
+
+    <!-- Style Info -->
+    <section class="style-info">
+      <h3>Style Info</h3>
+      <div class="style-info-grid">
+        <div class="style-info-item"><div class="info-label">Era</div><div class="info-value">Tools / Lifestyle</div></div>
+        <div class="style-info-item"><div class="info-label">Complexity</div><div class="info-value">Medium</div></div>
+        <div class="style-info-item"><div class="info-label">Radius</div><div class="info-value">32 / 16 / 999</div></div>
+        <div class="style-info-item"><div class="info-label">Shadows</div><div class="info-value">Dual-layer</div></div>
+      </div>
+    </section>
+
+    <!-- Modal -->
+    <button class="neu-btn primary" style="margin:24px 20px;" onclick="toggleModal('demo-modal')">Open Modal</button>
+  </div>
+
+  <div id="demo-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Neumorphism Modal</h3>
+      <p>Soft depth with dual-layer shadows. Extruded surfaces that feel like pressed clay.</p>
+      <button class="modal-close" onclick="toggleModal('demo-modal')">Close</button>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+</body>
+</html>
