@@ -63,9 +63,9 @@ uipro init
 
 ## How It Works
 
-By default, `uipro init` tries to download the latest release from GitHub to ensure you get the most up-to-date version. If the download fails (network error, rate limit), it automatically falls back to the bundled assets included in the CLI package.
+`uipro init` generates skill files from templates bundled inside the CLI package. This means installation works offline by default and does not require a network connection.
 
-Use `--offline` to skip the GitHub download and use bundled assets directly.
+Use `--offline` to make the offline behavior explicit (no-op with the current default, kept for clarity and future compatibility).
 
 ## Development
 
