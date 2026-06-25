@@ -30,6 +30,7 @@ export interface PlatformConfig {
     root: string;
     skillPath: string;
     filename: string;
+    dataPath?: string;
   };
   scriptPath: string;
   frontmatter: Record<string, string> | null;

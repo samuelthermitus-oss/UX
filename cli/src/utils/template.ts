@@ -15,6 +15,7 @@ export interface PlatformConfig {
     root: string;
     skillPath: string;
     filename: string;
+    dataPath?: string;
   };
   scriptPath: string;
   frontmatter: Record<string, string> | null;
@@ -144,12 +145,22 @@ export async function renderSkillFile(config: PlatformConfig, isGlobal = false):
     .replace(/\{\{SKILL_OR_WORKFLOW\}\}/g, config.skillOrWorkflow)
     .replace(/\{\{QUICK_REFERENCE\}\}/g, quickRefWithNewline);
 
+  // Rewrite the hardcoded default script path to the platform-specific path
+  const defaultScriptPath = 'skills/ui-ux-pro-max/scripts/search.py';
+  if (config.scriptPath !== defaultScriptPath) {
+    content = content.replace(
+      new RegExp(defaultScriptPath.replace(/\//g, '\\/'), 'g'),
+      config.scriptPath
+    );
+  }
+
   // For global install, rewrite relative script paths to absolute ~/root/ paths
   if (isGlobal) {
     const globalPrefix = `~/${config.folderStructure.root}/`;
+    // Match any platform's script path pattern (skills/, prompts/, steering/, etc.)
     content = content.replace(
-      /python3 skills\//g,
-      `python3 ${globalPrefix}skills/`
+      new RegExp(`python3 ${config.scriptPath.replace(/\//g, '\\/')}`, 'g'),
+      `python3 ${globalPrefix}${config.scriptPath}`
     );
   }
 
@@ -219,8 +230,12 @@ export async function generatePlatformFiles(
   await writeFile(skillFilePath, skillContent, 'utf-8');
   createdFolders.push(config.folderStructure.root);
 
-  // Copy data and scripts into the skill directory (self-contained)
-  await copyDataAndScripts(skillDir);
+  // Copy data and scripts into the data directory (may differ from skill file location)
+  const dataDir = config.folderStructure.dataPath
+    ? join(effectiveDir, config.folderStructure.root, config.folderStructure.dataPath)
+    : skillDir;
+  await mkdir(dataDir, { recursive: true });
+  await copyDataAndScripts(dataDir);
 
   return createdFolders;
 }

@@ -1,4 +1,4 @@
-import { rm, stat } from 'node:fs/promises';
+import { rm, stat, unlink } from 'node:fs/promises';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
 import chalk from 'chalk';
@@ -22,14 +22,40 @@ async function removeSkillDir(baseDir: string, aiType: Exclude<AIType, 'all'>): 
   const removed: string[] = [];
 
   for (const folder of folders) {
+    // Standard path: {folder}/skills/ui-ux-pro-max
     const skillDir = join(baseDir, folder, 'skills', 'ui-ux-pro-max');
     try {
       await stat(skillDir);
       await rm(skillDir, { recursive: true, force: true });
       removed.push(`${folder}/skills/ui-ux-pro-max`);
     } catch (err: unknown) {
-      // Skip non-existent dirs; re-throw permission or other errors
       if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
+    }
+
+    // Copilot-specific paths
+    if (aiType === 'copilot') {
+      // Remove .github/prompts/ui-ux-pro-max.prompt.md
+      const promptFile = join(baseDir, folder, 'prompts', 'ui-ux-pro-max.prompt.md');
+      try {
+        await stat(promptFile);
+        await unlink(promptFile);
+        removed.push(`${folder}/prompts/ui-ux-pro-max.prompt.md`);
+      } catch (err: unknown) {
+        if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
+      }
+
+      // Remove .github/prompts/ui-ux-pro-max/ (data directory)
+      const dataDir = join(baseDir, folder, 'prompts', 'ui-ux-pro-max');
+      try {
+        await stat(dataDir);
+        await rm(dataDir, { recursive: true, force: true });
+        removed.push(`${folder}/prompts/ui-ux-pro-max`);
+      } catch (err: unknown) {
+        if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
+      }
+
+      // Legacy: remove .github/prompts/ui-ux-pro-max/PROMPT.md (old install format)
+      // Already covered by the dataDir removal above
     }
   }
 
@@ -101,6 +127,7 @@ export async function uninstallCommand(options: UninstallOptions): Promise<void>
     if (aiType === 'all') {
       // Remove for all detected platforms
       for (const type of initialDetected) {
+        if (type === 'all') continue;
         const removed = await removeSkillDir(baseDir, type);
         allRemoved.push(...removed);
       }
