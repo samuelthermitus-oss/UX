@@ -251,6 +251,25 @@ Each rule includes:
 
 </details>
 
+## 💎 Basic vs. Premium Version Comparison
+
+Many users ask about the differences between the open-source and premium versions. Here is a detailed breakdown to help you choose the right fit for your workflow.
+
+### 🟢 Basic Version (This Repository)
+* **Fully Open Source:** Perfect for individual developers, hobbyists, and standard projects.
+* **Core UI/UX Intelligence:** Full access to 67 UI styles, 161 product types, color palettes, and curated font pairings.
+* **Smart Recommendations:** Built-in BM25 search engine for highly accurate design matching.
+* **Cross-Platform Support:** Stack-specific guidelines supporting 13+ major frameworks (React, Vue, Tailwind, iOS, Android, etc.).
+* **Design System Generation:** Instantly generate tailored UI rules, patterns, and logic via CLI.
+
+### 🟡 Premium Version
+* **Extended Brand Design Skills:** Goes beyond UI/UX to include Brand Identity generation, Logo Design, Corporate Identity Programs (CIP), Banners, Presentation Slides, and custom Iconography.
+* **Advanced Asset Creation:** Deep integration with AI-powered image generation to create real visual assets, not just placeholders.
+* **Enterprise Architecture:** A more comprehensive and scalable Design Token architecture, built for large-scale team deployments.
+* **Priority Support:** Dedicated technical assistance for teams and professionals who need an uninterrupted full design workflow.
+
+👉 *For more details on upgrading to the Premium tier, visit [uipm.cc](https://uipm.cc).*
+
 ## Installation
 
 ### Using Claude Marketplace (Claude Code)
