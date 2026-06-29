@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lisie Products — Women's Style, Redefined</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          caramel: { 50:'#FBF3EC', 100:'#F3DFC9', 300:'#D9A766', 400:'#C8893F', 500:'#B5712E', 600:'#8F5722' },
+          gold: { 400:'#E0B84A', 500:'#CA8A04', 600:'#A66A02' },
+          ink: '#241A12'
+        },
+        fontFamily: {
+          serif: ['Playfair Display', 'serif'],
+          sans: ['Inter', 'sans-serif']
+        }
+      }
+    }
+  }
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { background-color: #FBF3EC; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-18px); }
+  }
+  @keyframes floatSlow {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(14px) rotate(3deg); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .animate-float { animation: float 6s ease-in-out infinite; }
+  .animate-float-slow { animation: floatSlow 9s ease-in-out infinite; }
+  .fade-up { animation: fadeUp 0.9s ease-out both; }
+  .delay-1 { animation-delay: 0.15s; }
+  .delay-2 { animation-delay: 0.3s; }
+  .delay-3 { animation-delay: 0.45s; }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 8px 32px rgba(36, 26, 18, 0.18);
+  }
+  .glass-dark {
+    background: rgba(36, 26, 18, 0.35);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+  .shimmer-text {
+    background: linear-gradient(90deg, #8F5722 0%, #E0B84A 45%, #8F5722 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 5s linear infinite;
+  }
+  .hero-bg {
+    background: radial-gradient(circle at 20% 20%, #F3DFC9 0%, transparent 55%),
+                radial-gradient(circle at 80% 0%, #E0B84A 0%, transparent 45%),
+                linear-gradient(160deg, #C8893F 0%, #8F5722 55%, #241A12 100%);
+  }
+  .product-card { transition: transform 0.35s ease, box-shadow 0.35s ease; }
+  .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(143, 87, 34, 0.25); }
+  .btn-cta { transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease; }
+  .btn-cta:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 14px 28px rgba(202, 138, 4, 0.35); }
+</style>
+</head>
+<body class="font-sans text-ink antialiased">
+
+<!-- NAV -->
+<header class="fixed top-0 inset-x-0 z-50">
+  <nav class="glass mx-auto mt-4 max-w-6xl rounded-2xl px-6 py-4 flex items-center justify-between">
+    <a href="#" class="font-serif text-2xl text-ink tracking-wide">Lisie <span class="shimmer-text">Products</span></a>
+    <div class="hidden md:flex items-center gap-8 text-sm font-medium text-ink/80">
+      <a href="#collection" class="hover:text-caramel-600 transition-colors">Collection</a>
+      <a href="#about" class="hover:text-caramel-600 transition-colors">About</a>
+      <a href="#testimonials" class="hover:text-caramel-600 transition-colors">Reviews</a>
+      <a href="#contact" class="hover:text-caramel-600 transition-colors">Contact</a>
+    </div>
+    <a href="#collection" class="btn-cta bg-gold-500 text-white text-sm font-semibold px-5 py-2.5 rounded-full cursor-pointer">
+      Shop Now
+    </a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero-bg relative min-h-screen flex items-center overflow-hidden pt-32 pb-20">
+  <div class="absolute -top-20 -left-10 w-72 h-72 rounded-full bg-gold-400/30 blur-3xl animate-float-slow"></div>
+  <div class="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-caramel-300/30 blur-3xl animate-float"></div>
+
+  <div class="relative mx-auto max-w-6xl px-6 grid md:grid-cols-2 gap-12 items-center w-full">
+    <div class="text-white fade-up">
+      <span class="inline-block glass-dark text-gold-400 text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6">
+        New Season Collection
+      </span>
+      <h1 class="font-serif text-5xl md:text-6xl leading-[1.1] mb-6">
+        Style Crafted for the
+        <span class="shimmer-text">Modern Woman</span>
+      </h1>
+      <p class="text-white/80 text-lg mb-8 max-w-md">
+        Discover Lisie Products — timeless silhouettes, caramel-toned textures,
+        and gold-kissed details made to move with you.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a href="#collection" class="btn-cta bg-gold-500 hover:bg-gold-600 text-white font-semibold px-8 py-3.5 rounded-full cursor-pointer">
+          Explore Collection
+        </a>
+        <a href="#about" class="glass text-white font-semibold px-8 py-3.5 rounded-full cursor-pointer hover:bg-white/25 transition-colors">
+          Our Story
+        </a>
+      </div>
+    </div>
+
+    <div class="relative fade-up delay-2">
+      <div class="glass rounded-3xl p-6 animate-float">
+        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=900&auto=format&fit=crop"
+             alt="Lisie Products model wearing caramel-toned outfit"
+             class="rounded-2xl w-full h-[420px] object-cover">
+      </div>
+      <div class="glass absolute -bottom-8 -left-8 rounded-2xl px-6 py-4 hidden sm:block">
+        <p class="text-white text-sm font-medium">★★★★★</p>
+        <p class="text-white/80 text-xs mt-1">4.9 from 2,300+ reviews</p>
+      </div>
+    </div>
+  </div>
+
+  <a href="#collection" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/70 text-xs flex flex-col items-center gap-2 animate-float">
+    Scroll
+    <span class="w-5 h-9 rounded-full border border-white/40 flex justify-center pt-2">
+      <span class="w-1 h-2 bg-gold-400 rounded-full"></span>
+    </span>
+  </a>
+</section>
+
+<!-- COLLECTION -->
+<section id="collection" class="py-24 px-6 max-w-6xl mx-auto">
+  <div class="text-center mb-14 fade-up">
+    <span class="text-gold-600 text-xs font-semibold tracking-widest uppercase">Curated For You</span>
+    <h2 class="font-serif text-4xl mt-3 text-ink">The Signature Collection</h2>
+  </div>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md">
+      <img src="https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=700&auto=format&fit=crop" alt="Caramel trench coat" class="w-full h-72 object-cover">
+      <div class="p-5">
+        <h3 class="font-serif text-lg text-ink">Caramel Trench Coat</h3>
+        <p class="text-caramel-600 font-semibold mt-1">$128.00</p>
+      </div>
+    </div>
+    <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md">
+      <img src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?q=80&w=700&auto=format&fit=crop" alt="Gold accent dress" class="w-full h-72 object-cover">
+      <div class="p-5">
+        <h3 class="font-serif text-lg text-ink">Gold Accent Dress</h3>
+        <p class="text-caramel-600 font-semibold mt-1">$96.00</p>
+      </div>
+    </div>
+    <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md">
+      <img src="https://images.unsplash.com/photo-1495385794356-15371f348c31?q=80&w=700&auto=format&fit=crop" alt="Tailored blazer" class="w-full h-72 object-cover">
+      <div class="p-5">
+        <h3 class="font-serif text-lg text-ink">Tailored Blazer</h3>
+        <p class="text-caramel-600 font-semibold mt-1">$112.00</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="py-24 px-6 bg-caramel-100/60">
+  <div class="max-w-4xl mx-auto text-center fade-up">
+    <span class="text-gold-600 text-xs font-semibold tracking-widest uppercase">Our Story</span>
+    <h2 class="font-serif text-4xl mt-3 mb-6 text-ink">Designed with Warmth, Worn with Confidence</h2>
+    <p class="text-ink/70 text-lg leading-relaxed">
+      Lisie Products was born from a love of texture, tone, and timeless femininity.
+      Every piece blends caramel hues and golden details into pieces meant to move,
+      shine, and last — wherever life takes you.
+    </p>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials" class="py-24 px-6 max-w-5xl mx-auto">
+  <div class="text-center mb-14 fade-up">
+    <span class="text-gold-600 text-xs font-semibold tracking-widest uppercase">Loved By Many</span>
+    <h2 class="font-serif text-4xl mt-3 text-ink">What Our Customers Say</h2>
+  </div>
+  <div class="grid md:grid-cols-2 gap-8">
+    <div class="bg-white rounded-2xl p-8 shadow-sm">
+      <p class="text-ink/80 mb-4">"The quality and the colors are exactly what I needed — elegant and so comfortable."</p>
+      <p class="font-semibold text-ink">— Amara K.</p>
+    </div>
+    <div class="bg-white rounded-2xl p-8 shadow-sm">
+      <p class="text-ink/80 mb-4">"Lisie Products has become my go-to. The gold detailing makes every outfit feel special."</p>
+      <p class="font-semibold text-ink">— Janelle R.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="contact" class="py-24 px-6">
+  <div class="hero-bg max-w-5xl mx-auto rounded-3xl px-10 py-16 text-center relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-64 h-64 rounded-full bg-gold-400/20 blur-3xl animate-float"></div>
+    <h2 class="font-serif text-4xl text-white mb-4">Step Into Your Signature Style</h2>
+    <p class="text-white/80 mb-8 max-w-xl mx-auto">Join the Lisie Products community for early access to new drops and exclusive offers.</p>
+    <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+      <input type="email" required placeholder="Your email address"
+             class="glass flex-1 px-5 py-3 rounded-full text-white placeholder-white/60 outline-none">
+      <button type="submit" class="btn-cta bg-gold-500 hover:bg-gold-600 text-white font-semibold px-6 py-3 rounded-full cursor-pointer">
+        Subscribe
+      </button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="py-10 px-6 text-center text-ink/60 text-sm">
+  <p class="font-serif text-xl text-ink mb-2">Lisie Products</p>
+  <p>&copy; 2026 Lisie Products. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
