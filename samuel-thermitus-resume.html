@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Samuel Thermitus — Graphic Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#0C0A09',
+          charcoal: { 700:'#1C1917', 600:'#292524', 500:'#44403C' },
+          gold: { 400:'#E0B84A', 500:'#CA8A04', 600:'#A66A02' }
+        },
+        fontFamily: {
+          serif: ['Playfair Display', 'serif'],
+          sans: ['Inter', 'sans-serif']
+        }
+      }
+    }
+  }
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { background-color: #0C0A09; }
+
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-16px); } }
+  @keyframes floatSlow { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(12px) rotate(3deg); } }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(24px); } to { opacity:1; transform: translateY(0); } }
+  @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+  .animate-float { animation: float 6s ease-in-out infinite; }
+  .animate-float-slow { animation: floatSlow 9s ease-in-out infinite; }
+  .fade-up { animation: fadeUp 0.9s ease-out both; }
+  .delay-1 { animation-delay: .15s; }
+  .delay-2 { animation-delay: .3s; }
+  .delay-3 { animation-delay: .45s; }
+
+  .glass {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  }
+  .glass-light {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(202,138,4,0.25);
+  }
+  .shimmer-text {
+    background: linear-gradient(90deg, #A66A02 0%, #E0B84A 45%, #A66A02 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 5s linear infinite;
+  }
+  .hero-bg {
+    background:
+      radial-gradient(circle at 15% 15%, rgba(224,184,74,0.18) 0%, transparent 50%),
+      radial-gradient(circle at 85% 10%, rgba(202,138,4,0.15) 0%, transparent 45%),
+      linear-gradient(160deg, #1C1917 0%, #0C0A09 60%, #000000 100%);
+  }
+  .card-hover { transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease; }
+  .card-hover:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(202,138,4,0.15); border-color: rgba(202,138,4,0.4); }
+  .btn-cta { transition: transform .25s ease, box-shadow .25s ease, background-color .25s ease; }
+  .btn-cta:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 14px 28px rgba(202,138,4,0.35); }
+  .skill-bar-fill { transition: width 1.4s cubic-bezier(.4,0,.2,1); }
+</style>
+</head>
+<body class="font-sans text-white antialiased">
+
+<!-- NAV -->
+<header class="fixed top-0 inset-x-0 z-50">
+  <nav class="glass mx-auto mt-4 max-w-6xl rounded-2xl px-6 py-4 flex items-center justify-between">
+    <a href="#" class="font-serif text-2xl tracking-wide">Samuel <span class="shimmer-text">Thermitus</span></a>
+    <div class="hidden md:flex items-center gap-8 text-sm font-medium text-white/75">
+      <a href="#about" class="hover:text-gold-400 transition-colors">About</a>
+      <a href="#skills" class="hover:text-gold-400 transition-colors">Skills</a>
+      <a href="#experience" class="hover:text-gold-400 transition-colors">Experience</a>
+      <a href="#portfolio" class="hover:text-gold-400 transition-colors">Portfolio</a>
+      <a href="#contact" class="hover:text-gold-400 transition-colors">Contact</a>
+    </div>
+    <a href="#contact" class="btn-cta bg-gold-500 text-ink text-sm font-semibold px-5 py-2.5 rounded-full cursor-pointer">
+      Hire Me
+    </a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero-bg relative min-h-screen flex items-center overflow-hidden pt-32 pb-20">
+  <div class="absolute -top-16 -left-10 w-72 h-72 rounded-full bg-gold-500/20 blur-3xl animate-float-slow"></div>
+  <div class="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-gold-400/10 blur-3xl animate-float"></div>
+
+  <div class="relative mx-auto max-w-6xl px-6 grid md:grid-cols-2 gap-12 items-center w-full">
+    <div class="fade-up">
+      <span class="inline-block glass text-gold-400 text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6">
+        Graphic Designer
+      </span>
+      <h1 class="font-serif text-5xl md:text-6xl leading-[1.1] mb-6">
+        Samuel <span class="shimmer-text">Thermitus</span>
+      </h1>
+      <p class="text-white/70 text-lg mb-8 max-w-md">
+        [Placeholder tagline] — Crafting bold visual identities and clean, modern
+        design systems. Replace this with your personal pitch.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a href="#portfolio" class="btn-cta bg-gold-500 hover:bg-gold-600 text-ink font-semibold px-8 py-3.5 rounded-full cursor-pointer">
+          View Portfolio
+        </a>
+        <a href="#contact" class="glass text-white font-semibold px-8 py-3.5 rounded-full cursor-pointer hover:bg-white/10 transition-colors">
+          Download Resume
+        </a>
+      </div>
+    </div>
+
+    <div class="relative fade-up delay-2">
+      <div class="glass rounded-3xl p-6 animate-float">
+        <div class="rounded-2xl w-full h-[420px] bg-charcoal-600 flex items-center justify-center border border-gold-500/20">
+          <span class="text-white/30 text-sm">[ Profile photo placeholder ]</span>
+        </div>
+      </div>
+      <div class="glass absolute -bottom-8 -left-8 rounded-2xl px-6 py-4 hidden sm:block">
+        <p class="text-gold-400 text-sm font-semibold">[X]+ Years</p>
+        <p class="text-white/60 text-xs mt-1">Design Experience</p>
+      </div>
+    </div>
+  </div>
+
+  <a href="#about" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 text-xs flex flex-col items-center gap-2 animate-float">
+    Scroll
+    <span class="w-5 h-9 rounded-full border border-white/25 flex justify-center pt-2">
+      <span class="w-1 h-2 bg-gold-400 rounded-full"></span>
+    </span>
+  </a>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="py-24 px-6 max-w-5xl mx-auto">
+  <div class="text-center mb-14 fade-up">
+    <span class="text-gold-500 text-xs font-semibold tracking-widest uppercase">Get To Know Me</span>
+    <h2 class="font-serif text-4xl mt-3 text-white">About Me</h2>
+  </div>
+  <div class="glass rounded-3xl p-10 text-white/70 text-lg leading-relaxed text-center">
+    [Placeholder] Add a short bio here — background, design philosophy, what drives
+    your creative work, and what kind of projects you're looking for. Send me your
+    resume content and I'll drop it in.
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="py-24 px-6 max-w-5xl mx-auto">
+  <div class="text-center mb-14 fade-up">
+    <span class="text-gold-500 text-xs font-semibold tracking-widest uppercase">Capabilities</span>
+    <h2 class="font-serif text-4xl mt-3 text-white">Skills & Tools</h2>
+  </div>
+  <div class="grid md:grid-cols-2 gap-8">
+    <div class="space-y-6">
+      <div>
+        <div class="flex justify-between text-sm mb-2"><span>[Skill 1]</span><span class="text-gold-400">90%</span></div>
+        <div class="h-2 rounded-full bg-white/10 overflow-hidden"><div class="skill-bar-fill h-full bg-gold-500 rounded-full" style="width:90%"></div></div>
+      </div>
+      <div>
+        <div class="flex justify-between text-sm mb-2"><span>[Skill 2]</span><span class="text-gold-400">85%</span></div>
+        <div class="h-2 rounded-full bg-white/10 overflow-hidden"><div class="skill-bar-fill h-full bg-gold-500 rounded-full" style="width:85%"></div></div>
+      </div>
+      <div>
+        <div class="flex justify-between text-sm mb-2"><span>[Skill 3]</span><span class="text-gold-400">80%</span></div>
+        <div class="h-2 rounded-full bg-white/10 overflow-hidden"><div class="skill-bar-fill h-full bg-gold-500 rounded-full" style="width:80%"></div></div>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="glass card-hover rounded-2xl p-6 text-center">[Tool 1]</div>
+      <div class="glass card-hover rounded-2xl p-6 text-center">[Tool 2]</div>
+      <div class="glass card-hover rounded-2xl p-6 text-center">[Tool 3]</div>
+      <div class="glass card-hover rounded-2xl p-6 text-center">[Tool 4]</div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience" class="py-24 px-6 max-w-4xl mx-auto">
+  <div class="text-center mb-14 fade-up">
+    <span class="text-gold-500 text-xs font-semibold tracking-widest uppercase">Career Path</span>
+    <h2 class="font-serif text-4xl mt-3 text-white">Experience</h2>
+  </div>
+  <div class="space-y-6">
+    <div class="glass card-hover rounded-2xl p-8">
+      <div class="flex flex-wrap justify-between items-baseline mb-2">
+        <h3 class="font-serif text-xl text-white">[Job Title] — [Company]</h3>
+        <span class="text-gold-400 text-sm">[Start] – [End]</span>
+      </div>
+      <p class="text-white/60">[Placeholder description of role and key achievements.]</p>
+    </div>
+    <div class="glass card-hover rounded-2xl p-8">
+      <div class="flex flex-wrap justify-between items-baseline mb-2">
+        <h3 class="font-serif text-xl text-white">[Job Title] — [Company]</h3>
+        <span class="text-gold-400 text-sm">[Start] – [End]</span>
+      </div>
+      <p class="text-white/60">[Placeholder description of role and key achievements.]</p>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section id="portfolio" class="py-24 px-6 max-w-6xl mx-auto">
+  <div class="text-center mb-14 fade-up">
+    <span class="text-gold-500 text-xs font-semibold tracking-widest uppercase">Selected Work</span>
+    <h2 class="font-serif text-4xl mt-3 text-white">Portfolio</h2>
+  </div>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="card-hover glass rounded-2xl overflow-hidden">
+      <div class="h-56 bg-charcoal-600 flex items-center justify-center text-white/30 text-sm">[ Project 1 ]</div>
+      <div class="p-5"><h3 class="font-serif text-lg">[Project Title]</h3><p class="text-white/50 text-sm mt-1">[Category]</p></div>
+    </div>
+    <div class="card-hover glass rounded-2xl overflow-hidden">
+      <div class="h-56 bg-charcoal-600 flex items-center justify-center text-white/30 text-sm">[ Project 2 ]</div>
+      <div class="p-5"><h3 class="font-serif text-lg">[Project Title]</h3><p class="text-white/50 text-sm mt-1">[Category]</p></div>
+    </div>
+    <div class="card-hover glass rounded-2xl overflow-hidden">
+      <div class="h-56 bg-charcoal-600 flex items-center justify-center text-white/30 text-sm">[ Project 3 ]</div>
+      <div class="p-5"><h3 class="font-serif text-lg">[Project Title]</h3><p class="text-white/50 text-sm mt-1">[Category]</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="py-24 px-6">
+  <div class="hero-bg max-w-5xl mx-auto rounded-3xl px-10 py-16 text-center relative overflow-hidden border border-gold-500/20">
+    <div class="absolute top-0 right-0 w-64 h-64 rounded-full bg-gold-500/15 blur-3xl animate-float"></div>
+    <h2 class="font-serif text-4xl text-white mb-4">Let's Work Together</h2>
+    <p class="text-white/60 mb-8 max-w-xl mx-auto">[Placeholder] Add your email, phone, and links (LinkedIn, Behance, Instagram).</p>
+    <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+      <input type="email" required placeholder="Your email address"
+             class="glass flex-1 px-5 py-3 rounded-full text-white placeholder-white/40 outline-none">
+      <button type="submit" class="btn-cta bg-gold-500 hover:bg-gold-600 text-ink font-semibold px-6 py-3 rounded-full cursor-pointer">
+        Send
+      </button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="py-10 px-6 text-center text-white/40 text-sm">
+  <p class="font-serif text-xl text-white mb-2">Samuel Thermitus</p>
+  <p>&copy; 2026 Samuel Thermitus. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
