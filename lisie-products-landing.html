@@ -82,6 +82,36 @@
   .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(143, 87, 34, 0.25); }
   .btn-cta { transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease; }
   .btn-cta:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 14px 28px rgba(202, 138, 4, 0.35); }
+
+  /* Hero slider */
+  .slide {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease;
+    position: absolute;
+    inset: 0;
+  }
+  .slide.active {
+    opacity: 1;
+    visibility: visible;
+    position: relative;
+  }
+  .slide-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.4);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .slide-dot.active {
+    background: #E0B84A;
+    width: 28px;
+  }
+  .slide-arrow {
+    transition: background-color 0.25s ease, transform 0.25s ease;
+  }
+  .slide-arrow:hover { transform: scale(1.08); }
 </style>
 </head>
 <body class="font-sans text-ink antialiased">
@@ -89,7 +119,18 @@
 <!-- NAV -->
 <header class="fixed top-0 inset-x-0 z-50">
   <nav class="glass mx-auto mt-4 max-w-6xl rounded-2xl px-6 py-4 flex items-center justify-between">
-    <a href="#" class="font-serif text-2xl text-ink tracking-wide">Lisie <span class="shimmer-text">Products</span></a>
+    <a href="#" class="flex items-center gap-3">
+      <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="50" cy="50" r="48" fill="#241A12"/>
+        <path d="M30 40c0-9 9-16 20-16s20 7 20 16c0 12-8 18-8 26H38c0-8-8-14-8-26z" fill="#C8893F"/>
+        <path d="M34 32l4 8 6-10 6 12 6-12 6 10 4-8" stroke="#E0B84A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <circle cx="34" cy="32" r="2.5" fill="#E0B84A"/>
+        <circle cx="50" cy="22" r="2.5" fill="#E0B84A"/>
+        <circle cx="66" cy="32" r="2.5" fill="#E0B84A"/>
+        <rect x="38" y="66" width="24" height="5" rx="2.5" fill="#E0B84A"/>
+      </svg>
+      <span class="font-serif text-2xl text-ink tracking-wide">Lisie <span class="shimmer-text">Products</span></span>
+    </a>
     <div class="hidden md:flex items-center gap-8 text-sm font-medium text-ink/80">
       <a href="#collection" class="hover:text-caramel-600 transition-colors">Collection</a>
       <a href="#about" class="hover:text-caramel-600 transition-colors">About</a>
@@ -102,45 +143,148 @@
   </nav>
 </header>
 
-<!-- HERO -->
-<section class="hero-bg relative min-h-screen flex items-center overflow-hidden pt-32 pb-20">
+<!-- HERO SLIDER -->
+<section id="hero-slider" class="hero-bg relative min-h-screen flex items-center overflow-hidden pt-32 pb-20">
   <div class="absolute -top-20 -left-10 w-72 h-72 rounded-full bg-gold-400/30 blur-3xl animate-float-slow"></div>
   <div class="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-caramel-300/30 blur-3xl animate-float"></div>
 
-  <div class="relative mx-auto max-w-6xl px-6 grid md:grid-cols-2 gap-12 items-center w-full">
-    <div class="text-white fade-up">
-      <span class="inline-block glass-dark text-gold-400 text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6">
-        New Season Collection
-      </span>
-      <h1 class="font-serif text-5xl md:text-6xl leading-[1.1] mb-6">
-        Style Crafted for the
-        <span class="shimmer-text">Modern Woman</span>
-      </h1>
-      <p class="text-white/80 text-lg mb-8 max-w-md">
-        Discover Lisie Products — timeless silhouettes, caramel-toned textures,
-        and gold-kissed details made to move with you.
-      </p>
-      <div class="flex flex-wrap gap-4">
-        <a href="#collection" class="btn-cta bg-gold-500 hover:bg-gold-600 text-white font-semibold px-8 py-3.5 rounded-full cursor-pointer">
-          Explore Collection
-        </a>
-        <a href="#about" class="glass text-white font-semibold px-8 py-3.5 rounded-full cursor-pointer hover:bg-white/25 transition-colors">
-          Our Story
-        </a>
+  <div class="relative mx-auto max-w-6xl px-6 w-full">
+
+    <!-- Slide 1 -->
+    <div class="slide active grid md:grid-cols-2 gap-12 items-center w-full">
+      <div class="text-white fade-up">
+        <span class="inline-block glass-dark text-gold-400 text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6">
+          New Season Collection
+        </span>
+        <h1 class="font-serif text-5xl md:text-6xl leading-[1.1] mb-6">
+          Style Crafted for the
+          <span class="shimmer-text">Modern Woman</span>
+        </h1>
+        <p class="text-white/80 text-lg mb-8 max-w-md">
+          Discover Lisie Products — timeless silhouettes, caramel-toned textures,
+          and gold-kissed details made to move with you.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a href="#collection" class="btn-cta bg-gold-500 hover:bg-gold-600 text-white font-semibold px-8 py-3.5 rounded-full cursor-pointer">
+            Explore Collection
+          </a>
+          <a href="#about" class="glass text-white font-semibold px-8 py-3.5 rounded-full cursor-pointer hover:bg-white/25 transition-colors">
+            Our Story
+          </a>
+        </div>
+      </div>
+      <div class="relative">
+        <div class="glass rounded-3xl p-6 animate-float">
+          <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=900&auto=format&fit=crop"
+               alt="Lisie Products model wearing caramel-toned outfit"
+               class="rounded-2xl w-full h-[420px] object-cover">
+        </div>
+        <div class="glass absolute -bottom-8 -left-8 rounded-2xl px-6 py-4 hidden sm:block">
+          <p class="text-white text-sm font-medium">★★★★★</p>
+          <p class="text-white/80 text-xs mt-1">4.9 from 2,300+ reviews</p>
+        </div>
       </div>
     </div>
 
-    <div class="relative fade-up delay-2">
-      <div class="glass rounded-3xl p-6 animate-float">
-        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=900&auto=format&fit=crop"
-             alt="Lisie Products model wearing caramel-toned outfit"
-             class="rounded-2xl w-full h-[420px] object-cover">
+    <!-- Slide 2 -->
+    <div class="slide grid md:grid-cols-2 gap-12 items-center w-full">
+      <div class="text-white">
+        <span class="inline-block glass-dark text-gold-400 text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6">
+          Best Seller
+        </span>
+        <h1 class="font-serif text-5xl md:text-6xl leading-[1.1] mb-6">
+          The <span class="shimmer-text">Caramel Trench</span> Coat
+        </h1>
+        <p class="text-white/80 text-lg mb-8 max-w-md">
+          Tailored structure meets soft caramel tones — the piece every wardrobe needs this season.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a href="#collection" class="btn-cta bg-gold-500 hover:bg-gold-600 text-white font-semibold px-8 py-3.5 rounded-full cursor-pointer">
+            Shop the Coat
+          </a>
+        </div>
       </div>
-      <div class="glass absolute -bottom-8 -left-8 rounded-2xl px-6 py-4 hidden sm:block">
-        <p class="text-white text-sm font-medium">★★★★★</p>
-        <p class="text-white/80 text-xs mt-1">4.9 from 2,300+ reviews</p>
+      <div class="relative">
+        <div class="glass rounded-3xl p-6 animate-float">
+          <img src="https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=900&auto=format&fit=crop"
+               alt="Caramel trench coat" class="rounded-2xl w-full h-[420px] object-cover">
+        </div>
+        <div class="glass absolute -bottom-8 -left-8 rounded-2xl px-6 py-4 hidden sm:block">
+          <p class="text-white text-sm font-medium">$128.00</p>
+          <p class="text-white/80 text-xs mt-1">Limited stock</p>
+        </div>
       </div>
     </div>
+
+    <!-- Slide 3 -->
+    <div class="slide grid md:grid-cols-2 gap-12 items-center w-full">
+      <div class="text-white">
+        <span class="inline-block glass-dark text-gold-400 text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6">
+          Evening Edit
+        </span>
+        <h1 class="font-serif text-5xl md:text-6xl leading-[1.1] mb-6">
+          Shine in the <span class="shimmer-text">Gold Accent Dress</span>
+        </h1>
+        <p class="text-white/80 text-lg mb-8 max-w-md">
+          Fluid silhouettes with gold-kissed detailing, designed to move with confidence.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a href="#collection" class="btn-cta bg-gold-500 hover:bg-gold-600 text-white font-semibold px-8 py-3.5 rounded-full cursor-pointer">
+            Shop the Dress
+          </a>
+        </div>
+      </div>
+      <div class="relative">
+        <div class="glass rounded-3xl p-6 animate-float">
+          <img src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?q=80&w=900&auto=format&fit=crop"
+               alt="Gold accent dress" class="rounded-2xl w-full h-[420px] object-cover">
+        </div>
+        <div class="glass absolute -bottom-8 -left-8 rounded-2xl px-6 py-4 hidden sm:block">
+          <p class="text-white text-sm font-medium">$96.00</p>
+          <p class="text-white/80 text-xs mt-1">New arrival</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide grid md:grid-cols-2 gap-12 items-center w-full">
+      <div class="text-white">
+        <span class="inline-block glass-dark text-gold-400 text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6">
+          Workwear Edit
+        </span>
+        <h1 class="font-serif text-5xl md:text-6xl leading-[1.1] mb-6">
+          The <span class="shimmer-text">Tailored Blazer</span>
+        </h1>
+        <p class="text-white/80 text-lg mb-8 max-w-md">
+          Sharp lines, soft caramel tones — power dressing redefined for the modern woman.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a href="#collection" class="btn-cta bg-gold-500 hover:bg-gold-600 text-white font-semibold px-8 py-3.5 rounded-full cursor-pointer">
+            Shop the Blazer
+          </a>
+        </div>
+      </div>
+      <div class="relative">
+        <div class="glass rounded-3xl p-6 animate-float">
+          <img src="https://images.unsplash.com/photo-1495385794356-15371f348c31?q=80&w=900&auto=format&fit=crop"
+               alt="Tailored blazer" class="rounded-2xl w-full h-[420px] object-cover">
+        </div>
+        <div class="glass absolute -bottom-8 -left-8 rounded-2xl px-6 py-4 hidden sm:block">
+          <p class="text-white text-sm font-medium">$112.00</p>
+          <p class="text-white/80 text-xs mt-1">Customer favorite</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <button id="slide-prev" aria-label="Previous slide" class="slide-arrow glass absolute left-0 md:-left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center text-white cursor-pointer hover:bg-white/25">
+      ‹
+    </button>
+    <button id="slide-next" aria-label="Next slide" class="slide-arrow glass absolute right-0 md:-right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center text-white cursor-pointer hover:bg-white/25">
+      ›
+    </button>
+
+    <div id="slide-dots" class="flex items-center justify-center gap-3 mt-12"></div>
   </div>
 
   <a href="#collection" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/70 text-xs flex flex-col items-center gap-2 animate-float">
@@ -231,9 +375,60 @@
 
 <!-- FOOTER -->
 <footer class="py-10 px-6 text-center text-ink/60 text-sm">
-  <p class="font-serif text-xl text-ink mb-2">Lisie Products</p>
+  <div class="flex items-center justify-center gap-2 mb-2">
+    <svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="50" cy="50" r="48" fill="#241A12"/>
+      <path d="M30 40c0-9 9-16 20-16s20 7 20 16c0 12-8 18-8 26H38c0-8-8-14-8-26z" fill="#C8893F"/>
+      <path d="M34 32l4 8 6-10 6 12 6-12 6 10 4-8" stroke="#E0B84A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <rect x="38" y="66" width="24" height="5" rx="2.5" fill="#E0B84A"/>
+    </svg>
+    <p class="font-serif text-xl text-ink">Lisie Products</p>
+  </div>
   <p>&copy; 2026 Lisie Products. All rights reserved.</p>
 </footer>
+
+<script>
+  (function () {
+    const slides = document.querySelectorAll('#hero-slider .slide');
+    const dotsContainer = document.getElementById('slide-dots');
+    const prevBtn = document.getElementById('slide-prev');
+    const nextBtn = document.getElementById('slide-next');
+    let current = 0;
+    let timer;
+
+    slides.forEach((_, i) => {
+      const dot = document.createElement('span');
+      dot.className = 'slide-dot' + (i === 0 ? ' active' : '');
+      dot.addEventListener('click', () => goTo(i));
+      dotsContainer.appendChild(dot);
+    });
+    const dots = dotsContainer.querySelectorAll('.slide-dot');
+
+    function goTo(index) {
+      slides[current].classList.remove('active');
+      dots[current].classList.remove('active');
+      current = (index + slides.length) % slides.length;
+      slides[current].classList.add('active');
+      dots[current].classList.add('active');
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    function startAutoplay() {
+      timer = setInterval(next, 6000);
+    }
+    function resetAutoplay() {
+      clearInterval(timer);
+      startAutoplay();
+    }
+
+    nextBtn.addEventListener('click', () => { next(); resetAutoplay(); });
+    prevBtn.addEventListener('click', () => { prev(); resetAutoplay(); });
+
+    startAutoplay();
+  })();
+</script>
 
 </body>
 </html>
