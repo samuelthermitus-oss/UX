@@ -12,7 +12,7 @@ import time
 import httpx
 
 PROVIDER = "511.org / Caltrans (California)"
-CAMERA_LIST_URL = "https://api.511.org/traffic/cameras"
+CAMERA_LIST_URL = "https://api.511.org/traffic/cctv"
 LIST_CACHE_TTL_SECONDS = 5 * 60
 
 _camera_cache = {"fetched_at": 0.0, "cameras": []}
