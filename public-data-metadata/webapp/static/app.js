@@ -2,7 +2,11 @@ const FLIGHT_POLL_MS = 15000;
 const SAT_POLL_MS = 6000;
 const TRAIN_POLL_MS = 10000;
 const CAMERA_POLL_MS = 20000;
-const CAMERA_IMAGE_REFRESH_MS = 10000;
+// WSDOT's own cameras only refresh their source image roughly every
+// 1-2 minutes (this is a still-image API, not live video - there is no
+// free/official live traffic camera video feed). Polling faster than
+// that just wastes requests without ever showing a newer picture.
+const CAMERA_IMAGE_REFRESH_MS = 90000;
 const MOVE_DEBOUNCE_MS = 800;
 
 const isDark = () => {
@@ -463,7 +467,8 @@ function openCameraDetail(cam) {
     "var(--camera)",
     cam.name,
     [["Source", cam.provider]],
-    `<img class="cam-image" id="camImage" src="${imgUrl()}" alt="Live view from ${escapeHtml(cam.name)}" onerror="this.replaceWith(Object.assign(document.createElement('p'),{className:'cam-image-fallback',textContent:'Image unavailable right now.'}))" />`
+    `<img class="cam-image" id="camImage" src="${imgUrl()}" alt="Snapshot from ${escapeHtml(cam.name)}" onerror="this.replaceWith(Object.assign(document.createElement('p'),{className:'cam-image-fallback',textContent:'Image unavailable right now.'}))" />
+     <p class="cam-caption">Still snapshot, not video - refreshes here every ${Math.round(CAMERA_IMAGE_REFRESH_MS / 1000)}s, matching how often WSDOT updates the source image.</p>`
   );
   clearInterval(cameraImageTimer);
   cameraImageTimer = setInterval(() => {

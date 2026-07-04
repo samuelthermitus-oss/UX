@@ -352,6 +352,12 @@ h1 {
   color: var(--ink-faint);
   margin: 0 0 0.6rem;
 }
+.detail .cam-caption {
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: var(--ink-faint);
+  margin: -0.35rem 0 0.6rem;
+}
 
 .leaflet-control-attribution {
   background: var(--surface) !important;
