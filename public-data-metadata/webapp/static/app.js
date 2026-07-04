@@ -54,6 +54,9 @@ let cameraMarkers = new Map();  // id -> {marker, data}
 let query = "";
 let openCameraId = null;
 let cameraImageTimer = null;
+let openDetail = null; // {kind, id} of whatever's shown in the detail panel
+
+const categoryChips = document.getElementById("categoryChips");
 
 const connDot = document.getElementById("connDot");
 const connLabel = document.getElementById("connLabel");
@@ -122,7 +125,8 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
 }
 
-function showDetail(kind, color, name, rows, extraHtml) {
+function showDetail(kind, color, name, rows, extraHtml, trackId) {
+  openDetail = trackId ? { kind: kind.toLowerCase(), id: trackId } : null;
   const dl = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
   detailEl.innerHTML = `
     <button class="close" aria-label="Close">✕</button>
@@ -135,6 +139,7 @@ function showDetail(kind, color, name, rows, extraHtml) {
   detailEl.querySelector(".close").addEventListener("click", () => {
     detailEl.hidden = true;
     openCameraId = null;
+    openDetail = null;
     clearInterval(cameraImageTimer);
   });
 }
@@ -151,6 +156,80 @@ function planeIcon(heading) {
     iconSize: [22, 22],
     iconAnchor: [11, 11],
   });
+}
+
+// Route (origin/destination) enrichment - OpenSky's live positions don't
+// include this, so it's looked up per-aircraft on a separate, more
+// expensive endpoint. Fetched lazily/throttled in the background so a
+// crowded viewport doesn't hammer OpenSky's rate limit; always fetched
+// immediately (bypassing the queue) when the user actually clicks a flight.
+const ROUTE_LOOKUP_INTERVAL_MS = 1500;
+const MAX_AUTO_ENRICH_VISIBLE = 80;
+let routeQueue = [];
+let routeQueued = new Set();
+let routeInFlight = false;
+
+function airportLabel(a) {
+  if (!a) return null;
+  return a.city ? `${a.code} (${a.city})` : a.code;
+}
+
+function routeSearchText(route) {
+  if (!route || !route.known) return "";
+  return [route.origin, route.destination].filter(Boolean)
+    .map((a) => `${a.code} ${a.name} ${a.city || ""} ${a.country || ""}`).join(" ");
+}
+
+function flightSearchText(d) {
+  return `${d.callsign} ${d.country} ${d.airline || ""} ${routeSearchText(d.route)}`;
+}
+
+async function fetchRoute(icao24) {
+  const entry = flightMarkers.get(icao24);
+  if (!entry) return;
+  entry.data.route = { pending: true };
+  try {
+    const res = await fetch(`/api/flight-route/${icao24}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    entry.data.route = await res.json();
+  } catch {
+    entry.data.route = { known: false };
+  }
+  applyFilterToExisting();
+  if (openDetail && openDetail.kind === "flight" && openDetail.id === icao24) renderFlightDetail(icao24);
+}
+
+function processRouteQueue() {
+  if (routeInFlight || routeQueue.length === 0) return;
+  const icao24 = routeQueue.shift();
+  routeQueued.delete(icao24);
+  routeInFlight = true;
+  fetchRoute(icao24).finally(() => { routeInFlight = false; });
+}
+setInterval(processRouteQueue, ROUTE_LOOKUP_INTERVAL_MS);
+
+function routeRow(route) {
+  if (!route || route.pending) return "Loading…";
+  if (!route.known) return "Not recently reported";
+  const o = airportLabel(route.origin) || "?";
+  const d = airportLabel(route.destination) || "?";
+  return `${o} → ${d}`;
+}
+
+function renderFlightDetail(icao24) {
+  const d = flightMarkers.get(icao24).data;
+  if (d.route === undefined) fetchRoute(icao24); // clicked before background queue reached it
+  showDetail("Flight", "var(--flight)", d.callsign || d.icao24, [
+    ["Airline", d.airline || "Unknown / private"],
+    ["Route", routeRow(d.route)],
+    ["Country", d.country || "—"],
+    ["Altitude", d.altitude_m != null ? `${Math.round(d.altitude_m)} m` : "—"],
+    ["Speed", d.velocity_ms != null ? `${Math.round(d.velocity_ms * 3.6)} km/h` : "—"],
+    ["Heading", d.heading != null ? `${Math.round(d.heading)}°` : "—"],
+    ["Vert. rate", d.vertical_rate_ms != null ? `${d.vertical_rate_ms.toFixed(1)} m/s` : "—"],
+    ["ICAO24", d.icao24],
+    ["Source", d.provider],
+  ], "", icao24);
 }
 
 async function pollFlights() {
@@ -174,33 +253,27 @@ async function pollFlights() {
 
 function renderFlights(flights) {
   const seen = new Set();
+  const autoEnrich = flights.length <= MAX_AUTO_ENRICH_VISIBLE;
   for (const f of flights) {
     seen.add(f.icao24);
-    const visible = toggleFlights.checked && matchesQuery(`${f.callsign} ${f.country} ${f.airline || ""}`);
     const existing = flightMarkers.get(f.icao24);
     if (existing) {
       existing.marker.setLatLng([f.lat, f.lon]);
       existing.marker.setIcon(planeIcon(f.heading));
-      existing.data = f;
+      existing.data = { ...f, route: existing.data.route }; // keep any route already resolved
+      const visible = toggleFlights.checked && matchesQuery(flightSearchText(existing.data));
       if (visible && !flightLayer.hasLayer(existing.marker)) flightLayer.addLayer(existing.marker);
       if (!visible && flightLayer.hasLayer(existing.marker)) flightLayer.removeLayer(existing.marker);
     } else {
       const marker = L.marker([f.lat, f.lon], { icon: planeIcon(f.heading) });
-      marker.on("click", () => {
-        const d = flightMarkers.get(f.icao24).data;
-        showDetail("Flight", "var(--flight)", d.callsign || d.icao24, [
-          ["Airline", d.airline || "Unknown / private"],
-          ["Country", d.country || "—"],
-          ["Altitude", d.altitude_m != null ? `${Math.round(d.altitude_m)} m` : "—"],
-          ["Speed", d.velocity_ms != null ? `${Math.round(d.velocity_ms * 3.6)} km/h` : "—"],
-          ["Heading", d.heading != null ? `${Math.round(d.heading)}°` : "—"],
-          ["Vert. rate", d.vertical_rate_ms != null ? `${d.vertical_rate_ms.toFixed(1)} m/s` : "—"],
-          ["ICAO24", d.icao24],
-          ["Source", d.provider],
-        ]);
-      });
+      marker.on("click", () => renderFlightDetail(f.icao24));
       flightMarkers.set(f.icao24, { marker, data: f });
+      const visible = toggleFlights.checked && matchesQuery(flightSearchText(f));
       if (visible) flightLayer.addLayer(marker);
+      if (autoEnrich && !routeQueued.has(f.icao24)) {
+        routeQueued.add(f.icao24);
+        routeQueue.push(f.icao24);
+      }
     }
   }
   for (const [id, entry] of flightMarkers) {
@@ -447,7 +520,7 @@ function renderCameras(cams) {
 
 function applyFilterToExisting() {
   for (const { marker, data } of flightMarkers.values()) {
-    const visible = toggleFlights.checked && matchesQuery(`${data.callsign} ${data.country} ${data.airline || ""}`);
+    const visible = toggleFlights.checked && matchesQuery(flightSearchText(data));
     if (visible && !flightLayer.hasLayer(marker)) flightLayer.addLayer(marker);
     if (!visible && flightLayer.hasLayer(marker)) flightLayer.removeLayer(marker);
   }
@@ -468,19 +541,57 @@ function applyFilterToExisting() {
   }
 }
 
+// ---------- Category chips (All / Flights / Trains / Satellites / Cameras) ----------
+// A quick single-click preset on top of the four toggles: picking one
+// isolates that layer, picking "All" restores every layer. Manually
+// (un)checking a toggle falls back to no chip highlighted ("mixed").
+
+const CATEGORY_TOGGLES = {
+  flights: toggleFlights, trains: toggleTrains, satellites: toggleSats, cameras: toggleCameras,
+};
+
+function syncChipsFromToggles() {
+  const states = Object.values(CATEGORY_TOGGLES).map((t) => t.checked);
+  const allOn = states.every(Boolean);
+  const onlyOne = states.filter(Boolean).length === 1
+    ? Object.keys(CATEGORY_TOGGLES).find((cat) => CATEGORY_TOGGLES[cat].checked)
+    : null;
+  for (const chip of categoryChips.querySelectorAll(".chip")) {
+    const cat = chip.dataset.cat;
+    const pressed = cat === "all" ? allOn : cat === onlyOne;
+    chip.setAttribute("aria-pressed", String(pressed));
+  }
+}
+
+categoryChips.addEventListener("click", (e) => {
+  const chip = e.target.closest(".chip");
+  if (!chip) return;
+  const cat = chip.dataset.cat;
+  for (const [key, toggle] of Object.entries(CATEGORY_TOGGLES)) {
+    toggle.checked = cat === "all" || cat === key;
+  }
+  syncChipsFromToggles();
+  onTrainToggleChange();
+  applyFilterToExisting();
+});
+
+function onTrainToggleChange() {
+  if (!toggleTrains.checked) map.removeLayer(trainRouteLayer);
+  else if (!map.hasLayer(trainRouteLayer)) trainRouteLayer.addTo(map);
+}
+
 searchEl.addEventListener("input", (e) => {
   query = e.target.value.trim().toLowerCase();
   applyFilterToExisting();
 });
-toggleFlights.addEventListener("change", applyFilterToExisting);
-toggleSats.addEventListener("change", applyFilterToExisting);
-toggleTrains.addEventListener("change", () => {
-  trainRouteLayer.eachLayer((l) => (toggleTrains.checked ? trainRouteLayer.addLayer(l) : null));
-  if (!toggleTrains.checked) map.removeLayer(trainRouteLayer);
-  else if (!map.hasLayer(trainRouteLayer)) trainRouteLayer.addTo(map);
-  applyFilterToExisting();
-});
-toggleCameras.addEventListener("change", applyFilterToExisting);
+for (const toggle of Object.values(CATEGORY_TOGGLES)) {
+  toggle.addEventListener("change", () => {
+    syncChipsFromToggles();
+    onTrainToggleChange();
+    applyFilterToExisting();
+  });
+}
+syncChipsFromToggles();
 
 let moveTimer = null;
 map.on("moveend", () => {

@@ -18,6 +18,7 @@ from fastapi.staticfiles import StaticFiles
 from pyorbital.orbital import Orbital
 
 import cameras
+import flight_routes
 import trains
 from airlines import airline_for_callsign
 
@@ -137,6 +138,17 @@ async def flights(
         "provider": OPENSKY_PROVIDER,
         "flights": out,
     }
+
+
+@app.get("/api/flight-route/{icao24}")
+async def flight_route(icao24: str):
+    try:
+        route = await flight_routes.get_route(icao24)
+    except httpx.HTTPError as exc:
+        raise HTTPException(status_code=502, detail=f"OpenSky Network unreachable: {exc}")
+    if route is None:
+        return {"icao24": icao24, "known": False}
+    return {"icao24": icao24, "known": True, "provider": OPENSKY_PROVIDER, **route}
 
 
 @app.get("/api/satellites")

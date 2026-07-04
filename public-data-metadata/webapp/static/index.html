@@ -34,7 +34,15 @@
       </label>
     </div>
 
-    <input class="search" id="search" type="text" placeholder="Filter by callsign, airline, route, camera…" autocomplete="off" />
+    <div class="chip-row" id="categoryChips">
+      <button class="chip" type="button" data-cat="all" aria-pressed="true">All</button>
+      <button class="chip" type="button" data-cat="flights" style="--tone: var(--flight)">Flights</button>
+      <button class="chip" type="button" data-cat="trains" style="--tone: var(--train)">Trains</button>
+      <button class="chip" type="button" data-cat="satellites" style="--tone: var(--satellite)">Satellites</button>
+      <button class="chip" type="button" data-cat="cameras" style="--tone: var(--camera)">Cameras</button>
+    </div>
+
+    <input class="search" id="search" type="text" placeholder="Callsign, airline, airport code, route, camera…" autocomplete="off" />
 
     <p class="status" id="statusLine">—</p>
     <p class="notice" id="cameraNotice" hidden></p>

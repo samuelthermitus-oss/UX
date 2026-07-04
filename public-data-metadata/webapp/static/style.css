@@ -213,6 +213,30 @@ h1 {
 }
 .notice a { color: var(--accent); }
 
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+.chip {
+  font-family: "Board Mono", "DejaVu Sans Mono", ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 0.32rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--ink-dim);
+  cursor: pointer;
+}
+.chip[aria-pressed="true"] {
+  background: var(--tone, var(--accent));
+  color: var(--accent-ink);
+  border-color: var(--tone, var(--accent));
+}
+
 .search {
   width: 100%;
   background: var(--surface-2);
