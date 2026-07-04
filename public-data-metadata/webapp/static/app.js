@@ -125,6 +125,25 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
 }
 
+// fetch() that surfaces the backend's actual error detail (FastAPI's
+// {"detail": "..."} body) instead of just the bare HTTP status code, so
+// the on-screen status line says *why* a provider failed, not just that
+// it did.
+async function fetchJson(url) {
+  const res = await fetch(url);
+  if (!res.ok) {
+    let detail = `HTTP ${res.status}`;
+    try {
+      const body = await res.json();
+      if (body && body.detail) detail = body.detail;
+    } catch {
+      // response wasn't JSON - keep the bare status
+    }
+    throw new Error(detail);
+  }
+  return res.json();
+}
+
 function showDetail(kind, color, name, rows, extraHtml, trackId) {
   openDetail = trackId ? { kind: kind.toLowerCase(), id: trackId } : null;
   const dl = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
@@ -189,9 +208,7 @@ async function fetchRoute(icao24) {
   if (!entry) return;
   entry.data.route = { pending: true };
   try {
-    const res = await fetch(`/api/flight-route/${icao24}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    entry.data.route = await res.json();
+    entry.data.route = await fetchJson(`/api/flight-route/${icao24}`);
   } catch {
     entry.data.route = { known: false };
   }
@@ -238,9 +255,7 @@ async function pollFlights() {
     lamin: b.getSouth(), lomin: b.getWest(), lamax: b.getNorth(), lomax: b.getEast(),
   });
   try {
-    const res = await fetch(`/api/flights?${params}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const payload = await res.json();
+    const payload = await fetchJson(`/api/flights?${params}`);
     flightError = null;
     lastFlightUpdate = payload.updated;
     renderFlights(payload.flights);
@@ -301,9 +316,7 @@ function satIcon() {
 
 async function pollSatellites() {
   try {
-    const res = await fetch("/api/satellites");
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const payload = await res.json();
+    const payload = await fetchJson("/api/satellites");
     satError = null;
     lastSatUpdate = payload.updated;
     renderSatellites(payload.satellites);
@@ -368,9 +381,7 @@ function trainIcon(color) {
 
 async function loadTrainRoutes() {
   try {
-    const res = await fetch("/api/train-routes");
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const payload = await res.json();
+    const payload = await fetchJson("/api/train-routes");
     for (const route of payload.routes) {
       const line = L.polyline(route.coordinates, {
         color: route.color, weight: 2.5, opacity: 0.75,
@@ -385,9 +396,7 @@ async function loadTrainRoutes() {
 
 async function pollTrains() {
   try {
-    const res = await fetch("/api/trains");
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const payload = await res.json();
+    const payload = await fetchJson("/api/trains");
     trainError = null;
     lastTrainUpdate = payload.updated;
     renderTrains(payload.trains);
@@ -466,9 +475,7 @@ function openCameraDetail(cam) {
 
 async function pollCameras() {
   try {
-    const res = await fetch("/api/cameras");
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const payload = await res.json();
+    const payload = await fetchJson("/api/cameras");
     camerasConfigured = payload.configured;
     if (!payload.configured) {
       cameraError = null;
