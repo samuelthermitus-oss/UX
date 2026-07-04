@@ -1,5 +1,8 @@
 const FLIGHT_POLL_MS = 15000;
 const SAT_POLL_MS = 6000;
+const TRAIN_POLL_MS = 10000;
+const CAMERA_POLL_MS = 20000;
+const CAMERA_IMAGE_REFRESH_MS = 10000;
 const MOVE_DEBOUNCE_MS = 800;
 
 const isDark = () => {
@@ -40,31 +43,50 @@ new MutationObserver(refreshTileTheme).observe(document.documentElement, { attri
 
 const flightLayer = L.layerGroup().addTo(map);
 const satLayer = L.layerGroup().addTo(map);
+const trainRouteLayer = L.layerGroup().addTo(map);
+const trainLayer = L.layerGroup().addTo(map);
+const cameraLayer = L.layerGroup().addTo(map);
 
-let flightMarkers = new Map(); // icao24 -> {marker, data}
-let satMarkers = new Map();    // name -> {marker, data}
+let flightMarkers = new Map();  // icao24 -> {marker, data}
+let satMarkers = new Map();     // name -> {marker, data}
+let trainMarkers = new Map();   // vehicle_id -> {marker, data}
+let cameraMarkers = new Map();  // id -> {marker, data}
 let query = "";
+let openCameraId = null;
+let cameraImageTimer = null;
 
 const connDot = document.getElementById("connDot");
 const connLabel = document.getElementById("connLabel");
 const statusLine = document.getElementById("statusLine");
+const cameraNotice = document.getElementById("cameraNotice");
 const flightCountEl = document.getElementById("flightCount");
 const satCountEl = document.getElementById("satCount");
+const trainCountEl = document.getElementById("trainCount");
+const cameraCountEl = document.getElementById("cameraCount");
 const toggleFlights = document.getElementById("toggleFlights");
 const toggleSats = document.getElementById("toggleSats");
+const toggleTrains = document.getElementById("toggleTrains");
+const toggleCameras = document.getElementById("toggleCameras");
 const searchEl = document.getElementById("search");
 const detailEl = document.getElementById("detail");
 
 let lastFlightUpdate = null;
 let lastSatUpdate = null;
+let lastTrainUpdate = null;
+let lastCameraUpdate = null;
 let flightError = null;
 let satError = null;
+let trainError = null;
+let cameraError = null;
+let camerasConfigured = null; // null = unknown yet, true/false once we've asked
 
 function setConn() {
-  if (flightError || satError) {
+  const anyError = flightError || satError || trainError || cameraError;
+  const anyData = lastFlightUpdate || lastSatUpdate || lastTrainUpdate || lastCameraUpdate;
+  if (anyError) {
     connDot.className = "dot error";
     connLabel.textContent = "connection issue";
-  } else if (lastFlightUpdate || lastSatUpdate) {
+  } else if (anyData) {
     connDot.className = "dot live";
     connLabel.textContent = "live";
   } else {
@@ -80,15 +102,44 @@ function agoText(iso) {
 }
 
 function updateStatusLine() {
-  const parts = [];
-  parts.push(`flights ${agoText(lastFlightUpdate)}`);
-  parts.push(`satellites ${agoText(lastSatUpdate)}`);
+  if (flightError) { statusLine.textContent = `flights: ${flightError}`; statusLine.classList.add("error"); return; }
+  if (satError) { statusLine.textContent = `satellites: ${satError}`; statusLine.classList.add("error"); return; }
+  if (trainError) { statusLine.textContent = `trains: ${trainError}`; statusLine.classList.add("error"); return; }
+  if (cameraError) { statusLine.textContent = `cameras: ${cameraError}`; statusLine.classList.add("error"); return; }
+  statusLine.classList.remove("error");
+  const parts = [`flights ${agoText(lastFlightUpdate)}`, `satellites ${agoText(lastSatUpdate)}`, `trains ${agoText(lastTrainUpdate)}`];
+  if (camerasConfigured) parts.push(`cameras ${agoText(lastCameraUpdate)}`);
   statusLine.textContent = parts.join(" · ");
-  statusLine.classList.toggle("error", Boolean(flightError || satError));
-  if (flightError) statusLine.textContent = `flights: ${flightError}`;
-  else if (satError) statusLine.textContent = `satellites: ${satError}`;
 }
 setInterval(updateStatusLine, 1000);
+
+function matchesQuery(text) {
+  if (!query) return true;
+  return text.toLowerCase().includes(query);
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+}
+
+function showDetail(kind, color, name, rows, extraHtml) {
+  const dl = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
+  detailEl.innerHTML = `
+    <button class="close" aria-label="Close">✕</button>
+    <p class="kind" style="color:${color}">${kind}</p>
+    <p class="name">${escapeHtml(name)}</p>
+    ${extraHtml || ""}
+    <dl>${dl}</dl>
+  `;
+  detailEl.hidden = false;
+  detailEl.querySelector(".close").addEventListener("click", () => {
+    detailEl.hidden = true;
+    openCameraId = null;
+    clearInterval(cameraImageTimer);
+  });
+}
+
+// ---------- Flights (OpenSky Network) ----------
 
 function planeIcon(heading) {
   const rot = heading || 0;
@@ -100,35 +151,6 @@ function planeIcon(heading) {
     iconSize: [22, 22],
     iconAnchor: [11, 11],
   });
-}
-
-function satIcon() {
-  return L.divIcon({
-    className: "sat-icon",
-    html: `<div style="position:relative;width:16px;height:16px">
-      <div class="ring" style="position:absolute;inset:0;border:1.5px solid;border-radius:50%;opacity:0.55"></div>
-      <div class="core" style="position:absolute;left:5px;top:5px;width:6px;height:6px;border-radius:50%"></div>
-    </div>`,
-    iconSize: [16, 16],
-    iconAnchor: [8, 8],
-  });
-}
-
-function matchesQuery(text) {
-  if (!query) return true;
-  return text.toLowerCase().includes(query);
-}
-
-function showDetail(kind, color, name, rows) {
-  const dl = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
-  detailEl.innerHTML = `
-    <button class="close" aria-label="Close">✕</button>
-    <p class="kind" style="color:${color}">${kind}</p>
-    <p class="name">${name}</p>
-    <dl>${dl}</dl>
-  `;
-  detailEl.hidden = false;
-  detailEl.querySelector(".close").addEventListener("click", () => { detailEl.hidden = true; });
 }
 
 async function pollFlights() {
@@ -154,7 +176,7 @@ function renderFlights(flights) {
   const seen = new Set();
   for (const f of flights) {
     seen.add(f.icao24);
-    const visible = toggleFlights.checked && matchesQuery(`${f.callsign} ${f.country}`);
+    const visible = toggleFlights.checked && matchesQuery(`${f.callsign} ${f.country} ${f.airline || ""}`);
     const existing = flightMarkers.get(f.icao24);
     if (existing) {
       existing.marker.setLatLng([f.lat, f.lon]);
@@ -167,12 +189,14 @@ function renderFlights(flights) {
       marker.on("click", () => {
         const d = flightMarkers.get(f.icao24).data;
         showDetail("Flight", "var(--flight)", d.callsign || d.icao24, [
+          ["Airline", d.airline || "Unknown / private"],
           ["Country", d.country || "—"],
           ["Altitude", d.altitude_m != null ? `${Math.round(d.altitude_m)} m` : "—"],
           ["Speed", d.velocity_ms != null ? `${Math.round(d.velocity_ms * 3.6)} km/h` : "—"],
           ["Heading", d.heading != null ? `${Math.round(d.heading)}°` : "—"],
           ["Vert. rate", d.vertical_rate_ms != null ? `${d.vertical_rate_ms.toFixed(1)} m/s` : "—"],
           ["ICAO24", d.icao24],
+          ["Source", d.provider],
         ]);
       });
       flightMarkers.set(f.icao24, { marker, data: f });
@@ -186,6 +210,20 @@ function renderFlights(flights) {
     }
   }
   flightCountEl.textContent = String(flights.length);
+}
+
+// ---------- Satellites (CelesTrak) ----------
+
+function satIcon() {
+  return L.divIcon({
+    className: "sat-icon",
+    html: `<div style="position:relative;width:16px;height:16px">
+      <div class="ring" style="position:absolute;inset:0;border:1.5px solid;border-radius:50%;opacity:0.55"></div>
+      <div class="core" style="position:absolute;left:5px;top:5px;width:6px;height:6px;border-radius:50%"></div>
+    </div>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+  });
 }
 
 async function pollSatellites() {
@@ -219,9 +257,11 @@ function renderSatellites(sats) {
       marker.on("click", () => {
         const d = satMarkers.get(s.name).data;
         showDetail("Satellite", "var(--satellite)", d.name, [
+          ["Operator", d.operator || "Unlisted"],
           ["Latitude", d.lat.toFixed(2)],
           ["Longitude", d.lon.toFixed(2)],
           ["Altitude", `${Math.round(d.alt_km)} km`],
+          ["Source", d.provider],
         ]);
       });
       satMarkers.set(s.name, { marker, data: s });
@@ -237,9 +277,177 @@ function renderSatellites(sats) {
   satCountEl.textContent = String(sats.length);
 }
 
+// ---------- Trains (MBTA) ----------
+
+function trainIcon(color) {
+  return L.divIcon({
+    className: "",
+    html: `<svg class="train-icon" width="16" height="16" viewBox="0 0 24 24" style="color:${color}">
+      <rect x="4" y="3" width="16" height="14" rx="4" fill="currentColor" opacity="0.9"/>
+      <rect x="6.5" y="6" width="11" height="5" rx="1" fill="var(--surface)"/>
+      <circle cx="8" cy="19" r="1.6" fill="currentColor"/>
+      <circle cx="16" cy="19" r="1.6" fill="currentColor"/>
+    </svg>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+  });
+}
+
+async function loadTrainRoutes() {
+  try {
+    const res = await fetch("/api/train-routes");
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const payload = await res.json();
+    for (const route of payload.routes) {
+      const line = L.polyline(route.coordinates, {
+        color: route.color, weight: 2.5, opacity: 0.75,
+      });
+      line.bindTooltip(route.name, { sticky: true });
+      trainRouteLayer.addLayer(line);
+    }
+  } catch (err) {
+    // static route shapes are cosmetic - live vehicle polling reports the real error
+  }
+}
+
+async function pollTrains() {
+  try {
+    const res = await fetch("/api/trains");
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const payload = await res.json();
+    trainError = null;
+    lastTrainUpdate = payload.updated;
+    renderTrains(payload.trains);
+  } catch (err) {
+    trainError = err.message || "unreachable";
+  }
+  setConn();
+  updateStatusLine();
+}
+
+function renderTrains(vehicles) {
+  const seen = new Set();
+  for (const v of vehicles) {
+    seen.add(v.vehicle_id);
+    const visible = toggleTrains.checked && matchesQuery(`${v.route_name} ${v.label || ""}`);
+    const existing = trainMarkers.get(v.vehicle_id);
+    if (existing) {
+      existing.marker.setLatLng([v.lat, v.lon]);
+      existing.data = v;
+      if (visible && !trainLayer.hasLayer(existing.marker)) trainLayer.addLayer(existing.marker);
+      if (!visible && trainLayer.hasLayer(existing.marker)) trainLayer.removeLayer(existing.marker);
+    } else {
+      const marker = L.marker([v.lat, v.lon], { icon: trainIcon(v.route_color) });
+      marker.on("click", () => {
+        const d = trainMarkers.get(v.vehicle_id).data;
+        showDetail("Train", d.route_color, d.route_name, [
+          ["Vehicle", d.label || d.vehicle_id],
+          ["Status", (d.status || "—").replaceAll("_", " ").toLowerCase()],
+          ["Source", d.provider],
+        ]);
+      });
+      trainMarkers.set(v.vehicle_id, { marker, data: v });
+      if (visible) trainLayer.addLayer(marker);
+    }
+  }
+  for (const [id, entry] of trainMarkers) {
+    if (!seen.has(id)) {
+      trainLayer.removeLayer(entry.marker);
+      trainMarkers.delete(id);
+    }
+  }
+  trainCountEl.textContent = String(vehicles.length);
+}
+
+// ---------- Traffic cameras (511.org / Caltrans) ----------
+
+function cameraIcon() {
+  return L.divIcon({
+    className: "",
+    html: `<svg class="camera-icon" width="16" height="16" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M4 7a2 2 0 0 1 2-2h3l1.5-2h3L15 5h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/>
+      <circle cx="12" cy="13" r="3.4" fill="var(--surface)"/>
+    </svg>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+  });
+}
+
+function openCameraDetail(cam) {
+  openCameraId = cam.id;
+  const imgUrl = () => `/api/camera-image/${encodeURIComponent(cam.id)}?t=${Date.now()}`;
+  showDetail(
+    "Traffic camera",
+    "var(--camera)",
+    cam.name,
+    [["Source", cam.provider]],
+    `<img class="cam-image" id="camImage" src="${imgUrl()}" alt="Live view from ${escapeHtml(cam.name)}" onerror="this.replaceWith(Object.assign(document.createElement('p'),{className:'cam-image-fallback',textContent:'Image unavailable right now.'}))" />`
+  );
+  clearInterval(cameraImageTimer);
+  cameraImageTimer = setInterval(() => {
+    if (openCameraId !== cam.id) return clearInterval(cameraImageTimer);
+    const img = document.getElementById("camImage");
+    if (img) img.src = imgUrl();
+  }, CAMERA_IMAGE_REFRESH_MS);
+}
+
+async function pollCameras() {
+  try {
+    const res = await fetch("/api/cameras");
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const payload = await res.json();
+    camerasConfigured = payload.configured;
+    if (!payload.configured) {
+      cameraError = null;
+      cameraNotice.textContent = payload.message;
+      cameraNotice.hidden = false;
+      cameraCountEl.textContent = "0";
+      setConn();
+      updateStatusLine();
+      return;
+    }
+    cameraNotice.hidden = true;
+    cameraError = null;
+    lastCameraUpdate = payload.updated;
+    renderCameras(payload.cameras);
+  } catch (err) {
+    cameraError = err.message || "unreachable";
+  }
+  setConn();
+  updateStatusLine();
+}
+
+function renderCameras(cams) {
+  const seen = new Set();
+  for (const cam of cams) {
+    seen.add(cam.id);
+    const visible = toggleCameras.checked && matchesQuery(cam.name);
+    const existing = cameraMarkers.get(cam.id);
+    if (existing) {
+      existing.data = cam;
+      if (visible && !cameraLayer.hasLayer(existing.marker)) cameraLayer.addLayer(existing.marker);
+      if (!visible && cameraLayer.hasLayer(existing.marker)) cameraLayer.removeLayer(existing.marker);
+    } else {
+      const marker = L.marker([cam.lat, cam.lon], { icon: cameraIcon() });
+      marker.on("click", () => openCameraDetail(cameraMarkers.get(cam.id).data));
+      cameraMarkers.set(cam.id, { marker, data: cam });
+      if (visible) cameraLayer.addLayer(marker);
+    }
+  }
+  for (const [id, entry] of cameraMarkers) {
+    if (!seen.has(id)) {
+      cameraLayer.removeLayer(entry.marker);
+      cameraMarkers.delete(id);
+    }
+  }
+  cameraCountEl.textContent = String(cams.length);
+}
+
+// ---------- Shared filter/search wiring ----------
+
 function applyFilterToExisting() {
   for (const { marker, data } of flightMarkers.values()) {
-    const visible = toggleFlights.checked && matchesQuery(`${data.callsign} ${data.country}`);
+    const visible = toggleFlights.checked && matchesQuery(`${data.callsign} ${data.country} ${data.airline || ""}`);
     if (visible && !flightLayer.hasLayer(marker)) flightLayer.addLayer(marker);
     if (!visible && flightLayer.hasLayer(marker)) flightLayer.removeLayer(marker);
   }
@@ -247,6 +455,16 @@ function applyFilterToExisting() {
     const visible = toggleSats.checked && matchesQuery(data.name);
     if (visible && !satLayer.hasLayer(marker)) satLayer.addLayer(marker);
     if (!visible && satLayer.hasLayer(marker)) satLayer.removeLayer(marker);
+  }
+  for (const { marker, data } of trainMarkers.values()) {
+    const visible = toggleTrains.checked && matchesQuery(`${data.route_name} ${data.label || ""}`);
+    if (visible && !trainLayer.hasLayer(marker)) trainLayer.addLayer(marker);
+    if (!visible && trainLayer.hasLayer(marker)) trainLayer.removeLayer(marker);
+  }
+  for (const { marker, data } of cameraMarkers.values()) {
+    const visible = toggleCameras.checked && matchesQuery(data.name);
+    if (visible && !cameraLayer.hasLayer(marker)) cameraLayer.addLayer(marker);
+    if (!visible && cameraLayer.hasLayer(marker)) cameraLayer.removeLayer(marker);
   }
 }
 
@@ -256,6 +474,13 @@ searchEl.addEventListener("input", (e) => {
 });
 toggleFlights.addEventListener("change", applyFilterToExisting);
 toggleSats.addEventListener("change", applyFilterToExisting);
+toggleTrains.addEventListener("change", () => {
+  trainRouteLayer.eachLayer((l) => (toggleTrains.checked ? trainRouteLayer.addLayer(l) : null));
+  if (!toggleTrains.checked) map.removeLayer(trainRouteLayer);
+  else if (!map.hasLayer(trainRouteLayer)) trainRouteLayer.addTo(map);
+  applyFilterToExisting();
+});
+toggleCameras.addEventListener("change", applyFilterToExisting);
 
 let moveTimer = null;
 map.on("moveend", () => {
@@ -263,7 +488,12 @@ map.on("moveend", () => {
   moveTimer = setTimeout(pollFlights, MOVE_DEBOUNCE_MS);
 });
 
+loadTrainRoutes();
 pollFlights();
 pollSatellites();
+pollTrains();
+pollCameras();
 setInterval(pollFlights, FLIGHT_POLL_MS);
 setInterval(pollSatellites, SAT_POLL_MS);
+setInterval(pollTrains, TRAIN_POLL_MS);
+setInterval(pollCameras, CAMERA_POLL_MS);

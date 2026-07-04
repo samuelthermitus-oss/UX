@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Live Sky &amp; Orbit</title>
+<title>Live Sky, Rail &amp; Roads</title>
 <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
 <link rel="stylesheet" href="style.css" />
 </head>
@@ -12,17 +12,32 @@
 
   <div class="panel" id="panel">
     <p class="eyebrow"><span class="dot" id="connDot"></span><span id="connLabel">connecting…</span></p>
-    <h1>Live Sky &amp; Orbit</h1>
-    <p class="dek">Live aircraft positions from OpenSky Network and live satellite ground tracks (SGP4-propagated from CelesTrak TLEs). Pan the map to load flights in view.</p>
+    <h1>Live Sky, Rail &amp; Roads</h1>
+    <p class="dek">Every layer below pulls straight from that provider's own live API — nothing is mirrored or delayed.</p>
 
     <div class="layers">
-      <label class="toggle"><input type="checkbox" id="toggleFlights" checked /> Flights <span class="count" id="flightCount">0</span></label>
-      <label class="toggle"><input type="checkbox" id="toggleSats" checked /> Satellites <span class="count" id="satCount">0</span></label>
+      <label class="toggle" style="--tone: var(--flight)">
+        <span class="toggle-row"><input type="checkbox" id="toggleFlights" checked /><span class="toggle-label">Flights</span><span class="count" id="flightCount">0</span></span>
+        <span class="toggle-source">OpenSky Network</span>
+      </label>
+      <label class="toggle" style="--tone: var(--satellite)">
+        <span class="toggle-row"><input type="checkbox" id="toggleSats" checked /><span class="toggle-label">Satellites</span><span class="count" id="satCount">0</span></span>
+        <span class="toggle-source">CelesTrak</span>
+      </label>
+      <label class="toggle" style="--tone: var(--train)">
+        <span class="toggle-row"><input type="checkbox" id="toggleTrains" checked /><span class="toggle-label">Trains</span><span class="count" id="trainCount">0</span></span>
+        <span class="toggle-source">MBTA</span>
+      </label>
+      <label class="toggle" style="--tone: var(--camera)">
+        <span class="toggle-row"><input type="checkbox" id="toggleCameras" checked /><span class="toggle-label">Cameras</span><span class="count" id="cameraCount">0</span></span>
+        <span class="toggle-source">511.org / Caltrans</span>
+      </label>
     </div>
 
-    <input class="search" id="search" type="text" placeholder="Filter by callsign, country or satellite name…" autocomplete="off" />
+    <input class="search" id="search" type="text" placeholder="Filter by callsign, airline, route, camera…" autocomplete="off" />
 
     <p class="status" id="statusLine">—</p>
+    <p class="notice" id="cameraNotice" hidden></p>
   </div>
 
   <div class="detail" id="detail" hidden></div>
