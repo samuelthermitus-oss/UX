@@ -3,8 +3,9 @@
 
 Proxies OpenSky Network (flights), CelesTrak (satellite TLEs, propagated
 with SGP4 via pyorbital), MBTA (live train positions + route shapes), and
-511.org (official Bay Area traffic cameras) so the browser never needs its
-own API keys and never hits CORS restrictions on those providers.
+WSDOT (official Washington State traffic cameras) so the browser never
+needs its own API keys and never hits CORS restrictions on those
+providers.
 """
 import os
 import time
@@ -40,7 +41,7 @@ STATION_OPERATORS = {
     "CSS": "China Manned Space Agency (CMSA)",
 }
 
-TRAFFIC_511_TOKEN = os.environ.get("TRAFFIC_511_TOKEN", "")
+WSDOT_ACCESS_CODE = os.environ.get("WSDOT_ACCESS_CODE", "")
 
 app = FastAPI(title="Live Sky, Rail & Roads")
 app.add_middleware(
@@ -222,18 +223,18 @@ async def live_trains():
 
 @app.get("/api/cameras")
 async def camera_list():
-    if not cameras.is_configured(TRAFFIC_511_TOKEN):
+    if not cameras.is_configured(WSDOT_ACCESS_CODE):
         return {
             "configured": False,
             "provider": cameras.PROVIDER,
-            "message": "Add a free 511.org API token (get one instantly at "
-                       "https://511.org/open-data/token) as the TRAFFIC_511_TOKEN "
+            "message": "Add a free WSDOT Access Code (get one instantly at "
+                       "https://wsdot.wa.gov/traffic/api/) as the WSDOT_ACCESS_CODE "
                        "environment variable to enable this layer.",
         }
     try:
-        cam_list = await cameras.get_cameras(TRAFFIC_511_TOKEN)
+        cam_list = await cameras.get_cameras(WSDOT_ACCESS_CODE)
     except httpx.HTTPError as exc:
-        raise HTTPException(status_code=502, detail=f"511.org unreachable: {exc}")
+        raise HTTPException(status_code=502, detail=f"WSDOT unreachable: {exc}")
     return {
         "configured": True,
         "updated": datetime.now(timezone.utc).isoformat(),
@@ -253,7 +254,7 @@ async def camera_image(camera_id: str):
             resp = await client.get(image_url)
             resp.raise_for_status()
     except httpx.HTTPError as exc:
-        raise HTTPException(status_code=502, detail=f"511.org image unreachable: {exc}")
+        raise HTTPException(status_code=502, detail=f"WSDOT image unreachable: {exc}")
     content_type = resp.headers.get("content-type", "image/jpeg")
     return Response(content=resp.content, media_type=content_type)
 

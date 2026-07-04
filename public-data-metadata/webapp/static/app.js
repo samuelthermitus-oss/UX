@@ -441,7 +441,7 @@ function renderTrains(vehicles) {
   trainCountEl.textContent = String(vehicles.length);
 }
 
-// ---------- Traffic cameras (511.org / Caltrans) ----------
+// ---------- Traffic cameras (WSDOT) ----------
 
 function cameraIcon() {
   return L.divIcon({

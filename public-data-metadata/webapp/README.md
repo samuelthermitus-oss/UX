@@ -2,7 +2,7 @@
 
 A real-time dashboard: live aircraft (OpenSky Network), live satellite
 ground tracks (CelesTrak, SGP4-propagated), live trains (MBTA), and
-official public traffic cameras (511.org / Caltrans) on one map. Every
+official public traffic cameras (WSDOT, Washington State) on one map. Every
 marker is labeled with the provider it actually came from. This is a real
 running app, not a static page — it makes live network calls, so it runs
 on your machine rather than as a shared link.
@@ -43,17 +43,25 @@ query only costs quota for the visible bounding box.
 
 ## Enabling traffic cameras (optional)
 
-511.org's camera API requires a free token (instant self-serve signup, no
-approval wait):
+WSDOT's camera API requires a free Access Code (instant self-serve
+signup, no approval wait):
 
-1. Get one at <https://511.org/open-data/token>.
+1. Get one at <https://wsdot.wa.gov/traffic/api/> - enter your email,
+   the code is shown immediately.
 2. Run the server with it set:
    ```bash
-   TRAFFIC_511_TOKEN=your-token-here python3 server.py
+   WSDOT_ACCESS_CODE=your-access-code-here python3 server.py
    ```
 
 Without it, every other layer still works — the Cameras panel just shows a
 message telling you how to enable it instead of erroring.
+
+Note: this originally targeted 511.org (Bay Area), matching the catalog's
+`cam-001` entry, but 511.org's actual public Open Data API turned out to
+only cover Traffic Events, Toll Data, and WZDx - no camera/CCTV endpoint
+exists despite their website showing camera imagery in its own UI. Fixed
+to use WSDOT (`cam-002`), whose `GetCamerasAsJson` endpoint is confirmed
+real. The catalog entry for 511.org has been corrected to note this.
 
 ## How it's built
 
@@ -79,8 +87,8 @@ message telling you how to enable it instead of erroring.
     `VehiclePositions.pb` GTFS-realtime feed (via Google's official
     `gtfs-realtime-bindings`) for moving train positions.
   - `GET /api/cameras` / `GET /api/camera-image/{id}` - `cameras.py` lists
-    official Caltrans/511.org traffic cameras and proxies the actual
-    image bytes, so the API token never reaches the browser.
+    official WSDOT traffic cameras and proxies the actual image bytes, so
+    the Access Code never reaches the browser.
   - The backend exists so the browser never talks to any provider
     directly - avoids CORS issues and keeps every API key server-side.
 - **`static/`** - vanilla JS + Leaflet (vendored locally under
@@ -101,9 +109,9 @@ message telling you how to enable it instead of erroring.
   Other agencies (SNCF, Deutsche Bahn, UK rail) are cataloged in
   `../data/sources.csv` but need their own free API keys to wire up the
   same way; ask if you want one added.
-- Cameras cover the Bay Area/California via 511.org only, per the same
-  scoping as the catalog: official government traffic-camera programs
-  only, never general/private CCTV.
-- If any provider fails (offline, down, rate limited, camera token
+- Cameras cover Washington State via WSDOT only, per the same scoping as
+  the catalog: official government traffic-camera programs only, never
+  general/private CCTV.
+- If any provider fails (offline, down, rate limited, camera code
   missing), the affected layer/status line says so explicitly instead of
   silently going stale.
