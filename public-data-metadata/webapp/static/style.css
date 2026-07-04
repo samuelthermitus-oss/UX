@@ -1,0 +1,282 @@
+@font-face {
+  font-family: "Board Sans";
+  font-weight: 700;
+  src: url(fonts/heading-bold.woff2) format("woff2");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Board Sans";
+  font-weight: 400;
+  src: url(fonts/body-regular.woff2) format("woff2");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Board Mono";
+  font-weight: 400;
+  src: url(fonts/mono-regular.woff2) format("woff2");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Board Mono";
+  font-weight: 700;
+  src: url(fonts/mono-bold.woff2) format("woff2");
+  font-display: swap;
+}
+
+:root {
+  --bg: #0a0f16;
+  --surface: rgba(18, 26, 36, 0.92);
+  --surface-2: #182230;
+  --border: #2b3746;
+  --ink: #e7edf5;
+  --ink-dim: #97a3b3;
+  --ink-faint: #5c6b7e;
+  --accent: #4fd1c5;
+  --accent-ink: #06211e;
+  --flight: #6fa8ff;
+  --satellite: #b48bf2;
+  --live: #56d68a;
+  --warn: #f2905a;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --surface: rgba(255, 255, 255, 0.92);
+    --surface-2: #eceff4;
+    --border: #d7dde6;
+    --ink: #16202c;
+    --ink-dim: #5b6b7f;
+    --ink-faint: #8593a4;
+    --accent: #0f8a7c;
+    --accent-ink: #ffffff;
+    --flight: #2f66d6;
+    --satellite: #7444c4;
+    --live: #1f9c5a;
+    --warn: #c85a24;
+  }
+}
+:root[data-theme="dark"] {
+  --surface: rgba(18, 26, 36, 0.92);
+  --surface-2: #182230;
+  --border: #2b3746;
+  --ink: #e7edf5;
+  --ink-dim: #97a3b3;
+  --ink-faint: #5c6b7e;
+  --accent: #4fd1c5;
+  --accent-ink: #06211e;
+  --flight: #6fa8ff;
+  --satellite: #b48bf2;
+  --live: #56d68a;
+  --warn: #f2905a;
+}
+:root[data-theme="light"] {
+  --surface: rgba(255, 255, 255, 0.92);
+  --surface-2: #eceff4;
+  --border: #d7dde6;
+  --ink: #16202c;
+  --ink-dim: #5b6b7f;
+  --ink-faint: #8593a4;
+  --accent: #0f8a7c;
+  --accent-ink: #ffffff;
+  --flight: #2f66d6;
+  --satellite: #7444c4;
+  --live: #1f9c5a;
+  --warn: #c85a24;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
+body {
+  background: #0a0f16;
+  color: var(--ink);
+  font-family: "Board Sans", "DejaVu Sans", system-ui, sans-serif;
+  font-size: 15px;
+  overflow: hidden;
+}
+
+#map { position: absolute; inset: 0; }
+
+.panel {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1000;
+  width: 340px;
+  max-width: calc(100vw - 2rem);
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.1rem 1.2rem 1.2rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+}
+
+.eyebrow {
+  font-family: "Board Mono", "DejaVu Sans Mono", ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.55rem;
+}
+.eyebrow .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--ink-faint);
+}
+.eyebrow .dot.live {
+  background: var(--live);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--live) 20%, transparent);
+  animation: pulse 2.2s ease-in-out infinite;
+}
+.eyebrow .dot.error { background: var(--warn); }
+@media (prefers-reduced-motion: reduce) { .eyebrow .dot { animation: none; } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+h1 {
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.5rem;
+  text-wrap: balance;
+}
+
+.dek {
+  color: var(--ink-dim);
+  font-size: 0.83rem;
+  line-height: 1.5;
+  margin: 0 0 1rem;
+}
+
+.layers {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 0.7rem;
+}
+
+.toggle {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  font-family: "Board Mono", "DejaVu Sans Mono", ui-monospace, monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 0.45rem 0.6rem;
+  cursor: pointer;
+  user-select: none;
+}
+.toggle input { accent-color: var(--accent); width: 14px; height: 14px; margin: 0; }
+.toggle .count {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.search {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--ink);
+  font-family: "Board Mono", "DejaVu Sans Mono", ui-monospace, monospace;
+  font-size: 0.8rem;
+  padding: 0.5rem 0.7rem;
+  margin-bottom: 0.7rem;
+}
+.search::placeholder { color: var(--ink-faint); }
+
+.status {
+  font-family: "Board Mono", "DejaVu Sans Mono", ui-monospace, monospace;
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  margin: 0;
+}
+.status.error { color: var(--warn); }
+
+.detail {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 1000;
+  width: 280px;
+  max-width: calc(100vw - 2rem);
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+}
+.detail .kind {
+  font-family: "Board Mono", "DejaVu Sans Mono", ui-monospace, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0 0 0.4rem;
+}
+.detail .name {
+  font-weight: 700;
+  font-size: 1rem;
+  margin: 0 0 0.6rem;
+}
+.detail dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.6rem;
+  row-gap: 0.28rem;
+  font-size: 0.78rem;
+  margin: 0;
+}
+.detail dt {
+  font-family: "Board Mono", "DejaVu Sans Mono", ui-monospace, monospace;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  font-size: 0.66rem;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  padding-top: 0.1rem;
+}
+.detail dd {
+  margin: 0;
+  font-family: "Board Mono", "DejaVu Sans Mono", ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+.detail .close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.7rem;
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  font-family: "Board Mono", monospace;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.2rem;
+}
+.detail .close:hover { color: var(--ink); }
+
+.plane-icon {
+  color: var(--flight);
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--flight) 55%, transparent));
+}
+.sat-icon .ring {
+  border-color: var(--satellite);
+}
+.sat-icon .core {
+  background: var(--satellite);
+}
+
+.leaflet-control-attribution {
+  background: var(--surface) !important;
+  color: var(--ink-faint) !important;
+  font-family: "Board Mono", monospace !important;
+  font-size: 0.65rem !important;
+}
+.leaflet-control-attribution a { color: var(--ink-dim) !important; }

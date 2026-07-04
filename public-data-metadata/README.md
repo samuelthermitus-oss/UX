@@ -36,8 +36,18 @@ public-data-metadata/
 │   └── sources.csv      # canonical registry - one row per data source
 ├── scripts/
 │   └── search.py         # CLI to query/filter the registry
+├── webapp/                # real-time flights + satellites dashboard (see webapp/README.md)
 └── README.md
 ```
+
+## Live dashboard
+
+The catalog itself is read-only metadata. For an actual real-time view —
+live aircraft positions and live satellite ground tracks on a map, updating
+continuously — see [`webapp/`](webapp/README.md). It's a small FastAPI +
+vanilla-JS app you run locally (`pip install -r requirements.txt && python3
+server.py`), currently covering the `flights` and `satellite-tracking`
+categories from the catalog below.
 
 ## Schema (`data/sources.csv`)
 

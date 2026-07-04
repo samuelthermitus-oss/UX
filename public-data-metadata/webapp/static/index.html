@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Live Sky &amp; Orbit</title>
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="map"></div>
+
+  <div class="panel" id="panel">
+    <p class="eyebrow"><span class="dot" id="connDot"></span><span id="connLabel">connecting…</span></p>
+    <h1>Live Sky &amp; Orbit</h1>
+    <p class="dek">Live aircraft positions from OpenSky Network and live satellite ground tracks (SGP4-propagated from CelesTrak TLEs). Pan the map to load flights in view.</p>
+
+    <div class="layers">
+      <label class="toggle"><input type="checkbox" id="toggleFlights" checked /> Flights <span class="count" id="flightCount">0</span></label>
+      <label class="toggle"><input type="checkbox" id="toggleSats" checked /> Satellites <span class="count" id="satCount">0</span></label>
+    </div>
+
+    <input class="search" id="search" type="text" placeholder="Filter by callsign, country or satellite name…" autocomplete="off" />
+
+    <p class="status" id="statusLine">—</p>
+  </div>
+
+  <div class="detail" id="detail" hidden></div>
+
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
