@@ -104,6 +104,7 @@ async def flights(
     lomax: float = Query(...),
 ):
     params = {"lamin": lamin, "lomin": lomin, "lamax": lamax, "lomax": lomax}
+    auth_mode = "authenticated" if opensky_auth.is_configured() else "anonymous"
     try:
         headers = await opensky_auth.get_auth_headers()
         async with httpx.AsyncClient(timeout=12) as client:
@@ -111,7 +112,7 @@ async def flights(
             resp.raise_for_status()
             payload = resp.json()
     except httpx.HTTPError as exc:
-        raise HTTPException(status_code=502, detail=f"OpenSky Network unreachable: {exc}")
+        raise HTTPException(status_code=502, detail=f"OpenSky Network unreachable ({auth_mode}): {exc}")
 
     states = payload.get("states") or []
     out = []
@@ -140,6 +141,17 @@ async def flights(
         "provider": OPENSKY_PROVIDER,
         "flights": out,
     }
+
+
+@app.get("/api/opensky-status")
+async def opensky_status():
+    if not opensky_auth.is_configured():
+        return {"configured": False, "token_ok": None, "detail": "OPENSKY_CLIENT_ID/SECRET not set - using anonymous access"}
+    try:
+        await opensky_auth.get_auth_headers()
+    except httpx.HTTPError as exc:
+        return {"configured": True, "token_ok": False, "detail": f"Token request failed: {exc}"}
+    return {"configured": True, "token_ok": True, "detail": "Token obtained successfully"}
 
 
 @app.get("/api/flight-route/{icao24}")
