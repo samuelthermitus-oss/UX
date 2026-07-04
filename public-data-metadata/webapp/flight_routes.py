@@ -12,6 +12,7 @@ import time
 
 import httpx
 
+import opensky_auth
 from airports import describe_airport
 
 OPENSKY_FLIGHTS_URL = "https://opensky-network.org/api/flights/aircraft"
@@ -32,8 +33,9 @@ async def get_route(icao24):
             return cached["route"]
 
     params = {"icao24": icao24, "begin": int(now - LOOKBACK_SECONDS), "end": int(now)}
+    headers = await opensky_auth.get_auth_headers()
     async with httpx.AsyncClient(timeout=12) as client:
-        resp = await client.get(OPENSKY_FLIGHTS_URL, params=params)
+        resp = await client.get(OPENSKY_FLIGHTS_URL, params=params, headers=headers)
         if resp.status_code == 404:
             _route_cache[icao24] = {"fetched_at": now, "route": None}
             return None

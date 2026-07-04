@@ -19,6 +19,7 @@ from pyorbital.orbital import Orbital
 
 import cameras
 import flight_routes
+import opensky_auth
 import trains
 from airlines import airline_for_callsign
 
@@ -104,8 +105,9 @@ async def flights(
 ):
     params = {"lamin": lamin, "lomin": lomin, "lamax": lamax, "lomax": lomax}
     try:
+        headers = await opensky_auth.get_auth_headers()
         async with httpx.AsyncClient(timeout=12) as client:
-            resp = await client.get(OPENSKY_STATES_URL, params=params)
+            resp = await client.get(OPENSKY_STATES_URL, params=params, headers=headers)
             resp.raise_for_status()
             payload = resp.json()
     except httpx.HTTPError as exc:

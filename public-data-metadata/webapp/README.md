@@ -17,8 +17,29 @@ python3 server.py
 
 Then open **http://127.0.0.1:8420**.
 
-Flights, satellites, and trains work immediately with no signup. The
-traffic camera layer needs one optional free step - see below.
+Flights, satellites, and trains work with no signup, but OpenSky's
+anonymous access is rate-limited hard enough that you'll likely see
+`flights: OpenSky Network unreachable: 429 ...` within a few requests,
+especially over a wide map view. Registering a free OpenSky account fixes
+this - see below.
+
+## Fixing flight rate-limiting (recommended)
+
+Anonymous OpenSky requests get a very small quota and are throttled
+per-request. A free account with an API client gets a much higher one:
+
+1. Register at <https://opensky-network.org/index.php> (free).
+2. Log in, go to your account page, and create an **API Client**
+   (OAuth2 client credentials) - this gives you a client ID and secret.
+3. Run the server with both set:
+   ```bash
+   OPENSKY_CLIENT_ID=your-client-id OPENSKY_CLIENT_SECRET=your-client-secret python3 server.py
+   ```
+
+Without these, the app still works exactly as before (anonymous access) -
+you'll just hit 429s sooner, especially zoomed out over a wide area.
+Zooming in to a smaller region also helps regardless of auth, since each
+query only costs quota for the visible bounding box.
 
 ## Enabling traffic cameras (optional)
 
@@ -40,7 +61,15 @@ message telling you how to enable it instead of erroring.
   - `GET /api/flights?lamin&lomin&lamax&lomax` - proxies OpenSky's
     `/states/all`, filtered to the map's current viewport. Adds an
     `airline` field derived from the callsign's ICAO 3-letter prefix
-    (see `airlines.py`).
+    (see `airlines.py`). Authenticates via `opensky_auth.py` (OAuth2
+    client-credentials, cached bearer token) when `OPENSKY_CLIENT_ID`
+    / `OPENSKY_CLIENT_SECRET` are set, otherwise falls back to
+    anonymous access.
+  - `GET /api/flight-route/{icao24}` - `flight_routes.py` looks up a
+    single aircraft's recent origin/destination via OpenSky's
+    `/flights/aircraft` history endpoint (not included in live state
+    vectors), cached per aircraft and fetched lazily/throttled by the
+    frontend rather than for every visible flight at once.
   - `GET /api/satellites` - fetches TLEs from CelesTrak (`stations` +
     `visual` groups, cached 2h), propagates each to the current instant
     with `pyorbital` (SGP4).
