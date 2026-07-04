@@ -58,6 +58,7 @@ let cameraMarkers = new Map();  // id -> {marker, data}
 let query = "";
 let openCameraId = null;
 let cameraImageTimer = null;
+let currentHls = null;
 let openDetail = null; // {kind, id} of whatever's shown in the detail panel
 
 const categoryChips = document.getElementById("categoryChips");
@@ -148,7 +149,16 @@ async function fetchJson(url) {
   return res.json();
 }
 
+function teardownCameraMedia() {
+  clearInterval(cameraImageTimer);
+  if (currentHls) {
+    currentHls.destroy();
+    currentHls = null;
+  }
+}
+
 function showDetail(kind, color, name, rows, extraHtml, trackId) {
+  teardownCameraMedia(); // switching panels stops any playing stream/refresh
   openDetail = trackId ? { kind: kind.toLowerCase(), id: trackId } : null;
   const dl = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
   detailEl.innerHTML = `
@@ -163,7 +173,7 @@ function showDetail(kind, color, name, rows, extraHtml, trackId) {
     detailEl.hidden = true;
     openCameraId = null;
     openDetail = null;
-    clearInterval(cameraImageTimer);
+    teardownCameraMedia();
   });
 }
 
@@ -445,7 +455,7 @@ function renderTrains(vehicles) {
   trainCountEl.textContent = String(vehicles.length);
 }
 
-// ---------- Traffic cameras (WSDOT) ----------
+// ---------- Traffic cameras (WSDOT snapshots + 511NY live HLS video) ----------
 
 function cameraIcon() {
   return L.divIcon({
@@ -459,23 +469,58 @@ function cameraIcon() {
   });
 }
 
-function openCameraDetail(cam) {
+function openImageCameraDetail(cam) {
   openCameraId = cam.id;
-  const imgUrl = () => `/api/camera-image/${encodeURIComponent(cam.id)}?t=${Date.now()}`;
+  const imgUrl = () => `${cam.media.proxy_url}?t=${Date.now()}`;
   showDetail(
     "Traffic camera",
     "var(--camera)",
     cam.name,
     [["Source", cam.provider]],
     `<img class="cam-image" id="camImage" src="${imgUrl()}" alt="Snapshot from ${escapeHtml(cam.name)}" onerror="this.replaceWith(Object.assign(document.createElement('p'),{className:'cam-image-fallback',textContent:'Image unavailable right now.'}))" />
-     <p class="cam-caption">Still snapshot, not video - refreshes here every ${Math.round(CAMERA_IMAGE_REFRESH_MS / 1000)}s, matching how often WSDOT updates the source image.</p>`
+     <p class="cam-caption">Still snapshot, not video - refreshes here every ${Math.round(CAMERA_IMAGE_REFRESH_MS / 1000)}s, matching how often the source image updates.</p>`,
+    cam.id
   );
-  clearInterval(cameraImageTimer);
   cameraImageTimer = setInterval(() => {
     if (openCameraId !== cam.id) return clearInterval(cameraImageTimer);
     const img = document.getElementById("camImage");
     if (img) img.src = imgUrl();
   }, CAMERA_IMAGE_REFRESH_MS);
+}
+
+function openVideoCameraDetail(cam) {
+  openCameraId = cam.id;
+  const pageLink = cam.media.page_url
+    ? `<a href="${cam.media.page_url}" target="_blank" rel="noopener">Open camera page →</a>` : "";
+  showDetail(
+    "Traffic camera",
+    "var(--camera)",
+    cam.name,
+    [["Source", cam.provider]],
+    `<video class="cam-video" id="camVideo" controls muted autoplay playsinline></video>
+     <p class="cam-caption">Live video stream. ${pageLink}</p>
+     <p class="cam-caption" id="camVideoError" hidden>Stream didn't load - try the camera page link above instead.</p>`,
+    cam.id
+  );
+  const video = document.getElementById("camVideo");
+  const streamUrl = cam.media.stream_url;
+  if (video.canPlayType("application/vnd.apple.mpegurl")) {
+    video.src = streamUrl; // Safari: native HLS support
+  } else if (window.Hls && Hls.isSupported()) {
+    currentHls = new Hls();
+    currentHls.on(Hls.Events.ERROR, (_evt, data) => {
+      if (data.fatal) document.getElementById("camVideoError")?.removeAttribute("hidden");
+    });
+    currentHls.loadSource(streamUrl);
+    currentHls.attachMedia(video);
+  } else {
+    document.getElementById("camVideoError")?.removeAttribute("hidden");
+  }
+}
+
+function openCameraDetail(cam) {
+  if (cam.media && cam.media.type === "video") openVideoCameraDetail(cam);
+  else openImageCameraDetail(cam);
 }
 
 async function pollCameras() {
@@ -484,7 +529,7 @@ async function pollCameras() {
     camerasConfigured = payload.configured;
     if (!payload.configured) {
       cameraError = null;
-      cameraNotice.textContent = payload.message;
+      cameraNotice.textContent = payload.sources.map((s) => s.message).join(" ");
       cameraNotice.hidden = false;
       cameraCountEl.textContent = "0";
       setConn();

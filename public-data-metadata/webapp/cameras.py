@@ -49,7 +49,7 @@ async def get_cameras(access_code):
         image_url = cam.get("ImageURL")
         if lat is None or lon is None or not image_url:
             continue
-        cam_id = str(cam.get("CameraID"))
+        cam_id = f"wsdot-{cam.get('CameraID')}"
         _image_url_by_id[cam_id] = image_url
         cameras.append({
             "id": cam_id,
@@ -57,6 +57,7 @@ async def get_cameras(access_code):
             "lat": float(lat),
             "lon": float(lon),
             "provider": PROVIDER,
+            "media": {"type": "image", "proxy_url": f"/api/camera-image/{cam_id}"},
         })
 
     _camera_cache.update(fetched_at=now, cameras=cameras)

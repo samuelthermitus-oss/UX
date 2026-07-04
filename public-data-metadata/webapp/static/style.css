@@ -339,7 +339,8 @@ h1 {
   filter: drop-shadow(0 0 3px color-mix(in srgb, var(--camera) 55%, transparent));
 }
 
-.detail .cam-image {
+.detail .cam-image,
+.detail .cam-video {
   width: 100%;
   border-radius: 7px;
   border: 1px solid var(--border);
@@ -347,6 +348,8 @@ h1 {
   display: block;
   background: var(--surface-2);
 }
+.detail .cam-video { aspect-ratio: 16 / 9; }
+.detail .cam-caption a { color: var(--accent); }
 .detail .cam-image-fallback {
   font-size: 0.72rem;
   color: var(--ink-faint);

@@ -20,6 +20,7 @@ from pyorbital.orbital import Orbital
 
 import cameras
 import flight_routes
+import ny_cameras
 import opensky_auth
 import trains
 from airlines import airline_for_callsign
@@ -42,6 +43,7 @@ STATION_OPERATORS = {
 }
 
 WSDOT_ACCESS_CODE = os.environ.get("WSDOT_ACCESS_CODE", "")
+NY511_API_KEY = os.environ.get("NY511_API_KEY", "")
 
 app = FastAPI(title="Live Sky, Rail & Roads")
 app.add_middleware(
@@ -221,26 +223,38 @@ async def live_trains():
     }
 
 
+CAMERA_SOURCES = [
+    (cameras, WSDOT_ACCESS_CODE, "Add a free WSDOT Access Code (get one instantly at "
+                                  "https://wsdot.wa.gov/traffic/api/) as the WSDOT_ACCESS_CODE "
+                                  "environment variable to enable Washington cameras."),
+    (ny_cameras, NY511_API_KEY, "Add a 511NY Developer API key (requires an account + "
+                                 "approval, see https://511ny.org/developers/help) as the "
+                                 "NY511_API_KEY environment variable to enable New York cameras."),
+]
+
+
 @app.get("/api/cameras")
 async def camera_list():
-    if not cameras.is_configured(WSDOT_ACCESS_CODE):
-        return {
-            "configured": False,
-            "provider": cameras.PROVIDER,
-            "message": "Add a free WSDOT Access Code (get one instantly at "
-                       "https://wsdot.wa.gov/traffic/api/) as the WSDOT_ACCESS_CODE "
-                       "environment variable to enable this layer.",
-        }
-    try:
-        cam_list = await cameras.get_cameras(WSDOT_ACCESS_CODE)
-    except httpx.HTTPError as exc:
-        raise HTTPException(status_code=502, detail=f"WSDOT unreachable: {exc}")
+    all_cameras = []
+    sources = []
+    for module, credential, setup_message in CAMERA_SOURCES:
+        if not module.is_configured(credential):
+            sources.append({"provider": module.PROVIDER, "configured": False, "count": 0, "message": setup_message})
+            continue
+        try:
+            cam_list = await module.get_cameras(credential)
+            all_cameras.extend(cam_list)
+            sources.append({"provider": module.PROVIDER, "configured": True, "count": len(cam_list), "error": None})
+        except httpx.HTTPError as exc:
+            sources.append({"provider": module.PROVIDER, "configured": True, "count": 0, "error": str(exc)})
+
+    any_configured = any(s["configured"] for s in sources)
     return {
-        "configured": True,
+        "configured": any_configured,
         "updated": datetime.now(timezone.utc).isoformat(),
-        "count": len(cam_list),
-        "provider": cameras.PROVIDER,
-        "cameras": cam_list,
+        "count": len(all_cameras),
+        "sources": sources,
+        "cameras": all_cameras,
     }
 
 
