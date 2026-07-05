@@ -260,11 +260,13 @@ h1 {
 
 .detail {
   position: absolute;
-  bottom: 1rem;
+  top: 1rem;
   right: 1rem;
   z-index: 1000;
-  width: 280px;
+  width: 300px;
   max-width: calc(100vw - 2rem);
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
   background: var(--surface);
   backdrop-filter: blur(10px);
   border: 1px solid var(--border);
@@ -324,6 +326,10 @@ h1 {
   color: var(--flight);
   filter: drop-shadow(0 0 3px color-mix(in srgb, var(--flight) 55%, transparent));
 }
+.target-icon {
+  color: var(--flight);
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--flight) 55%, transparent));
+}
 .sat-icon .ring {
   border-color: var(--satellite);
 }
@@ -369,3 +375,68 @@ h1 {
   font-size: 0.65rem !important;
 }
 .leaflet-control-attribution a { color: var(--ink-dim) !important; }
+
+/* ---------- Bottom card carousel ---------- */
+
+.carousel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 900;
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.8rem 1rem calc(0.8rem + env(safe-area-inset-bottom, 0px));
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  background: linear-gradient(to top, var(--bg) 0%, color-mix(in srgb, var(--bg) 85%, transparent) 70%, transparent 100%);
+}
+.carousel:empty { display: none; }
+.carousel::-webkit-scrollbar { height: 6px; }
+.carousel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.carousel-card {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+  width: 168px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--tone, var(--border));
+  border-radius: 9px;
+  padding: 0.55rem 0.65rem;
+  cursor: pointer;
+  text-align: left;
+  font-family: "Board Sans", "DejaVu Sans", sans-serif;
+  color: var(--ink);
+}
+.carousel-card:hover { border-color: var(--tone, var(--border)); background: var(--surface-2); }
+.carousel-card.active {
+  border-color: var(--tone, var(--accent));
+  box-shadow: 0 0 0 1px var(--tone, var(--accent));
+}
+.carousel-card .cc-title {
+  font-weight: 700;
+  font-size: 0.84rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0.15rem;
+}
+.carousel-card .cc-sub {
+  font-family: "Board Mono", "DejaVu Sans Mono", ui-monospace, monospace;
+  font-size: 0.7rem;
+  color: var(--ink-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.carousel-card .cc-tag {
+  display: inline-block;
+  margin-top: 0.3rem;
+  font-family: "Board Mono", "DejaVu Sans Mono", ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--tone, var(--ink-faint));
+}

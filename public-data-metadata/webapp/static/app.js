@@ -46,6 +46,7 @@ window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ref
 new MutationObserver(refreshTileTheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
 const flightLayer = L.layerGroup().addTo(map);
+const flightRouteLineLayer = L.layerGroup().addTo(map); // selected flight's origin->target line
 const satLayer = L.layerGroup().addTo(map);
 const trainRouteLayer = L.layerGroup().addTo(map);
 const trainLayer = L.layerGroup().addTo(map);
@@ -62,6 +63,8 @@ let currentHls = null;
 let openDetail = null; // {kind, id} of whatever's shown in the detail panel
 
 const categoryChips = document.getElementById("categoryChips");
+const carouselEl = document.getElementById("carousel");
+let activeCarouselCard = null; // {kind, id} of the card currently highlighted
 
 const connDot = document.getElementById("connDot");
 const connLabel = document.getElementById("connLabel");
@@ -149,16 +152,17 @@ async function fetchJson(url) {
   return res.json();
 }
 
-function teardownCameraMedia() {
+function teardownDetailExtras() {
   clearInterval(cameraImageTimer);
   if (currentHls) {
     currentHls.destroy();
     currentHls = null;
   }
+  flightRouteLineLayer.clearLayers();
 }
 
 function showDetail(kind, color, name, rows, extraHtml, trackId) {
-  teardownCameraMedia(); // switching panels stops any playing stream/refresh
+  teardownDetailExtras(); // switching panels stops any playing stream/refresh and clears the route line
   openDetail = trackId ? { kind: kind.toLowerCase(), id: trackId } : null;
   const dl = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
   detailEl.innerHTML = `
@@ -173,7 +177,7 @@ function showDetail(kind, color, name, rows, extraHtml, trackId) {
     detailEl.hidden = true;
     openCameraId = null;
     openDetail = null;
-    teardownCameraMedia();
+    teardownDetailExtras();
   });
 }
 
@@ -247,6 +251,45 @@ function routeRow(route) {
   return `${o} → ${d}`;
 }
 
+function targetIcon() {
+  return L.divIcon({
+    className: "",
+    html: `<svg class="target-icon" width="20" height="20" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M12 2c-4.4 0-8 3.6-8 8 0 6 8 12 8 12s8-6 8-12c0-4.4-3.6-8-8-8Z"/>
+      <circle cx="12" cy="10" r="3" fill="var(--surface)"/>
+    </svg>`,
+    iconSize: [20, 20],
+    iconAnchor: [10, 19],
+  });
+}
+
+function originIcon() {
+  return L.divIcon({
+    className: "",
+    html: `<div style="width:9px;height:9px;border-radius:50%;background:var(--surface);border:2px solid var(--flight)"></div>`,
+    iconSize: [9, 9],
+    iconAnchor: [4, 4],
+  });
+}
+
+// Draws the resolved origin -> target line for the flight currently shown
+// in the detail panel. Cleared automatically whenever the panel's content
+// changes (see teardownDetailExtras), so only one route is ever shown.
+function drawFlightRouteLine(d) {
+  flightRouteLineLayer.clearLayers();
+  const route = d.route;
+  if (!route || !route.known) return;
+  const o = route.origin, t = route.destination;
+  if (!o || !t || o.lat == null || t.lat == null) return; // airport not in our coordinate table
+
+  const line = L.polyline([[o.lat, o.lon], [d.lat, d.lon], [t.lat, t.lon]], {
+    color: "var(--flight)", weight: 2, opacity: 0.8, dashArray: "1 7", lineCap: "round",
+  });
+  flightRouteLineLayer.addLayer(line);
+  flightRouteLineLayer.addLayer(L.marker([o.lat, o.lon], { icon: originIcon(), interactive: false }));
+  flightRouteLineLayer.addLayer(L.marker([t.lat, t.lon], { icon: targetIcon(), interactive: false }));
+}
+
 function renderFlightDetail(icao24) {
   const d = flightMarkers.get(icao24).data;
   if (d.route === undefined) fetchRoute(icao24); // clicked before background queue reached it
@@ -261,6 +304,7 @@ function renderFlightDetail(icao24) {
     ["ICAO24", d.icao24],
     ["Source", d.provider],
   ], "", icao24);
+  drawFlightRouteLine(d); // showDetail already cleared any previous route line
 }
 
 async function pollFlights() {
@@ -312,6 +356,7 @@ function renderFlights(flights) {
     }
   }
   flightCountEl.textContent = String(flights.length);
+  rebuildCarousel();
 }
 
 // ---------- Satellites (CelesTrak) ----------
@@ -341,6 +386,17 @@ async function pollSatellites() {
   updateStatusLine();
 }
 
+function renderSatelliteDetail(name) {
+  const d = satMarkers.get(name).data;
+  showDetail("Satellite", "var(--satellite)", d.name, [
+    ["Operator", d.operator || "Unlisted"],
+    ["Latitude", d.lat.toFixed(2)],
+    ["Longitude", d.lon.toFixed(2)],
+    ["Altitude", `${Math.round(d.alt_km)} km`],
+    ["Source", d.provider],
+  ], "", name);
+}
+
 function renderSatellites(sats) {
   const seen = new Set();
   for (const s of sats) {
@@ -354,16 +410,7 @@ function renderSatellites(sats) {
       if (!visible && satLayer.hasLayer(existing.marker)) satLayer.removeLayer(existing.marker);
     } else {
       const marker = L.marker([s.lat, s.lon], { icon: satIcon() });
-      marker.on("click", () => {
-        const d = satMarkers.get(s.name).data;
-        showDetail("Satellite", "var(--satellite)", d.name, [
-          ["Operator", d.operator || "Unlisted"],
-          ["Latitude", d.lat.toFixed(2)],
-          ["Longitude", d.lon.toFixed(2)],
-          ["Altitude", `${Math.round(d.alt_km)} km`],
-          ["Source", d.provider],
-        ]);
-      });
+      marker.on("click", () => renderSatelliteDetail(s.name));
       satMarkers.set(s.name, { marker, data: s });
       if (visible) satLayer.addLayer(marker);
     }
@@ -375,6 +422,7 @@ function renderSatellites(sats) {
     }
   }
   satCountEl.textContent = String(sats.length);
+  rebuildCarousel();
 }
 
 // ---------- Trains (MBTA) ----------
@@ -421,6 +469,15 @@ async function pollTrains() {
   updateStatusLine();
 }
 
+function renderTrainDetail(vehicleId) {
+  const d = trainMarkers.get(vehicleId).data;
+  showDetail("Train", d.route_color, d.route_name, [
+    ["Vehicle", d.label || d.vehicle_id],
+    ["Status", (d.status || "—").replaceAll("_", " ").toLowerCase()],
+    ["Source", d.provider],
+  ], "", vehicleId);
+}
+
 function renderTrains(vehicles) {
   const seen = new Set();
   for (const v of vehicles) {
@@ -434,14 +491,7 @@ function renderTrains(vehicles) {
       if (!visible && trainLayer.hasLayer(existing.marker)) trainLayer.removeLayer(existing.marker);
     } else {
       const marker = L.marker([v.lat, v.lon], { icon: trainIcon(v.route_color) });
-      marker.on("click", () => {
-        const d = trainMarkers.get(v.vehicle_id).data;
-        showDetail("Train", d.route_color, d.route_name, [
-          ["Vehicle", d.label || d.vehicle_id],
-          ["Status", (d.status || "—").replaceAll("_", " ").toLowerCase()],
-          ["Source", d.provider],
-        ]);
-      });
+      marker.on("click", () => renderTrainDetail(v.vehicle_id));
       trainMarkers.set(v.vehicle_id, { marker, data: v });
       if (visible) trainLayer.addLayer(marker);
     }
@@ -453,6 +503,7 @@ function renderTrains(vehicles) {
     }
   }
   trainCountEl.textContent = String(vehicles.length);
+  rebuildCarousel();
 }
 
 // ---------- Traffic cameras (WSDOT snapshots + 511NY live HLS video) ----------
@@ -571,7 +622,66 @@ function renderCameras(cams) {
     }
   }
   cameraCountEl.textContent = String(cams.length);
+  rebuildCarousel();
 }
+
+// ---------- Bottom card carousel ----------
+// One card per currently-visible entity (respecting toggles + search),
+// across all four categories. Clicking a card pans the map to it and
+// opens the same detail panel a marker click would.
+
+function carouselCardHtml(kind, id, tone, title, subtitle, tag) {
+  const isActive = activeCarouselCard && activeCarouselCard.kind === kind && String(activeCarouselCard.id) === String(id);
+  return `<button class="carousel-card${isActive ? " active" : ""}" style="--tone:${tone}" data-kind="${kind}" data-id="${escapeHtml(String(id))}">
+    <div class="cc-title">${escapeHtml(title)}</div>
+    <div class="cc-sub">${escapeHtml(subtitle)}</div>
+    ${tag ? `<div class="cc-tag">${escapeHtml(tag)}</div>` : ""}
+  </button>`;
+}
+
+function rebuildCarousel() {
+  const cards = [];
+  for (const { marker, data } of flightMarkers.values()) {
+    if (!flightLayer.hasLayer(marker)) continue;
+    const routeKnown = data.route && data.route.known;
+    const subtitle = routeKnown
+      ? `${(data.route.origin && data.route.origin.code) || "?"} → ${(data.route.destination && data.route.destination.code) || "?"}`
+      : (data.airline || data.country || "Unknown route");
+    cards.push(carouselCardHtml("flight", data.icao24, "var(--flight)", data.callsign || data.icao24, subtitle, "FLIGHT"));
+  }
+  for (const { marker, data } of satMarkers.values()) {
+    if (!satLayer.hasLayer(marker)) continue;
+    cards.push(carouselCardHtml("satellite", data.name, "var(--satellite)", data.name, `${Math.round(data.alt_km)} km altitude`, "SATELLITE"));
+  }
+  for (const { marker, data } of trainMarkers.values()) {
+    if (!trainLayer.hasLayer(marker)) continue;
+    cards.push(carouselCardHtml("train", data.vehicle_id, data.route_color, data.route_name, data.label || data.vehicle_id, "TRAIN"));
+  }
+  for (const { marker, data } of cameraMarkers.values()) {
+    if (!cameraLayer.hasLayer(marker)) continue;
+    const tag = data.media && data.media.type === "video" ? "LIVE VIDEO" : "SNAPSHOT";
+    cards.push(carouselCardHtml("camera", data.id, "var(--camera)", data.name, data.provider, tag));
+  }
+  carouselEl.innerHTML = cards.join("");
+}
+
+function focusEntity(kind, id) {
+  let entry;
+  if (kind === "flight") { entry = flightMarkers.get(id); if (!entry) return; renderFlightDetail(id); }
+  else if (kind === "satellite") { entry = satMarkers.get(id); if (!entry) return; renderSatelliteDetail(id); }
+  else if (kind === "train") { entry = trainMarkers.get(id); if (!entry) return; renderTrainDetail(id); }
+  else if (kind === "camera") { entry = cameraMarkers.get(id); if (!entry) return; openCameraDetail(entry.data); }
+  else return;
+  activeCarouselCard = { kind, id };
+  map.flyTo(entry.marker.getLatLng(), Math.max(map.getZoom(), 9), { duration: 0.6 });
+  rebuildCarousel(); // refresh active-card highlight
+}
+
+carouselEl.addEventListener("click", (e) => {
+  const card = e.target.closest(".carousel-card");
+  if (!card) return;
+  focusEntity(card.dataset.kind, card.dataset.id);
+});
 
 // ---------- Shared filter/search wiring ----------
 
@@ -596,6 +706,7 @@ function applyFilterToExisting() {
     if (visible && !cameraLayer.hasLayer(marker)) cameraLayer.addLayer(marker);
     if (!visible && cameraLayer.hasLayer(marker)) cameraLayer.removeLayer(marker);
   }
+  rebuildCarousel();
 }
 
 // ---------- Category chips (All / Flights / Trains / Satellites / Cameras) ----------

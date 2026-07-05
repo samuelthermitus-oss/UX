@@ -125,6 +125,17 @@ note the missing camera endpoint.
   clear which data came from where. Map basemap tiles come from CartoDB's
   free tile service (light/dark, matching your OS theme) - that one call
   does need internet access at runtime, same as the data APIs.
+  - **Bottom card carousel** - a swipeable row of cards, one per
+    currently-visible entity across all four categories (respecting
+    active toggles/search). Clicking a card pans the map to it and opens
+    the same detail panel a marker click would; the active card stays
+    highlighted while its detail panel is open.
+  - **Flight route line** - when a flight's origin/destination airports
+    are known (see `airports.py`, which now carries coordinates for its
+    curated airport list) and both have coordinates, opening that
+    flight's detail draws a dashed line from origin through the plane's
+    current position to a distinct target-pin marker at the destination.
+    Cleared automatically when the panel switches to something else.
 
 ## Notes
 
