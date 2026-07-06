@@ -10,6 +10,24 @@ network calls, so it runs on your machine rather than as a shared link.
 
 ## Run it
 
+**One-click (macOS):** set up your credentials once, then just double-click
+an icon like any other app:
+
+```bash
+cd public-data-metadata/webapp
+cp local-config.example.sh local-config.sh
+```
+
+Open `local-config.sh` in a text editor and fill in whichever tokens you
+have (see "Fixing flight rate-limiting" and "Enabling traffic cameras"
+below for how to get them - none are required, the app still runs without
+them). Save it, then **double-click `start-server.command` in Finder**.
+It installs dependencies on first run, starts the server, and opens the
+app in your browser automatically. `local-config.sh` is gitignored - your
+credentials never get committed.
+
+**Or from a terminal:**
+
 ```bash
 cd public-data-metadata/webapp
 python3 -m pip install -r requirements.txt
@@ -32,7 +50,8 @@ per-request. A free account with an API client gets a much higher one:
 1. Register at <https://opensky-network.org/index.php> (free).
 2. Log in, go to your account page, and create an **API Client**
    (OAuth2 client credentials) - this gives you a client ID and secret.
-3. Run the server with both set:
+3. Put both in `local-config.sh` (see above) and just double-click
+   `start-server.command` from then on - or, from a terminal:
    ```bash
    OPENSKY_CLIENT_ID=your-client-id OPENSKY_CLIENT_SECRET=your-client-secret python3 server.py
    ```
@@ -51,7 +70,7 @@ be enabled, and each shows its own setup message if missing:
 
 1. Get a free Access Code at <https://wsdot.wa.gov/traffic/api/> - enter
    your email, the code is shown immediately.
-2. Run the server with it set:
+2. Put it in `local-config.sh` (see above), or from a terminal:
    ```bash
    WSDOT_ACCESS_CODE=your-access-code-here python3 server.py
    ```
@@ -64,7 +83,7 @@ be enabled, and each shows its own setup message if missing:
    <https://511ny.org/developers/help>.
 3. Wait for approval - NYSDOT emails you a key once granted; this is
    *not* instant like WSDOT.
-4. Run the server with it set:
+4. Put it in `local-config.sh` (see above), or from a terminal:
    ```bash
    NY511_API_KEY=your-key-here python3 server.py
    ```
