@@ -9,6 +9,13 @@
 </head>
 <body>
   <div id="map"></div>
+  <div id="globeFull" class="globe-full" hidden></div>
+
+  <div class="view-switch" id="viewSwitch">
+    <button type="button" data-view="map" aria-pressed="true">Map</button>
+    <button type="button" data-view="satellite" aria-pressed="false">Satellite</button>
+    <button type="button" data-view="3d" aria-pressed="false">3D</button>
+  </div>
 
   <div class="panel" id="panel">
     <p class="eyebrow"><span class="dot" id="connDot"></span><span id="connLabel">connecting…</span></p>
@@ -51,14 +58,6 @@
   <div class="detail" id="detail" hidden></div>
 
   <div class="carousel" id="carousel"></div>
-
-  <div class="globe-widget" id="globeWidget">
-    <div class="globe-head">
-      <p class="globe-title"><span class="dot live"></span>Satellites - real 3D view</p>
-      <button class="globe-expand" id="globeExpand" type="button" aria-label="Expand">⤢</button>
-    </div>
-    <div class="globe-canvas" id="globeCanvas"></div>
-  </div>
 
   <script src="vendor/leaflet/leaflet.js"></script>
   <script src="vendor/hls/hls.light.min.js"></script>

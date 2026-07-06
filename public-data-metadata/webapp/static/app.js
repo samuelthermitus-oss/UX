@@ -45,21 +45,31 @@ function refreshTileTheme() {
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", refreshTileTheme);
 new MutationObserver(refreshTileTheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
-// ---------- 3D satellite globe widget (independent of the 2D map/toggle) ----------
-// Real-view: each satellite is plotted at its true altitude as a fraction
-// of Earth's radius (~6371 km), not visually exaggerated, using the same
-// live CelesTrak positions already polled for the 2D map.
+// ---------- View modes: Map / Satellite / 3D ----------
+// "Map" and "Satellite" both use the same 2D Leaflet map, just with a
+// different tile layer (drawn map vs. real aerial/satellite imagery).
+// "3D" replaces the map entirely with a full-screen Three.js globe
+// (via globe.gl) showing every live entity - flights, satellites, trains,
+// cameras - plotted at its true altitude as a fraction of Earth's radius
+// (~6371 km), not visually exaggerated.
 const EARTH_RADIUS_KM = 6371;
-const globeWidget = document.getElementById("globeWidget");
-const globeExpandBtn = document.getElementById("globeExpand");
+const CATEGORY_COLOR_HEX = { flight: "#6fa8ff", satellite: "#b48bf2", train: "#e8b34a", camera: "#f2905a" };
+
+const viewSwitch = document.getElementById("viewSwitch");
+const globeFullEl = document.getElementById("globeFull");
+let viewMode = "map"; // "map" | "satellite" | "3d"
 let globeInstance = null;
-let globeExpanded = false;
+let globePointsByKind = { flight: [], satellite: [], train: [], camera: [] };
+
+const satelliteTiles = L.tileLayer(
+  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+  { attribution: "Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community", maxZoom: 19 }
+);
 
 function initGlobe() {
   if (globeInstance || typeof Globe === "undefined") return;
-  const container = document.getElementById("globeCanvas");
-  globeInstance = Globe()(container)
-    .backgroundColor("rgba(0,0,0,0)")
+  globeInstance = Globe()(globeFullEl)
+    .backgroundColor("#05070c")
     .globeImageUrl("vendor/globe/earth-dark.jpg")
     .showAtmosphere(true)
     .atmosphereColor("#4fd1c5")
@@ -67,37 +77,58 @@ function initGlobe() {
     .pointsData([])
     .pointLat("lat")
     .pointLng("lon")
-    .pointAltitude((d) => d.alt_km / EARTH_RADIUS_KM)
+    .pointAltitude((d) => d.altKm / EARTH_RADIUS_KM)
     .pointRadius(0.28)
-    .pointColor(() => "#b48bf2")
-    .pointLabel((d) => `${d.name}${d.operator ? ` · ${d.operator}` : ""} · ${Math.round(d.alt_km)} km`)
-    .pointsMerge(false);
+    .pointColor((d) => d.color)
+    .pointLabel((d) => d.label)
+    .pointsMerge(false)
+    .onPointClick((d) => focusEntity(d.kind, d.id));
   globeInstance.controls().autoRotate = true;
-  globeInstance.controls().autoRotateSpeed = 0.4;
+  globeInstance.controls().autoRotateSpeed = 0.35;
   resizeGlobe();
+  refreshGlobePoints();
 }
 
 function resizeGlobe() {
   if (!globeInstance) return;
-  const container = document.getElementById("globeCanvas");
-  globeInstance.width(container.clientWidth).height(container.clientHeight);
+  globeInstance.width(globeFullEl.clientWidth).height(globeFullEl.clientHeight);
 }
-
-function updateGlobeSatellites(sats) {
-  if (!globeInstance) return;
-  globeInstance.pointsData(sats);
-}
-
-globeExpandBtn.addEventListener("click", () => {
-  globeExpanded = !globeExpanded;
-  globeWidget.classList.toggle("expanded", globeExpanded);
-  globeExpandBtn.textContent = globeExpanded ? "⤡" : "⤢";
-  globeExpandBtn.setAttribute("aria-label", globeExpanded ? "Collapse" : "Expand");
-  // wait for the CSS size transition to finish before resizing the canvas
-  setTimeout(resizeGlobe, 260);
-});
 window.addEventListener("resize", resizeGlobe);
-initGlobe();
+
+function refreshGlobePoints() {
+  if (!globeInstance) return;
+  globeInstance.pointsData([].concat(
+    globePointsByKind.flight, globePointsByKind.satellite, globePointsByKind.train, globePointsByKind.camera
+  ));
+}
+
+function setViewMode(mode) {
+  viewMode = mode;
+  for (const btn of viewSwitch.querySelectorAll("button")) {
+    btn.setAttribute("aria-pressed", String(btn.dataset.view === mode));
+  }
+  if (mode === "3d") {
+    map.getContainer().hidden = true;
+    globeFullEl.hidden = false;
+    initGlobe();
+    resizeGlobe();
+  } else {
+    map.getContainer().hidden = false;
+    globeFullEl.hidden = true;
+    const wantSatellite = mode === "satellite";
+    if (wantSatellite && map.hasLayer(currentTiles)) map.removeLayer(currentTiles);
+    if (wantSatellite && !map.hasLayer(satelliteTiles)) satelliteTiles.addTo(map);
+    if (!wantSatellite && map.hasLayer(satelliteTiles)) map.removeLayer(satelliteTiles);
+    if (!wantSatellite && !map.hasLayer(currentTiles)) currentTiles.addTo(map);
+    setTimeout(() => map.invalidateSize(), 50);
+  }
+}
+
+viewSwitch.addEventListener("click", (e) => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+  setViewMode(btn.dataset.view);
+});
 
 const flightLayer = L.layerGroup().addTo(map);
 const flightRouteLineLayer = L.layerGroup().addTo(map); // selected flight's origin->target line
@@ -411,6 +442,12 @@ function renderFlights(flights) {
   }
   flightCountEl.textContent = String(flights.length);
   rebuildCarousel();
+  globePointsByKind.flight = flights.map((f) => ({
+    lat: f.lat, lon: f.lon, altKm: (f.altitude_m || 0) / 1000,
+    color: CATEGORY_COLOR_HEX.flight, kind: "flight", id: f.icao24,
+    label: `${f.callsign || f.icao24}${f.airline ? ` · ${f.airline}` : ""}`,
+  }));
+  refreshGlobePoints();
 }
 
 // ---------- Satellites (CelesTrak) ----------
@@ -477,7 +514,12 @@ function renderSatellites(sats) {
   }
   satCountEl.textContent = String(sats.length);
   rebuildCarousel();
-  updateGlobeSatellites(sats); // 3D widget always shows the full live list, independent of the 2D toggle/search
+  globePointsByKind.satellite = sats.map((s) => ({
+    lat: s.lat, lon: s.lon, altKm: s.alt_km,
+    color: CATEGORY_COLOR_HEX.satellite, kind: "satellite", id: s.name,
+    label: `${s.name}${s.operator ? ` · ${s.operator}` : ""} · ${Math.round(s.alt_km)} km`,
+  }));
+  refreshGlobePoints();
 }
 
 // ---------- Trains (MBTA) ----------
@@ -559,6 +601,12 @@ function renderTrains(vehicles) {
   }
   trainCountEl.textContent = String(vehicles.length);
   rebuildCarousel();
+  globePointsByKind.train = vehicles.map((v) => ({
+    lat: v.lat, lon: v.lon, altKm: 0,
+    color: v.route_color || CATEGORY_COLOR_HEX.train, kind: "train", id: v.vehicle_id,
+    label: `${v.route_name} · ${v.label || v.vehicle_id}`,
+  }));
+  refreshGlobePoints();
 }
 
 // ---------- Traffic cameras (WSDOT snapshots + 511NY live HLS video) ----------
@@ -678,6 +726,11 @@ function renderCameras(cams) {
   }
   cameraCountEl.textContent = String(cams.length);
   rebuildCarousel();
+  globePointsByKind.camera = cams.map((cam) => ({
+    lat: cam.lat, lon: cam.lon, altKm: 0,
+    color: CATEGORY_COLOR_HEX.camera, kind: "camera", id: cam.id, label: cam.name,
+  }));
+  refreshGlobePoints();
 }
 
 // ---------- Bottom card carousel ----------
@@ -728,7 +781,12 @@ function focusEntity(kind, id) {
   else if (kind === "camera") { entry = cameraMarkers.get(id); if (!entry) return; openCameraDetail(entry.data); }
   else return;
   activeCarouselCard = { kind, id };
-  map.flyTo(entry.marker.getLatLng(), Math.max(map.getZoom(), 9), { duration: 0.6 });
+  const { lat, lng } = entry.marker.getLatLng();
+  if (viewMode === "3d" && globeInstance) {
+    globeInstance.pointOfView({ lat, lng, altitude: 1.8 }, 900);
+  } else {
+    map.flyTo([lat, lng], Math.max(map.getZoom(), 9), { duration: 0.6 });
+  }
   rebuildCarousel(); // refresh active-card highlight
 }
 
