@@ -268,15 +268,41 @@ function showDetail(kind, color, name, rows, extraHtml, trackId) {
 
 // ---------- Flights (OpenSky Network) ----------
 
-function planeIcon(heading) {
+// Distinct silhouette per aircraft category (see aircraft_types.py) so
+// planes are visually identifiable on the map, not all the same dart
+// shape. Categories come from OpenSky's community aircraft database;
+// "unknown"/"jet" share the plain dart shape since most traffic is
+// narrowbody jets and we have no better guess without type data.
+const AIRCRAFT_ICON_PATHS = {
+  jet: { d: "M12 2 L15 10 L22 13 L15 14.5 L14 21 L12 18 L10 21 L9 14.5 L2 13 L9 10 Z", size: 22 },
+  unknown: { d: "M12 2 L15 10 L22 13 L15 14.5 L14 21 L12 18 L10 21 L9 14.5 L2 13 L9 10 Z", size: 22 },
+  widebody: { d: "M12 1 L16 9 L23 13 L16 15 L15 22 L12 18.5 L9 22 L8 15 L1 13 L8 9 Z", size: 27 },
+  turboprop: { d: "M12 3 L12 9 L21 11 L21 13 L12 12 L12 19 L16 21 L16 22.5 L12 21.5 L8 22.5 L8 21 L12 19 L12 12 L3 13 L3 11 L12 9 Z", size: 20 },
+  piston: { d: "M12 5 L12 10 L19 12 L19 13.5 L12 12.5 L12 18 L14.5 19.5 L14.5 20.5 L12 20 L9.5 20.5 L9.5 19.5 L12 18 L12 12.5 L5 13.5 L5 12 L12 10 Z", size: 16 },
+};
+
+function planeIcon(heading, category) {
   const rot = heading || 0;
+  if (category === "helicopter") {
+    return L.divIcon({
+      className: "",
+      html: `<svg class="plane-icon" width="20" height="20" viewBox="0 0 24 24" style="transform: rotate(${rot}deg)">
+        <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.55"/>
+        <rect x="6" y="11.2" width="12" height="1.6" fill="currentColor"/>
+        <rect x="10.6" y="9" width="2.8" height="12" rx="1.2" fill="currentColor"/>
+      </svg>`,
+      iconSize: [20, 20],
+      iconAnchor: [10, 10],
+    });
+  }
+  const shape = AIRCRAFT_ICON_PATHS[category] || AIRCRAFT_ICON_PATHS.unknown;
   return L.divIcon({
     className: "",
-    html: `<svg class="plane-icon" width="22" height="22" viewBox="0 0 24 24" style="transform: rotate(${rot}deg)">
-      <path fill="currentColor" d="M12 2 L15 10 L22 13 L15 14.5 L14 21 L12 18 L10 21 L9 14.5 L2 13 L9 10 Z"/>
+    html: `<svg class="plane-icon" width="${shape.size}" height="${shape.size}" viewBox="0 0 24 24" style="transform: rotate(${rot}deg)">
+      <path fill="currentColor" d="${shape.d}"/>
     </svg>`,
-    iconSize: [22, 22],
-    iconAnchor: [11, 11],
+    iconSize: [shape.size, shape.size],
+    iconAnchor: [shape.size / 2, shape.size / 2],
   });
 }
 
@@ -303,7 +329,7 @@ function routeSearchText(route) {
 }
 
 function flightSearchText(d) {
-  return `${d.callsign} ${d.country} ${d.airline || ""} ${routeSearchText(d.route)}`;
+  return `${d.callsign} ${d.country} ${d.airline || ""} ${d.aircraft_model || ""} ${routeSearchText(d.route)}`;
 }
 
 async function fetchRoute(icao24) {
@@ -375,11 +401,24 @@ function drawFlightRouteLine(d) {
   flightRouteLineLayer.addLayer(L.marker([t.lat, t.lon], { icon: targetIcon(), interactive: false }));
 }
 
+const AIRCRAFT_CATEGORY_LABELS = {
+  jet: "Jet", widebody: "Widebody jet", turboprop: "Turboprop",
+  piston: "Piston / GA", helicopter: "Helicopter",
+};
+
+function aircraftRow(d) {
+  const label = AIRCRAFT_CATEGORY_LABELS[d.aircraft_category];
+  if (d.aircraft_model && label) return `${d.aircraft_model} (${label})`;
+  if (d.aircraft_model) return d.aircraft_model;
+  return label || "Unknown";
+}
+
 function renderFlightDetail(icao24) {
   const d = flightMarkers.get(icao24).data;
   if (d.route === undefined) fetchRoute(icao24); // clicked before background queue reached it
   showDetail("Flight", "var(--flight)", d.callsign || d.icao24, [
     ["Airline", d.airline || "Unknown / private"],
+    ["Aircraft", aircraftRow(d)],
     ["Route", routeRow(d.route)],
     ["Country", d.country || "—"],
     ["Altitude", d.altitude_m != null ? `${Math.round(d.altitude_m)} m` : "—"],
@@ -417,13 +456,13 @@ function renderFlights(flights) {
     const existing = flightMarkers.get(f.icao24);
     if (existing) {
       existing.marker.setLatLng([f.lat, f.lon]);
-      existing.marker.setIcon(planeIcon(f.heading));
+      existing.marker.setIcon(planeIcon(f.heading, f.aircraft_category));
       existing.data = { ...f, route: existing.data.route }; // keep any route already resolved
       const visible = toggleFlights.checked && matchesQuery(flightSearchText(existing.data));
       if (visible && !flightLayer.hasLayer(existing.marker)) flightLayer.addLayer(existing.marker);
       if (!visible && flightLayer.hasLayer(existing.marker)) flightLayer.removeLayer(existing.marker);
     } else {
-      const marker = L.marker([f.lat, f.lon], { icon: planeIcon(f.heading) });
+      const marker = L.marker([f.lat, f.lon], { icon: planeIcon(f.heading, f.aircraft_category) });
       marker.on("click", () => renderFlightDetail(f.icao24));
       flightMarkers.set(f.icao24, { marker, data: f });
       const visible = toggleFlights.checked && matchesQuery(flightSearchText(f));

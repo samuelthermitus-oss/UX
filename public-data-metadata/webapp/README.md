@@ -98,6 +98,15 @@ note the missing camera endpoint.
     `/flights/aircraft` history endpoint (not included in live state
     vectors), cached per aircraft and fetched lazily/throttled by the
     frontend rather than for every visible flight at once.
+  - Every flight response is also enriched with `aircraft_category`
+    (jet / widebody / turboprop / piston / helicopter / unknown) and
+    `aircraft_model`, via `aircraft_types.py`. This downloads OpenSky's
+    community aircraft-type database once (tens of MB, unlicensed/
+    crowdsourced data - not covered by OpenSky's API terms), caches a
+    slim icao24→type lookup to disk for 30 days, and degrades silently
+    (aircraft show as "unknown", everything else still works) if the
+    download fails. Used to pick a distinct map icon per aircraft type
+    instead of one generic dart shape for every flight.
   - `GET /api/satellites` - fetches TLEs from CelesTrak (`stations` +
     `visual` groups, cached 2h), propagates each to the current instant
     with `pyorbital` (SGP4).
@@ -173,3 +182,7 @@ note the missing camera endpoint.
 - If any provider fails (offline, down, rate limited, camera code
   missing), the affected layer/status line says so explicitly instead of
   silently going stale.
+- The very first `/api/flights` request after starting the server (or
+  after the 30-day cache expires) will be slower than usual while
+  `aircraft_types.py` downloads and parses OpenSky's full aircraft
+  database in the background; every request after that is instant.

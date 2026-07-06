@@ -18,6 +18,7 @@ from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
 from pyorbital.orbital import Orbital
 
+import aircraft_types
 import cameras
 import flight_routes
 import ny_cameras
@@ -137,6 +138,15 @@ async def flights(
             "heading": s[10],
             "vertical_rate_ms": s[11],
         })
+
+    try:
+        types_by_icao24 = await aircraft_types.lookup_many([f["icao24"] for f in out])
+    except httpx.HTTPError:
+        types_by_icao24 = {}  # aircraft-type enrichment is best-effort - flights still work without it
+    for f in out:
+        info = types_by_icao24.get(f["icao24"])
+        f["aircraft_category"] = info["category"] if info else "unknown"
+        f["aircraft_model"] = f"{info['manufacturer'] or ''} {info['model'] or ''}".strip() if info else None
 
     return {
         "updated": datetime.now(timezone.utc).isoformat(),
