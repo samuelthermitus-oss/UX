@@ -167,6 +167,17 @@ async def opensky_status():
     return {"configured": True, "token_ok": True, "detail": "Token obtained successfully"}
 
 
+@app.get("/api/aircraft-types-status")
+async def aircraft_types_status():
+    try:
+        by_icao24 = await aircraft_types._load()
+    except httpx.HTTPError as exc:
+        return {"loaded": False, "count": 0, "detail": f"Aircraft database download failed: {exc}"}
+    from collections import Counter
+    counts = Counter(v["category"] for v in by_icao24.values())
+    return {"loaded": True, "count": len(by_icao24), "by_category": dict(counts)}
+
+
 @app.get("/api/flight-route/{icao24}")
 async def flight_route(icao24: str):
     try:

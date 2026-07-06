@@ -269,16 +269,16 @@ function showDetail(kind, color, name, rows, extraHtml, trackId) {
 // ---------- Flights (OpenSky Network) ----------
 
 // Distinct silhouette per aircraft category (see aircraft_types.py) so
-// planes are visually identifiable on the map, not all the same dart
-// shape. Categories come from OpenSky's community aircraft database;
-// "unknown"/"jet" share the plain dart shape since most traffic is
-// narrowbody jets and we have no better guess without type data.
+// planes are visually identifiable on the map, not all the same shape.
+// Jet/widebody use swept-back wings (like a real jet's planform); turboprop
+// /piston use straight perpendicular wings - the two are meant to read as
+// different aircraft at a glance, not just different sizes.
 const AIRCRAFT_ICON_PATHS = {
-  jet: { d: "M12 2 L15 10 L22 13 L15 14.5 L14 21 L12 18 L10 21 L9 14.5 L2 13 L9 10 Z", size: 22 },
-  unknown: { d: "M12 2 L15 10 L22 13 L15 14.5 L14 21 L12 18 L10 21 L9 14.5 L2 13 L9 10 Z", size: 22 },
-  widebody: { d: "M12 1 L16 9 L23 13 L16 15 L15 22 L12 18.5 L9 22 L8 15 L1 13 L8 9 Z", size: 27 },
-  turboprop: { d: "M12 3 L12 9 L21 11 L21 13 L12 12 L12 19 L16 21 L16 22.5 L12 21.5 L8 22.5 L8 21 L12 19 L12 12 L3 13 L3 11 L12 9 Z", size: 20 },
-  piston: { d: "M12 5 L12 10 L19 12 L19 13.5 L12 12.5 L12 18 L14.5 19.5 L14.5 20.5 L12 20 L9.5 20.5 L9.5 19.5 L12 18 L12 12.5 L5 13.5 L5 12 L12 10 Z", size: 16 },
+  jet: { d: "M12 1 L13 8 L23 15 L13 12 L13.5 21 L16 23 L12 21.5 L8 23 L10.5 21 L11 12 L1 15 L11 8 Z", size: 24 },
+  unknown: { d: "M12 1 L13 8 L23 15 L13 12 L13.5 21 L16 23 L12 21.5 L8 23 L10.5 21 L11 12 L1 15 L11 8 Z", size: 24 },
+  widebody: { d: "M12 1 L13 8 L23 15 L13 12 L13.5 21 L16 23 L12 21.5 L8 23 L10.5 21 L11 12 L1 15 L11 8 Z", size: 30 },
+  turboprop: { d: "M12 3 L12.5 10 L21 11.5 L12.5 13 L13 19 L15.5 21 L12 20 L8.5 21 L11 19 L11.5 13 L3 11.5 L11.5 10 Z", size: 20 },
+  piston: { d: "M12 3 L12.5 10 L21 11.5 L12.5 13 L13 19 L15.5 21 L12 20 L8.5 21 L11 19 L11.5 13 L3 11.5 L11.5 10 Z", size: 15 },
 };
 
 function planeIcon(heading, category) {
