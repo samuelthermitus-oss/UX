@@ -16,7 +16,11 @@ import opensky_auth
 from airports import describe_airport
 
 OPENSKY_FLIGHTS_URL = "https://opensky-network.org/api/flights/aircraft"
-LOOKBACK_SECONDS = 8 * 60 * 60  # OpenSky only retains recent flight history anyway
+# Must comfortably exceed the longest realistic flight duration (~18-19h for
+# the longest nonstops in service) - an 8h window was cutting off long-haul
+# flights entirely, since a flight that departed 10+ hours ago wouldn't even
+# appear in the query.
+LOOKBACK_SECONDS = 26 * 60 * 60
 POSITIVE_TTL_SECONDS = 30 * 60  # a resolved route barely changes mid-flight
 NEGATIVE_TTL_SECONDS = 10 * 60  # "nothing found" - don't hammer the endpoint retrying
 

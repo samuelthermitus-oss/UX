@@ -243,11 +243,10 @@ function teardownDetailExtras() {
     currentHls.destroy();
     currentHls = null;
   }
-  flightRouteLineLayer.clearLayers();
 }
 
 function showDetail(kind, color, name, rows, extraHtml, trackId) {
-  teardownDetailExtras(); // switching panels stops any playing stream/refresh and clears the route line
+  teardownDetailExtras(); // switching panels stops any playing stream/refresh
   openDetail = trackId ? { kind: kind.toLowerCase(), id: trackId } : null;
   const dl = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
   detailEl.innerHTML = `
@@ -263,7 +262,9 @@ function showDetail(kind, color, name, rows, extraHtml, trackId) {
     openCameraId = null;
     openDetail = null;
     teardownDetailExtras();
+    refreshAllFlightRouteLines(); // drop the "selected" emphasis
   });
+  refreshAllFlightRouteLines(); // re-emphasize if the new detail is a flight
 }
 
 // ---------- Flights (OpenSky Network) ----------
@@ -357,8 +358,12 @@ setInterval(processRouteQueue, ROUTE_LOOKUP_INTERVAL_MS);
 function routeRow(route) {
   if (!route || route.pending) return "Loading…";
   if (!route.known) return "Not recently reported";
-  const o = airportLabel(route.origin) || "?";
-  const d = airportLabel(route.destination) || "?";
+  // OpenSky estimates the destination from the flight actually landing, so
+  // an in-progress flight often has a known origin but no destination yet -
+  // that's a real gap in the free data, not a lookup failure, so say so
+  // plainly instead of a bare "?".
+  const o = airportLabel(route.origin) || "unknown origin";
+  const d = airportLabel(route.destination) || "not yet known (flight still in progress)";
   return `${o} → ${d}`;
 }
 
@@ -383,22 +388,34 @@ function originIcon() {
   });
 }
 
-// Draws the resolved origin -> target line for the flight currently shown
-// in the detail panel. Cleared automatically whenever the panel's content
-// changes (see teardownDetailExtras), so only one route is ever shown.
-function drawFlightRouteLine(d) {
+// Draws an origin -> target line for every currently-visible flight with a
+// known route (not just the one shown in the detail panel), so you can see
+// at a glance how far each plane still has to go. The flight whose detail
+// panel is open (if any) is drawn thicker/brighter; everything else is
+// dimmed but still visible. Naturally bounded by MAX_AUTO_ENRICH_VISIBLE,
+// since only flights with a resolved route get a line at all.
+function refreshAllFlightRouteLines() {
   flightRouteLineLayer.clearLayers();
-  const route = d.route;
-  if (!route || !route.known) return;
-  const o = route.origin, t = route.destination;
-  if (!o || !t || o.lat == null || t.lat == null) return; // airport not in our coordinate table
+  const selectedId = openDetail && openDetail.kind === "flight" ? openDetail.id : null;
+  let selectedLine = null;
+  for (const [icao24, entry] of flightMarkers) {
+    if (!flightLayer.hasLayer(entry.marker)) continue; // only currently-visible flights
+    const d = entry.data;
+    const route = d.route;
+    if (!route || !route.known) continue;
+    const o = route.origin, t = route.destination;
+    if (!o || !t || o.lat == null || t.lat == null) continue; // airport not in our coordinate table
 
-  const line = L.polyline([[o.lat, o.lon], [d.lat, d.lon], [t.lat, t.lon]], {
-    color: "var(--flight)", weight: 2, opacity: 0.8, dashArray: "1 7", lineCap: "round",
-  });
-  flightRouteLineLayer.addLayer(line);
-  flightRouteLineLayer.addLayer(L.marker([o.lat, o.lon], { icon: originIcon(), interactive: false }));
-  flightRouteLineLayer.addLayer(L.marker([t.lat, t.lon], { icon: targetIcon(), interactive: false }));
+    const isSelected = icao24 === selectedId;
+    const line = L.polyline([[o.lat, o.lon], [d.lat, d.lon], [t.lat, t.lon]], isSelected
+      ? { color: "var(--flight)", weight: 2.4, opacity: 0.95, dashArray: "1 6", lineCap: "round" }
+      : { color: "var(--flight)", weight: 1.1, opacity: 0.3, dashArray: "1 6", lineCap: "round" });
+    flightRouteLineLayer.addLayer(line);
+    flightRouteLineLayer.addLayer(L.marker([o.lat, o.lon], { icon: originIcon(), interactive: false }));
+    flightRouteLineLayer.addLayer(L.marker([t.lat, t.lon], { icon: targetIcon(), interactive: false }));
+    if (isSelected) selectedLine = line;
+  }
+  if (selectedLine) selectedLine.bringToFront();
 }
 
 const AIRCRAFT_CATEGORY_LABELS = {
@@ -427,8 +444,7 @@ function renderFlightDetail(icao24) {
     ["Vert. rate", d.vertical_rate_ms != null ? `${d.vertical_rate_ms.toFixed(1)} m/s` : "—"],
     ["ICAO24", d.icao24],
     ["Source", d.provider],
-  ], "", icao24);
-  drawFlightRouteLine(d); // showDetail already cleared any previous route line
+  ], "", icao24); // showDetail() already re-emphasizes this flight's route line
 }
 
 async function pollFlights() {
@@ -481,6 +497,7 @@ function renderFlights(flights) {
   }
   flightCountEl.textContent = String(flights.length);
   rebuildCarousel();
+  refreshAllFlightRouteLines();
   globePointsByKind.flight = flights.map((f) => ({
     lat: f.lat, lon: f.lon, altKm: (f.altitude_m || 0) / 1000,
     color: CATEGORY_COLOR_HEX.flight, kind: "flight", id: f.icao24,
@@ -859,6 +876,7 @@ function applyFilterToExisting() {
     if (!visible && cameraLayer.hasLayer(marker)) cameraLayer.removeLayer(marker);
   }
   rebuildCarousel();
+  refreshAllFlightRouteLines();
 }
 
 // ---------- Category chips (All / Flights / Trains / Satellites / Cameras) ----------

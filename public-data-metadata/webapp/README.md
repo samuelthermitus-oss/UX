@@ -139,12 +139,12 @@ note the missing camera endpoint.
     active toggles/search). Clicking a card pans the map to it and opens
     the same detail panel a marker click would; the active card stays
     highlighted while its detail panel is open.
-  - **Flight route line** - when a flight's origin/destination airports
-    are known (see `airports.py`, which now carries coordinates for its
-    curated airport list) and both have coordinates, opening that
-    flight's detail draws a dashed line from origin through the plane's
-    current position to a distinct target-pin marker at the destination.
-    Cleared automatically when the panel switches to something else.
+  - **Flight route lines** - every currently-visible flight with a known
+    route (both airports resolved with coordinates - see `airports.py`)
+    gets a dashed origin → target-pin line drawn automatically, not just
+    the one you've clicked, so you can see at a glance how far each plane
+    still has to go. Whichever flight's detail panel is open (if any) is
+    drawn thicker/brighter; the rest stay dimmed but visible.
   - **Map / Satellite / 3D view switcher** - a top-center control (like
     Google/Apple Maps) that changes the entire view, not just one layer:
     - **Map** - the default flat 2D view (CartoDB tiles, light/dark).
@@ -186,3 +186,10 @@ note the missing camera endpoint.
   after the 30-day cache expires) will be slower than usual while
   `aircraft_types.py` downloads and parses OpenSky's full aircraft
   database in the background; every request after that is instant.
+- Destination airports are frequently unavailable for flights still
+  in progress: OpenSky's `/flights/aircraft` records an arrival airport
+  only once it infers the aircraft has actually landed, so a flight
+  that's still airborne often has a known origin but no destination yet.
+  That's a real gap in OpenSky's free data, not a bug here - the app
+  says so explicitly ("not yet known - flight still in progress")
+  rather than a bare "?" or guessing.
