@@ -440,3 +440,86 @@ h1 {
   text-transform: uppercase;
   color: var(--tone, var(--ink-faint));
 }
+
+/* ---------- 3D satellite globe widget ---------- */
+
+.globe-widget {
+  position: absolute;
+  right: 1rem;
+  bottom: 150px;
+  z-index: 950;
+  width: 240px;
+  height: 240px;
+  max-width: calc(100vw - 2rem);
+  background: #05070c;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.25s ease, height 0.25s ease, right 0.25s ease, bottom 0.25s ease, top 0.25s ease, left 0.25s ease, transform 0.25s ease;
+}
+.globe-widget.expanded {
+  left: 50%;
+  top: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+  width: min(80vw, 720px);
+  height: min(80vh, 720px);
+  z-index: 1200;
+}
+.globe-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex: 0 0 auto;
+}
+.globe-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: "Board Mono", "DejaVu Sans Mono", ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.globe-title .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--satellite);
+  flex: 0 0 auto;
+}
+.globe-title .dot.live { animation: pulse 2.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .globe-title .dot.live { animation: none; } }
+.globe-expand {
+  flex: 0 0 auto;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--ink-dim);
+  font-size: 0.75rem;
+  line-height: 1;
+  padding: 0.25rem 0.4rem;
+  cursor: pointer;
+}
+.globe-expand:hover { color: var(--ink); }
+.globe-canvas {
+  flex: 1 1 auto;
+  position: relative;
+  min-height: 0; /* without this, three.js's initial (pre-resize) canvas size
+                    becomes the flex item's content-based minimum, so the
+                    container never actually shrinks to fit */
+  min-width: 0;
+  overflow: hidden;
+}
+.globe-canvas canvas { display: block; outline: none; }

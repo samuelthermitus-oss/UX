@@ -45,6 +45,60 @@ function refreshTileTheme() {
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", refreshTileTheme);
 new MutationObserver(refreshTileTheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
+// ---------- 3D satellite globe widget (independent of the 2D map/toggle) ----------
+// Real-view: each satellite is plotted at its true altitude as a fraction
+// of Earth's radius (~6371 km), not visually exaggerated, using the same
+// live CelesTrak positions already polled for the 2D map.
+const EARTH_RADIUS_KM = 6371;
+const globeWidget = document.getElementById("globeWidget");
+const globeExpandBtn = document.getElementById("globeExpand");
+let globeInstance = null;
+let globeExpanded = false;
+
+function initGlobe() {
+  if (globeInstance || typeof Globe === "undefined") return;
+  const container = document.getElementById("globeCanvas");
+  globeInstance = Globe()(container)
+    .backgroundColor("rgba(0,0,0,0)")
+    .globeImageUrl("vendor/globe/earth-dark.jpg")
+    .showAtmosphere(true)
+    .atmosphereColor("#4fd1c5")
+    .atmosphereAltitude(0.15)
+    .pointsData([])
+    .pointLat("lat")
+    .pointLng("lon")
+    .pointAltitude((d) => d.alt_km / EARTH_RADIUS_KM)
+    .pointRadius(0.28)
+    .pointColor(() => "#b48bf2")
+    .pointLabel((d) => `${d.name}${d.operator ? ` · ${d.operator}` : ""} · ${Math.round(d.alt_km)} km`)
+    .pointsMerge(false);
+  globeInstance.controls().autoRotate = true;
+  globeInstance.controls().autoRotateSpeed = 0.4;
+  resizeGlobe();
+}
+
+function resizeGlobe() {
+  if (!globeInstance) return;
+  const container = document.getElementById("globeCanvas");
+  globeInstance.width(container.clientWidth).height(container.clientHeight);
+}
+
+function updateGlobeSatellites(sats) {
+  if (!globeInstance) return;
+  globeInstance.pointsData(sats);
+}
+
+globeExpandBtn.addEventListener("click", () => {
+  globeExpanded = !globeExpanded;
+  globeWidget.classList.toggle("expanded", globeExpanded);
+  globeExpandBtn.textContent = globeExpanded ? "⤡" : "⤢";
+  globeExpandBtn.setAttribute("aria-label", globeExpanded ? "Collapse" : "Expand");
+  // wait for the CSS size transition to finish before resizing the canvas
+  setTimeout(resizeGlobe, 260);
+});
+window.addEventListener("resize", resizeGlobe);
+initGlobe();
+
 const flightLayer = L.layerGroup().addTo(map);
 const flightRouteLineLayer = L.layerGroup().addTo(map); // selected flight's origin->target line
 const satLayer = L.layerGroup().addTo(map);
@@ -423,6 +477,7 @@ function renderSatellites(sats) {
   }
   satCountEl.textContent = String(sats.length);
   rebuildCarousel();
+  updateGlobeSatellites(sats); // 3D widget always shows the full live list, independent of the 2D toggle/search
 }
 
 // ---------- Trains (MBTA) ----------

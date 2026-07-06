@@ -136,6 +136,15 @@ note the missing camera endpoint.
     flight's detail draws a dashed line from origin through the plane's
     current position to a distinct target-pin marker at the destination.
     Cleared automatically when the panel switches to something else.
+  - **3D satellite globe** - a small always-on picture-in-picture widget
+    (expandable to a large centered view via the ⤢ button) showing every
+    live CelesTrak satellite plotted on an actual 3D Earth, at its true
+    altitude as a fraction of Earth's radius - not visually exaggerated.
+    Built with `globe.gl` (bundles Three.js; vendored locally under
+    `static/vendor/globe/`, ~1.8MB, by far the largest vendored asset
+    here) plus a small MIT-licensed Earth texture from the `three-globe`
+    package's own example assets. Independent of the 2D map's Satellites
+    toggle/search - it always shows the full live list.
 
 ## Notes
 
