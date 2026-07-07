@@ -339,8 +339,12 @@ async function fetchRoute(icao24) {
   entry.data.route = { pending: true };
   try {
     entry.data.route = await fetchJson(`/api/flight-route/${icao24}`);
-  } catch {
-    entry.data.route = { known: false };
+  } catch (err) {
+    // Distinct from {known: false} (OpenSky genuinely has no history for
+    // this aircraft) - this is a real failure (rate limit, network, etc.)
+    // that was previously silently relabeled as "no data", making a 429
+    // indistinguishable from a legitimate empty result.
+    entry.data.route = { known: false, error: err.message || "unreachable" };
   }
   applyFilterToExisting();
   if (openDetail && openDetail.kind === "flight" && openDetail.id === icao24) renderFlightDetail(icao24);
@@ -357,6 +361,7 @@ setInterval(processRouteQueue, ROUTE_LOOKUP_INTERVAL_MS);
 
 function routeRow(route) {
   if (!route || route.pending) return "Loading…";
+  if (route.error) return `Lookup failed: ${route.error}`;
   if (!route.known) return "Not recently reported";
   // OpenSky estimates the destination from the flight actually landing, so
   // an in-progress flight often has a known origin but no destination yet -
