@@ -35,7 +35,7 @@ async def get_cameras(access_code):
     if _camera_cache["cameras"] and now - _camera_cache["fetched_at"] < LIST_CACHE_TTL_SECONDS:
         return _camera_cache["cameras"]
 
-    async with httpx.AsyncClient(timeout=15) as client:
+    async with httpx.AsyncClient(timeout=15, follow_redirects=True) as client:
         resp = await client.get(CAMERA_LIST_URL, params={"AccessCode": access_code})
         resp.raise_for_status()
         payload = resp.json()

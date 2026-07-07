@@ -33,7 +33,7 @@ async def get_auth_headers():
     if _token_cache["access_token"] and now < _token_cache["expires_at"] - TOKEN_EXPIRY_SAFETY_MARGIN_SECONDS:
         return {"Authorization": f"Bearer {_token_cache['access_token']}"}
 
-    async with httpx.AsyncClient(timeout=10) as client:
+    async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
         resp = await client.post(TOKEN_URL, data={
             "grant_type": "client_credentials",
             "client_id": CLIENT_ID,

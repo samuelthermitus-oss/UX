@@ -117,7 +117,7 @@ async def get_train_routes():
         _route_cache.update(fetched_at=now, routes=cached["routes"], trip_to_route=cached["trip_to_route"])
         return _route_cache["routes"], _route_cache["trip_to_route"]
 
-    async with httpx.AsyncClient(timeout=30) as client:
+    async with httpx.AsyncClient(timeout=30, follow_redirects=True) as client:
         resp = await client.get(MBTA_STATIC_GTFS_URL)
         resp.raise_for_status()
         zip_bytes = resp.content
@@ -135,7 +135,7 @@ async def get_live_vehicles():
     routes, trip_to_route = await get_train_routes()
     routes_by_id = {r["route_id"]: r for r in routes}
 
-    async with httpx.AsyncClient(timeout=12) as client:
+    async with httpx.AsyncClient(timeout=12, follow_redirects=True) as client:
         resp = await client.get(MBTA_VEHICLE_POSITIONS_URL)
         resp.raise_for_status()
         raw = resp.content

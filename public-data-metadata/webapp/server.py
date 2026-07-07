@@ -82,7 +82,7 @@ async def _fetch_tles():
 
     entries = []
     seen_names = set()
-    async with httpx.AsyncClient(timeout=15) as client:
+    async with httpx.AsyncClient(timeout=15, follow_redirects=True) as client:
         for group in SATELLITE_GROUPS:
             resp = await client.get(CELESTRAK_URL, params={"GROUP": group, "FORMAT": "tle"})
             resp.raise_for_status()
@@ -111,7 +111,7 @@ async def flights(
     auth_mode = "authenticated" if opensky_auth.is_configured() else "anonymous"
     try:
         headers = await opensky_auth.get_auth_headers()
-        async with httpx.AsyncClient(timeout=12) as client:
+        async with httpx.AsyncClient(timeout=12, follow_redirects=True) as client:
             resp = await client.get(OPENSKY_STATES_URL, params=params, headers=headers)
             resp.raise_for_status()
             payload = resp.json()
@@ -285,7 +285,7 @@ async def camera_image(camera_id: str):
     if not image_url:
         raise HTTPException(status_code=404, detail="Unknown camera id - fetch /api/cameras first")
     try:
-        async with httpx.AsyncClient(timeout=10) as client:
+        async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
             resp = await client.get(image_url)
             resp.raise_for_status()
     except httpx.HTTPError as exc:

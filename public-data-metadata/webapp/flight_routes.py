@@ -38,7 +38,7 @@ async def get_route(icao24):
 
     params = {"icao24": icao24, "begin": int(now - LOOKBACK_SECONDS), "end": int(now)}
     headers = await opensky_auth.get_auth_headers()
-    async with httpx.AsyncClient(timeout=12) as client:
+    async with httpx.AsyncClient(timeout=12, follow_redirects=True) as client:
         resp = await client.get(OPENSKY_FLIGHTS_URL, params=params, headers=headers)
         if resp.status_code == 404:
             _route_cache[icao24] = {"fetched_at": now, "route": None}

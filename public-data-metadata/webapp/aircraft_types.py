@@ -91,7 +91,7 @@ async def _load():
         _type_cache.update(loaded_at=now, by_icao24=by_icao24)
         return by_icao24
 
-    async with httpx.AsyncClient(timeout=120) as client:
+    async with httpx.AsyncClient(timeout=120, follow_redirects=True) as client:
         resp = await client.get(AIRCRAFT_DB_URL)
         resp.raise_for_status()
         text = resp.text
