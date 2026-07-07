@@ -139,10 +139,9 @@ async def flights(
             "vertical_rate_ms": s[11],
         })
 
-    try:
-        types_by_icao24 = await aircraft_types.lookup_many([f["icao24"] for f in out])
-    except httpx.HTTPError:
-        types_by_icao24 = {}  # aircraft-type enrichment is best-effort - flights still work without it
+    # Never blocks: kicks off a background load the first time it's needed
+    # and returns whatever's already known (possibly nothing yet).
+    types_by_icao24 = await aircraft_types.lookup_many([f["icao24"] for f in out])
     for f in out:
         info = types_by_icao24.get(f["icao24"])
         f["aircraft_category"] = info["category"] if info else "unknown"
@@ -169,13 +168,7 @@ async def opensky_status():
 
 @app.get("/api/aircraft-types-status")
 async def aircraft_types_status():
-    try:
-        by_icao24 = await aircraft_types._load()
-    except httpx.HTTPError as exc:
-        return {"loaded": False, "count": 0, "detail": f"Aircraft database download failed: {exc}"}
-    from collections import Counter
-    counts = Counter(v["category"] for v in by_icao24.values())
-    return {"loaded": True, "count": len(by_icao24), "by_category": dict(counts)}
+    return await aircraft_types.status()
 
 
 @app.get("/api/flight-route/{icao24}")

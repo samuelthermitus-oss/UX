@@ -14,7 +14,16 @@ back to a generic category rather than a guess.
 
 Source is unlicensed / crowdsourced (not covered by OpenSky's own API terms)
 per OpenSky's own description of this dataset - treat it as best-effort.
+
+Loading is fire-and-forget from the caller's perspective: lookup_many()
+never blocks on the download or the (CPU-bound, potentially slow) CSV
+parse - both would otherwise freeze the single asyncio event loop for
+everyone else's requests too. It kicks off a background load the first
+time it's needed and returns whatever's cached so far (possibly nothing
+yet), so /api/flights always responds quickly and aircraft types simply
+fill in on a later poll once loading finishes.
 """
+import asyncio
 import csv
 import io
 import json
@@ -35,6 +44,8 @@ WIDEBODY_TWIN_TYPECODES = {
 }
 
 _type_cache = {"loaded_at": 0.0, "by_icao24": {}}
+_load_task = None
+_last_error = None
 
 
 def categorize(typecode, icaoaircrafttype):
@@ -79,34 +90,71 @@ def _parse_csv(text):
     return by_icao24
 
 
+def _read_disk_cache():
+    with open(CACHE_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
 async def _load():
+    global _last_error
     now = time.time()
-    if _type_cache["by_icao24"] and now - _type_cache["loaded_at"] < CACHE_TTL_SECONDS:
-        return _type_cache["by_icao24"]
 
     os.makedirs(CACHE_DIR, exist_ok=True)
     if os.path.exists(CACHE_PATH) and now - os.path.getmtime(CACHE_PATH) < CACHE_TTL_SECONDS:
-        with open(CACHE_PATH, encoding="utf-8") as f:
-            by_icao24 = json.load(f)
+        try:
+            by_icao24 = await asyncio.to_thread(_read_disk_cache)
+            _type_cache.update(loaded_at=now, by_icao24=by_icao24)
+            _last_error = None
+            return
+        except (OSError, json.JSONDecodeError):
+            pass  # fall through and re-download
+
+    try:
+        async with httpx.AsyncClient(timeout=120, follow_redirects=True) as client:
+            resp = await client.get(AIRCRAFT_DB_URL)
+            resp.raise_for_status()
+            text = resp.text
+
+        # CSV parsing over ~500k rows is real CPU work - run it in a thread
+        # so it can't block the event loop (and every other in-flight
+        # request) for the whole duration.
+        by_icao24 = await asyncio.to_thread(_parse_csv, text)
+
+        def _write_disk_cache():
+            with open(CACHE_PATH, "w", encoding="utf-8") as f:
+                json.dump(by_icao24, f)
+
+        await asyncio.to_thread(_write_disk_cache)
         _type_cache.update(loaded_at=now, by_icao24=by_icao24)
-        return by_icao24
+        _last_error = None
+    except httpx.HTTPError as exc:
+        _last_error = str(exc)
 
-    async with httpx.AsyncClient(timeout=120, follow_redirects=True) as client:
-        resp = await client.get(AIRCRAFT_DB_URL)
-        resp.raise_for_status()
-        text = resp.text
 
-    by_icao24 = _parse_csv(text)
-    with open(CACHE_PATH, "w", encoding="utf-8") as f:
-        json.dump(by_icao24, f)
-
-    _type_cache.update(loaded_at=now, by_icao24=by_icao24)
-    return by_icao24
+def _ensure_loading_started():
+    global _load_task
+    now = time.time()
+    is_stale = now - _type_cache["loaded_at"] >= CACHE_TTL_SECONDS
+    if is_stale and (_load_task is None or _load_task.done()):
+        _load_task = asyncio.ensure_future(_load())
 
 
 async def lookup_many(icao24_list):
-    """Returns {icao24: {category, manufacturer, model}} for the given
-    aircraft, omitting any not found in the database (unknown category
-    handled by the caller/frontend, not guessed here)."""
-    by_icao24 = await _load()
+    """Returns {icao24: {category, manufacturer, model}} for whichever of
+    the given aircraft are already known. Never blocks on loading - if the
+    database isn't ready yet, returns what's available (possibly nothing)
+    and a later call will have more once the background load completes."""
+    _ensure_loading_started()
+    by_icao24 = _type_cache["by_icao24"]
     return {icao24: by_icao24[icao24] for icao24 in icao24_list if icao24 in by_icao24}
+
+
+async def status():
+    _ensure_loading_started()
+    loading = _load_task is not None and not _load_task.done()
+    return {
+        "loaded": bool(_type_cache["by_icao24"]),
+        "loading": loading,
+        "count": len(_type_cache["by_icao24"]),
+        "last_error": _last_error,
+    }
