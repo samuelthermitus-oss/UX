@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+httpx
+pyorbital
+numpy
+gtfs-realtime-bindings

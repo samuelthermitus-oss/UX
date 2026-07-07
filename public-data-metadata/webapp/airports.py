@@ -1,0 +1,108 @@
+"""ICAO airport code -> name/coordinates lookup (public reference data).
+
+Covers major/hub airports likely to show up as OpenSky's estDepartureAirport
+/ estArrivalAirport. Not exhaustive - unmatched codes are shown as their raw
+ICAO code with no coordinates, rather than guessed.
+"""
+
+# code: (name, city, country, lat, lon)
+ICAO_AIRPORTS = {
+    "KJFK": ("New York John F. Kennedy", "New York", "US", 40.6413, -73.7781),
+    "KLAX": ("Los Angeles Intl", "Los Angeles", "US", 33.9416, -118.4085),
+    "KORD": ("Chicago O'Hare", "Chicago", "US", 41.9742, -87.9073),
+    "KATL": ("Hartsfield-Jackson Atlanta", "Atlanta", "US", 33.6407, -84.4277),
+    "KDFW": ("Dallas/Fort Worth", "Dallas", "US", 32.8998, -97.0403),
+    "KDEN": ("Denver Intl", "Denver", "US", 39.8561, -104.6737),
+    "KSFO": ("San Francisco Intl", "San Francisco", "US", 37.6213, -122.3790),
+    "KSEA": ("Seattle-Tacoma", "Seattle", "US", 47.4502, -122.3088),
+    "KMIA": ("Miami Intl", "Miami", "US", 25.7959, -80.2870),
+    "KBOS": ("Boston Logan", "Boston", "US", 42.3656, -71.0096),
+    "KEWR": ("Newark Liberty", "Newark", "US", 40.6895, -74.1745),
+    "KIAD": ("Washington Dulles", "Washington", "US", 38.9531, -77.4565),
+    "KPHX": ("Phoenix Sky Harbor", "Phoenix", "US", 33.4352, -112.0101),
+    "KLAS": ("Las Vegas Harry Reid", "Las Vegas", "US", 36.0840, -115.1537),
+    "KIAH": ("Houston George Bush", "Houston", "US", 29.9902, -95.3368),
+    "KMCO": ("Orlando Intl", "Orlando", "US", 28.4312, -81.3081),
+    "KMSP": ("Minneapolis-Saint Paul", "Minneapolis", "US", 44.8848, -93.2223),
+    "KDTW": ("Detroit Metro", "Detroit", "US", 42.2124, -83.3534),
+    "KPHL": ("Philadelphia Intl", "Philadelphia", "US", 39.8744, -75.2424),
+    "KCLT": ("Charlotte Douglas", "Charlotte", "US", 35.2144, -80.9473),
+    "CYYZ": ("Toronto Pearson", "Toronto", "CA", 43.6777, -79.6248),
+    "CYVR": ("Vancouver Intl", "Vancouver", "CA", 49.1967, -123.1815),
+    "CYUL": ("Montreal-Trudeau", "Montreal", "CA", 45.4706, -73.7408),
+    "EGLL": ("London Heathrow", "London", "GB", 51.4700, -0.4543),
+    "EGKK": ("London Gatwick", "London", "GB", 51.1537, -0.1821),
+    "EGSS": ("London Stansted", "London", "GB", 51.8860, 0.2389),
+    "EGCC": ("Manchester", "Manchester", "GB", 53.3537, -2.2750),
+    "EDDF": ("Frankfurt am Main", "Frankfurt", "DE", 50.0379, 8.5622),
+    "EDDM": ("Munich", "Munich", "DE", 48.3538, 11.7861),
+    "EDDB": ("Berlin Brandenburg", "Berlin", "DE", 52.3667, 13.5033),
+    "EDDL": ("Dusseldorf", "Dusseldorf", "DE", 51.2895, 6.7668),
+    "EDDH": ("Hamburg", "Hamburg", "DE", 53.6304, 9.9882),
+    "LFPG": ("Paris Charles de Gaulle", "Paris", "FR", 49.0097, 2.5479),
+    "LFPO": ("Paris Orly", "Paris", "FR", 48.7233, 2.3794),
+    "LEMD": ("Madrid Barajas", "Madrid", "ES", 40.4983, -3.5676),
+    "LEBL": ("Barcelona El Prat", "Barcelona", "ES", 41.2971, 2.0785),
+    "LIRF": ("Rome Fiumicino", "Rome", "IT", 41.8003, 12.2389),
+    "LIMC": ("Milan Malpensa", "Milan", "IT", 45.6306, 8.7281),
+    "EHAM": ("Amsterdam Schiphol", "Amsterdam", "NL", 52.3105, 4.7683),
+    "EBBR": ("Brussels", "Brussels", "BE", 50.9014, 4.4844),
+    "LSZH": ("Zurich", "Zurich", "CH", 47.4647, 8.5492),
+    "LOWW": ("Vienna", "Vienna", "AT", 48.1103, 16.5697),
+    "EKCH": ("Copenhagen Kastrup", "Copenhagen", "DK", 55.6180, 12.6560),
+    "ENGM": ("Oslo Gardermoen", "Oslo", "NO", 60.1976, 11.1004),
+    "ESSA": ("Stockholm Arlanda", "Stockholm", "SE", 59.6519, 17.9186),
+    "EFHK": ("Helsinki Vantaa", "Helsinki", "FI", 60.3172, 24.9633),
+    "EIDW": ("Dublin", "Dublin", "IE", 53.4213, -6.2701),
+    "LPPT": ("Lisbon", "Lisbon", "PT", 38.7813, -9.1359),
+    "LTFM": ("Istanbul", "Istanbul", "TR", 41.2753, 28.7519),
+    "UUEE": ("Moscow Sheremetyevo", "Moscow", "RU", 55.9736, 37.4125),
+    "LGAV": ("Athens", "Athens", "GR", 37.9364, 23.9445),
+    "EPWA": ("Warsaw Chopin", "Warsaw", "PL", 52.1657, 20.9671),
+    "LKPR": ("Prague Vaclav Havel", "Prague", "CZ", 50.1008, 14.2632),
+    "LHBP": ("Budapest", "Budapest", "HU", 47.4298, 19.2611),
+    "OMDB": ("Dubai Intl", "Dubai", "AE", 25.2532, 55.3657),
+    "OTHH": ("Doha Hamad Intl", "Doha", "QA", 25.2731, 51.6081),
+    "OERK": ("Riyadh King Khalid", "Riyadh", "SA", 24.9576, 46.6988),
+    "OMAA": ("Abu Dhabi Intl", "Abu Dhabi", "AE", 24.4330, 54.6511),
+    "OJAI": ("Amman Queen Alia", "Amman", "JO", 31.7226, 35.9932),
+    "HECA": ("Cairo Intl", "Cairo", "EG", 30.1219, 31.4056),
+    "VABB": ("Mumbai Chhatrapati Shivaji", "Mumbai", "IN", 19.0896, 72.8656),
+    "VIDP": ("Delhi Indira Gandhi", "Delhi", "IN", 28.5562, 77.1000),
+    "VHHH": ("Hong Kong Intl", "Hong Kong", "HK", 22.3080, 113.9185),
+    "ZBAA": ("Beijing Capital", "Beijing", "CN", 40.0799, 116.6031),
+    "ZSPD": ("Shanghai Pudong", "Shanghai", "CN", 31.1443, 121.8083),
+    "ZGGG": ("Guangzhou Baiyun", "Guangzhou", "CN", 23.3924, 113.2988),
+    "RJTT": ("Tokyo Haneda", "Tokyo", "JP", 35.5494, 139.7798),
+    "RJAA": ("Tokyo Narita", "Tokyo", "JP", 35.7647, 140.3864),
+    "RKSI": ("Seoul Incheon", "Seoul", "KR", 37.4602, 126.4407),
+    "WSSS": ("Singapore Changi", "Singapore", "SG", 1.3644, 103.9915),
+    "WMKK": ("Kuala Lumpur Intl", "Kuala Lumpur", "MY", 2.7456, 101.7099),
+    "VTBS": ("Bangkok Suvarnabhumi", "Bangkok", "TH", 13.6900, 100.7501),
+    "RPLL": ("Manila Ninoy Aquino", "Manila", "PH", 14.5086, 121.0198),
+    "WIII": ("Jakarta Soekarno-Hatta", "Jakarta", "ID", -6.1256, 106.6559),
+    "YSSY": ("Sydney Kingsford Smith", "Sydney", "AU", -33.9399, 151.1753),
+    "YMML": ("Melbourne", "Melbourne", "AU", -37.6690, 144.8410),
+    "YBBN": ("Brisbane", "Brisbane", "AU", -27.3842, 153.1175),
+    "NZAA": ("Auckland", "Auckland", "NZ", -37.0082, 174.7850),
+    "SBGR": ("Sao Paulo Guarulhos", "Sao Paulo", "BR", -23.4356, -46.4731),
+    "SBGL": ("Rio de Janeiro Galeao", "Rio de Janeiro", "BR", -22.8099, -43.2505),
+    "SAEZ": ("Buenos Aires Ezeiza", "Buenos Aires", "AR", -34.8222, -58.5358),
+    "SCEL": ("Santiago", "Santiago", "CL", -33.3930, -70.7858),
+    "SKBO": ("Bogota El Dorado", "Bogota", "CO", 4.7016, -74.1469),
+    "MMMX": ("Mexico City Intl", "Mexico City", "MX", 19.4363, -99.0721),
+    "FAOR": ("Johannesburg O.R. Tambo", "Johannesburg", "ZA", -26.1392, 28.2460),
+    "HKJK": ("Nairobi Jomo Kenyatta", "Nairobi", "KE", -1.3192, 36.9278),
+    "DAAG": ("Algiers", "Algiers", "DZ", 36.6910, 3.2154),
+    "GMMN": ("Casablanca Mohammed V", "Casablanca", "MA", 33.3675, -7.5900),
+}
+
+
+def describe_airport(code):
+    if not code:
+        return None
+    entry = ICAO_AIRPORTS.get(code.upper())
+    if not entry:
+        return {"code": code, "name": code, "city": None, "country": None, "lat": None, "lon": None}
+    name, city, country, lat, lon = entry
+    return {"code": code, "name": name, "city": city, "country": country, "lat": lat, "lon": lon}

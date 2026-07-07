@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Live Sky, Rail &amp; Roads</title>
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="map"></div>
+  <div id="globeFull" class="globe-full" hidden></div>
+
+  <div class="view-switch" id="viewSwitch">
+    <button type="button" data-view="map" aria-pressed="true">Map</button>
+    <button type="button" data-view="satellite" aria-pressed="false">Satellite</button>
+    <button type="button" data-view="3d" aria-pressed="false">3D</button>
+  </div>
+
+  <div class="panel" id="panel">
+    <p class="eyebrow"><span class="dot" id="connDot"></span><span id="connLabel">connecting…</span></p>
+    <h1>Live Sky, Rail &amp; Roads</h1>
+    <p class="dek">Every layer below pulls straight from that provider's own live API — nothing is mirrored or delayed.</p>
+
+    <div class="layers">
+      <label class="toggle" style="--tone: var(--flight)">
+        <span class="toggle-row"><input type="checkbox" id="toggleFlights" checked /><span class="toggle-label">Flights</span><span class="count" id="flightCount">0</span></span>
+        <span class="toggle-source">OpenSky Network</span>
+      </label>
+      <label class="toggle" style="--tone: var(--satellite)">
+        <span class="toggle-row"><input type="checkbox" id="toggleSats" checked /><span class="toggle-label">Satellites</span><span class="count" id="satCount">0</span></span>
+        <span class="toggle-source">CelesTrak</span>
+      </label>
+      <label class="toggle" style="--tone: var(--train)">
+        <span class="toggle-row"><input type="checkbox" id="toggleTrains" checked /><span class="toggle-label">Trains</span><span class="count" id="trainCount">0</span></span>
+        <span class="toggle-source">MBTA</span>
+      </label>
+      <label class="toggle" style="--tone: var(--camera)">
+        <span class="toggle-row"><input type="checkbox" id="toggleCameras" checked /><span class="toggle-label">Cameras</span><span class="count" id="cameraCount">0</span></span>
+        <span class="toggle-source">WSDOT + 511NY</span>
+      </label>
+    </div>
+
+    <div class="chip-row" id="categoryChips">
+      <button class="chip" type="button" data-cat="all" aria-pressed="true">All</button>
+      <button class="chip" type="button" data-cat="flights" style="--tone: var(--flight)">Flights</button>
+      <button class="chip" type="button" data-cat="trains" style="--tone: var(--train)">Trains</button>
+      <button class="chip" type="button" data-cat="satellites" style="--tone: var(--satellite)">Satellites</button>
+      <button class="chip" type="button" data-cat="cameras" style="--tone: var(--camera)">Cameras</button>
+    </div>
+
+    <input class="search" id="search" type="text" placeholder="Callsign, airline, airport code, route, camera…" autocomplete="off" />
+
+    <p class="status" id="statusLine">—</p>
+    <p class="notice" id="cameraNotice" hidden></p>
+  </div>
+
+  <div class="detail" id="detail" hidden></div>
+
+  <div class="carousel" id="carousel"></div>
+
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="vendor/hls/hls.light.min.js"></script>
+  <script src="vendor/globe/globe.gl.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
