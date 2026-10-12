@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Quest Lock</string>
+    <string name="locked_title">Headset locked</string>
+    <string name="locked_body">Enter your unlock code, or ask staff to start your session.</string>
+    <string name="code_hint">Unlock code</string>
+    <string name="unlock">Unlock</string>
+    <string name="unlocked_title">Time left</string>
+    <string name="pick_game">Pick a game</string>
+    <string name="no_games">No games are enabled yet. Ask staff.</string>
+    <string name="offline">Can\'t reach the server. Ask staff.</string>
+    <string name="time_warning">1 minute left — the headset locks when time runs out.</string>
+    <string name="notification">Session control is running</string>
+</resources>

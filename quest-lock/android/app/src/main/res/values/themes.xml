@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="LockTheme" parent="@android:style/Theme.DeviceDefault.NoActionBar.Fullscreen">
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:colorAccent">@color/accent</item>
+    </style>
+    <color name="bg">#FF111317</color>
+    <color name="panel">#FF1A1D23</color>
+    <color name="text">#FFECEEF2</color>
+    <color name="muted">#FF9AA1AD</color>
+    <color name="accent">#FF7B9CFF</color>
+    <color name="warn">#FFF0A35B</color>
+</resources>

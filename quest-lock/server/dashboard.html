@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quest Lock</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #fff; --text: #16181d; --muted: #646b78; --line: #dfe2e8;
+    --accent: #2f5bea; --ok: #18794e; --warn: #b4540a; --off: #9aa1ad;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111317; --panel: #1a1d23; --text: #eceef2; --muted: #9aa1ad; --line: #2c3039;
+      --accent: #7b9cff; --ok: #4cc38a; --warn: #f0a35b; --off: #5d6470;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.45 system-ui, sans-serif; }
+  main { max-width: 1040px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 16px; margin: 0 0 12px; }
+  p.sub { color: var(--muted); margin: 0 0 24px; }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  .card { border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .name { font-weight: 600; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .pill { font-size: 12px; padding: 2px 8px; border-radius: 99px; border: 1px solid currentColor; }
+  .pill.unlocked { color: var(--ok); } .pill.locked { color: var(--warn); } .pill.offline { color: var(--off); }
+  .time { font-variant-numeric: tabular-nums; font-size: 24px; margin: 8px 0; }
+  .muted { color: var(--muted); font-size: 13px; }
+  button, input, textarea, select { font: inherit; color: inherit; }
+  input, textarea, select { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; }
+  textarea { width: 100%; min-height: 96px; font-family: ui-monospace, monospace; font-size: 13px; }
+  button { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  td, th { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+  code { font-family: ui-monospace, monospace; }
+  #err { color: var(--warn); min-height: 1.4em; }
+  .empty { color: var(--muted); padding: 12px 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Quest Lock</h1>
+  <p class="sub">Unlock headsets for paid sessions. Headsets lock themselves when time runs out.</p>
+
+  <section id="login">
+    <h2>Staff sign-in</h2>
+    <form class="row" id="login-form">
+      <input id="token" type="password" placeholder="Admin token" autocomplete="current-password" required>
+      <button class="primary">Sign in</button>
+    </form>
+  </section>
+
+  <div id="app" hidden>
+    <div id="err" role="alert"></div>
+
+    <section>
+      <h2>Headsets</h2>
+      <div class="grid" id="devices"></div>
+    </section>
+
+    <section>
+      <h2>Unlock codes</h2>
+      <p class="muted">Sell a code at the counter; the customer types it on the headset lock screen. Each code works once.</p>
+      <form class="row" id="code-form">
+        <input id="code-count" type="number" min="1" max="100" value="1" aria-label="How many codes" style="width:80px">
+        <span>code(s) for</span>
+        <input id="code-minutes" type="number" min="1" max="1440" value="30" aria-label="Minutes" style="width:90px">
+        <span>minutes</span>
+        <button class="primary">Generate</button>
+      </form>
+      <table style="margin-top:12px">
+        <thead><tr><th>Code</th><th>Minutes</th><th>Status</th></tr></thead>
+        <tbody id="codes"></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Allowed games (all headsets)</h2>
+      <p class="muted">One Android package name per line, e.g. <code>com.beatgames.beatsaber</code>. Find them with <code>adb shell pm list packages -3</code>.</p>
+      <textarea id="packages" spellcheck="false"></textarea>
+      <div class="row" style="margin-top:8px"><button class="primary" id="save-packages">Save</button></div>
+    </section>
+  </div>
+</main>
+
+<script>
+let token = "";
+try { token = localStorage.getItem("ql_token") || ""; } catch (e) {}
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = (sec) => {
+  const h = Math.floor(sec / 3600), m = Math.floor(sec / 60) % 60, s = sec % 60;
+  return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(s).padStart(2, "0");
+};
+
+async function api(method, path, body) {
+  const res = await fetch("/api/admin" + path, {
+    method,
+    headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const data = await res.json().catch(() => ({}));
+  if (res.status === 401) { signOut(); throw new Error("Wrong admin token"); }
+  if (!res.ok) throw new Error(data.error || res.statusText);
+  return data;
+}
+
+function signOut() {
+  token = "";
+  try { localStorage.removeItem("ql_token"); } catch (e) {}
+  $("app").hidden = true; $("login").hidden = false;
+}
+
+let packagesLoaded = false;
+async function refresh() {
+  if (!token) return;
+  try {
+    const data = await api("GET", "/devices");
+    $("login").hidden = true; $("app").hidden = false; $("err").textContent = "";
+    renderDevices(data.devices);
+    if (!packagesLoaded) { $("packages").value = data.allowed_packages.join("\n"); packagesLoaded = true; }
+    const codes = await api("GET", "/codes");
+    renderCodes(codes.codes);
+  } catch (e) { $("err").textContent = e.message; }
+}
+
+function renderDevices(devices) {
+  if (!devices.length) {
+    $("devices").innerHTML = '<div class="empty">No headsets yet. They appear here the first time the lock app checks in.</div>';
+    return;
+  }
+  $("devices").innerHTML = devices.map((d) => `
+    <div class="card" data-id="${esc(d.id)}">
+      <div class="row">
+        <span class="name" title="${esc(d.id)}">${esc(d.name)}</span>
+        ${d.online ? "" : '<span class="pill offline">offline</span>'}
+        <span class="pill ${d.locked ? "locked" : "unlocked"}">${d.locked ? "locked" : "unlocked"}</span>
+      </div>
+      <div class="time">${d.locked ? "—" : fmt(d.remaining_seconds)}</div>
+      <div class="row">
+        <button data-act="unlock" data-min="15">+15 min</button>
+        <button data-act="unlock" data-min="30">+30 min</button>
+        <button data-act="unlock" data-min="60">+60 min</button>
+        <button data-act="lock" ${d.locked ? "disabled" : ""}>Lock now</button>
+        <button data-act="rename">Rename</button>
+      </div>
+    </div>`).join("");
+}
+
+function renderCodes(codes) {
+  $("codes").innerHTML = codes.length ? codes.slice(0, 30).map((c) => `
+    <tr><td><code>${esc(c.code)}</code></td><td>${c.minutes}</td>
+    <td class="muted">${c.used_by ? "used by " + esc(c.used_by) : "unused"}</td></tr>`).join("")
+    : '<tr><td colspan="3" class="empty">No codes yet.</td></tr>';
+}
+
+$("devices").addEventListener("click", async (e) => {
+  const btn = e.target.closest("button"); if (!btn) return;
+  const id = encodeURIComponent(btn.closest(".card").dataset.id);
+  try {
+    if (btn.dataset.act === "unlock") await api("POST", `/devices/${id}/unlock`, { minutes: +btn.dataset.min });
+    if (btn.dataset.act === "lock") await api("POST", `/devices/${id}/lock`, {});
+    if (btn.dataset.act === "rename") {
+      const name = prompt("Headset name"); if (!name) return;
+      await api("POST", `/devices/${id}/update`, { name });
+    }
+    refresh();
+  } catch (err) { $("err").textContent = err.message; }
+});
+
+$("code-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    await api("POST", "/codes", { count: +$("code-count").value, minutes: +$("code-minutes").value });
+    refresh();
+  } catch (err) { $("err").textContent = err.message; }
+});
+
+$("save-packages").addEventListener("click", async () => {
+  const list = $("packages").value.split(/\s+/).filter(Boolean);
+  try {
+    const data = await api("PUT", "/settings", { allowed_packages: list });
+    $("packages").value = data.allowed_packages.join("\n");
+    $("err").textContent = "";
+  } catch (err) { $("err").textContent = err.message; }
+});
+
+$("login-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  token = $("token").value;
+  try { localStorage.setItem("ql_token", token); } catch (e) {}
+  refresh();
+});
+
+refresh();
+setInterval(refresh, 3000);
+</script>
+</body>
+</html>
