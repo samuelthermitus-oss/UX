@@ -249,3 +249,24 @@ window.SECPREP_LANGS.en={"code":"en","label":"English","short":"EN","speech":["e
 Object.assign(window.SECPREP_LANGS.en.ui,{today:"Today",goalTitle:"Daily goal",goalOf:"{n} of {g} questions",startDaily:"Start Daily 25",keepGoing:"Keep going",goalDone:"Goal reached. Nice work.",streakN:"{n}-day streak",streakN1:"1-day streak",streak0:"Start your streak today",readiness:"Exam readiness",readinessBody:"Your accuracy, weighted by how much each domain counts on the exam.",readinessEmpty:"Answer 20 questions to see your estimate.",more:"More practice",domainsTitle:"Domains",continueBtn:"Continue",questionOf:"Question {i} of {n}",why:"Why",nowPlaying:"Now playing",topics:"{n} topics",close:"Close",chooseLanguage:"Language",yourScore:"Your score",target:"Target 85%"});
 Object.assign(window.SECPREP_LANGS.en.ui,{look:"Look",background:"Background",themeOriginal:"Original",themeOcean:"Ocean",themeGlacier:"Glacier",appearance:"Appearance",appearLight:"Light",appearDark:"Dark",appearAuto:"Auto",voiceCoach:"Voice coach"});
 Object.assign(window.SECPREP_LANGS.en.ui,{done:"Done",logout:"Log out",logoutBody:"Clears your progress and settings on this device.",logoutTitle:"Log out?",logoutMsg:"This erases your progress, streak and settings on this phone. It can't be undone.",cancel:"Cancel",reminderAppOnly:"Daily reminders work in the iPhone and Android app.",openSettings:"Open settings"});
+Object.assign(window.SECPREP_LANGS.en.ui,{
+welcomeBody:"Practice for the Security+ exam a little every day with questions, spoken lessons and live scenarios.",createProfile:"Create my profile",stepOf:"Step {i} of {n}",
+nameTitle:"What's your first name?",nameHint:"We use it to greet you. It stays on this phone.",namePh:"First name",
+birthTitle:"When were you born?",birthHint:"CompTIA requires exam candidates to be at least 13 years old.",month:"Month",year:"Year",
+under13:"You need to be at least 13 to use SecPrep Daily. This matches CompTIA's minimum age for the Security+ exam.",
+minorNote:"Because you're under 18, CompTIA requires consent from a parent or guardian before you can take the exam. Ask a parent or guardian to review the exam policies on CompTIA's website with you.",
+parentCheck:"A parent or guardian knows I'm using this app",
+levelTitle:"How much IT experience do you have?",levelHint:"There are no required prerequisites. CompTIA recommends Network+ and about 2 years of IT administration with a security focus.",
+level1:"New to IT",level1d:"I'm just starting out",level2:"Some IT experience",level2d:"Help desk, home lab or classes",level3:"Network+ or 2+ years",level3d:"I work in IT or hold Network+",
+examTitle:"When is your exam?",examHint:"We'll count down the days and help you keep pace.",notScheduled:"Not scheduled yet",
+goalPick:"Choose your daily goal",goalHint:"You can change it anytime in Settings.",goal10:"Light",goal10d:"About 5 minutes a day",goal25:"Steady",goal25d:"About 15 minutes a day",goal50:"Intense",goal50d:"About 30 minutes a day",paceHint:"To go through every question twice before your exam, aim for about {n} a day.",
+pinTitle:"Create a 4-digit PIN",pinHint:"You'll use it to log back in on this phone.",pinConfirm:"Enter your PIN again",pinMismatch:"The PINs didn't match. Try again.",
+welcomeBack:"Welcome back, {name}",enterPin:"Enter your PIN",wrongPin:"Wrong PIN. Try again.",lockedOut:"Too many tries. Wait {s} seconds.",forgotPin:"Forgot PIN?",
+forgotTitle:"Reset this profile?",forgotMsg:"Without your PIN, the only option is to delete this profile and its progress on this phone, then create a new one.",
+deleteProfile:"Delete profile",deleteBody:"Erase your profile and all progress on this phone.",deleteTitle:"Delete your profile?",deleteMsg:"This permanently erases your profile, progress, streak and settings on this phone.",
+logoutBody:"Lock the app. Your progress stays saved.",logoutMsg:"Your progress stays saved on this phone. You'll need your PIN to log back in.",
+profile:"Profile",examDate:"Exam date",dailyGoal:"Daily goal",examIn:"Exam in {n} days",examIn1:"Exam tomorrow",examToday:"Exam day. You've got this.",examPast:"Exam date passed",
+beginnerTip:"New to IT? Start with the Domain 1 lessons, then come back for your daily questions.",openLessons:"Open lessons",greet:"Hi, {name}",
+contentUpdated:"New study content downloaded.",contentUpdatedN:"{n} new questions added.",
+privacy:"Privacy: your profile and progress stay on this device. The app only downloads new study content. Nothing about you is sent."});
+Object.assign(window.SECPREP_LANGS.en.ui,{startDaily:"Start today's {n} questions",quizDaily:"Daily practice",daily:"Daily practice",contentUpdated1:"1 new question added."});

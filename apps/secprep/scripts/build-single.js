@@ -4,7 +4,7 @@ const fs = require("fs"), path = require("path");
 const www = path.join(__dirname, "../www");
 const read = f => fs.readFileSync(path.join(www, f), "utf8");
 let css = read("lib/ionic/ionic.bundle.css") + "\n" + read("lib/ionic/dark.class.css") + "\n" + read("styles.css").replace(/@font-face\{[^}]*\}\n?/g, "");
-const js = ["data/en.js", "data/fr.js", "app.js"].map(read).join("\n;\n").replace(/<\/script/gi, "<\\/script");
+const js = ["config.js", "data/en.js", "data/fr.js", "app.js"].map(read).join("\n;\n").replace(/<\/script/gi, "<\\/script");
 const body = read("index.html").match(/<body>([\s\S]*?)<script/)[1];
 const out = `<title>SecPrep Daily</title>
 <meta name="claude:viewport-fit-sides" content="cover">

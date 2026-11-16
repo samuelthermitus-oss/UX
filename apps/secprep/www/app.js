@@ -167,7 +167,7 @@ document.addEventListener("pointermove",e=>{const g=e.target.closest&&e.target.c
 
 /* ---------- shell ---------- */
 S.daily = S.daily || {d:"", n:0};
-const GOAL = 25;
+let GOAL = 25;
 const todayCount = () => S.daily.d===today() ? S.daily.n : 0;
 const app = document.getElementById("app");
 new MutationObserver(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>app.querySelectorAll("circle[data-target]").forEach(c=>{c.setAttribute("stroke-dashoffset",c.dataset.target);c.removeAttribute("data-target")})))).observe(app,{childList:true});
@@ -185,7 +185,7 @@ function chrome(){
 }
 function focusMode(on){ document.body.classList.toggle("focus", !!on); }
 function go(x){ Voice.stop(); Player.hide(); clearInterval(timerId); clearScen(); closeSheet(); quiz=null; focusMode(false); tab=x; chrome(); window.scrollTo(0,0); ({practice:viewPractice,learn:viewLearn,scenarios:viewScenarios,progress:viewProgress})[x](); }
-const langPill = () => `<div class="head-actions"><button class="pill-btn press" id="langbtn" type="button" aria-label="${esc(t("chooseLanguage"))}">${icon("globe")}${esc(L().short)}</button><button class="pill-btn round press" id="setbtn" type="button" aria-label="${esc(t("openSettings"))}">${icon("gear")}</button></div>`;
+const langPill = (noGear) => `<div class="head-actions"><button class="pill-btn press" id="langbtn" type="button" aria-label="${esc(t("chooseLanguage"))}">${icon("globe")}${esc(L().short)}</button>${noGear?"":`<button class="pill-btn round press" id="setbtn" type="button" aria-label="${esc(t("openSettings"))}">${icon("gear")}</button>`}</div>`;
 function bindLang(){ const b=document.getElementById("langbtn"); if(b) b.onclick=openLangSheet; const g=document.getElementById("setbtn"); if(g) g.onclick=openSettings; }
 
 /* ---------- sheet ---------- */
@@ -193,7 +193,7 @@ function openSheet(html, bind){ closeSheet(); const s=document.createElement("di
 function closeSheet(){ const s=document.getElementById("sheetwrap"); if(s) s.remove(); }
 function openLangSheet(){
   openSheet(`<h2>${esc(t("chooseLanguage"))}</h2><div class="list">${ENABLED_LANGS.map(c=>`<button class="row" type="button" data-l="${c}"><span class="txt"><b>${esc(LANGS[c].label)}</b></span><span class="end check">${S.lang===c?icon("check"):""}</span></button>`).join("")}</div>`,
-  s=>s.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{S.lang=b.dataset.l;save();Voice.stop();Haptic.tap();closeSheet();refreshSettings();if(quiz&&document.querySelector(".qtext"))renderQ();else go(tab);chrome()}));
+  s=>s.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{S.lang=b.dataset.l;save();Voice.stop();Haptic.tap();closeSheet();refreshSettings();if(!S.profile)Onboard.render();else if(!S.session)Auth.loginScreen();else{if(quiz&&document.querySelector(".qtext"))renderQ();else go(tab);chrome()}}));
 }
 
 /* ---------- mini player ---------- */
@@ -218,13 +218,15 @@ function viewPractice(){
   const n=todayCount(), st=streak(), missedN=Object.keys(S.missed).length, rd=readiness();
   const dateStr=new Date().toLocaleDateString(S.lang==="ht"?"fr":S.lang,{weekday:"long",month:"long",day:"numeric"});
   app.innerHTML=`<div class="screen enter">
-   <div class="head"><div><div class="over">${esc(dateStr)}</div><h1>${esc(t("today"))}</h1></div>${langPill()}</div>
+   <div class="head"><div><div class="over">${esc(dateStr)}</div><h1>${esc(S.profile?t("greet",{name:S.profile.name}):t("today"))}</h1></div>${langPill()}</div>
+   ${examLabel()?`<div class="exam-chip">${icon("clock")}<span>${esc(examLabel())}</span></div>`:""}
+   ${S.profile&&S.profile.level==="beginner"&&Object.keys(S.seen).length<20?`<section class="card tipcard"><p>${esc(t("beginnerTip"))}</p><button class="btn small press" id="m-learn" type="button">${esc(t("openLessons"))}</button></section>`:""}
    <section class="card">
     <div class="hero">${ring(n/GOAL,92,10,"var(--brand)",`<b class="num" style="font-size:26px">${n}</b><small>/ ${GOAL}</small>`)}
      <div class="meta"><span class="muted" style="font-size:14px;font-weight:600">${esc(t("goalTitle"))}</span><span class="big num">${esc(t("goalOf",{n,g:GOAL}))}</span>
       <span class="flame">${icon("flame")}${esc(st===0?t("streak0"):st===1?t("streakN1"):t("streakN",{n:st}))}</span></div></div>
     ${weekStrip()}
-    <button class="btn block press" id="m-daily" style="margin-top:18px">${esc(n>=GOAL?t("keepGoing"):t("startDaily"))}</button>
+    <button class="btn block press" id="m-daily" style="margin-top:18px">${esc(n>=GOAL?t("keepGoing"):t("startDaily",{n:GOAL}))}</button>
     ${n>=GOAL?`<p class="fine" style="text-align:center;margin-top:8px">${esc(t("goalDone"))}</p>`:""}
    </section>
    <section class="card ready">
@@ -242,7 +244,8 @@ function viewPractice(){
    <p class="fine">${esc(t("disclaimer"))}</p>
   </div>`;
   bindLang();
-  document.getElementById("m-daily").onclick=()=>{const missed=shuffle(Object.keys(S.missed).map(Number)).slice(0,8);const rest=shuffle(ALL.filter(i=>!missed.includes(i)));startQuiz(shuffle(missed.concat(rest).slice(0,25)),"quizDaily",false)};
+  document.getElementById("m-daily").onclick=()=>{const missed=shuffle(Object.keys(S.missed).map(Number)).slice(0,Math.ceil(GOAL/3));const rest=shuffle(ALL.filter(i=>!missed.includes(i)));startQuiz(shuffle(missed.concat(rest).slice(0,GOAL)),"quizDaily",false)};
+  const ml=document.getElementById("m-learn"); if(ml) ml.onclick=()=>{lessonDomain=1;go("learn")};
   document.getElementById("m-exam").onclick=()=>startQuiz(shuffle(ALL).slice(0,90),"quizExam",true);
   document.getElementById("m-missed").onclick=()=>startQuiz(shuffle(Object.keys(S.missed).map(Number)),"quizMissed",false);
   document.getElementById("m-all").onclick=()=>startQuiz(shuffle(ALL),"quizAll",false);
@@ -407,7 +410,14 @@ const THEMES=[["original","themeOriginal","#eef1f6","#5ec8d4","#a48cff","#ffb27a
 function settingsBody(){
   const vl=Voice.list(), cur=Voice.chosen();
   const sw=(base,a,b,c)=>`background:radial-gradient(circle at 25% 30%,${a},transparent 62%),radial-gradient(circle at 78% 65%,${b},transparent 60%),radial-gradient(circle at 40% 95%,${c},transparent 55%),${base}`;
+  const P=S.profile||{}, lvl={beginner:"level1",some:"level2",pro:"level3"}[P.level]||"level2";
   return `<div class="settings-body">
+   <section><div class="group-label">${esc(t("profile"))}</div><div class="list">
+    <ion-item lines="inset"><span class="avatar small" slot="start">${esc((P.name||"?").charAt(0).toUpperCase())}</span><ion-label><b>${esc(P.name||"")}</b><p>${esc(t(lvl))}</p></ion-label></ion-item>
+    <ion-item lines="inset"><span class="tile" slot="start" style="background-color:var(--d3)">${icon("clock")}</span><ion-label>${esc(t("examDate"))}<p>${esc(examLabel()||t("notScheduled"))}</p></ion-label><input slot="end" type="date" id="pexam" value="${esc(P.exam||"")}"></ion-item>
+    <ion-item lines="none"><span class="tile" slot="start" style="background-color:var(--brand)">${icon("flame")}</span><ion-label>${esc(t("dailyGoal"))}</ion-label></ion-item>
+    <div class="seg-wrap" style="padding-top:0"><ion-segment id="pgoal" value="${P.goal||25}">${[10,25,50].map(g=>`<ion-segment-button value="${g}"><ion-label>${g}</ion-label></ion-segment-button>`).join("")}</ion-segment></div>
+   </div></section>
    <section><div class="group-label">${esc(t("background"))}</div>
     <div class="themes" role="group" aria-label="${esc(t("background"))}">${THEMES.map(([id,k,base,a,b,c])=>`<button type="button" data-theme-bg="${id}" aria-pressed="${(S.bg||"glacier")===id}"><span class="sw" style="${sw(base,a,b,c)}"></span>${esc(t(k))}</button>`).join("")}</div></section>
    <section><div class="group-label">${esc(t("appearance"))}</div>
@@ -426,7 +436,8 @@ function settingsBody(){
     <ion-item lines="none"><span class="tile" slot="start" style="background-color:var(--d4)">${icon("clock")}</span><ion-label>${esc(t("reminderTime"))}</ion-label><input slot="end" type="time" id="remt" value="${esc(S.remind.time)}" ${Remind.available?"":"disabled"}></ion-item>
    </div><p class="fine" id="remmsg" aria-live="polite" style="padding:6px 4px 0">${Remind.available?"":esc(t("reminderAppOnly"))}</p></section>
    <section><div class="list">
-    <ion-item lines="none" button id="logout"><span class="tile" slot="start" style="background-color:var(--bad)">${icon("logout")}</span><ion-label><span style="color:var(--bad);font-weight:600">${esc(t("logout"))}</span><p>${esc(t("logoutBody"))}</p></ion-label></ion-item>
+    <ion-item lines="inset" button id="logout"><span class="tile" slot="start" style="background-color:var(--bad)">${icon("logout")}</span><ion-label><span style="color:var(--bad);font-weight:600">${esc(t("logout"))}</span><p>${esc(t("logoutBody"))}</p></ion-label></ion-item>
+    <ion-item lines="none" button id="delprof"><span class="tile" slot="start" style="background-color:#3a4150">${icon("x")}</span><ion-label><span style="color:var(--bad);font-weight:600">${esc(t("deleteProfile"))}</span><p>${esc(t("deleteBody"))}</p></ion-label></ion-item>
    </div></section>
    <section class="fine-block"><p class="fine">${esc(t("disclaimer"))}</p><p class="fine">${esc(t("privacy"))}</p></section>
   </div>`;
@@ -445,7 +456,10 @@ function bindSettings(root){
   const msg=m=>{const el=root.querySelector("#remmsg");if(el)el.textContent=m};
   on("rem","ionChange",async e=>{S.remind.on=e.detail.checked;save();msg(await Remind.apply());const r=root.querySelector("#rem");if(r)r.checked=S.remind.on});
   on("remt","change",async e=>{S.remind.time=e.target.value||"19:00";save();if(S.remind.on)msg(await Remind.apply())});
-  on("logout","click",confirmLogout);
+  on("logout","click",()=>Auth.logout());
+  on("delprof","click",()=>Auth.deleteProfile());
+  on("pexam","change",e=>{S.profile.exam=e.target.value;save();rerenderBehind()});
+  on("pgoal","ionChange",e=>{S.profile.goal=+e.detail.value;GOAL=S.profile.goal;save();rerenderBehind()});
 }
 function rerenderBehind(){ if(quiz&&document.querySelector(".qtext")) renderQ(); else ({practice:viewPractice,learn:viewLearn,scenarios:viewScenarios,progress:viewProgress})[tab](); }
 function refreshSettings(){ if(!settingsHost) return; const box=settingsHost.querySelector(".settings-slot"); box.innerHTML=settingsBody(); bindSettings(box);
@@ -464,29 +478,162 @@ async function openSettings(){
       s=>{settingsHost=s;refreshSettings();s.querySelector(".settings-done").onclick=()=>{closeSheet();settingsHost=null}});
   }
 }
-function doLogout(){
-  Voice.stop(); try{localStorage.removeItem(KEY)}catch(e){}
-  const keepLang=S.lang;
-  for(const k of Object.keys(S)) delete S[k];
-  Object.assign(S,{days:[],history:[],missed:{},seen:{},dstat:{},scen:{},lang:keepLang,voice:{},rate:1,autoRead:false,remind:{on:false,time:"19:00"},bg:"glacier",appearance:"auto",daily:{d:"",n:0},v:2});
-  save(); Remind.apply&&Remind.available&&Remind.apply(); Look.apply();
-  const host=settingsHost; settingsHost=null;
-  if(host){ if(host.dismiss) host.dismiss().then(()=>host.isConnected&&host.remove()); else closeSheet(); }
-  Haptic.ok(); go("practice");
+/* =====================================================================
+   ACCOUNT: on-device profile with sign-up, PIN login and log out.
+   Built so a server account can replace Auth.* later.
+   ===================================================================== */
+const PIN_LEN = 4;
+async function hashPin(pin, salt){
+  try{ const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(salt+":"+pin)); return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join(""); }
+  catch(e){ let h=5381; for(const ch of salt+":"+pin) h=((h<<5)+h+ch.charCodeAt(0))|0; return "x"+(h>>>0).toString(16); }
 }
-async function confirmLogout(){
-  Haptic.no();
-  if(customElements.get("ion-alert")){
-    const a=document.createElement("ion-alert");
-    a.header=t("logoutTitle"); a.message=t("logoutMsg");
-    a.buttons=[{text:t("cancel"),role:"cancel"},{text:t("logout"),role:"destructive"}];
-    document.body.appendChild(a); a.addEventListener("didDismiss",e=>{a.remove(); if(e.detail&&e.detail.role==="destructive") doLogout();}); await a.present();
-  } else {
-    const b=document.querySelector("#logout ion-label span"); if(b&&b.dataset.armed){doLogout();return}
-    if(b){b.dataset.armed="1";b.textContent=t("resetConfirm")}
+const newSalt=()=>{ try{ return [...crypto.getRandomValues(new Uint8Array(12))].map(b=>b.toString(16).padStart(2,"0")).join(""); }catch(e){ return String(Math.random()).slice(2); } };
+function ageFrom(by, bm){ const n=new Date(); let a=n.getFullYear()-by; if(n.getMonth()+1<=bm) a--; return a; } // conservative: birthday counted only after the birth month
+function examDays(){ const e=S.profile&&S.profile.exam; if(!e) return null; const d=new Date(e+"T00:00:00"), n=new Date(); n.setHours(0,0,0,0); return Math.round((d-n)/86400000); }
+function examLabel(){ const d=examDays(); if(d==null) return ""; if(d<0) return t("examPast"); if(d===0) return t("examToday"); if(d===1) return t("examIn1"); return t("examIn",{n:d}); }
+function toast(msg){ const el=document.createElement("div"); el.className="toast glass"; el.setAttribute("role","status"); el.textContent=msg; document.body.appendChild(el); setTimeout(()=>el.classList.add("out"),2600); setTimeout(()=>el.remove(),3100); }
+function confirmBox(title, message, okText, onOk){
+  if(customElements.get("ion-alert")){ const a=document.createElement("ion-alert"); a.header=title; a.message=message;
+    a.buttons=[{text:t("cancel"),role:"cancel"},{text:okText,role:"destructive"}]; document.body.appendChild(a);
+    a.addEventListener("didDismiss",e=>{a.remove(); if(e.detail&&e.detail.role==="destructive") onOk();}); a.present(); }
+  else openSheet(`<h2>${esc(title)}</h2><p class="muted">${esc(message)}</p><button class="btn block" id="cbok" style="background:var(--bad)">${esc(okText)}</button><button class="btn soft block" id="cbno">${esc(t("cancel"))}</button>`,
+    s=>{s.querySelector("#cbok").onclick=()=>{closeSheet();onOk()}; s.querySelector("#cbno").onclick=closeSheet;});
+}
+function closeSettingsPanel(){ const host=settingsHost; settingsHost=null; if(host){ if(host.dismiss) host.dismiss().then(()=>host.isConnected&&host.remove()); else closeSheet(); } }
+
+/* PIN keypad shared by sign-up and login */
+function keypad(onDigit){ return `<div class="keypad" role="group">${[1,2,3,4,5,6,7,8,9,"",0,"del"].map(k=>k===""?"<span></span>":`<button type="button" class="key press" data-k="${k}" aria-label="${k==="del"?"Delete":k}">${k==="del"?icon("back"):k}</button>`).join("")}</div>`; }
+function bindKeypad(root, get, set, done){
+  root.querySelectorAll(".key").forEach(b=>b.onclick=()=>{ let v=get(); if(b.dataset.k==="del") v=v.slice(0,-1); else if(v.length<PIN_LEN) v+=b.dataset.k; Haptic.tap(); set(v); paintDots(root,v); if(v.length===PIN_LEN) setTimeout(()=>done(v),120); });
+}
+const dots = () => `<div class="pin-dots" aria-hidden="true">${"<i></i>".repeat(PIN_LEN)}</div>`;
+function paintDots(root,v){ root.querySelectorAll(".pin-dots i").forEach((d,i)=>d.classList.toggle("on",i<v.length)); }
+function shakeDots(root){ const d=root.querySelector(".pin-dots"); if(!d) return; d.classList.remove("shake"); void d.offsetWidth; d.classList.add("shake"); }
+
+const Auth = {
+  boot(){ if(!S.profile) return Onboard.start(); if(!S.session) return this.loginScreen(); this.enter(); },
+  enter(){ GOAL=S.profile.goal||25; S.session=true; save(); focusMode(false); closeSheet(); tab="practice"; chrome(); viewPractice(); },
+  loginScreen(msg){
+    Voice.stop(); Player.hide(); focusMode(true); quiz=null; let pin="";
+    const p=S.profile, lockLeft=()=>Math.max(0,Math.ceil(((S.lockUntil||0)-Date.now())/1000));
+    app.innerHTML=`<div class="screen enter auth">
+      <div class="auth-top">${langPill(true)}</div>
+      <div class="auth-hero"><span class="avatar">${esc((p.name||"?").trim().charAt(0).toUpperCase())}</span><h1>${esc(t("welcomeBack",{name:p.name}))}</h1><p class="muted" id="pinmsg" aria-live="polite">${esc(msg||t("enterPin"))}</p>${dots()}</div>
+      ${keypad()}
+      <button class="link-btn" type="button" id="forgot">${esc(t("forgotPin"))}</button>
+    </div>`;
+    bindLang();
+    const msgEl=app.querySelector("#pinmsg");
+    bindKeypad(app,()=>pin,v=>pin=v,async v=>{
+      if(lockLeft()>0){ msgEl.textContent=t("lockedOut",{s:lockLeft()}); pin=""; paintDots(app,pin); return; }
+      if(await hashPin(v,p.pin.salt)===p.pin.hash){ S.fails=0; S.lockUntil=0; Haptic.ok(); this.enter(); }
+      else { S.fails=(S.fails||0)+1; if(S.fails>=5){ S.lockUntil=Date.now()+30000; S.fails=0; } save(); Haptic.no(); shakeDots(app); pin=""; setTimeout(()=>paintDots(app,pin),350);
+        msgEl.textContent=lockLeft()>0?t("lockedOut",{s:lockLeft()}):t("wrongPin"); }
+    });
+    app.querySelector("#forgot").onclick=()=>confirmBox(t("forgotTitle"),t("forgotMsg"),t("deleteProfile"),()=>this.wipe());
+  },
+  logout(){ confirmBox(t("logoutTitle"),t("logoutMsg"),t("logout"),()=>{ S.session=false; save(); closeSettingsPanel(); Haptic.ok(); this.loginScreen(); }); },
+  deleteProfile(){ confirmBox(t("deleteTitle"),t("deleteMsg"),t("deleteProfile"),()=>{ closeSettingsPanel(); this.wipe(); }); },
+  wipe(){ Voice.stop(); const keepLang=S.lang; try{localStorage.removeItem(KEY)}catch(e){}
+    for(const k of Object.keys(S)) delete S[k];
+    Object.assign(S,{days:[],history:[],missed:{},seen:{},dstat:{},scen:{},lang:keepLang,voice:{},rate:1,autoRead:false,remind:{on:false,time:"19:00"},bg:"glacier",appearance:"auto",daily:{d:"",n:0},v:2});
+    save(); try{ if(Remind.available) Remind.apply(); }catch(e){} Look.apply(); Haptic.ok(); Onboard.start(); }
+};
+
+/* Sign-up flow */
+const Onboard = {
+  d:null, i:0,
+  STEPS:["welcome","name","birth","level","exam","goal","pin"],
+  start(){ this.d={name:"",bm:"",by:"",parent:false,level:"",exam:"",goal:25,pin:"",pin1:""}; this.i=0; Voice.stop(); Player.hide(); focusMode(true); quiz=null; this.render(); },
+  canNext(){ const d=this.d, s=this.STEPS[this.i];
+    if(s==="name") return d.name.trim().length>0;
+    if(s==="birth"){ if(!d.by||!d.bm) return false; const a=ageFrom(+d.by,+d.bm); return a>=13&&(a>=18||d.parent); }
+    if(s==="level") return !!d.level;
+    return true; },
+  next(){ if(!this.canNext()) return; Haptic.tap(); this.i++; this.render(); },
+  back(){ if(this.i===0) return; this.i--; this.d.pin=""; this.d.pin1=""; this.render(); },
+  render(){
+    const d=this.d, s=this.STEPS[this.i], total=this.STEPS.length-1, yr=new Date().getFullYear();
+    const head = s==="welcome" ? `<div class="auth-top">${langPill(true)}</div>` :
+      `<div class="ob-bar"><button class="icon-btn press" type="button" id="obback" aria-label="${esc(t("back"))}">${icon("back")}</button><div class="segs"><i style="width:${this.i/total*100}%"></i></div><span class="timer">${this.i}/${total}</span></div>`;
+    const choice=(name,val,title,sub,cur)=>`<button type="button" class="choice press" data-${name}="${val}" aria-pressed="${String(cur)===String(val)}"><b>${esc(title)}</b><span>${esc(sub)}</span></button>`;
+    let body="", next=true;
+    if(s==="welcome"){ next=false; body=`<div class="auth-hero welcome"><span class="logo">${icon("d1")}</span><h1>SecPrep Daily</h1><p class="muted">${esc(t("welcomeBody"))}</p></div>
+      <div class="ob-actions"><button class="btn block press" id="obstart">${esc(t("createProfile"))}</button><p class="fine" style="text-align:center">${esc(t("privacy"))}</p></div>`; }
+    if(s==="name") body=`<h1>${esc(t("nameTitle"))}</h1><p class="muted">${esc(t("nameHint"))}</p><input class="field" id="obname" type="text" autocomplete="given-name" maxlength="30" placeholder="${esc(t("namePh"))}" value="${esc(d.name)}">`;
+    if(s==="birth"){ const months=[...Array(12)].map((_,k)=>new Date(2000,k,1).toLocaleDateString(S.lang,{month:"long"}));
+      const a=d.by&&d.bm?ageFrom(+d.by,+d.bm):null;
+      body=`<h1>${esc(t("birthTitle"))}</h1><p class="muted">${esc(t("birthHint"))}</p>
+       <div class="two"><label class="fld"><span>${esc(t("month"))}</span><select id="obbm" class="field"><option value=""></option>${months.map((m,k)=>`<option value="${k+1}" ${+d.bm===k+1?"selected":""}>${esc(m)}</option>`).join("")}</select></label>
+       <label class="fld"><span>${esc(t("year"))}</span><select id="obby" class="field"><option value=""></option>${[...Array(90)].map((_,k)=>yr-k).map(y=>`<option value="${y}" ${+d.by===y?"selected":""}>${y}</option>`).join("")}</select></label></div>
+       ${a!=null&&a<13?`<div class="notice bad">${esc(t("under13"))}</div>`:""}
+       ${a!=null&&a>=13&&a<18?`<div class="notice">${esc(t("minorNote"))}</div><label class="check"><input type="checkbox" id="obparent" ${d.parent?"checked":""}><span>${esc(t("parentCheck"))}</span></label>`:""}`; }
+    if(s==="level") body=`<h1>${esc(t("levelTitle"))}</h1><p class="muted">${esc(t("levelHint"))}</p><div class="choices">${choice("lv","beginner",t("level1"),t("level1d"),d.level)}${choice("lv","some",t("level2"),t("level2d"),d.level)}${choice("lv","pro",t("level3"),t("level3d"),d.level)}</div>`;
+    if(s==="exam"){ const today=new Date().toISOString().slice(0,10);
+      body=`<h1>${esc(t("examTitle"))}</h1><p class="muted">${esc(t("examHint"))}</p><input class="field" id="obexam" type="date" min="${today}" value="${esc(d.exam)}"><button type="button" class="choice press" id="obnoexam" aria-pressed="${!d.exam}"><b>${esc(t("notScheduled"))}</b></button>`; }
+    if(s==="goal"){ const days=d.exam?Math.max(1,Math.round((new Date(d.exam+"T00:00:00")-new Date())/86400000)):null, pace=days?Math.min(50,Math.ceil(EN.q.length*2/days)):null;
+      body=`<h1>${esc(t("goalPick"))}</h1><p class="muted">${esc(t("goalHint"))}</p><div class="choices">${choice("gl",10,"10 · "+t("goal10"),t("goal10d"),d.goal)}${choice("gl",25,"25 · "+t("goal25"),t("goal25d"),d.goal)}${choice("gl",50,"50 · "+t("goal50"),t("goal50d"),d.goal)}</div>${pace?`<div class="notice">${esc(t("paceHint",{n:pace}))}</div>`:""}`; }
+    if(s==="pin"){ next=false; body=`<div class="auth-hero"><h1>${esc(d.pin1?t("pinConfirm"):t("pinTitle"))}</h1><p class="muted" id="pinmsg" aria-live="polite">${esc(t("pinHint"))}</p>${dots()}</div>${keypad()}`; }
+    app.innerHTML=`<div class="screen enter auth ob">${head}<div class="ob-body">${body}</div></div>${next?`<div class="dock"><div class="dock-in"><button class="btn block press" id="obnext" ${this.canNext()?"":"disabled"}>${esc(t("next"))}</button></div></div>`:""}`;
+    bindLang();
+    const $=id=>app.querySelector("#"+id)||document.getElementById(id);
+    const refresh=()=>{const n=$("obnext"); if(n) n.disabled=!this.canNext();};
+    if($("obstart")) $("obstart").onclick=()=>this.next();
+    if($("obback")) $("obback").onclick=()=>this.back();
+    if($("obnext")) $("obnext").onclick=()=>this.next();
+    if($("obname")){ const f=$("obname"); f.oninput=()=>{d.name=f.value;refresh()}; f.onkeydown=e=>{if(e.key==="Enter")this.next()}; setTimeout(()=>f.focus(),350); }
+    if($("obbm")) $("obbm").onchange=e=>{d.bm=e.target.value;d.parent=false;this.render()};
+    if($("obby")) $("obby").onchange=e=>{d.by=e.target.value;d.parent=false;this.render()};
+    if($("obparent")) $("obparent").onchange=e=>{d.parent=e.target.checked;refresh()};
+    app.querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>{d.level=b.dataset.lv;Haptic.tap();app.querySelectorAll("[data-lv]").forEach(x=>x.setAttribute("aria-pressed",x===b));refresh()});
+    app.querySelectorAll("[data-gl]").forEach(b=>b.onclick=()=>{d.goal=+b.dataset.gl;Haptic.tap();app.querySelectorAll("[data-gl]").forEach(x=>x.setAttribute("aria-pressed",x===b))});
+    if($("obexam")) $("obexam").onchange=e=>{d.exam=e.target.value;$("obnoexam").setAttribute("aria-pressed",!d.exam)};
+    if($("obnoexam")) $("obnoexam").onclick=()=>{d.exam="";$("obexam").value="";$("obnoexam").setAttribute("aria-pressed","true")};
+    if(s==="pin") bindKeypad(app,()=>d.pin,v=>d.pin=v,async v=>{
+      if(!d.pin1){ d.pin1=v; d.pin=""; this.render(); return; }
+      if(v!==d.pin1){ Haptic.no(); d.pin1=""; d.pin=""; this.render(); const m=app.querySelector("#pinmsg"); if(m) m.textContent=t("pinMismatch"); shakeDots(app); return; }
+      const salt=newSalt();
+      S.profile={name:d.name.trim(),bm:+d.bm,by:+d.by,parentAck:!!d.parent,level:d.level,exam:d.exam,goal:d.goal,pin:{salt,hash:await hashPin(v,salt)},created:today()};
+      S.session=true; save(); Haptic.ok(); Auth.enter();
+    });
   }
-}
+};
+
+/* =====================================================================
+   CONTENT UPDATES: download new questions, lessons and scenarios from
+   SECPREP_CONFIG.contentUrl, keep them for offline use.
+   Questions must only be added at the end, never reordered or removed.
+   ===================================================================== */
+const Content = {
+  KEY:"secprep-content", base:{},
+  cfg(){ return window.SECPREP_CONFIG||{}; },
+  current(){ return (this.cached()&&this.cached().version)||this.cfg().builtInVersion||"0"; },
+  cached(){ try{ return JSON.parse(localStorage.getItem(this.KEY)); }catch(e){ return null; } },
+  valid(c){ try{
+      if(!c||!c.version||!c.langs||!c.langs.en) return false;
+      const n=c.langs.en.q.length; if(n<this.base.en) return false;
+      for(const code of ENABLED_LANGS){ const l=c.langs[code]; if(!l) continue; if(l.q.length!==n) return false;
+        if(!l.q.every(q=>Array.isArray(q)&&q.length===5&&typeof q[1]==="string"&&Array.isArray(q[3])&&q[3].length===3)) return false; }
+      return true; }catch(e){ return false; } },
+  apply(c){ for(const code of Object.keys(c.langs)){ if(!LANGS[code]) continue; const l=c.langs[code];
+      ["q","lessons","scen","domains"].forEach(k=>{ if(l[k]) LANGS[code][k]=l[k]; }); } ALL.length=0; EN.q.forEach((_,i)=>ALL.push(i)); },
+  applyCached(){ this.base.en=EN.q.length; const c=this.cached(); if(c&&this.valid(c)&&c.version>(this.cfg().builtInVersion||"0")) this.apply(c); },
+  async check(force){
+    const url=this.cfg().contentUrl; if(!url||(navigator.onLine===false)) return;
+    const last=+(localStorage.getItem(this.KEY+"-checked")||0); if(!force&&Date.now()-last<(this.cfg().checkEveryHours||6)*3600e3) return;
+    try{ localStorage.setItem(this.KEY+"-checked",String(Date.now())); }catch(e){}
+    try{ const r=await fetch(url,{cache:"no-store"}); if(!r.ok) return; const c=await r.json();
+      if(!this.valid(c)||!(c.version>this.current())) return;
+      const before=EN.q.length; try{ localStorage.setItem(this.KEY,JSON.stringify(c)); }catch(e){}
+      this.apply(c); const added=EN.q.length-before;
+      toast(added===1?t("contentUpdated1"):added>0?t("contentUpdatedN",{n:added}):t("contentUpdated"));
+      if(!quiz&&S.session&&document.querySelector(".screen")&&!document.querySelector(".auth")) rerenderBehind();
+    }catch(e){}
+  }
+};
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") Content.check(); });
+
 Voice.onVoices = () => { refreshSettings(); };
 
-chrome(); viewPractice();
+Content.applyCached(); Auth.boot(); Content.check(true);
 })();
