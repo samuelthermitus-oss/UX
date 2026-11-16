@@ -1,0 +1,11 @@
+{
+  "appId": "com.secprepdaily.app",
+  "appName": "SecPrep Daily",
+  "webDir": "www",
+  "backgroundColor": "#0f6e7a",
+  "ios": { "contentInset": "never" },
+  "android": { "allowMixedContent": false },
+  "plugins": {
+    "LocalNotifications": { "smallIcon": "ic_stat_icon", "iconColor": "#0f6e7a" }
+  }
+}

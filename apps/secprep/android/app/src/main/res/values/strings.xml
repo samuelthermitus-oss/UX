@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SecPrep Daily</string>
+    <string name="title_activity_main">SecPrep Daily</string>
+    <string name="package_name">com.secprepdaily.app</string>
+    <string name="custom_url_scheme">com.secprepdaily.app</string>
+</resources>

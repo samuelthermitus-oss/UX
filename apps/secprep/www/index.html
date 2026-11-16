@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f6e7a">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>SecPrep Daily</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">SecPrep Daily<small id="sub">SY0-701 · 5 domains</small></div>
+  <div class="top-right">
+    <div class="seg" role="group" aria-label="Language">
+      <button type="button" data-langbtn="en" aria-pressed="true">EN</button><button type="button" data-langbtn="fr" aria-pressed="false">FR</button><button type="button" data-langbtn="ht" aria-pressed="false">KR</button>
+    </div>
+    <div class="streak" id="streak">0</div>
+  </div>
+</header>
+<main id="app"></main>
+<nav class="tabs" aria-label="Sections">
+  <button data-tab="practice" aria-current="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg><span>Practice</span></button>
+  <button data-tab="learn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg><span>Lessons</span></button>
+  <button data-tab="scenarios"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M10 9l5 2.5-5 2.5z"/><path d="M8 21h8"/></svg><span>Scenarios</span></button>
+  <button data-tab="progress"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Progress</span></button>
+</nav>
+<script src="data/en.js"></script>
+<script src="data/fr.js"></script>
+<script src="data/ht.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
