@@ -10,7 +10,7 @@ const PLUG = (CAP && CAP.Plugins) || {};
 
 /* ---------- storage ---------- */
 const KEY = "secprep-v2";
-const S = Object.assign({days:[],history:[],missed:{},seen:{},dstat:{},scen:{},lang:null,voice:{},rate:1,autoRead:false,remind:{on:false,time:"19:00"}}, read());
+const S = Object.assign({days:[],history:[],missed:{},seen:{},dstat:{},scen:{},lang:null,voice:{},rate:1,autoRead:false,remind:{on:false,time:"19:00"},bg:"original",appearance:"auto"}, read());
 function read(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 if(!S.lang){const n=(navigator.language||"en").toLowerCase();S.lang=n.startsWith("ht")?"ht":n.startsWith("fr")?"fr":"en"}
@@ -143,20 +143,39 @@ const fillIcon = n => icon(n, "fill");
 const dc = d => `var(--d${d})`;
 function ring(pct, size, stroke, color, inner){
   const r=(size-stroke)/2, c=2*Math.PI*r, off=c*(1-Math.max(0,Math.min(1,pct)));
-  return `<span class="ring-wrap" style="width:${size}px;height:${size}px"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="${stroke}"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}" transform="rotate(-90 ${size/2} ${size/2})" style="transition:stroke-dashoffset .8s var(--ease)"/></svg>${inner?`<span class="center">${inner}</span>`:""}</span>`;
+  return `<span class="ring-wrap" style="width:${size}px;height:${size}px"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="${stroke}"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c}" data-target="${off}" transform="rotate(-90 ${size/2} ${size/2})" style="transition:stroke-dashoffset .8s var(--ease)"/></svg>${inner?`<span class="center">${inner}</span>`:""}</span>`;
 }
+
+/* ---------- look: background theme + light/dark ---------- */
+const Look = {
+  mq: window.matchMedia("(prefers-color-scheme: dark)"),
+  apply(){ const r=document.documentElement; r.dataset.bg=S.bg||"original"; const a=S.appearance||"auto";
+    if(a==="auto") r.removeAttribute("data-theme"); else r.setAttribute("data-theme",a);
+    const dark=a==="dark"||(a==="auto"&&this.mq.matches); r.classList.toggle("ion-palette-dark",dark);
+    const m=document.querySelector('meta[name="theme-color"]'); if(m) m.content=dark?"#07090c":"#eef1f6";
+    try{ if(PLUG.StatusBar) PLUG.StatusBar.setStyle({style:dark?"DARK":"LIGHT"}); }catch(e){} }
+};
+try{ Look.mq.addEventListener("change",()=>Look.apply()); }catch(e){}
+Look.apply();
+// light follows your finger across glass surfaces
+document.addEventListener("pointermove",e=>{const g=e.target.closest&&e.target.closest(".card,.list,.stat,.opt,nav.tabs,.dock.fb");if(!g)return;const r=g.getBoundingClientRect();g.style.setProperty("--mx",(e.clientX-r.left)+"px");g.style.setProperty("--my",(e.clientY-r.top)+"px")},{passive:true});
 
 /* ---------- shell ---------- */
 S.daily = S.daily || {d:"", n:0};
 const GOAL = 25;
 const todayCount = () => S.daily.d===today() ? S.daily.n : 0;
 const app = document.getElementById("app");
+new MutationObserver(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>app.querySelectorAll("circle[data-target]").forEach(c=>{c.setAttribute("stroke-dashoffset",c.dataset.target);c.removeAttribute("data-target")})))).observe(app,{childList:true});
 const tabsEl = document.getElementById("tabs");
-let tab = "practice", quiz = null, timerId = null, scenTimers = [];
+let tab = "practice", quiz = null, timerId = null, scenTimers = [], shownTab = null;
 const TABS = [["practice","home","tPractice"],["learn","book","tLearn"],["scenarios","radar","tScen"],["progress","chart","tProgress"]];
 function chrome(){
   document.documentElement.lang = L().code;
-  tabsEl.innerHTML = TABS.map(([id,ic,k])=>`<button type="button" data-tab="${id}" aria-current="${tab===id}">${icon(ic)}<span>${esc(t(k))}</span></button>`).join("");
+  const idx=TABS.findIndex(x=>x[0]===tab), from=shownTab==null?idx:TABS.findIndex(x=>x[0]===shownTab);
+  tabsEl.innerHTML = `<span class="bubble" aria-hidden="true"></span>`+TABS.map(([id,ic,k])=>`<button type="button" data-tab="${id}" aria-current="${tab===id}">${icon(ic)}<span>${esc(t(k))}</span></button>`).join("");
+  tabsEl.style.setProperty("--t",from);
+  if(from!==idx){const b=tabsEl.querySelector(".bubble");requestAnimationFrame(()=>requestAnimationFrame(()=>{tabsEl.style.setProperty("--t",idx);b.classList.add("squish")}))}
+  shownTab=tab;
   tabsEl.querySelectorAll("button").forEach(b=>b.onclick=()=>{Haptic.tap();go(b.dataset.tab)});
 }
 function focusMode(on){ document.body.classList.toggle("focus", !!on); }
@@ -193,7 +212,7 @@ function readiness(){
 function viewPractice(){
   const n=todayCount(), st=streak(), missedN=Object.keys(S.missed).length, rd=readiness();
   const dateStr=new Date().toLocaleDateString(S.lang==="ht"?"fr":S.lang,{weekday:"long",month:"long",day:"numeric"});
-  app.innerHTML=`<div class="screen">
+  app.innerHTML=`<div class="screen enter">
    <div class="head"><div><div class="over">${esc(dateStr)}</div><h1>${esc(t("today"))}</h1></div>${langPill()}</div>
    <section class="card">
     <div class="hero">${ring(n/GOAL,92,10,"var(--brand)",`<b class="num" style="font-size:26px">${n}</b><small>/ ${GOAL}</small>`)}
@@ -210,11 +229,11 @@ function viewPractice(){
     <p class="fine">${esc(rd==null?t("readinessEmpty"):t("readinessBody"))}</p>
    </section>
    <div><div class="group-label">${esc(t("more"))}</div><div class="list">
-    <button class="row" id="m-exam"><span class="tile" style="background:var(--fg)">${icon("clock")}</span><span class="txt"><b>${esc(t("exam"))}</b><span>${esc(t("examDesc"))}</span></span><span class="end">${icon("chev")}</span></button>
-    <button class="row" id="m-missed" ${missedN?"":"disabled"} style="${missedN?"":"opacity:.5"}"><span class="tile" style="background:var(--bad)">${icon("redo")}</span><span class="txt"><b>${esc(t("missed"))}</b><span>${esc(t("missedDesc",{n:missedN}))}</span></span><span class="end">${missedN?`<span class="badge">${missedN}</span>`:""}${icon("chev")}</span></button>
-    <button class="row" id="m-all"><span class="tile" style="background:var(--brand)">${icon("list")}</span><span class="txt"><b>${esc(t("all",{n:EN.q.length}))}</b><span>${esc(t("allDesc"))}</span></span><span class="end">${icon("chev")}</span></button>
+    <button class="row" id="m-exam"><span class="tile" style="background-color:#3a4150">${icon("clock")}</span><span class="txt"><b>${esc(t("exam"))}</b><span>${esc(t("examDesc"))}</span></span><span class="end">${icon("chev")}</span></button>
+    <button class="row" id="m-missed" ${missedN?"":"disabled"} style="${missedN?"":"opacity:.5"}"><span class="tile" style="background-color:var(--bad)">${icon("redo")}</span><span class="txt"><b>${esc(t("missed"))}</b><span>${esc(t("missedDesc",{n:missedN}))}</span></span><span class="end">${missedN?`<span class="badge">${missedN}</span>`:""}${icon("chev")}</span></button>
+    <button class="row" id="m-all"><span class="tile" style="background-color:var(--brand)">${icon("list")}</span><span class="txt"><b>${esc(t("all",{n:EN.q.length}))}</b><span>${esc(t("allDesc"))}</span></span><span class="end">${icon("chev")}</span></button>
    </div></div>
-   <div><div class="group-label">${esc(t("domainsTitle"))}</div><div class="list">${[1,2,3,4,5].map(k=>{const cnt=EN.q.filter(q=>q[0]==k).length,s=S.dstat[k]||{c:0,t:0},p=s.t?Math.round(s.c/s.t*100):0;return `<button class="row" data-d="${k}"><span class="tile" style="background:${dc(k)}">${icon("d"+k)}</span><span class="txt"><b>${esc(DN(k))}</b><span>${esc(t("qCount",{n:cnt}))} · ${WEIGHTS[k]}</span><span class="bar"><i style="width:${p}%;background:${dc(k)}"></i></span></span><span class="end"><span class="num">${s.t?p+"%":"–"}</span>${icon("chev")}</span></button>`}).join("")}</div></div>
+   <div><div class="group-label">${esc(t("domainsTitle"))}</div><div class="list">${[1,2,3,4,5].map(k=>{const cnt=EN.q.filter(q=>q[0]==k).length,s=S.dstat[k]||{c:0,t:0},p=s.t?Math.round(s.c/s.t*100):0;return `<button class="row" data-d="${k}"><span class="tile" style="background-color:${dc(k)}">${icon("d"+k)}</span><span class="txt"><b>${esc(DN(k))}</b><span>${esc(t("qCount",{n:cnt}))} · ${WEIGHTS[k]}</span><span class="bar"><i style="width:${p}%;background:${dc(k)}"></i></span></span><span class="end"><span class="num">${s.t?p+"%":"–"}</span>${icon("chev")}</span></button>`}).join("")}</div></div>
    <p class="fine">${esc(t("disclaimer"))}</p>
   </div>`;
   bindLang();
@@ -242,14 +261,14 @@ function renderQ(fresh, justAnswered){
     else if(ans===oi) c="sel";
     if(justAnswered&&shown&&ans===oi) c+=ok?" pop":" shake";
     return `<button class="opt ${c}" data-o="${oi}" ${shown?"disabled":""}><span class="k">${k}</span><span>${esc(q.opts[oi])}</span></button>`}).join("");
-  app.innerHTML=`<div class="screen" style="gap:18px">
+  app.innerHTML=`<div class="screen${fresh?" enter":""}" style="gap:18px">
    <div class="qbar"><button class="icon-btn press" id="quit" type="button" aria-label="${esc(t("close"))}">${icon("x")}</button><div class="segs"><i style="width:${(quiz.i+(ans!==undefined?1:0))/quiz.list.length*100}%"></i></div>${quiz.exam?`<span class="timer" id="timer">${fmt(quiz.end-Date.now())}</span>`:`<span class="timer">${quiz.i+1}/${quiz.list.length}</span>`}</div>
    <div class="row" style="padding:0;min-height:0;justify-content:space-between"><span class="chip" style="--c:${dc(q.d)}">${icon("d"+q.d)}D${q.d} · ${esc(DN(q.d))}</span>${Voice.available?`<button class="icon-btn press" id="ql" type="button" aria-label="${esc(t("listen"))}">${icon("speaker")}</button>`:""}</div>
    <p class="muted" style="font-size:14px;font-weight:600">${esc(t("questionOf",{i:quiz.i+1,n:quiz.list.length}))}</p>
    <p class="qtext">${esc(q.q)}</p>
    <div class="opts">${optHtml}</div>
   </div>
-  ${shown?`<div class="dock fb ${ok?"ok":"no"}"><div class="dock-in"><div class="fb-title"><span class="dot">${icon(ok?"check":"x")}</span>${esc(ok?pick(V().correct).replace(/\.\.\./g,"…"):t("notQuite").replace(/[·:]\s*$/,"").trim())}</div><div class="fb-body">${ok?"":`<p style="margin-bottom:6px"><b>${esc(t("answer"))}: ${esc(q.opts[0])}</b></p>`}<p>${esc(q.exp)}</p></div><button class="btn block press ${ok?"go-ok":"go-no"}" id="next">${esc(quiz.i===quiz.list.length-1?t("finish"):t("continueBtn"))}</button></div></div>`
+  ${shown?`<div class="dock fb ${ok?"ok":"no"}"><div class="dock-in"><div class="fb-title"><span class="dot">${icon(ok?"check":"x")}</span>${esc(ok?pick(V().correct).replace(/\.\.\./g,"…"):t("notQuite").split("·")[0].trim())}</div><div class="fb-body">${ok?"":`<p style="margin-bottom:6px"><b>${esc(t("answer"))}: ${esc(q.opts[0])}</b></p>`}<p>${esc(q.exp)}</p></div><button class="btn block press ${ok?"go-ok":"go-no"}" id="next">${esc(quiz.i===quiz.list.length-1?t("finish"):t("continueBtn"))}</button></div></div>`
   : `<div class="dock"><div class="dock-in"><div class="duo"><button class="btn soft press" id="prev" ${quiz.i===0?"disabled":""}>${esc(t("back"))}</button><button class="btn press" id="next" ${(ans===undefined&&!quiz.exam)||(quiz.exam&&ans===undefined)?"disabled":""}>${esc(quiz.i===quiz.list.length-1?t("finish"):t("next"))}</button></div></div></div>`}`;
   app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const oi=+b.dataset.o;quiz.answers[quiz.i]=oi;
     if(!quiz.exam){record(qi,oi===0);(oi===0?Haptic.ok:Haptic.no)();renderQ(false,true);if(S.autoRead)speak(Coach.feedback(q,oi===0))}else{Haptic.tap();renderQ()}});
@@ -268,12 +287,12 @@ function finishQuiz(){
   S.history.unshift({d:today(),label:quiz.label,lv:quiz.lv,c,t:quiz.list.length}); S.history=S.history.slice(0,60); markDay(); save();
   const wrong=quiz.list.map((qi,k)=>({qi,a:quiz.answers[k]})).filter(x=>x.a!==0);
   const label=t(quiz.label,quiz.lv); const q0=quiz; quiz=null; chrome();
-  app.innerHTML=`<div class="screen">
+  app.innerHTML=`<div class="screen enter">
    <div class="head"><div><div class="over">${esc(label)}</div><h1>${esc(t("results").replace(/^./,m=>m.toUpperCase()))}</h1></div></div>
    <section class="card score">${ring(pct/100,168,14,col,`<b style="font-size:44px">${pct}%</b><small>${esc(t("yourScore"))}</small>`)}
     <p style="font-weight:600">${esc(t("ofCorrect",{c,t:q0.list.length}))}${answered<q0.list.length?" · "+esc(t("unanswered",{n:q0.list.length-answered})):""}</p>
     <p class="muted" style="max-width:34ch">${esc(pct>=85?t("msgHigh"):pct>=70?t("msgMid"):t("msgLow"))}</p><span class="chip" style="--c:var(--muted)">${esc(t("target"))}</span></section>
-   <div><div class="group-label">${esc(t("byDomainRes"))}</div><div class="list">${Object.keys(res).sort().map(d=>{const r=res[d];return `<div class="row"><span class="tile" style="background:${dc(d)}">${icon("d"+d)}</span><span class="txt"><b>${esc(DN(d))}</b><span class="bar"><i style="width:${r.c/r.t*100}%;background:${dc(d)}"></i></span></span><span class="end num">${r.c}/${r.t}</span></div>`}).join("")}</div></div>
+   <div><div class="group-label">${esc(t("byDomainRes"))}</div><div class="list">${Object.keys(res).sort().map(d=>{const r=res[d];return `<div class="row"><span class="tile" style="background-color:${dc(d)}">${icon("d"+d)}</span><span class="txt"><b>${esc(DN(d))}</b><span class="bar"><i style="width:${r.c/r.t*100}%;background:${dc(d)}"></i></span></span><span class="end num">${r.c}/${r.t}</span></div>`}).join("")}</div></div>
    ${wrong.length?`<div><div class="group-label">${esc(t("reviewMisses"))} · ${wrong.length}</div><div class="stack" style="display:flex;flex-direction:column;gap:10px">${wrong.map(x=>{const q=Q(x.qi);return `<div class="card" style="display:flex;flex-direction:column;gap:10px"><span class="chip" style="--c:${dc(q.d)}">D${q.d}</span><p class="qtext small">${esc(q.q)}</p>${x.a===undefined?`<p class="fine">${esc(t("unansweredLbl"))}</p>`:`<p class="choice-fb no">${icon("x")} ${esc(q.opts[x.a])}</p>`}<p class="choice-fb ok"><b>${esc(q.opts[0])}</b><br><span style="color:var(--fg-2)">${esc(q.exp)}</span></p></div>`}).join("")}</div></div>`:""}
    <div style="display:flex;flex-direction:column;gap:10px">${wrong.length?`<button class="btn block press" id="redo">${esc(t("retryMissed",{n:wrong.length}))}</button>`:""}<button class="btn soft block press" id="again">${esc(t("backPractice"))}</button></div>
   </div>`;
@@ -288,7 +307,7 @@ function finishQuiz(){
 let lessonDomain=1;
 function viewLearn(){
   const ls=L().lessons[lessonDomain], c=dc(lessonDomain);
-  app.innerHTML=`<div class="screen">
+  app.innerHTML=`<div class="screen enter">
    <div class="head"><div><div class="over">${esc(t("lessonsEyebrow"))}</div><h1>${esc(t("lessonsTitle"))}</h1></div>${langPill()}</div>
    <div class="scroller" role="group">${[1,2,3,4,5].map(k=>`<button class="dchip press" type="button" data-ld="${k}" style="--c:${dc(k)}" aria-pressed="${k===lessonDomain}"><i></i>D${k}</button>`).join("")}</div>
    <section class="lesson-hero" style="--c:${c}"><span class="over">${esc(t("domain"))} ${lessonDomain} · ${WEIGHTS[lessonDomain]} · ${esc(t("topics",{n:ls.length}))}</span><h2>${esc(DN(lessonDomain))}</h2>
@@ -309,7 +328,7 @@ function viewLearn(){
 /* ---------- scenarios ---------- */
 function clearScen(){ scenTimers.forEach(clearTimeout); scenTimers=[]; }
 function viewScenarios(){
-  app.innerHTML=`<div class="screen">
+  app.innerHTML=`<div class="screen enter">
    <div class="head"><div><div class="over">${esc(t("scenEyebrow"))}</div><h1>${esc(t("scenTitle"))}</h1></div>${langPill()}</div>
    <p class="muted">${esc(t("scenBody"))}</p>
    <div style="display:flex;flex-direction:column;gap:12px">${EN.scen.map((s,i)=>{const ls=L().scen[i]||s,r=S.scen[s.id],lg=s.steps[0].log,hot=lg.slice(1).find(x=>/alert|warn/i.test(x))||lg[1]||"";
@@ -325,7 +344,7 @@ function playScen(si){
   const render=()=>{
     clearScen(); Voice.stop();
     const s=loc(), st=s.steps[step], es=E.steps[step], order=shuffle(es.choices.map((_,i)=>i));
-    app.innerHTML=`<div class="screen" style="gap:16px">
+    app.innerHTML=`<div class="screen enter" style="gap:16px">
      <div class="qbar"><button class="icon-btn press" id="sx" type="button" aria-label="${esc(t("exit"))}">${icon("x")}</button><div class="segs"><i style="width:${step/E.steps.length*100}%"></i></div><span class="timer">${step+1}/${E.steps.length}</span></div>
      <div class="row" style="padding:0;min-height:0;justify-content:space-between"><span class="live">${esc(t("live"))}</span>${Voice.available?`<button class="icon-btn press" id="narr" type="button" aria-pressed="${narrate}" aria-label="${esc(narrate?t("narrOn"):t("narrOff"))}" style="${narrate?"color:var(--brand)":"opacity:.5"}">${icon("speaker")}</button>`:""}</div>
      <h2>${esc(s.title)}</h2>
@@ -353,7 +372,7 @@ function playScen(si){
   };
   const debrief=()=>{clearScen();Voice.stop();focusMode(false);S.scen[E.id]=Math.max(S.scen[E.id]||0,score);markDay();save();chrome();
     const full=score===E.steps.length;
-    app.innerHTML=`<div class="screen"><div class="head"><div><div class="over">${esc(t("debrief"))}</div><h1>${esc(loc().title)}</h1></div></div>
+    app.innerHTML=`<div class="screen enter"><div class="head"><div><div class="over">${esc(t("debrief"))}</div><h1>${esc(loc().title)}</h1></div></div>
      <section class="card score">${ring(score/E.steps.length,150,13,full?"var(--good)":"var(--d4)",`<b style="font-size:40px">${score}/${E.steps.length}</b>`)}<p class="muted" style="max-width:36ch">${esc(full?t("debriefGood"):t("debriefBad"))}</p></section>
      <div style="display:flex;flex-direction:column;gap:10px"><button class="btn block press" id="rp">${esc(t("replay"))}</button><button class="btn soft block press" id="bk">${esc(t("allScen"))}</button></div></div>`;
     document.getElementById("rp").onclick=()=>playScen(si); document.getElementById("bk").onclick=()=>go("scenarios");
@@ -368,33 +387,53 @@ function viewProgress(){
   const tot=Object.values(S.dstat).reduce((a,b)=>({c:a.c+b.c,t:a.t+b.t}),{c:0,t:0}), acc=tot.t?Math.round(tot.c/tot.t*100):0;
   const weakest=Object.entries(S.dstat).filter(([,v])=>v.t>=5).sort((a,b)=>a[1].c/a[1].t-b[1].c/b[1].t)[0];
   const vl=Voice.list(), cur=Voice.chosen();
-  app.innerHTML=`<div class="screen">
+  const THEMES=[["original","themeOriginal","#eef1f6","#5ec8d4","#a48cff","#ffb27a"],["ocean","themeOcean","#e9f2ff","#2f7dff","#22c3e6","#4f6bff"],["glacier","themeGlacier","#f3f4ff","#8cc8ff","#b9a8ff","#6fa9ff"]];
+  const sw=(base,a,b,c)=>`background:radial-gradient(circle at 25% 30%,${a},transparent 62%),radial-gradient(circle at 78% 65%,${b},transparent 60%),radial-gradient(circle at 40% 95%,${c},transparent 55%),${base}`;
+  app.innerHTML=`<div class="screen enter">
    <div class="head"><div><div class="over">${esc(t("progEyebrow"))}</div><h1>${esc(t("progTitle"))}</h1></div>${langPill()}</div>
    <div class="stats"><div class="stat"><b style="color:var(--flame)">${streak()}</b><span>${esc(t("dayStreak"))}</span></div><div class="stat"><b>${tot.t}</b><span>${esc(t("answers"))}</span></div><div class="stat"><b>${acc}%</b><span>${esc(t("accuracy"))}</span></div></div>
    ${weakest?`<div class="tip" style="--c:${dc(weakest[0])}"><b>${esc(t("focusLbl"))}</b>${esc(t("focusNext",{d:weakest[0],n:DN(weakest[0])}))}</div>`:`<div class="tip"><b>${esc(t("startLbl"))}</b>${esc(t("startBody"))}</div>`}
-   <div><div class="group-label">${esc(t("accByDomain"))}</div><div class="list">${[1,2,3,4,5].map(k=>{const s=S.dstat[k]||{c:0,t:0},p=s.t?Math.round(s.c/s.t*100):0;return `<div class="row"><span class="tile" style="background:${dc(k)}">${icon("d"+k)}</span><span class="txt"><b>${esc(DN(k))}</b><span>${esc(s.t?s.c+"/"+s.t:t("noAnswers"))}</span><span class="bar"><i style="width:${p}%;background:${dc(k)}"></i></span></span><span class="end num">${s.t?p+"%":"–"}</span></div>`}).join("")}</div></div>
-   <div><div class="group-label">${esc(t("settings"))}</div><div class="list">
-    <button class="row" type="button" id="langrow"><span class="tile" style="background:var(--d3)">${icon("globe")}</span><span class="txt"><b>${esc(t("language"))}</b></span><span class="end">${esc(L().label)}${icon("chev")}</span></button>
-    ${Voice.available?`
-    <div class="row"><span class="tile" style="background:var(--brand)">${icon("speaker")}</span><label class="txt" for="vsel"><b>${esc(t("voice"))}</b></label><select id="vsel"><option value="">${esc(t("voiceAuto"))}${cur&&!S.voice[S.lang]?" · "+esc(cur.v.name):""}</option>${vl.map(x=>`<option value="${esc(x.v.name)}" ${S.voice[S.lang]===x.v.name?"selected":""}>${esc(x.v.name)} (${esc(x.v.lang)})</option>`).join("")}</select></div>
-    <div class="row"><span class="tile" style="background:var(--d1)">${icon("clock")}</span><label class="txt" for="rate"><b>${esc(t("speed"))}</b></label><select id="rate">${[0.85,0.95,1,1.1,1.25].map(r=>`<option value="${r}" ${S.rate==r?"selected":""}>${r}×</option>`).join("")}</select></div>
-    <div class="row"><span class="tile" style="background:var(--d5)">${icon("play")}</span><label class="txt" for="auto"><b>${esc(t("autoRead"))}</b></label><input type="checkbox" class="switch" id="auto" ${S.autoRead?"checked":""}></div>
-    <button class="row" type="button" id="testv"><span class="tile" style="background:var(--fg)">${fillIcon("play")}</span><span class="txt"><b>${esc(t("testVoice"))}</b></span><span class="end">${icon("chev")}</span></button>`:""}
-    ${Remind.available?`<div class="row"><span class="tile" style="background:var(--flame)">${icon("flame")}</span><label class="txt" for="rem"><b>${esc(t("reminderOn"))}</b></label><input type="checkbox" class="switch" id="rem" ${S.remind.on?"checked":""}></div>
-    <div class="row"><span class="tile" style="background:var(--d4)">${icon("clock")}</span><label class="txt" for="remt"><b>${esc(t("reminderTime"))}</b></label><input type="time" id="remt" value="${esc(S.remind.time)}"></div>`:""}
-   </div>${Voice.available?`<p class="fine" style="padding:8px 4px 0">${esc(t("voiceHelp"))}</p>`:""}<p class="fine" id="remmsg" aria-live="polite" style="padding:4px"></p></div>
+   <div><div class="group-label">${esc(t("accByDomain"))}</div><div class="list">${[1,2,3,4,5].map(k=>{const s=S.dstat[k]||{c:0,t:0},p=s.t?Math.round(s.c/s.t*100):0;return `<div class="row"><span class="tile" style="background-color:${dc(k)}">${icon("d"+k)}</span><span class="txt"><b>${esc(DN(k))}</b><span>${esc(s.t?s.c+"/"+s.t:t("noAnswers"))}</span><span class="bar"><i style="width:${p}%;background:${dc(k)}"></i></span></span><span class="end num">${s.t?p+"%":"–"}</span></div>`}).join("")}</div></div>
+
+   <div><div class="group-label">${esc(t("background"))}</div>
+    <div class="themes" role="group" aria-label="${esc(t("background"))}">${THEMES.map(([id,k,base,a,b,c])=>`<button type="button" data-theme-bg="${id}" aria-pressed="${(S.bg||"original")===id}"><span class="sw" style="${sw(base,a,b,c)}"></span>${esc(t(k))}</button>`).join("")}</div></div>
+
+   <div><div class="group-label">${esc(t("appearance"))}</div>
+    <div class="list seg-wrap"><ion-segment id="appear" value="${S.appearance||"auto"}">${["light","dark","auto"].map(a=>`<ion-segment-button value="${a}"><ion-label>${esc(t("appear"+a[0].toUpperCase()+a.slice(1)))}</ion-label></ion-segment-button>`).join("")}</ion-segment></div></div>
+
+   <div><div class="group-label">${esc(t("language"))}</div>
+    <div class="list seg-wrap"><ion-segment id="langseg" value="${S.lang}">${["en","fr","ht"].map(c=>`<ion-segment-button value="${c}"><ion-label>${esc(LANGS[c].label.split(" ")[0])}</ion-label></ion-segment-button>`).join("")}</ion-segment></div></div>
+
+   ${Voice.available?`<div><div class="group-label">${esc(t("voiceCoach"))}</div><div class="list">
+    <ion-item lines="inset"><span class="tile" slot="start" style="background-color:var(--brand)">${icon("speaker")}</span><ion-select id="vsel" label="${esc(t("voice"))}" interface="popover" value="${esc(S.voice[S.lang]||"")}"><ion-select-option value="">${esc(t("voiceAuto"))}${cur&&!S.voice[S.lang]?" · "+esc(cur.v.name):""}</ion-select-option>${vl.map(x=>`<ion-select-option value="${esc(x.v.name)}">${esc(x.v.name)} (${esc(x.v.lang)})</ion-select-option>`).join("")}</ion-select></ion-item>
+    <ion-item lines="none"><span class="tile" slot="start" style="background-color:var(--d1)">${icon("clock")}</span><ion-label>${esc(t("speed"))}</ion-label><ion-note slot="end" id="ratev">${(+S.rate).toFixed(2)}×</ion-note></ion-item>
+    <ion-item lines="inset"><ion-range id="rate" min="0.8" max="1.3" step="0.05" value="${S.rate}" aria-label="${esc(t("speed"))}"></ion-range></ion-item>
+    <ion-item lines="inset"><span class="tile" slot="start" style="background-color:var(--d5)">${icon("play")}</span><ion-toggle id="auto" ${S.autoRead?"checked":""}>${esc(t("autoRead"))}</ion-toggle></ion-item>
+    <ion-item lines="none" button detail id="testv"><span class="tile" slot="start" style="background-color:#3a4150">${fillIcon("play")}</span><ion-label>${esc(t("testVoice"))}</ion-label></ion-item>
+   </div><p class="fine" style="padding:8px 4px 0">${esc(t("voiceHelp"))}</p></div>`:""}
+
+   ${Remind.available?`<div><div class="group-label">${esc(t("reminder"))}</div><div class="list">
+    <ion-item lines="inset"><span class="tile" slot="start" style="background-color:var(--flame)">${icon("flame")}</span><ion-toggle id="rem" ${S.remind.on?"checked":""}>${esc(t("reminderOn"))}</ion-toggle></ion-item>
+    <ion-item lines="none"><span class="tile" slot="start" style="background-color:var(--d4)">${icon("clock")}</span><ion-label>${esc(t("reminderTime"))}</ion-label><input slot="end" type="time" id="remt" value="${esc(S.remind.time)}"></ion-item>
+   </div><p class="fine" id="remmsg" aria-live="polite" style="padding:6px 4px 0"></p></div>`:""}
+
    <div><div class="group-label">${esc(t("recent"))}</div>${S.history.length?`<div class="list hist">${S.history.slice(0,12).map(h=>{const p=Math.round(h.c/h.t*100);return `<div class="row"><span class="txt"><b>${esc(t(h.label,h.lv))}</b><span>${esc(h.d)}</span></span><span class="end num" style="color:${p>=85?"var(--good)":p>=70?"var(--d4)":"var(--bad)"}">${p}%</span></div>`}).join("")}</div>`:`<p class="muted">${esc(t("noSessions"))}</p>`}</div>
    <div style="display:flex;flex-direction:column;gap:8px"><p class="fine">${esc(t("examFacts"))}</p><p class="fine">${esc(t("disclaimer"))}</p><p class="fine">${esc(t("privacy"))}</p></div>
    <button class="btn soft block press" id="reset" style="color:var(--bad)">${esc(t("reset"))}</button>
   </div>`;
-  bindLang(); document.getElementById("langrow").onclick=openLangSheet;
-  const vs=document.getElementById("vsel"); if(vs) vs.onchange=()=>{S.voice[S.lang]=vs.value;save();speak(Voice.chunk(t("voiceSample")))};
-  const rt=document.getElementById("rate"); if(rt) rt.onchange=()=>{S.rate=+rt.value;save()};
-  const au=document.getElementById("auto"); if(au) au.onchange=()=>{S.autoRead=au.checked;save();Haptic.tap()};
-  const tv=document.getElementById("testv"); if(tv) tv.onclick=()=>speak(Voice.chunk(t("voiceSample"),{pitch:1.04}));
+  bindLang();
+  const on=(id,ev,fn)=>{const el=document.getElementById(id);if(el)el.addEventListener(ev,fn)};
+  app.querySelectorAll("[data-theme-bg]").forEach(b=>b.onclick=()=>{S.bg=b.dataset.themeBg;save();Look.apply();Haptic.tap();app.querySelectorAll("[data-theme-bg]").forEach(x=>x.setAttribute("aria-pressed",x===b))});
+  on("appear","ionChange",e=>{S.appearance=e.detail.value;save();Look.apply();Haptic.tap()});
+  on("langseg","ionChange",e=>{if(e.detail.value===S.lang)return;S.lang=e.detail.value;save();Voice.stop();chrome();viewProgress()});
+  on("vsel","ionChange",e=>{S.voice[S.lang]=e.detail.value||"";save();speak(Voice.chunk(t("voiceSample")))});
+  on("rate","ionInput",e=>{const v=document.getElementById("ratev");if(v)v.textContent=(+e.detail.value).toFixed(2)+"×"});
+  on("rate","ionChange",e=>{S.rate=+e.detail.value;save()});
+  on("auto","ionChange",e=>{S.autoRead=e.detail.checked;save();Haptic.tap()});
+  on("testv","click",()=>speak(Voice.chunk(t("voiceSample"),{pitch:1.04})));
   const msg=m=>{const el=document.getElementById("remmsg");if(el)el.textContent=m};
-  const rem=document.getElementById("rem"); if(rem) rem.onchange=async()=>{S.remind.on=rem.checked;save();msg(await Remind.apply());rem.checked=S.remind.on};
-  const remt=document.getElementById("remt"); if(remt) remt.onchange=async()=>{S.remind.time=remt.value||"19:00";save();if(S.remind.on)msg(await Remind.apply())};
+  on("rem","ionChange",async e=>{S.remind.on=e.detail.checked;save();msg(await Remind.apply());const r=document.getElementById("rem");if(r)r.checked=S.remind.on});
+  on("remt","change",async e=>{S.remind.time=e.target.value||"19:00";save();if(S.remind.on)msg(await Remind.apply())});
   const r=document.getElementById("reset"); let armed=false;
   r.onclick=()=>{if(!armed){armed=true;r.textContent=t("resetConfirm");Haptic.no();return}Object.assign(S,{days:[],history:[],missed:{},seen:{},dstat:{},scen:{},daily:{d:"",n:0}});save();chrome();viewProgress()};
 }

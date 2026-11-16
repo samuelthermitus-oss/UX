@@ -298,3 +298,4 @@ scen:[
 ]
 };
 Object.assign(window.SECPREP_LANGS.ht.ui,{today:"Jodi a",goalTitle:"Objektif jodi a",goalOf:"{n} sou {g} kesyon",startDaily:"Kòmanse 25 Chak Jou",keepGoing:"Kontinye",goalDone:"Ou rive nan objektif la. Bravo.",streakN:"{n} jou youn dèyè lòt",streakN1:"1 jou",streak0:"Kòmanse seri ou jodi a",readiness:"Preparasyon pou egzamen",readinessBody:"Presizyon ou, dapre pwa chak domèn nan egzamen an.",readinessEmpty:"Reponn 20 kesyon pou wè estimasyon ou.",more:"Plis pratik",domainsTitle:"Domèn yo",continueBtn:"Kontinye",questionOf:"Kesyon {i} sou {n}",why:"Poukisa",nowPlaying:"K ap jwe",topics:"{n} sijè",close:"Fèmen",chooseLanguage:"Lang",yourScore:"Nòt ou",target:"Objektif 85%"});
+Object.assign(window.SECPREP_LANGS.ht.ui,{look:"Stil",background:"Fon ekran",themeOriginal:"Orijinal",themeOcean:"Oseyan",themeGlacier:"Glasye",appearance:"Aparans",appearLight:"Klè",appearDark:"Fonse",appearAuto:"Otomatik",voiceCoach:"Antrenè vwa"});
