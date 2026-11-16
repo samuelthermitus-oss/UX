@@ -8,7 +8,7 @@ const js = ["data/en.js", "data/fr.js", "data/ht.js", "app.js"].map(read).join("
 const body = read("index.html").match(/<body>([\s\S]*?)<script/)[1];
 const out = `<title>SecPrep Daily</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&display=swap">
 <style>${css}</style>
 ${body}<script>${js}</script>
 `;

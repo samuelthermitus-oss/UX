@@ -107,165 +107,258 @@ const Remind = {
     return t("reminderSaved",{t:S.remind.time}); }
 };
 
-/* ---------- shell ---------- */
-const app = document.getElementById("app");
-let tab = "practice", quiz = null, timerId = null, scenTimers = [];
-function chrome(){
-  document.documentElement.lang = L().code === "ht" ? "ht" : L().code;
-  document.getElementById("sub").textContent = t("appSub");
-  const n=streak(); document.getElementById("streak").innerHTML = n===1 ? t("streak1") : t("streak",{n});
-  document.querySelectorAll("[data-langbtn]").forEach(b=>b.setAttribute("aria-pressed", b.dataset.langbtn===S.lang));
-  const lab={practice:"tPractice",learn:"tLearn",scenarios:"tScen",progress:"tProgress"};
-  document.querySelectorAll("nav.tabs button").forEach(b=>{b.querySelector("span").textContent=t(lab[b.dataset.tab]);b.setAttribute("aria-current",b.dataset.tab===tab)});
-}
-document.querySelectorAll("nav.tabs button").forEach(b=>b.onclick=()=>go(b.dataset.tab));
-document.querySelectorAll("[data-langbtn]").forEach(b=>b.onclick=()=>{ S.lang=b.dataset.langbtn; save(); Voice.stop(); chrome(); if(quiz&&tab==="practice"&&document.querySelector(".qtext")) renderQ(); else go(tab); });
-function go(x){ Voice.stop(); clearInterval(timerId); clearScen(); quiz=null; tab=x; chrome(); window.scrollTo(0,0); ({practice:viewPractice,learn:viewLearn,scenarios:viewScenarios,progress:viewProgress})[x](); }
-const listenBtn = id => Voice.available ? `<button class="btn ghost small" id="${id}" type="button">▶ ${esc(t("listen"))}</button>` : "";
+/* ---------- haptics (native plugin in the app, vibration on Android web) ---------- */
+const Haptic = {
+  tap(){ try{ if(PLUG.Haptics) PLUG.Haptics.impact({style:"LIGHT"}); }catch(e){} },
+  ok(){ try{ if(PLUG.Haptics) PLUG.Haptics.notification({type:"SUCCESS"}); else if(navigator.vibrate) navigator.vibrate(12); }catch(e){} },
+  no(){ try{ if(PLUG.Haptics) PLUG.Haptics.notification({type:"ERROR"}); else if(navigator.vibrate) navigator.vibrate([18,60,18]); }catch(e){} }
+};
 
-/* ---------- practice ---------- */
+/* ---------- icons ---------- */
+const P = {
+  home:"M3.5 10.5 12 4l8.5 6.5V19a1.5 1.5 0 0 1-1.5 1.5h-4v-6h-6v6H5A1.5 1.5 0 0 1 3.5 19z",
+  book:"M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5zM5 19.5A1.5 1.5 0 0 0 6.5 21H19M9 7h6",
+  radar:"M3.5 5h17v11h-17zM9 20h6M12 16v4M7.5 12.5l3-3.5 2.5 2.5 3.5-4",
+  chart:"M5 20v-8M12 20V5M19 20v-5",
+  x:"M6.5 6.5l11 11M17.5 6.5l-11 11",
+  speaker:"M4 9.5v5h3.5L12 18V6L7.5 9.5zM15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11",
+  check:"M5 12.5l4.5 4.5L19 7.5",
+  flame:"M12 3c.8 3.6 5 5.2 5 10a5 5 0 0 1-10 0c0-2.4 1.3-3.6 2.4-5 .4 1.4 1.3 2 2.3 2C11.7 7.5 11.4 5.3 12 3z",
+  clock:"M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7.5V12l3 2",
+  redo:"M4.5 12a7.5 7.5 0 1 0 2.2-5.3M4.5 4.5v4h4",
+  list:"M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01",
+  globe:"M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c2.4 2.5 3.5 5.5 3.5 9s-1.1 6.5-3.5 9c-2.4-2.5-3.5-5.5-3.5-9S9.6 5.5 12 3z",
+  chev:"M9.5 6l6 6-6 6",
+  back:"M14.5 6l-6 6 6 6",
+  play:"M8 5.2v13.6L19 12z",
+  stop:"M7 7h10v10H7z",
+  d1:"M12 3l7.5 3v6c0 4.4-3.2 7.8-7.5 9-4.3-1.2-7.5-4.6-7.5-9V6z",
+  d2:"M12 4l9 16H3zM12 10v4M12 17h.01",
+  d3:"M12 3.5l8.5 4.5-8.5 4.5L3.5 8zM3.5 12.5 12 17l8.5-4.5M3.5 16.5 12 21l8.5-4.5",
+  d4:"M3 12h4l2.5-6 5 12 2.5-6h4",
+  d5:"M9 3.5h6v3H9zM7 5H5.5v15.5h13V5H17M9 11h6M9 15h4"
+};
+const icon = (n, cls) => `<svg class="ico ${cls||""}" viewBox="0 0 24 24" aria-hidden="true"><path d="${P[n]}"/></svg>`;
+const fillIcon = n => icon(n, "fill");
+const dc = d => `var(--d${d})`;
+function ring(pct, size, stroke, color, inner){
+  const r=(size-stroke)/2, c=2*Math.PI*r, off=c*(1-Math.max(0,Math.min(1,pct)));
+  return `<span class="ring-wrap" style="width:${size}px;height:${size}px"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="${stroke}"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}" transform="rotate(-90 ${size/2} ${size/2})" style="transition:stroke-dashoffset .8s var(--ease)"/></svg>${inner?`<span class="center">${inner}</span>`:""}</span>`;
+}
+
+/* ---------- shell ---------- */
+S.daily = S.daily || {d:"", n:0};
+const GOAL = 25;
+const todayCount = () => S.daily.d===today() ? S.daily.n : 0;
+const app = document.getElementById("app");
+const tabsEl = document.getElementById("tabs");
+let tab = "practice", quiz = null, timerId = null, scenTimers = [];
+const TABS = [["practice","home","tPractice"],["learn","book","tLearn"],["scenarios","radar","tScen"],["progress","chart","tProgress"]];
+function chrome(){
+  document.documentElement.lang = L().code;
+  tabsEl.innerHTML = TABS.map(([id,ic,k])=>`<button type="button" data-tab="${id}" aria-current="${tab===id}">${icon(ic)}<span>${esc(t(k))}</span></button>`).join("");
+  tabsEl.querySelectorAll("button").forEach(b=>b.onclick=()=>{Haptic.tap();go(b.dataset.tab)});
+}
+function focusMode(on){ document.body.classList.toggle("focus", !!on); }
+function go(x){ Voice.stop(); Player.hide(); clearInterval(timerId); clearScen(); closeSheet(); quiz=null; focusMode(false); tab=x; chrome(); window.scrollTo(0,0); ({practice:viewPractice,learn:viewLearn,scenarios:viewScenarios,progress:viewProgress})[x](); }
+const langPill = () => `<button class="pill-btn press" id="langbtn" type="button" aria-label="${esc(t("chooseLanguage"))}">${icon("globe")}${esc(L().short)}</button>`;
+function bindLang(){ const b=document.getElementById("langbtn"); if(b) b.onclick=openLangSheet; }
+
+/* ---------- sheet ---------- */
+function openSheet(html, bind){ closeSheet(); const s=document.createElement("div"); s.id="sheetwrap"; s.innerHTML=`<div class="scrim" data-close></div><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`; document.body.appendChild(s); s.querySelector("[data-close]").onclick=closeSheet; if(bind) bind(s); }
+function closeSheet(){ const s=document.getElementById("sheetwrap"); if(s) s.remove(); }
+function openLangSheet(){
+  openSheet(`<h2>${esc(t("chooseLanguage"))}</h2><div class="list">${["en","fr","ht"].map(c=>`<button class="row" type="button" data-l="${c}"><span class="txt"><b>${esc(LANGS[c].label)}</b></span><span class="end check">${S.lang===c?icon("check"):""}</span></button>`).join("")}</div>`,
+  s=>s.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{S.lang=b.dataset.l;save();Voice.stop();Haptic.tap();closeSheet();if(quiz&&document.querySelector(".qtext"))renderQ();else go(tab);chrome()}));
+}
+
+/* ---------- mini player ---------- */
+const Player = {
+  show(title, onStop){ this.hide(); const el=document.createElement("div"); el.className="player"; el.id="player"; el.innerHTML=`<span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="txt"><small>${esc(t("nowPlaying"))}</small><b>${esc(title)}</b></span><button class="icon-btn" type="button" aria-label="${esc(t("stop"))}">${fillIcon("stop")}</button>`; document.body.appendChild(el); el.querySelector("button").onclick=()=>{Voice.stop();this.hide();if(onStop)onStop()}; },
+  title(tt){ const b=document.querySelector("#player b"); if(b) b.textContent=tt; },
+  hide(){ const el=document.getElementById("player"); if(el) el.remove(); }
+};
+
+/* ---------- home ---------- */
+function weekStrip(){
+  const days=[]; const d=new Date(); d.setDate(d.getDate()-6);
+  for(let i=0;i<7;i++){ const k=dayKey(d); days.push({k,lab:d.toLocaleDateString(S.lang==="ht"?"fr":S.lang,{weekday:"narrow"}),on:S.days.includes(k),today:k===today()}); d.setDate(d.getDate()+1); }
+  return `<div class="week">${days.map(x=>`<div>${esc(x.lab)}<i class="${x.on?"on":""} ${x.today?"today":""}">${x.on?icon("check"):""}</i></div>`).join("")}</div>`;
+}
+function readiness(){
+  const w={1:12,2:22,3:18,4:28,5:20}; let tot=0, sum=0, ws=0;
+  for(const d in w){ const s=S.dstat[d]; if(s&&s.t){ tot+=s.t; if(s.t>=3){ sum+=w[d]*(s.c/s.t); ws+=w[d]; } } }
+  return tot>=20&&ws ? Math.round(sum/ws*100) : null;
+}
 function viewPractice(){
-  const missedN=Object.keys(S.missed).length, seenN=Object.keys(S.seen).length;
-  app.innerHTML=`<div class="section">
-   <div class="stack"><span class="eyebrow">${esc(new Date().toLocaleDateString(S.lang==="ht"?"fr":S.lang,{weekday:"long",month:"short",day:"numeric"}))}</span>
-   <h1>${esc(t("heroTitle"))}</h1><p class="muted">${esc(t("heroBody",{n:EN.q.length,s:seenN}))}</p></div>
-   <div class="progress" aria-hidden="true"><i style="width:${Math.round(seenN/EN.q.length*100)}%"></i></div>
-   <div class="grid2">
-    <button class="mode primary" id="m-daily"><b>${esc(t("daily"))}</b><span>${esc(t("dailyDesc"))}</span></button>
-    <button class="mode" id="m-exam"><b>${esc(t("exam"))}</b><span>${esc(t("examDesc"))}</span></button>
-    <button class="mode" id="m-missed" ${missedN?"":"disabled"}><b>${esc(t("missed"))}</b><span>${esc(t("missedDesc",{n:missedN}))}</span></button>
-    <button class="mode" id="m-all"><b>${esc(t("all",{n:EN.q.length}))}</b><span>${esc(t("allDesc"))}</span></button>
-   </div>
-   <h2>${esc(t("byDomain"))}</h2>
-   <div class="domain-list">${[1,2,3,4,5].map(k=>{const n=EN.q.filter(q=>q[0]==k).length;const st=S.dstat[k]||{c:0,t:0};const p=st.t?Math.round(st.c/st.t*100):0;return `<button class="domain-item" data-d="${k}"><span class="dnum">D${k}</span><span class="dmeta"><b>${esc(DN(k))}</b><span>${esc(t("qCount",{n}))} · ${esc(t("weight",{w:WEIGHTS[k]}))} · ${esc(st.t?t("pctCorrect",{p}):t("notStarted"))}</span><div class="bar"><i style="width:${p}%"></i></div></span></button>`}).join("")}</div>
+  const n=todayCount(), st=streak(), missedN=Object.keys(S.missed).length, rd=readiness();
+  const dateStr=new Date().toLocaleDateString(S.lang==="ht"?"fr":S.lang,{weekday:"long",month:"long",day:"numeric"});
+  app.innerHTML=`<div class="screen">
+   <div class="head"><div><div class="over">${esc(dateStr)}</div><h1>${esc(t("today"))}</h1></div>${langPill()}</div>
+   <section class="card">
+    <div class="hero">${ring(n/GOAL,92,10,"var(--brand)",`<b class="num" style="font-size:26px">${n}</b><small>/ ${GOAL}</small>`)}
+     <div class="meta"><span class="muted" style="font-size:14px;font-weight:600">${esc(t("goalTitle"))}</span><span class="big num">${esc(t("goalOf",{n,g:GOAL}))}</span>
+      <span class="flame">${icon("flame")}${esc(st===0?t("streak0"):st===1?t("streakN1"):t("streakN",{n:st}))}</span></div></div>
+    ${weekStrip()}
+    <button class="btn block press" id="m-daily" style="margin-top:18px">${esc(n>=GOAL?t("keepGoing"):t("startDaily"))}</button>
+    ${n>=GOAL?`<p class="fine" style="text-align:center;margin-top:8px">${esc(t("goalDone"))}</p>`:""}
+   </section>
+   <section class="card ready">
+    <div class="ready-top"><h3>${esc(t("readiness"))}</h3>${rd==null?"":`<span class="num" style="color:${rd>=85?"var(--good)":rd>=70?"var(--d4)":"var(--bad)"}">${rd}%</span>`}</div>
+    <div class="stack-bar">${[1,2,3,4,5].map(d=>{const s=S.dstat[d],w=+WEIGHTS[d].replace("%","");const a=s&&s.t?s.c/s.t:0;return `<i style="flex:${w};background:${dc(d)};opacity:${s&&s.t?0.25+0.75*a:0.15}"></i>`}).join("")}</div>
+    <div class="legend">${[1,2,3,4,5].map(d=>`<span style="--c:${dc(d)}">D${d} · ${WEIGHTS[d]}</span>`).join("")}</div>
+    <p class="fine">${esc(rd==null?t("readinessEmpty"):t("readinessBody"))}</p>
+   </section>
+   <div><div class="group-label">${esc(t("more"))}</div><div class="list">
+    <button class="row" id="m-exam"><span class="tile" style="background:var(--fg)">${icon("clock")}</span><span class="txt"><b>${esc(t("exam"))}</b><span>${esc(t("examDesc"))}</span></span><span class="end">${icon("chev")}</span></button>
+    <button class="row" id="m-missed" ${missedN?"":"disabled"} style="${missedN?"":"opacity:.5"}"><span class="tile" style="background:var(--bad)">${icon("redo")}</span><span class="txt"><b>${esc(t("missed"))}</b><span>${esc(t("missedDesc",{n:missedN}))}</span></span><span class="end">${missedN?`<span class="badge">${missedN}</span>`:""}${icon("chev")}</span></button>
+    <button class="row" id="m-all"><span class="tile" style="background:var(--brand)">${icon("list")}</span><span class="txt"><b>${esc(t("all",{n:EN.q.length}))}</b><span>${esc(t("allDesc"))}</span></span><span class="end">${icon("chev")}</span></button>
+   </div></div>
+   <div><div class="group-label">${esc(t("domainsTitle"))}</div><div class="list">${[1,2,3,4,5].map(k=>{const cnt=EN.q.filter(q=>q[0]==k).length,s=S.dstat[k]||{c:0,t:0},p=s.t?Math.round(s.c/s.t*100):0;return `<button class="row" data-d="${k}"><span class="tile" style="background:${dc(k)}">${icon("d"+k)}</span><span class="txt"><b>${esc(DN(k))}</b><span>${esc(t("qCount",{n:cnt}))} · ${WEIGHTS[k]}</span><span class="bar"><i style="width:${p}%;background:${dc(k)}"></i></span></span><span class="end"><span class="num">${s.t?p+"%":"–"}</span>${icon("chev")}</span></button>`}).join("")}</div></div>
    <p class="fine">${esc(t("disclaimer"))}</p>
   </div>`;
+  bindLang();
   document.getElementById("m-daily").onclick=()=>{const missed=shuffle(Object.keys(S.missed).map(Number)).slice(0,8);const rest=shuffle(ALL.filter(i=>!missed.includes(i)));startQuiz(shuffle(missed.concat(rest).slice(0,25)),"quizDaily",false)};
   document.getElementById("m-exam").onclick=()=>startQuiz(shuffle(ALL).slice(0,90),"quizExam",true);
   document.getElementById("m-missed").onclick=()=>startQuiz(shuffle(Object.keys(S.missed).map(Number)),"quizMissed",false);
   document.getElementById("m-all").onclick=()=>startQuiz(shuffle(ALL),"quizAll",false);
   app.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>startQuiz(shuffle(ALL.filter(i=>EN.q[i][0]==b.dataset.d)),"quizDomain",false,{d:b.dataset.d}));
 }
+
+/* ---------- quiz ---------- */
 function startQuiz(list,label,exam,lv){
-  Voice.stop(); clearInterval(timerId);
+  Voice.stop(); Player.hide(); clearInterval(timerId); Haptic.tap();
   quiz={list,label,lv:lv||{},exam,i:0,answers:[],order:list.map(()=>shuffle([0,1,2,3])),end:exam?Date.now()+90*60000:0};
+  focusMode(true);
   if(exam) timerId=setInterval(()=>{const el=document.getElementById("timer");if(!el)return;const left=quiz.end-Date.now();if(left<=0){clearInterval(timerId);finishQuiz();return}el.textContent=fmt(left);el.classList.toggle("low",left<600000)},1000);
   renderQ(true);
 }
 const fmt=ms=>{const s=Math.max(0,Math.floor(ms/1000));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")};
-function renderQ(fresh){
+function renderQ(fresh, justAnswered){
   const qi=quiz.list[quiz.i], q=Q(qi), order=quiz.order[quiz.i], ans=quiz.answers[quiz.i];
-  const shown=!quiz.exam&&ans!==undefined;
-  app.innerHTML=`<div class="section">
-   <div class="row between"><button class="btn ghost small" id="quit">✕ ${esc(t("end"))}</button><span class="eyebrow">${esc(t(quiz.label,quiz.lv))}</span>${quiz.exam?`<span class="timer" id="timer">${fmt(quiz.end-Date.now())}</span>`:`<span class="pill">${quiz.i+1}/${quiz.list.length}</span>`}</div>
-   <div class="progress"><i style="width:${quiz.i/quiz.list.length*100}%"></i></div>
-   <div class="card">
-    <div class="qmeta"><span>Q${quiz.i+1} · D${q.d} ${esc(DN(q.d))}</span>${listenBtn("ql")}</div>
-    <p class="qtext">${esc(q.q)}</p>
-    <div class="opts">${order.map((oi,j)=>{let c="";if(shown){if(oi===0)c="right";else if(ans===oi)c="wrong"}else if(ans===oi)c="sel";return `<button class="opt ${c}" data-o="${oi}" ${shown?"disabled":""}><span class="k">${"ABCD"[j]}</span><span>${esc(q.opts[oi])}</span></button>`}).join("")}</div>
-    ${shown?`<div class="explain ${ans===0?"ok":"no"}"><b>${ans===0?esc(t("correct")):esc(t("notQuite"))+esc(q.opts[0])}</b><p>${esc(q.exp)}</p></div>`:""}
-   </div>
-   <div class="row between"><button class="btn ghost" id="prev" ${quiz.i===0?"disabled":""}>${esc(t("back"))}</button><button class="btn" id="next" ${(ans===undefined&&!quiz.exam)?"disabled":""}>${esc(quiz.i===quiz.list.length-1?t("finish"):t("next"))}</button></div>
-  </div>`;
-  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const oi=+b.dataset.o;quiz.answers[quiz.i]=oi;if(!quiz.exam){record(qi,oi===0);renderQ();if(S.autoRead)speak(Coach.feedback(q,oi===0))}else renderQ()});
-  const ql=document.getElementById("ql"); if(ql) ql.onclick=()=>speak(shown?Coach.feedback(q,ans===0):Coach.question(q,order));
-  document.getElementById("prev").onclick=()=>{quiz.i--;Voice.stop();renderQ(true)};
-  document.getElementById("next").onclick=()=>{Voice.stop();if(quiz.i===quiz.list.length-1)finishQuiz();else{quiz.i++;renderQ(true);window.scrollTo(0,0)}};
+  const shown=!quiz.exam&&ans!==undefined, ok=ans===0;
+  const optHtml=order.map((oi,j)=>{let c="",k="ABCD"[j];
+    if(shown){ if(oi===0){c="right";k=icon("check")} else if(ans===oi){c="wrong";k=icon("x")} else c="dim"; }
+    else if(ans===oi) c="sel";
+    if(justAnswered&&shown&&ans===oi) c+=ok?" pop":" shake";
+    return `<button class="opt ${c}" data-o="${oi}" ${shown?"disabled":""}><span class="k">${k}</span><span>${esc(q.opts[oi])}</span></button>`}).join("");
+  app.innerHTML=`<div class="screen" style="gap:18px">
+   <div class="qbar"><button class="icon-btn press" id="quit" type="button" aria-label="${esc(t("close"))}">${icon("x")}</button><div class="segs"><i style="width:${(quiz.i+(ans!==undefined?1:0))/quiz.list.length*100}%"></i></div>${quiz.exam?`<span class="timer" id="timer">${fmt(quiz.end-Date.now())}</span>`:`<span class="timer">${quiz.i+1}/${quiz.list.length}</span>`}</div>
+   <div class="row" style="padding:0;min-height:0;justify-content:space-between"><span class="chip" style="--c:${dc(q.d)}">${icon("d"+q.d)}D${q.d} · ${esc(DN(q.d))}</span>${Voice.available?`<button class="icon-btn press" id="ql" type="button" aria-label="${esc(t("listen"))}">${icon("speaker")}</button>`:""}</div>
+   <p class="muted" style="font-size:14px;font-weight:600">${esc(t("questionOf",{i:quiz.i+1,n:quiz.list.length}))}</p>
+   <p class="qtext">${esc(q.q)}</p>
+   <div class="opts">${optHtml}</div>
+  </div>
+  ${shown?`<div class="dock fb ${ok?"ok":"no"}"><div class="dock-in"><div class="fb-title"><span class="dot">${icon(ok?"check":"x")}</span>${esc(ok?pick(V().correct).replace(/\.\.\./g,"…"):t("notQuite").replace(/[·:]\s*$/,"").trim())}</div><div class="fb-body">${ok?"":`<p style="margin-bottom:6px"><b>${esc(t("answer"))}: ${esc(q.opts[0])}</b></p>`}<p>${esc(q.exp)}</p></div><button class="btn block press ${ok?"go-ok":"go-no"}" id="next">${esc(quiz.i===quiz.list.length-1?t("finish"):t("continueBtn"))}</button></div></div>`
+  : `<div class="dock"><div class="dock-in"><div class="duo"><button class="btn soft press" id="prev" ${quiz.i===0?"disabled":""}>${esc(t("back"))}</button><button class="btn press" id="next" ${(ans===undefined&&!quiz.exam)||(quiz.exam&&ans===undefined)?"disabled":""}>${esc(quiz.i===quiz.list.length-1?t("finish"):t("next"))}</button></div></div></div>`}`;
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const oi=+b.dataset.o;quiz.answers[quiz.i]=oi;
+    if(!quiz.exam){record(qi,oi===0);(oi===0?Haptic.ok:Haptic.no)();renderQ(false,true);if(S.autoRead)speak(Coach.feedback(q,oi===0))}else{Haptic.tap();renderQ()}});
+  const ql=document.getElementById("ql"); if(ql) ql.onclick=()=>speak(shown?Coach.feedback(q,ok):Coach.question(q,order));
+  const pv=document.getElementById("prev"); if(pv) pv.onclick=()=>{quiz.i--;Voice.stop();renderQ(true)};
+  document.getElementById("next").onclick=()=>{Voice.stop();Haptic.tap();if(quiz.i===quiz.list.length-1)finishQuiz();else{quiz.i++;renderQ(true);window.scrollTo(0,0)}};
   document.getElementById("quit").onclick=()=>{if(quiz.answers.some(a=>a!==undefined))finishQuiz();else go("practice")};
   if(fresh&&S.autoRead&&!shown) speak(Coach.question(q,order));
 }
-function record(qi,ok){ S.seen[qi]=1; const d=EN.q[qi][0]; S.dstat[d]=S.dstat[d]||{c:0,t:0}; S.dstat[d].t++; if(ok){S.dstat[d].c++;delete S.missed[qi]}else S.missed[qi]=1; markDay(); save(); chrome(); }
+function record(qi,ok){ S.seen[qi]=1; const d=EN.q[qi][0]; S.dstat[d]=S.dstat[d]||{c:0,t:0}; S.dstat[d].t++; if(ok){S.dstat[d].c++;delete S.missed[qi]}else S.missed[qi]=1; if(S.daily.d!==today())S.daily={d:today(),n:0}; S.daily.n++; markDay(); save(); }
 function finishQuiz(){
-  clearInterval(timerId); Voice.stop();
+  clearInterval(timerId); Voice.stop(); focusMode(false);
   const res={}; let c=0, answered=0;
   quiz.list.forEach((qi,k)=>{const a=quiz.answers[k],d=EN.q[qi][0];res[d]=res[d]||{c:0,t:0};res[d].t++;if(a!==undefined)answered++;if(a===0){c++;res[d].c++}if(quiz.exam){if(a!==undefined)record(qi,a===0);else S.missed[qi]=1}});
-  const pct=Math.round(c/quiz.list.length*100);
-  S.history.unshift({d:today(),label:quiz.label,lv:quiz.lv,c,t:quiz.list.length}); S.history=S.history.slice(0,60); markDay(); save(); chrome();
+  const pct=Math.round(c/quiz.list.length*100), col=pct>=85?"var(--good)":pct>=70?"var(--d4)":"var(--bad)";
+  S.history.unshift({d:today(),label:quiz.label,lv:quiz.lv,c,t:quiz.list.length}); S.history=S.history.slice(0,60); markDay(); save();
   const wrong=quiz.list.map((qi,k)=>({qi,a:quiz.answers[k]})).filter(x=>x.a!==0);
-  const label=t(quiz.label,quiz.lv);
-  app.innerHTML=`<div class="section">
-   <span class="eyebrow">${esc(label)} · ${esc(t("results"))}</span>
-   <div class="row" style="align-items:flex-end;gap:16px"><span class="score-big ${pct>=85?"pass":pct<70?"fail":""}">${pct}%</span><p class="muted">${esc(t("ofCorrect",{c,t:quiz.list.length}))}${answered<quiz.list.length?" · "+esc(t("unanswered",{n:quiz.list.length-answered})):""}.<br>${esc(pct>=85?t("msgHigh"):pct>=70?t("msgMid"):t("msgLow"))}</p></div>
-   <h2>${esc(t("byDomainRes"))}</h2>
-   <div class="domain-list">${Object.keys(res).sort().map(d=>{const r=res[d];return `<div class="domain-item"><span class="dnum">D${d}</span><span class="dmeta"><b>${esc(DN(d))}</b><span>${r.c}/${r.t}</span><div class="bar"><i style="width:${r.c/r.t*100}%"></i></div></span></div>`}).join("")}</div>
-   ${wrong.length?`<h2>${esc(t("reviewMisses"))}</h2><div class="stack">${wrong.map(x=>{const q=Q(x.qi);return `<div class="card"><p class="qtext small">${esc(q.q)}</p><div class="explain no"><b>${x.a===undefined?esc(t("unansweredLbl")):esc(t("youChose"))+esc(q.opts[x.a])}</b><p><strong>${esc(t("answer"))}: ${esc(q.opts[0])}.</strong> ${esc(q.exp)}</p></div></div>`}).join("")}</div>`:""}
-   <div class="row"><button class="btn" id="again">${esc(t("backPractice"))}</button>${wrong.length?`<button class="btn ghost" id="redo">${esc(t("retryMissed",{n:wrong.length}))}</button>`:""}</div>
+  const label=t(quiz.label,quiz.lv); const q0=quiz; quiz=null; chrome();
+  app.innerHTML=`<div class="screen">
+   <div class="head"><div><div class="over">${esc(label)}</div><h1>${esc(t("results").replace(/^./,m=>m.toUpperCase()))}</h1></div></div>
+   <section class="card score">${ring(pct/100,168,14,col,`<b style="font-size:44px">${pct}%</b><small>${esc(t("yourScore"))}</small>`)}
+    <p style="font-weight:600">${esc(t("ofCorrect",{c,t:q0.list.length}))}${answered<q0.list.length?" · "+esc(t("unanswered",{n:q0.list.length-answered})):""}</p>
+    <p class="muted" style="max-width:34ch">${esc(pct>=85?t("msgHigh"):pct>=70?t("msgMid"):t("msgLow"))}</p><span class="chip" style="--c:var(--muted)">${esc(t("target"))}</span></section>
+   <div><div class="group-label">${esc(t("byDomainRes"))}</div><div class="list">${Object.keys(res).sort().map(d=>{const r=res[d];return `<div class="row"><span class="tile" style="background:${dc(d)}">${icon("d"+d)}</span><span class="txt"><b>${esc(DN(d))}</b><span class="bar"><i style="width:${r.c/r.t*100}%;background:${dc(d)}"></i></span></span><span class="end num">${r.c}/${r.t}</span></div>`}).join("")}</div></div>
+   ${wrong.length?`<div><div class="group-label">${esc(t("reviewMisses"))} · ${wrong.length}</div><div class="stack" style="display:flex;flex-direction:column;gap:10px">${wrong.map(x=>{const q=Q(x.qi);return `<div class="card" style="display:flex;flex-direction:column;gap:10px"><span class="chip" style="--c:${dc(q.d)}">D${q.d}</span><p class="qtext small">${esc(q.q)}</p>${x.a===undefined?`<p class="fine">${esc(t("unansweredLbl"))}</p>`:`<p class="choice-fb no">${icon("x")} ${esc(q.opts[x.a])}</p>`}<p class="choice-fb ok"><b>${esc(q.opts[0])}</b><br><span style="color:var(--fg-2)">${esc(q.exp)}</span></p></div>`}).join("")}</div></div>`:""}
+   <div style="display:flex;flex-direction:column;gap:10px">${wrong.length?`<button class="btn block press" id="redo">${esc(t("retryMissed",{n:wrong.length}))}</button>`:""}<button class="btn soft block press" id="again">${esc(t("backPractice"))}</button></div>
   </div>`;
   document.getElementById("again").onclick=()=>go("practice");
   const r=document.getElementById("redo"); if(r) r.onclick=()=>startQuiz(shuffle(wrong.map(x=>x.qi)),"quizRetry",false);
-  if(S.autoRead) speak(Voice.chunk(t("ofCorrect",{c,t:quiz.list.length})+". "+(pct>=85?V().great:V().keep),{pitch:pct>=85?1.1:1}));
+  (pct>=70?Haptic.ok:Haptic.tap)();
+  if(S.autoRead) speak(Voice.chunk(t("ofCorrect",{c,t:q0.list.length})+". "+(pct>=85?V().great:V().keep),{pitch:pct>=85?1.1:1}));
   window.scrollTo(0,0);
 }
 
 /* ---------- lessons ---------- */
 let lessonDomain=1;
 function viewLearn(){
-  const ls=L().lessons[lessonDomain];
-  app.innerHTML=`<div class="section">
-   <span class="eyebrow">${esc(t("lessonsEyebrow"))}</span><h1>${esc(t("lessonsTitle"))}</h1>
-   <p class="muted">${esc(t("lessonsBody"))}</p>
-   <div class="row"><label for="dsel" class="eyebrow">${esc(t("domain"))}</label><select id="dsel">${[1,2,3,4,5].map(k=>`<option value="${k}" ${k==lessonDomain?"selected":""}>D${k} · ${esc(DN(k))} (${WEIGHTS[k]})</option>`).join("")}</select></div>
-   ${Voice.available?`<div class="row"><button class="btn small" id="playall" type="button">▶ ${esc(t("listenDomain"))}</button><button class="btn ghost small" id="stopall" type="button">■ ${esc(t("stop"))}</button></div>`:`<p class="tip">${esc(t("audioNA"))}</p>`}
-   <div class="stack lesson">${ls.map((l,i)=>`<div class="card" id="lc${i}"><div class="qmeta"><span>${lessonDomain}.${i+1}</span>${listenBtn("l"+i)}</div><h3>${esc(l[0])}</h3><ul>${l[1].split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ul><div class="tip"><b>${esc(t("examTip"))}</b>${esc(l[2])}</div></div>`).join("")}</div>
-   <button class="btn" id="drill">${esc(t("drill",{d:lessonDomain}))}</button>
+  const ls=L().lessons[lessonDomain], c=dc(lessonDomain);
+  app.innerHTML=`<div class="screen">
+   <div class="head"><div><div class="over">${esc(t("lessonsEyebrow"))}</div><h1>${esc(t("lessonsTitle"))}</h1></div>${langPill()}</div>
+   <div class="scroller" role="group">${[1,2,3,4,5].map(k=>`<button class="dchip press" type="button" data-ld="${k}" style="--c:${dc(k)}" aria-pressed="${k===lessonDomain}"><i></i>D${k}</button>`).join("")}</div>
+   <section class="lesson-hero" style="--c:${c}"><span class="over">${esc(t("domain"))} ${lessonDomain} · ${WEIGHTS[lessonDomain]} · ${esc(t("topics",{n:ls.length}))}</span><h2>${esc(DN(lessonDomain))}</h2>
+    ${Voice.available?`<button class="btn small press" id="playall" type="button">${fillIcon("play")}${esc(t("listenDomain"))}</button>`:""}</section>
+   <div style="display:flex;flex-direction:column;gap:12px">${ls.map((l,i)=>`<section class="card topic" id="lc${i}" style="--c:${c}"><div class="topic-head"><span class="n">${i+1}</span><h3>${esc(l[0])}</h3>${Voice.available?`<button class="icon-btn press" id="l${i}" type="button" aria-label="${esc(t("listen"))}">${icon("speaker")}</button>`:""}</div><ul>${l[1].split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ul><div class="tip"><b>${esc(t("examTip"))}</b>${esc(l[2])}</div></section>`).join("")}</div>
+   <button class="btn block press" id="drill" style="background:${c};color:#fff">${esc(t("drill",{d:lessonDomain}))}</button>
+   ${Voice.available?"":`<p class="fine">${esc(t("audioNA"))}</p>`}
   </div>`;
-  const sel=document.getElementById("dsel"); sel.onchange=()=>{Voice.stop();lessonDomain=+sel.value;viewLearn()};
-  const mark=i=>{app.querySelectorAll(".lesson .card").forEach(c=>c.classList.remove("playing"));const c=document.getElementById("lc"+i);if(c){c.classList.add("playing");c.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"center"})}};
-  ls.forEach((l,i)=>{const b=document.getElementById("l"+i);if(b)b.onclick=()=>{mark(i);speak(Coach.lesson(l,true),()=>mark(-1))}});
-  const pa=document.getElementById("playall"); if(pa) pa.onclick=()=>{let i=0;const next=()=>{if(i<ls.length){mark(i);const l=ls[i];speak(Coach.lesson(l,i===0),next);i++}else mark(-1)};next()};
-  const sa=document.getElementById("stopall"); if(sa) sa.onclick=()=>{Voice.stop();mark(-1)};
+  bindLang();
+  app.querySelectorAll("[data-ld]").forEach(b=>b.onclick=()=>{Voice.stop();Player.hide();Haptic.tap();lessonDomain=+b.dataset.ld;viewLearn()});
+  const mark=i=>{app.querySelectorAll(".topic").forEach(x=>x.classList.remove("playing"));const el=document.getElementById("lc"+i);if(el){el.classList.add("playing");el.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"center"})}};
+  const done=()=>{mark(-1);Player.hide()};
+  ls.forEach((l,i)=>{const b=document.getElementById("l"+i);if(b)b.onclick=()=>{mark(i);Player.show(l[0],done);speak(Coach.lesson(l,true),done)}});
+  const pa=document.getElementById("playall"); if(pa) pa.onclick=()=>{let i=0;Player.show(ls[0][0],done);const next=()=>{if(i<ls.length){mark(i);Player.title(ls[i][0]);speak(Coach.lesson(ls[i],i===0),next);i++}else done()};next()};
   document.getElementById("drill").onclick=()=>startQuiz(shuffle(ALL.filter(i=>EN.q[i][0]==lessonDomain)),"quizDomain",false,{d:lessonDomain});
 }
 
 /* ---------- scenarios ---------- */
 function clearScen(){ scenTimers.forEach(clearTimeout); scenTimers=[]; }
 function viewScenarios(){
-  app.innerHTML=`<div class="section">
-   <span class="eyebrow">${esc(t("scenEyebrow"))}</span><h1>${esc(t("scenTitle"))}</h1><p class="muted">${esc(t("scenBody"))}</p>
-   <div class="domain-list">${EN.scen.map((s,i)=>{const ls=L().scen[i]||s;const r=S.scen[s.id];return `<button class="domain-item" data-s="${i}"><span class="dnum">D${s.dom}</span><span class="dmeta"><b>${esc(ls.title)}</b><span>${esc(t("decisions",{n:s.steps.length}))} · ${esc(r?t("best",{s:r,t:s.steps.length}):t("notPlayed"))}</span></span><span class="pill">▶ ${esc(t("play"))}</span></button>`}).join("")}</div>
+  app.innerHTML=`<div class="screen">
+   <div class="head"><div><div class="over">${esc(t("scenEyebrow"))}</div><h1>${esc(t("scenTitle"))}</h1></div>${langPill()}</div>
+   <p class="muted">${esc(t("scenBody"))}</p>
+   <div style="display:flex;flex-direction:column;gap:12px">${EN.scen.map((s,i)=>{const ls=L().scen[i]||s,r=S.scen[s.id],lg=s.steps[0].log,hot=lg.slice(1).find(x=>/alert|warn/i.test(x))||lg[1]||"";
+    return `<button class="scen-card press" data-s="${i}" style="--c:${dc(s.dom)}"><span class="tag">D${s.dom}</span><span class="log">${esc(s.steps[0].log[0])}</span><span class="log"><em>${esc(hot)}</em></span><h3>${esc(ls.title)}</h3><span class="foot"><span>${esc(t("decisions",{n:s.steps.length}))} · ${esc(r?t("best",{s:r,t:s.steps.length}):t("notPlayed"))}</span><span class="play">${fillIcon("play")}</span></span></button>`}).join("")}</div>
   </div>`;
-  app.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>playScen(+b.dataset.s));
+  bindLang();
+  app.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{Haptic.tap();playScen(+b.dataset.s)});
 }
 function playScen(si){
   const E=EN.scen[si]; let step=0, score=0, narrate=Voice.available;
   const loc=()=>L().scen[si]||E;
+  focusMode(true);
   const render=()=>{
     clearScen(); Voice.stop();
-    const s=loc(), st=s.steps[step], es=E.steps[step];
-    const order=shuffle(es.choices.map((_,i)=>i));
-    app.innerHTML=`<div class="section">
-     <div class="row between"><button class="btn ghost small" id="sx">✕ ${esc(t("exit"))}</button><span class="eyebrow">${esc(s.title)}</span><span class="pill">${esc(t("step",{i:step+1,n:E.steps.length}))}</span></div>
+    const s=loc(), st=s.steps[step], es=E.steps[step], order=shuffle(es.choices.map((_,i)=>i));
+    app.innerHTML=`<div class="screen" style="gap:16px">
+     <div class="qbar"><button class="icon-btn press" id="sx" type="button" aria-label="${esc(t("exit"))}">${icon("x")}</button><div class="segs"><i style="width:${step/E.steps.length*100}%"></i></div><span class="timer">${step+1}/${E.steps.length}</span></div>
+     <div class="row" style="padding:0;min-height:0;justify-content:space-between"><span class="live">${esc(t("live"))}</span>${Voice.available?`<button class="icon-btn press" id="narr" type="button" aria-pressed="${narrate}" aria-label="${esc(narrate?t("narrOn"):t("narrOff"))}" style="${narrate?"color:var(--brand)":"opacity:.5"}">${icon("speaker")}</button>`:""}</div>
+     <h2>${esc(s.title)}</h2>
      ${step===0?`<p class="muted">${esc(s.intro)}</p>`:""}
-     <div class="card">
-      <div class="qmeta"><span class="rec">${esc(t("live"))}</span>${Voice.available?`<button class="btn ghost small" id="narr" type="button">${esc(narrate?"🔊 "+t("narrOn"):"🔈 "+t("narrOff"))}</button>`:""}</div>
-      <div class="term" id="term" aria-live="polite"></div>
-      <p class="qtext" id="say" hidden>${esc(st.say)}</p>
-      <div class="opts" id="ch" hidden>${order.map(i=>`<button class="opt" data-c="${i}"><span>${esc((st.choices[i]||es.choices[i])[0])}</span></button>`).join("")}</div>
-      <div id="fb"></div>
-     </div>
-     <div class="row" style="justify-content:flex-end"><button class="btn" id="snext" hidden>${esc(step===E.steps.length-1?t("seeDebrief"):t("nextStep"))}</button></div>
-    </div>`;
+     <div class="term" id="term" aria-live="polite"></div>
+     <p class="say" id="say" hidden>${esc(st.say)}</p>
+     <div class="opts" id="ch" hidden>${order.map((i,j)=>`<button class="opt" data-c="${i}"><span class="k">${"ABC"[j]}</span><span>${esc((st.choices[i]||es.choices[i])[0])}</span></button>`).join("")}</div>
+     <div id="fb"></div>
+    </div><div class="dock" id="sdock" hidden><div class="dock-in"><button class="btn block press" id="snext">${esc(step===E.steps.length-1?t("seeDebrief"):t("nextStep"))}</button></div></div>`;
     const term=document.getElementById("term"), reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
     const reveal=()=>{document.getElementById("say").hidden=false;document.getElementById("ch").hidden=false;
       if(narrate){let p=[];if(step===0){p=p.concat(Voice.chunk(pick(V().scenStart),{pitch:0.94,rate:0.92,after:600}));p=p.concat(Voice.chunk(s.intro,{pitch:0.95,rate:0.95,after:700}))}p=p.concat(Voice.chunk(st.say,{pitch:0.97,rate:0.96}));speak(p)}};
     es.log.forEach((line,i)=>scenTimers.push(setTimeout(()=>{const d=document.createElement("div");d.textContent=line;if(/alert/i.test(line))d.className="alert";else if(/warn/i.test(line))d.className="warn";else if(/\[ok\]|NOT sent|denied/i.test(line))d.className="ok";term.appendChild(d);term.scrollTop=term.scrollHeight;if(i===es.log.length-1)reveal()},reduce?0:600+i*900)));
     document.getElementById("sx").onclick=()=>go("scenarios");
-    const nb=document.getElementById("narr"); if(nb) nb.onclick=()=>{narrate=!narrate;if(!narrate)Voice.stop();nb.textContent=narrate?"🔊 "+t("narrOn"):"🔈 "+t("narrOff")};
+    const nb=document.getElementById("narr"); if(nb) nb.onclick=()=>{narrate=!narrate;if(!narrate)Voice.stop();nb.style.cssText=narrate?"color:var(--brand)":"opacity:.5";nb.setAttribute("aria-pressed",narrate)};
     app.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{
       const ci=+b.dataset.c, ok=!!es.choices[ci][1], fb=(st.choices[ci]&&st.choices[ci][st.choices[ci].length-1])||es.choices[ci][2];
-      if(ok) score++;
-      app.querySelectorAll("[data-c]").forEach(x=>{x.disabled=true;const k=+x.dataset.c;if(es.choices[k][1])x.classList.add("right");else if(x===b)x.classList.add("wrong")});
+      if(ok) score++; (ok?Haptic.ok:Haptic.no)();
+      app.querySelectorAll("[data-c]").forEach(x=>{x.disabled=true;const k=+x.dataset.c;if(es.choices[k][1]){x.classList.add("right");x.querySelector(".k").innerHTML=icon("check")}else if(x===b){x.classList.add("wrong","shake");x.querySelector(".k").innerHTML=icon("x")}else x.classList.add("dim")});
       document.getElementById("fb").innerHTML=`<p class="choice-fb ${ok?"ok":"no"}">${esc(fb)}</p>`;
       if(narrate) speak(Voice.chunk(fb,{pitch:ok?1.08:0.96,rate:ok?1.02:0.94}));
-      document.getElementById("snext").hidden=false;
+      document.getElementById("sdock").hidden=false;
     });
-    document.getElementById("snext").onclick=()=>{if(step<E.steps.length-1){step++;render()}else debrief()};
+    document.getElementById("snext").onclick=()=>{Haptic.tap();if(step<E.steps.length-1){step++;render();window.scrollTo(0,0)}else debrief()};
   };
-  const debrief=()=>{clearScen();Voice.stop();S.scen[E.id]=Math.max(S.scen[E.id]||0,score);markDay();save();chrome();
+  const debrief=()=>{clearScen();Voice.stop();focusMode(false);S.scen[E.id]=Math.max(S.scen[E.id]||0,score);markDay();save();chrome();
     const full=score===E.steps.length;
-    app.innerHTML=`<div class="section"><span class="eyebrow">${esc(t("debrief"))} · ${esc(loc().title)}</span><span class="score-big ${full?"pass":""}">${score}/${E.steps.length}</span><p class="muted">${esc(full?t("debriefGood"):t("debriefBad"))}</p><div class="row"><button class="btn" id="rp">${esc(t("replay"))}</button><button class="btn ghost" id="bk">${esc(t("allScen"))}</button></div></div>`;
+    app.innerHTML=`<div class="screen"><div class="head"><div><div class="over">${esc(t("debrief"))}</div><h1>${esc(loc().title)}</h1></div></div>
+     <section class="card score">${ring(score/E.steps.length,150,13,full?"var(--good)":"var(--d4)",`<b style="font-size:40px">${score}/${E.steps.length}</b>`)}<p class="muted" style="max-width:36ch">${esc(full?t("debriefGood"):t("debriefBad"))}</p></section>
+     <div style="display:flex;flex-direction:column;gap:10px"><button class="btn block press" id="rp">${esc(t("replay"))}</button><button class="btn soft block press" id="bk">${esc(t("allScen"))}</button></div></div>`;
     document.getElementById("rp").onclick=()=>playScen(si); document.getElementById("bk").onclick=()=>go("scenarios");
     if(narrate) speak(Voice.chunk(V().score.replace("{s}",score).replace("{t}",E.steps.length)+" "+(full?V().great:V().keep),{pitch:full?1.1:1}));
+    window.scrollTo(0,0);
   };
   render();
 }
@@ -275,39 +368,35 @@ function viewProgress(){
   const tot=Object.values(S.dstat).reduce((a,b)=>({c:a.c+b.c,t:a.t+b.t}),{c:0,t:0}), acc=tot.t?Math.round(tot.c/tot.t*100):0;
   const weakest=Object.entries(S.dstat).filter(([,v])=>v.t>=5).sort((a,b)=>a[1].c/a[1].t-b[1].c/b[1].t)[0];
   const vl=Voice.list(), cur=Voice.chosen();
-  app.innerHTML=`<div class="section">
-   <span class="eyebrow">${esc(t("progEyebrow"))}</span><h1>${esc(t("progTitle"))}</h1>
-   <div class="stat-row"><div class="stat"><b>${streak()}</b><span>${esc(t("dayStreak"))}</span></div><div class="stat"><b>${tot.t}</b><span>${esc(t("answers"))}</span></div><div class="stat"><b>${acc}%</b><span>${esc(t("accuracy"))}</span></div></div>
-   ${weakest?`<div class="tip"><b>${esc(t("focusLbl"))}</b>${esc(t("focusNext",{d:weakest[0],n:DN(weakest[0])}))}</div>`:`<div class="tip"><b>${esc(t("startLbl"))}</b>${esc(t("startBody"))}</div>`}
-   <h2>${esc(t("accByDomain"))}</h2>
-   <div class="domain-list">${[1,2,3,4,5].map(k=>{const st=S.dstat[k]||{c:0,t:0},p=st.t?Math.round(st.c/st.t*100):0;return `<div class="domain-item"><span class="dnum">D${k}</span><span class="dmeta"><b>${esc(DN(k))}</b><span>${esc(st.t?p+"% · "+st.c+"/"+st.t:t("noAnswers"))}</span><div class="bar"><i style="width:${p}%"></i></div></span></div>`}).join("")}</div>
-   <h2>${esc(t("settings"))}</h2>
-   <div class="settings">
-    <div class="set-row"><span>${esc(t("language"))}</span><div class="seg">${["en","fr","ht"].map(c=>`<button type="button" data-setlang="${c}" aria-pressed="${S.lang===c}">${esc(LANGS[c].label)}</button>`).join("")}</div></div>
+  app.innerHTML=`<div class="screen">
+   <div class="head"><div><div class="over">${esc(t("progEyebrow"))}</div><h1>${esc(t("progTitle"))}</h1></div>${langPill()}</div>
+   <div class="stats"><div class="stat"><b style="color:var(--flame)">${streak()}</b><span>${esc(t("dayStreak"))}</span></div><div class="stat"><b>${tot.t}</b><span>${esc(t("answers"))}</span></div><div class="stat"><b>${acc}%</b><span>${esc(t("accuracy"))}</span></div></div>
+   ${weakest?`<div class="tip" style="--c:${dc(weakest[0])}"><b>${esc(t("focusLbl"))}</b>${esc(t("focusNext",{d:weakest[0],n:DN(weakest[0])}))}</div>`:`<div class="tip"><b>${esc(t("startLbl"))}</b>${esc(t("startBody"))}</div>`}
+   <div><div class="group-label">${esc(t("accByDomain"))}</div><div class="list">${[1,2,3,4,5].map(k=>{const s=S.dstat[k]||{c:0,t:0},p=s.t?Math.round(s.c/s.t*100):0;return `<div class="row"><span class="tile" style="background:${dc(k)}">${icon("d"+k)}</span><span class="txt"><b>${esc(DN(k))}</b><span>${esc(s.t?s.c+"/"+s.t:t("noAnswers"))}</span><span class="bar"><i style="width:${p}%;background:${dc(k)}"></i></span></span><span class="end num">${s.t?p+"%":"–"}</span></div>`}).join("")}</div></div>
+   <div><div class="group-label">${esc(t("settings"))}</div><div class="list">
+    <button class="row" type="button" id="langrow"><span class="tile" style="background:var(--d3)">${icon("globe")}</span><span class="txt"><b>${esc(t("language"))}</b></span><span class="end">${esc(L().label)}${icon("chev")}</span></button>
     ${Voice.available?`
-    <div class="set-row"><label for="vsel">${esc(t("voice"))}</label><select id="vsel"><option value="">${esc(t("voiceAuto"))}${cur&&!S.voice[S.lang]?" · "+esc(cur.v.name):""}</option>${vl.map(x=>`<option value="${esc(x.v.name)}" ${S.voice[S.lang]===x.v.name?"selected":""}>${esc(x.v.name)} (${esc(x.v.lang)})</option>`).join("")}</select></div>
-    <div class="set-row"><label for="rate">${esc(t("speed"))}</label><select id="rate">${[0.85,0.95,1,1.1,1.25].map(r=>`<option value="${r}" ${S.rate==r?"selected":""}>${r}×</option>`).join("")}</select></div>
-    <div class="set-row"><label for="auto">${esc(t("autoRead"))}</label><input type="checkbox" id="auto" ${S.autoRead?"checked":""}></div>
-    <div class="set-row"><span></span><button class="btn ghost small" id="testv" type="button">▶ ${esc(t("testVoice"))}</button></div>
-    <p class="fine">${esc(t("voiceHelp"))}</p>`:`<p class="tip">${esc(t("audioNA"))}</p>`}
-    ${Remind.available?`<div class="set-row"><label for="rem">${esc(t("reminderOn"))}</label><input type="checkbox" id="rem" ${S.remind.on?"checked":""}></div>
-    <div class="set-row"><label for="remt">${esc(t("reminderTime"))}</label><input type="time" id="remt" value="${esc(S.remind.time)}"></div><p class="fine" id="remmsg" aria-live="polite"></p>`:""}
-   </div>
-   <h2>${esc(t("recent"))}</h2>
-   ${S.history.length?`<div class="hist">${S.history.slice(0,15).map(h=>`<div><span>${esc(h.d)} · ${esc(t(h.label,h.lv))}</span><b>${h.c}/${h.t} (${Math.round(h.c/h.t*100)}%)</b></div>`).join("")}</div>`:`<p class="muted">${esc(t("noSessions"))}</p>`}
-   <p class="fine">${esc(t("examFacts"))}</p><p class="fine">${esc(t("disclaimer"))}</p><p class="fine">${esc(t("privacy"))}</p>
-   <button class="btn ghost small" id="reset">${esc(t("reset"))}</button>
+    <div class="row"><span class="tile" style="background:var(--brand)">${icon("speaker")}</span><label class="txt" for="vsel"><b>${esc(t("voice"))}</b></label><select id="vsel"><option value="">${esc(t("voiceAuto"))}${cur&&!S.voice[S.lang]?" · "+esc(cur.v.name):""}</option>${vl.map(x=>`<option value="${esc(x.v.name)}" ${S.voice[S.lang]===x.v.name?"selected":""}>${esc(x.v.name)} (${esc(x.v.lang)})</option>`).join("")}</select></div>
+    <div class="row"><span class="tile" style="background:var(--d1)">${icon("clock")}</span><label class="txt" for="rate"><b>${esc(t("speed"))}</b></label><select id="rate">${[0.85,0.95,1,1.1,1.25].map(r=>`<option value="${r}" ${S.rate==r?"selected":""}>${r}×</option>`).join("")}</select></div>
+    <div class="row"><span class="tile" style="background:var(--d5)">${icon("play")}</span><label class="txt" for="auto"><b>${esc(t("autoRead"))}</b></label><input type="checkbox" class="switch" id="auto" ${S.autoRead?"checked":""}></div>
+    <button class="row" type="button" id="testv"><span class="tile" style="background:var(--fg)">${fillIcon("play")}</span><span class="txt"><b>${esc(t("testVoice"))}</b></span><span class="end">${icon("chev")}</span></button>`:""}
+    ${Remind.available?`<div class="row"><span class="tile" style="background:var(--flame)">${icon("flame")}</span><label class="txt" for="rem"><b>${esc(t("reminderOn"))}</b></label><input type="checkbox" class="switch" id="rem" ${S.remind.on?"checked":""}></div>
+    <div class="row"><span class="tile" style="background:var(--d4)">${icon("clock")}</span><label class="txt" for="remt"><b>${esc(t("reminderTime"))}</b></label><input type="time" id="remt" value="${esc(S.remind.time)}"></div>`:""}
+   </div>${Voice.available?`<p class="fine" style="padding:8px 4px 0">${esc(t("voiceHelp"))}</p>`:""}<p class="fine" id="remmsg" aria-live="polite" style="padding:4px"></p></div>
+   <div><div class="group-label">${esc(t("recent"))}</div>${S.history.length?`<div class="list hist">${S.history.slice(0,12).map(h=>{const p=Math.round(h.c/h.t*100);return `<div class="row"><span class="txt"><b>${esc(t(h.label,h.lv))}</b><span>${esc(h.d)}</span></span><span class="end num" style="color:${p>=85?"var(--good)":p>=70?"var(--d4)":"var(--bad)"}">${p}%</span></div>`}).join("")}</div>`:`<p class="muted">${esc(t("noSessions"))}</p>`}</div>
+   <div style="display:flex;flex-direction:column;gap:8px"><p class="fine">${esc(t("examFacts"))}</p><p class="fine">${esc(t("disclaimer"))}</p><p class="fine">${esc(t("privacy"))}</p></div>
+   <button class="btn soft block press" id="reset" style="color:var(--bad)">${esc(t("reset"))}</button>
   </div>`;
-  app.querySelectorAll("[data-setlang]").forEach(b=>b.onclick=()=>{S.lang=b.dataset.setlang;save();Voice.stop();chrome();viewProgress()});
+  bindLang(); document.getElementById("langrow").onclick=openLangSheet;
   const vs=document.getElementById("vsel"); if(vs) vs.onchange=()=>{S.voice[S.lang]=vs.value;save();speak(Voice.chunk(t("voiceSample")))};
   const rt=document.getElementById("rate"); if(rt) rt.onchange=()=>{S.rate=+rt.value;save()};
-  const au=document.getElementById("auto"); if(au) au.onchange=()=>{S.autoRead=au.checked;save()};
+  const au=document.getElementById("auto"); if(au) au.onchange=()=>{S.autoRead=au.checked;save();Haptic.tap()};
   const tv=document.getElementById("testv"); if(tv) tv.onclick=()=>speak(Voice.chunk(t("voiceSample"),{pitch:1.04}));
   const msg=m=>{const el=document.getElementById("remmsg");if(el)el.textContent=m};
   const rem=document.getElementById("rem"); if(rem) rem.onchange=async()=>{S.remind.on=rem.checked;save();msg(await Remind.apply());rem.checked=S.remind.on};
   const remt=document.getElementById("remt"); if(remt) remt.onchange=async()=>{S.remind.time=remt.value||"19:00";save();if(S.remind.on)msg(await Remind.apply())};
   const r=document.getElementById("reset"); let armed=false;
-  r.onclick=()=>{if(!armed){armed=true;r.textContent=t("resetConfirm");return}Object.assign(S,{days:[],history:[],missed:{},seen:{},dstat:{},scen:{}});save();chrome();viewProgress()};
+  r.onclick=()=>{if(!armed){armed=true;r.textContent=t("resetConfirm");Haptic.no();return}Object.assign(S,{days:[],history:[],missed:{},seen:{},dstat:{},scen:{},daily:{d:"",n:0}});save();chrome();viewProgress()};
 }
 Voice.onVoices = () => { if(tab==="progress" && !quiz) viewProgress(); };
 
