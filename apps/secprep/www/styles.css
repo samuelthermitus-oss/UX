@@ -359,3 +359,16 @@ ion-select{--placeholder-color:var(--muted);max-width:100%}
 @media (prefers-reduced-transparency: reduce) and (prefers-color-scheme: dark){:root:not([data-theme="light"]){--surface-solid:#1a1d22}}
 :root[data-theme="dark"]{--surface-solid:#1a1d22}
 @media (prefers-reduced-motion: reduce){.stage i,.screen.enter > *,nav.tabs .bubble.squish{animation:none!important}nav.tabs .bubble{transition:none}}
+
+/* header actions: language + settings */
+.head-actions{display:flex;align-items:center;gap:8px;flex:none}
+.pill-btn.round{width:36px;padding:0;justify-content:center}
+.pill-btn .ico{width:20px;height:20px}
+/* settings panel (Ionic modal) over a soft wash of the current background */
+ion-modal.settings-modal{--background:var(--stage);--border-radius:24px}
+ion-modal.settings-modal ion-content{--background:radial-gradient(120% 60% at 0% 0%,color-mix(in srgb,var(--blob1) 55%,transparent),transparent 60%),radial-gradient(120% 60% at 100% 45%,color-mix(in srgb,var(--blob2) 50%,transparent),transparent 60%),radial-gradient(120% 60% at 20% 100%,color-mix(in srgb,var(--blob4) 45%,transparent),transparent 60%),var(--stage);--color:var(--fg)}
+ion-modal.settings-modal ion-toolbar{--background:var(--glass);--color:var(--fg);-webkit-backdrop-filter:blur(20px) saturate(1.8);backdrop-filter:blur(20px) saturate(1.8)}
+ion-modal.settings-modal ion-button{--color:var(--brand)}
+.settings-body{display:flex;flex-direction:column;gap:22px;padding:16px max(16px,env(safe-area-inset-left,0px)) calc(32px + env(safe-area-inset-bottom,0px));max-width:640px;margin:0 auto}
+.settings-body .fine-block{display:flex;flex-direction:column;gap:8px}
+ion-alert{--background:var(--glass-strong)}

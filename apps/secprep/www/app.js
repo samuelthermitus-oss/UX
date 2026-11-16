@@ -139,7 +139,9 @@ const P = {
   d2:"M12 4l9 16H3zM12 10v4M12 17h.01",
   d3:"M12 3.5l8.5 4.5-8.5 4.5L3.5 8zM3.5 12.5 12 17l8.5-4.5M3.5 16.5 12 21l8.5-4.5",
   d4:"M3 12h4l2.5-6 5 12 2.5-6h4",
-  d5:"M9 3.5h6v3H9zM7 5H5.5v15.5h13V5H17M9 11h6M9 15h4"
+  d5:"M9 3.5h6v3H9zM7 5H5.5v15.5h13V5H17M9 11h6M9 15h4",
+  gear:"M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 13.5l1.6 1.2-2 3.4-1.9-.7a7 7 0 0 1-1.7 1l-.3 2h-4l-.3-2a7 7 0 0 1-1.7-1l-1.9.7-2-3.4 1.6-1.2a7 7 0 0 1 0-3L3 9.3l2-3.4 1.9.7a7 7 0 0 1 1.7-1l.3-2h4l.3 2a7 7 0 0 1 1.7 1l1.9-.7 2 3.4-1.6 1.2a7 7 0 0 1 0 3z",
+  logout:"M14 4h4.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H14M10 16l-4-4 4-4M6 12h10"
 };
 const icon = (n, cls) => `<svg class="ico ${cls||""}" viewBox="0 0 24 24" aria-hidden="true"><path d="${P[n]}"/></svg>`;
 const fillIcon = n => icon(n, "fill");
@@ -183,15 +185,15 @@ function chrome(){
 }
 function focusMode(on){ document.body.classList.toggle("focus", !!on); }
 function go(x){ Voice.stop(); Player.hide(); clearInterval(timerId); clearScen(); closeSheet(); quiz=null; focusMode(false); tab=x; chrome(); window.scrollTo(0,0); ({practice:viewPractice,learn:viewLearn,scenarios:viewScenarios,progress:viewProgress})[x](); }
-const langPill = () => `<button class="pill-btn press" id="langbtn" type="button" aria-label="${esc(t("chooseLanguage"))}">${icon("globe")}${esc(L().short)}</button>`;
-function bindLang(){ const b=document.getElementById("langbtn"); if(b) b.onclick=openLangSheet; }
+const langPill = () => `<div class="head-actions"><button class="pill-btn press" id="langbtn" type="button" aria-label="${esc(t("chooseLanguage"))}">${icon("globe")}${esc(L().short)}</button><button class="pill-btn round press" id="setbtn" type="button" aria-label="${esc(t("openSettings"))}">${icon("gear")}</button></div>`;
+function bindLang(){ const b=document.getElementById("langbtn"); if(b) b.onclick=openLangSheet; const g=document.getElementById("setbtn"); if(g) g.onclick=openSettings; }
 
 /* ---------- sheet ---------- */
 function openSheet(html, bind){ closeSheet(); const s=document.createElement("div"); s.id="sheetwrap"; s.innerHTML=`<div class="scrim" data-close></div><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`; document.body.appendChild(s); s.querySelector("[data-close]").onclick=closeSheet; if(bind) bind(s); }
 function closeSheet(){ const s=document.getElementById("sheetwrap"); if(s) s.remove(); }
 function openLangSheet(){
   openSheet(`<h2>${esc(t("chooseLanguage"))}</h2><div class="list">${ENABLED_LANGS.map(c=>`<button class="row" type="button" data-l="${c}"><span class="txt"><b>${esc(LANGS[c].label)}</b></span><span class="end check">${S.lang===c?icon("check"):""}</span></button>`).join("")}</div>`,
-  s=>s.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{S.lang=b.dataset.l;save();Voice.stop();Haptic.tap();closeSheet();if(quiz&&document.querySelector(".qtext"))renderQ();else go(tab);chrome()}));
+  s=>s.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{S.lang=b.dataset.l;save();Voice.stop();Haptic.tap();closeSheet();refreshSettings();if(quiz&&document.querySelector(".qtext"))renderQ();else go(tab);chrome()}));
 }
 
 /* ---------- mini player ---------- */
@@ -389,58 +391,102 @@ function playScen(si){
 function viewProgress(){
   const tot=Object.values(S.dstat).reduce((a,b)=>({c:a.c+b.c,t:a.t+b.t}),{c:0,t:0}), acc=tot.t?Math.round(tot.c/tot.t*100):0;
   const weakest=Object.entries(S.dstat).filter(([,v])=>v.t>=5).sort((a,b)=>a[1].c/a[1].t-b[1].c/b[1].t)[0];
-  const vl=Voice.list(), cur=Voice.chosen();
-  const THEMES=[["original","themeOriginal","#eef1f6","#5ec8d4","#a48cff","#ffb27a"],["ocean","themeOcean","#e9f2ff","#2f7dff","#22c3e6","#4f6bff"],["glacier","themeGlacier","#f3f4ff","#8cc8ff","#b9a8ff","#6fa9ff"]];
-  const sw=(base,a,b,c)=>`background:radial-gradient(circle at 25% 30%,${a},transparent 62%),radial-gradient(circle at 78% 65%,${b},transparent 60%),radial-gradient(circle at 40% 95%,${c},transparent 55%),${base}`;
   app.innerHTML=`<div class="screen enter">
    <div class="head"><div><div class="over">${esc(t("progEyebrow"))}</div><h1>${esc(t("progTitle"))}</h1></div>${langPill()}</div>
    <div class="stats"><div class="stat"><b style="color:var(--flame)">${streak()}</b><span>${esc(t("dayStreak"))}</span></div><div class="stat"><b>${tot.t}</b><span>${esc(t("answers"))}</span></div><div class="stat"><b>${acc}%</b><span>${esc(t("accuracy"))}</span></div></div>
    ${weakest?`<div class="tip" style="--c:${dc(weakest[0])}"><b>${esc(t("focusLbl"))}</b>${esc(t("focusNext",{d:weakest[0],n:DN(weakest[0])}))}</div>`:`<div class="tip"><b>${esc(t("startLbl"))}</b>${esc(t("startBody"))}</div>`}
    <div><div class="group-label">${esc(t("accByDomain"))}</div><div class="list">${[1,2,3,4,5].map(k=>{const s=S.dstat[k]||{c:0,t:0},p=s.t?Math.round(s.c/s.t*100):0;return `<div class="row"><span class="tile" style="background-color:${dc(k)}">${icon("d"+k)}</span><span class="txt"><b>${esc(DN(k))}</b><span>${esc(s.t?s.c+"/"+s.t:t("noAnswers"))}</span><span class="bar"><i style="width:${p}%;background:${dc(k)}"></i></span></span><span class="end num">${s.t?p+"%":"–"}</span></div>`}).join("")}</div></div>
+   <div><div class="group-label">${esc(t("recent"))}</div>${S.history.length?`<div class="list hist">${S.history.slice(0,12).map(h=>{const p=Math.round(h.c/h.t*100);return `<div class="row"><span class="txt"><b>${esc(t(h.label,h.lv))}</b><span>${esc(h.d)}</span></span><span class="end num" style="color:${p>=85?"var(--good)":p>=70?"var(--d4)":"var(--bad)"}">${p}%</span></div>`}).join("")}</div>`:`<p class="muted">${esc(t("noSessions"))}</p>`}</div>
+   <p class="fine">${esc(t("examFacts"))}</p>
+  </div>`;
+  bindLang();
+}
 
-   <div><div class="group-label">${esc(t("background"))}</div>
-    <div class="themes" role="group" aria-label="${esc(t("background"))}">${THEMES.map(([id,k,base,a,b,c])=>`<button type="button" data-theme-bg="${id}" aria-pressed="${(S.bg||"glacier")===id}"><span class="sw" style="${sw(base,a,b,c)}"></span>${esc(t(k))}</button>`).join("")}</div></div>
-
-   <div><div class="group-label">${esc(t("appearance"))}</div>
-    <div class="list seg-wrap"><ion-segment id="appear" value="${S.appearance||"auto"}">${["light","dark","auto"].map(a=>`<ion-segment-button value="${a}"><ion-label>${esc(t("appear"+a[0].toUpperCase()+a.slice(1)))}</ion-label></ion-segment-button>`).join("")}</ion-segment></div></div>
-
-   <div><div class="group-label">${esc(t("language"))}</div>
-    <div class="list seg-wrap"><ion-segment id="langseg" value="${S.lang}">${ENABLED_LANGS.map(c=>`<ion-segment-button value="${c}"><ion-label>${esc(LANGS[c].label.split(" ")[0])}</ion-label></ion-segment-button>`).join("")}</ion-segment></div></div>
-
-   ${Voice.available?`<div><div class="group-label">${esc(t("voiceCoach"))}</div><div class="list">
+/* ---------- settings panel (top-right gear) ---------- */
+const THEMES=[["original","themeOriginal","#eef1f6","#5ec8d4","#a48cff","#ffb27a"],["ocean","themeOcean","#e9f2ff","#2f7dff","#22c3e6","#4f6bff"],["glacier","themeGlacier","#f3f4ff","#8cc8ff","#b9a8ff","#6fa9ff"]];
+function settingsBody(){
+  const vl=Voice.list(), cur=Voice.chosen();
+  const sw=(base,a,b,c)=>`background:radial-gradient(circle at 25% 30%,${a},transparent 62%),radial-gradient(circle at 78% 65%,${b},transparent 60%),radial-gradient(circle at 40% 95%,${c},transparent 55%),${base}`;
+  return `<div class="settings-body">
+   <section><div class="group-label">${esc(t("background"))}</div>
+    <div class="themes" role="group" aria-label="${esc(t("background"))}">${THEMES.map(([id,k,base,a,b,c])=>`<button type="button" data-theme-bg="${id}" aria-pressed="${(S.bg||"glacier")===id}"><span class="sw" style="${sw(base,a,b,c)}"></span>${esc(t(k))}</button>`).join("")}</div></section>
+   <section><div class="group-label">${esc(t("appearance"))}</div>
+    <div class="list seg-wrap"><ion-segment id="appear" value="${S.appearance||"auto"}">${["light","dark","auto"].map(a=>`<ion-segment-button value="${a}"><ion-label>${esc(t("appear"+a[0].toUpperCase()+a.slice(1)))}</ion-label></ion-segment-button>`).join("")}</ion-segment></div></section>
+   <section><div class="group-label">${esc(t("language"))}</div>
+    <div class="list seg-wrap"><ion-segment id="langseg" value="${S.lang}">${ENABLED_LANGS.map(c=>`<ion-segment-button value="${c}"><ion-label>${esc(LANGS[c].label)}</ion-label></ion-segment-button>`).join("")}</ion-segment></div></section>
+   <section><div class="group-label">${esc(t("voiceCoach"))}</div>${Voice.available?`<div class="list">
     <ion-item lines="inset"><span class="tile" slot="start" style="background-color:var(--brand)">${icon("speaker")}</span><ion-select id="vsel" label="${esc(t("voice"))}" interface="popover" value="${esc(S.voice[S.lang]||"")}"><ion-select-option value="">${esc(t("voiceAuto"))}${cur&&!S.voice[S.lang]?" · "+esc(cur.v.name):""}</ion-select-option>${vl.map(x=>`<ion-select-option value="${esc(x.v.name)}">${esc(x.v.name)} (${esc(x.v.lang)})</ion-select-option>`).join("")}</ion-select></ion-item>
     <ion-item lines="none"><span class="tile" slot="start" style="background-color:var(--d1)">${icon("clock")}</span><ion-label>${esc(t("speed"))}</ion-label><ion-note slot="end" id="ratev">${(+S.rate).toFixed(2)}×</ion-note></ion-item>
     <ion-item lines="inset"><ion-range id="rate" min="0.8" max="1.3" step="0.05" value="${S.rate}" aria-label="${esc(t("speed"))}"></ion-range></ion-item>
     <ion-item lines="inset"><span class="tile" slot="start" style="background-color:var(--d5)">${icon("play")}</span><ion-toggle id="auto" ${S.autoRead?"checked":""}>${esc(t("autoRead"))}</ion-toggle></ion-item>
     <ion-item lines="none" button detail id="testv"><span class="tile" slot="start" style="background-color:#3a4150">${fillIcon("play")}</span><ion-label>${esc(t("testVoice"))}</ion-label></ion-item>
-   </div><p class="fine" style="padding:8px 4px 0">${esc(t("voiceHelp"))}</p></div>`:""}
-
-   ${Remind.available?`<div><div class="group-label">${esc(t("reminder"))}</div><div class="list">
-    <ion-item lines="inset"><span class="tile" slot="start" style="background-color:var(--flame)">${icon("flame")}</span><ion-toggle id="rem" ${S.remind.on?"checked":""}>${esc(t("reminderOn"))}</ion-toggle></ion-item>
-    <ion-item lines="none"><span class="tile" slot="start" style="background-color:var(--d4)">${icon("clock")}</span><ion-label>${esc(t("reminderTime"))}</ion-label><input slot="end" type="time" id="remt" value="${esc(S.remind.time)}"></ion-item>
-   </div><p class="fine" id="remmsg" aria-live="polite" style="padding:6px 4px 0"></p></div>`:""}
-
-   <div><div class="group-label">${esc(t("recent"))}</div>${S.history.length?`<div class="list hist">${S.history.slice(0,12).map(h=>{const p=Math.round(h.c/h.t*100);return `<div class="row"><span class="txt"><b>${esc(t(h.label,h.lv))}</b><span>${esc(h.d)}</span></span><span class="end num" style="color:${p>=85?"var(--good)":p>=70?"var(--d4)":"var(--bad)"}">${p}%</span></div>`}).join("")}</div>`:`<p class="muted">${esc(t("noSessions"))}</p>`}</div>
-   <div style="display:flex;flex-direction:column;gap:8px"><p class="fine">${esc(t("examFacts"))}</p><p class="fine">${esc(t("disclaimer"))}</p><p class="fine">${esc(t("privacy"))}</p></div>
-   <button class="btn soft block press" id="reset" style="color:var(--bad)">${esc(t("reset"))}</button>
+   </div><p class="fine" style="padding:8px 4px 0">${esc(t("voiceHelp"))}</p>`:`<p class="fine">${esc(t("audioNA"))}</p>`}</section>
+   <section><div class="group-label">${esc(t("reminder"))}</div><div class="list">
+    <ion-item lines="inset"><span class="tile" slot="start" style="background-color:var(--flame)">${icon("flame")}</span><ion-toggle id="rem" ${S.remind.on?"checked":""} ${Remind.available?"":"disabled"}>${esc(t("reminderOn"))}</ion-toggle></ion-item>
+    <ion-item lines="none"><span class="tile" slot="start" style="background-color:var(--d4)">${icon("clock")}</span><ion-label>${esc(t("reminderTime"))}</ion-label><input slot="end" type="time" id="remt" value="${esc(S.remind.time)}" ${Remind.available?"":"disabled"}></ion-item>
+   </div><p class="fine" id="remmsg" aria-live="polite" style="padding:6px 4px 0">${Remind.available?"":esc(t("reminderAppOnly"))}</p></section>
+   <section><div class="list">
+    <ion-item lines="none" button id="logout"><span class="tile" slot="start" style="background-color:var(--bad)">${icon("logout")}</span><ion-label><span style="color:var(--bad);font-weight:600">${esc(t("logout"))}</span><p>${esc(t("logoutBody"))}</p></ion-label></ion-item>
+   </div></section>
+   <section class="fine-block"><p class="fine">${esc(t("disclaimer"))}</p><p class="fine">${esc(t("privacy"))}</p></section>
   </div>`;
-  bindLang();
-  const on=(id,ev,fn)=>{const el=document.getElementById(id);if(el)el.addEventListener(ev,fn)};
-  app.querySelectorAll("[data-theme-bg]").forEach(b=>b.onclick=()=>{S.bg=b.dataset.themeBg;save();Look.apply();Haptic.tap();app.querySelectorAll("[data-theme-bg]").forEach(x=>x.setAttribute("aria-pressed",x===b))});
+}
+let settingsHost=null;
+function bindSettings(root){
+  const on=(id,ev,fn)=>{const el=root.querySelector("#"+id);if(el)el.addEventListener(ev,fn)};
+  root.querySelectorAll("[data-theme-bg]").forEach(b=>b.onclick=()=>{S.bg=b.dataset.themeBg;save();Look.apply();Haptic.tap();root.querySelectorAll("[data-theme-bg]").forEach(x=>x.setAttribute("aria-pressed",x===b))});
   on("appear","ionChange",e=>{S.appearance=e.detail.value;save();Look.apply();Haptic.tap()});
-  on("langseg","ionChange",e=>{if(e.detail.value===S.lang)return;S.lang=e.detail.value;save();Voice.stop();chrome();viewProgress()});
+  on("langseg","ionChange",e=>{if(e.detail.value===S.lang)return;S.lang=e.detail.value;save();Voice.stop();refreshSettings();chrome();rerenderBehind()});
   on("vsel","ionChange",e=>{S.voice[S.lang]=e.detail.value||"";save();speak(Voice.chunk(t("voiceSample")))});
-  on("rate","ionInput",e=>{const v=document.getElementById("ratev");if(v)v.textContent=(+e.detail.value).toFixed(2)+"×"});
+  on("rate","ionInput",e=>{const v=root.querySelector("#ratev");if(v)v.textContent=(+e.detail.value).toFixed(2)+"×"});
   on("rate","ionChange",e=>{S.rate=+e.detail.value;save()});
   on("auto","ionChange",e=>{S.autoRead=e.detail.checked;save();Haptic.tap()});
   on("testv","click",()=>speak(Voice.chunk(t("voiceSample"),{pitch:1.04})));
-  const msg=m=>{const el=document.getElementById("remmsg");if(el)el.textContent=m};
-  on("rem","ionChange",async e=>{S.remind.on=e.detail.checked;save();msg(await Remind.apply());const r=document.getElementById("rem");if(r)r.checked=S.remind.on});
+  const msg=m=>{const el=root.querySelector("#remmsg");if(el)el.textContent=m};
+  on("rem","ionChange",async e=>{S.remind.on=e.detail.checked;save();msg(await Remind.apply());const r=root.querySelector("#rem");if(r)r.checked=S.remind.on});
   on("remt","change",async e=>{S.remind.time=e.target.value||"19:00";save();if(S.remind.on)msg(await Remind.apply())});
-  const r=document.getElementById("reset"); let armed=false;
-  r.onclick=()=>{if(!armed){armed=true;r.textContent=t("resetConfirm");Haptic.no();return}Object.assign(S,{days:[],history:[],missed:{},seen:{},dstat:{},scen:{},daily:{d:"",n:0}});save();chrome();viewProgress()};
+  on("logout","click",confirmLogout);
 }
-Voice.onVoices = () => { if(tab==="progress" && !quiz) viewProgress(); };
+function rerenderBehind(){ if(quiz&&document.querySelector(".qtext")) renderQ(); else ({practice:viewPractice,learn:viewLearn,scenarios:viewScenarios,progress:viewProgress})[tab](); }
+function refreshSettings(){ if(!settingsHost) return; const box=settingsHost.querySelector(".settings-slot"); box.innerHTML=settingsBody(); bindSettings(box);
+  const tt=settingsHost.querySelector(".settings-title"); if(tt) tt.textContent=t("settings"); const dn=settingsHost.querySelector(".settings-done"); if(dn) dn.textContent=t("done"); }
+async function openSettings(){
+  Haptic.tap(); Voice.stop();
+  if(customElements.get("ion-modal")){
+    const m=document.createElement("ion-modal"); m.className="settings-modal";
+    m.innerHTML=`<ion-header class="ion-no-border"><ion-toolbar><ion-title class="settings-title">${esc(t("settings"))}</ion-title><ion-buttons slot="end"><ion-button class="settings-done" strong="true">${esc(t("done"))}</ion-button></ion-buttons></ion-toolbar></ion-header><ion-content><div class="settings-slot"></div></ion-content>`;
+    document.body.appendChild(m); settingsHost=m; refreshSettings();
+    m.querySelector(".settings-done").addEventListener("click",()=>m.dismiss());
+    m.addEventListener("didDismiss",()=>{m.remove();settingsHost=null});
+    await m.present();
+  } else {
+    openSheet(`<div class="row" style="padding:0;min-height:0;justify-content:space-between"><h2 class="settings-title">${esc(t("settings"))}</h2><button class="btn small settings-done" type="button">${esc(t("done"))}</button></div><div class="settings-slot" style="max-height:72vh;overflow:auto"></div>`,
+      s=>{settingsHost=s;refreshSettings();s.querySelector(".settings-done").onclick=()=>{closeSheet();settingsHost=null}});
+  }
+}
+function doLogout(){
+  Voice.stop(); try{localStorage.removeItem(KEY)}catch(e){}
+  const keepLang=S.lang;
+  for(const k of Object.keys(S)) delete S[k];
+  Object.assign(S,{days:[],history:[],missed:{},seen:{},dstat:{},scen:{},lang:keepLang,voice:{},rate:1,autoRead:false,remind:{on:false,time:"19:00"},bg:"glacier",appearance:"auto",daily:{d:"",n:0},v:2});
+  save(); Remind.apply&&Remind.available&&Remind.apply(); Look.apply();
+  const host=settingsHost; settingsHost=null;
+  if(host){ if(host.dismiss) host.dismiss().then(()=>host.isConnected&&host.remove()); else closeSheet(); }
+  Haptic.ok(); go("practice");
+}
+async function confirmLogout(){
+  Haptic.no();
+  if(customElements.get("ion-alert")){
+    const a=document.createElement("ion-alert");
+    a.header=t("logoutTitle"); a.message=t("logoutMsg");
+    a.buttons=[{text:t("cancel"),role:"cancel"},{text:t("logout"),role:"destructive"}];
+    document.body.appendChild(a); a.addEventListener("didDismiss",e=>{a.remove(); if(e.detail&&e.detail.role==="destructive") doLogout();}); await a.present();
+  } else {
+    const b=document.querySelector("#logout ion-label span"); if(b&&b.dataset.armed){doLogout();return}
+    if(b){b.dataset.armed="1";b.textContent=t("resetConfirm")}
+  }
+}
+Voice.onVoices = () => { refreshSettings(); };
 
 chrome(); viewPractice();
 })();
