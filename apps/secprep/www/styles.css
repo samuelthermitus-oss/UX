@@ -243,6 +243,8 @@ select,input[type=time]{font:inherit;font-size:15px;padding:6px 10px;border-radi
    Appearance: html[data-theme] light/dark, or none = follow the phone.
    ===================================================================== */
 html,body{overflow:visible!important;position:static!important;height:auto!important;min-height:100%}
+/* Ionic gives body a transform, which would make fixed bars scroll with the page */
+body{transform:none!important;contain:none!important}
 :root{
   --stage:#eef1f6; --blob1:#5ec8d4; --blob2:#a48cff; --blob3:#ffb27a; --blob4:#7fb2ff;
   --glass:rgba(255,255,255,.58); --glass-card:rgba(255,255,255,.52); --glass-strong:rgba(255,255,255,.74);
@@ -288,7 +290,8 @@ body::before{background:transparent}
   box-shadow:inset 0 1px .5px var(--glass-edge),inset 0 0 0 .5px rgba(255,255,255,.26),0 10px 30px var(--glass-shade)}
 nav.tabs,.dock,.qbar,.player{background:var(--glass)}
 .dock.fb,.sheet{background:var(--glass-strong)}
-.card,.list,.stat,.opt,nav.tabs,.dock.fb,.themes button{position:relative;overflow:hidden}
+.card,.list,.stat,.opt,.themes button{position:relative;overflow:hidden}
+nav.tabs,.dock,.dock.fb,.player{position:fixed;overflow:hidden}
 .card::after,.list::after,.stat::after,nav.tabs::after,.dock.fb::after,.opt::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
   background:radial-gradient(200px circle at var(--mx,30%) var(--my,0%),rgba(255,255,255,.35),transparent 60%),linear-gradient(160deg,rgba(255,255,255,.2),transparent 38%);mix-blend-mode:soft-light}
 .card{border-radius:28px} .list{border-radius:26px} .opt{border-radius:20px} .stat{border-radius:20px}

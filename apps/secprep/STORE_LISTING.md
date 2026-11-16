@@ -20,7 +20,7 @@ Get ready for the CompTIA Security+ (SY0-701) exam a little every day.
 • Spoken lessons for every domain, with a natural coach voice, pauses and exam tips. Study hands-free on your commute
 • Live incident scenarios: watch logs stream in, hear the narrator, and make the call, just like performance-based questions
 • Streaks, accuracy by domain and a daily reminder to keep you consistent
-• Three languages: English, French and Haitian Creole
+• Two languages: English and French
 • Works offline. No account, no ads, no tracking
 
 SecPrep Daily is an independent study app. The questions are original and written to the official exam objectives; they are not actual exam questions. Not affiliated with or endorsed by CompTIA. CompTIA and Security+ are trademarks of CompTIA, Inc.
@@ -42,14 +42,14 @@ Préparez l'examen CompTIA Security+ (SY0-701) un peu chaque jour.
 • Leçons audio pour chaque domaine, avec une voix de coach naturelle, des pauses et des astuces d'examen
 • Scénarios d'incidents en direct : les journaux défilent, le narrateur explique, vous décidez
 • Séries, précision par domaine et rappel quotidien
-• Trois langues : anglais, français et créole haïtien
+• Deux langues : anglais et français
 • Fonctionne hors ligne. Sans compte, sans publicité, sans suivi
 
 SecPrep Daily est une application d'étude indépendante. Les questions sont originales et rédigées d'après les objectifs officiels ; ce ne sont pas de vraies questions d'examen. Non affilié à CompTIA ni approuvé par CompTIA. CompTIA et Security+ sont des marques de CompTIA, Inc.
 
 ---
 
-## Kreyòl ayisyen
+## Kreyòl ayisyen (not in version 1.0, keep for a later update)
 
 **Non:** SecPrep Daily
 **Deskripsyon kout (Google):** Pratik chak jou, leson odyo ak senaryo pou egzamen Security+.

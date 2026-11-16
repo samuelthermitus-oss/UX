@@ -10,10 +10,13 @@ const PLUG = (CAP && CAP.Plugins) || {};
 
 /* ---------- storage ---------- */
 const KEY = "secprep-v2";
-const S = Object.assign({days:[],history:[],missed:{},seen:{},dstat:{},scen:{},lang:null,voice:{},rate:1,autoRead:false,remind:{on:false,time:"19:00"},bg:"original",appearance:"auto"}, read());
+const S = Object.assign({days:[],history:[],missed:{},seen:{},dstat:{},scen:{},lang:null,voice:{},rate:1,autoRead:false,remind:{on:false,time:"19:00"},bg:"glacier",appearance:"auto"}, read());
 function read(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-if(!S.lang){const n=(navigator.language||"en").toLowerCase();S.lang=n.startsWith("ht")?"ht":n.startsWith("fr")?"fr":"en"}
+const ENABLED_LANGS=["en","fr"];
+if(!S.v||S.v<2){S.bg="glacier";S.v=2;}
+if(!S.lang||!ENABLED_LANGS.includes(S.lang)){const n=(navigator.language||"en").toLowerCase();S.lang=n.startsWith("fr")||n.startsWith("ht")?"fr":"en"}
+save();
 
 /* ---------- i18n ---------- */
 const L = () => LANGS[S.lang] || EN;
@@ -149,7 +152,7 @@ function ring(pct, size, stroke, color, inner){
 /* ---------- look: background theme + light/dark ---------- */
 const Look = {
   mq: window.matchMedia("(prefers-color-scheme: dark)"),
-  apply(){ const r=document.documentElement; r.dataset.bg=S.bg||"original"; const a=S.appearance||"auto";
+  apply(){ const r=document.documentElement; r.dataset.bg=S.bg||"glacier"; const a=S.appearance||"auto";
     if(a==="auto") r.removeAttribute("data-theme"); else r.setAttribute("data-theme",a);
     const dark=a==="dark"||(a==="auto"&&this.mq.matches); r.classList.toggle("ion-palette-dark",dark);
     const m=document.querySelector('meta[name="theme-color"]'); if(m) m.content=dark?"#07090c":"#eef1f6";
@@ -187,7 +190,7 @@ function bindLang(){ const b=document.getElementById("langbtn"); if(b) b.onclick
 function openSheet(html, bind){ closeSheet(); const s=document.createElement("div"); s.id="sheetwrap"; s.innerHTML=`<div class="scrim" data-close></div><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`; document.body.appendChild(s); s.querySelector("[data-close]").onclick=closeSheet; if(bind) bind(s); }
 function closeSheet(){ const s=document.getElementById("sheetwrap"); if(s) s.remove(); }
 function openLangSheet(){
-  openSheet(`<h2>${esc(t("chooseLanguage"))}</h2><div class="list">${["en","fr","ht"].map(c=>`<button class="row" type="button" data-l="${c}"><span class="txt"><b>${esc(LANGS[c].label)}</b></span><span class="end check">${S.lang===c?icon("check"):""}</span></button>`).join("")}</div>`,
+  openSheet(`<h2>${esc(t("chooseLanguage"))}</h2><div class="list">${ENABLED_LANGS.map(c=>`<button class="row" type="button" data-l="${c}"><span class="txt"><b>${esc(LANGS[c].label)}</b></span><span class="end check">${S.lang===c?icon("check"):""}</span></button>`).join("")}</div>`,
   s=>s.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>{S.lang=b.dataset.l;save();Voice.stop();Haptic.tap();closeSheet();if(quiz&&document.querySelector(".qtext"))renderQ();else go(tab);chrome()}));
 }
 
@@ -396,13 +399,13 @@ function viewProgress(){
    <div><div class="group-label">${esc(t("accByDomain"))}</div><div class="list">${[1,2,3,4,5].map(k=>{const s=S.dstat[k]||{c:0,t:0},p=s.t?Math.round(s.c/s.t*100):0;return `<div class="row"><span class="tile" style="background-color:${dc(k)}">${icon("d"+k)}</span><span class="txt"><b>${esc(DN(k))}</b><span>${esc(s.t?s.c+"/"+s.t:t("noAnswers"))}</span><span class="bar"><i style="width:${p}%;background:${dc(k)}"></i></span></span><span class="end num">${s.t?p+"%":"–"}</span></div>`}).join("")}</div></div>
 
    <div><div class="group-label">${esc(t("background"))}</div>
-    <div class="themes" role="group" aria-label="${esc(t("background"))}">${THEMES.map(([id,k,base,a,b,c])=>`<button type="button" data-theme-bg="${id}" aria-pressed="${(S.bg||"original")===id}"><span class="sw" style="${sw(base,a,b,c)}"></span>${esc(t(k))}</button>`).join("")}</div></div>
+    <div class="themes" role="group" aria-label="${esc(t("background"))}">${THEMES.map(([id,k,base,a,b,c])=>`<button type="button" data-theme-bg="${id}" aria-pressed="${(S.bg||"glacier")===id}"><span class="sw" style="${sw(base,a,b,c)}"></span>${esc(t(k))}</button>`).join("")}</div></div>
 
    <div><div class="group-label">${esc(t("appearance"))}</div>
     <div class="list seg-wrap"><ion-segment id="appear" value="${S.appearance||"auto"}">${["light","dark","auto"].map(a=>`<ion-segment-button value="${a}"><ion-label>${esc(t("appear"+a[0].toUpperCase()+a.slice(1)))}</ion-label></ion-segment-button>`).join("")}</ion-segment></div></div>
 
    <div><div class="group-label">${esc(t("language"))}</div>
-    <div class="list seg-wrap"><ion-segment id="langseg" value="${S.lang}">${["en","fr","ht"].map(c=>`<ion-segment-button value="${c}"><ion-label>${esc(LANGS[c].label.split(" ")[0])}</ion-label></ion-segment-button>`).join("")}</ion-segment></div></div>
+    <div class="list seg-wrap"><ion-segment id="langseg" value="${S.lang}">${ENABLED_LANGS.map(c=>`<ion-segment-button value="${c}"><ion-label>${esc(LANGS[c].label.split(" ")[0])}</ion-label></ion-segment-button>`).join("")}</ion-segment></div></div>
 
    ${Voice.available?`<div><div class="group-label">${esc(t("voiceCoach"))}</div><div class="list">
     <ion-item lines="inset"><span class="tile" slot="start" style="background-color:var(--brand)">${icon("speaker")}</span><ion-select id="vsel" label="${esc(t("voice"))}" interface="popover" value="${esc(S.voice[S.lang]||"")}"><ion-select-option value="">${esc(t("voiceAuto"))}${cur&&!S.voice[S.lang]?" · "+esc(cur.v.name):""}</ion-select-option>${vl.map(x=>`<ion-select-option value="${esc(x.v.name)}">${esc(x.v.name)} (${esc(x.v.lang)})</ion-select-option>`).join("")}</ion-select></ion-item>

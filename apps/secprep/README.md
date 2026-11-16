@@ -1,6 +1,6 @@
 # SecPrep Daily
 
-A Security+ (SY0-701) study app in **English, French and Haitian Creole** for iPhone and Android.
+A Security+ (SY0-701) study app in **English and French** for iPhone and Android. Haitian Creole content is written (`www/data/ht.js`) but turned off for version 1.0.
 
 The app includes:
 - 189 practice questions with explanations
