@@ -60,8 +60,8 @@ const Voice = (function(){
   let onVoices = null;
   function langMatch(vlang, prefs){ vlang=(vlang||"").toLowerCase().replace("_","-"); for(let i=0;i<prefs.length;i++){ const p=prefs[i].toLowerCase(); if(vlang===p) return 100-i*10; if(vlang.split("-")[0]===p.split("-")[0]) return 90-i*10; } return -1; }
   function score(v, prefs){ const lm=langMatch(v.lang, prefs); if(lm<0) return -1; let s=lm; if(QUALITY.test(v.name)) s+=40; if(GOOD_NAMES.test(v.name)) s+=15; if(v.localService===false) s+=5; if(/compact|eloquence|espeak/i.test(v.name)) s-=30; return s; }
-  function list(){ const prefs=VLANG().speech; const src = nativeTTS ? nativeVoices : voices; return src.map((v,i)=>({v,i,s:score(v,prefs)})).filter(x=>x.s>=0).sort((a,b)=>b.s-a.s); }
-  function chosen(){ const l=list(); const want=Voice_langOverride?null:S.voice[S.lang]; if(want){ const f=l.find(x=>x.v.name===want); if(f) return f; } return l[0]||null; }
+  function list(lang){ const prefs=((lang&&LANGS[lang])||VLANG()).speech; const src = nativeTTS ? nativeVoices : voices; return src.map((v,i)=>({v,i,s:score(v,prefs)})).filter(x=>x.s>=0).sort((a,b)=>b.s-a.s); }
+  function chosen(lang){ const l=list(lang); const want=(lang&&lang!==S.lang)?null:S.voice[S.lang]; if(want){ const f=l.find(x=>x.v.name===want); if(f) return f; } return l[0]||null; }
   // Split text into speakable chunks, keeping each sentence's own pause.
   // Natural delivery: steady pitch, normal pace, sentences grouped into flowing phrases (about 240 characters),
   // with short breaths between phrases and a longer pause between paragraphs.
@@ -71,17 +71,17 @@ const Voice = (function(){
       sents.forEach(x=>{ if((buf+" "+x).length>240) flush(); buf=buf?buf+" "+x:x; }); flush();
       if(parts.length) parts[parts.length-1].pause=560; });
     if(parts.length&&opt.after!=null) parts[parts.length-1].pause=Math.max(250,Math.min(700,opt.after));
-    const src=String(text).replace(/\s+/g," ").trim(), vl=VLANG().code, gid=++gidSeq; parts.forEach(x=>{x.src=src;x.vl=vl;x.gid=gid;}); return parts; }
+    const src=String(text).replace(/\s+/g," ").trim(), vl=opt.lang||VLANG().code, gid=++gidSeq; parts.forEach(x=>{x.src=src;x.vl=vl;x.gid=gid;}); return parts; }
   function sayOne(p, my){ return new Promise(res=>{
     if(my!==token) return res();
-    const c = chosen(); const rate = Math.max(0.5, Math.min(2, p.rate*S.rate)); const pitch = Math.max(0.5,Math.min(2,p.pitch));
+    const PL=(p.vl&&LANGS[p.vl])||VLANG(); const c = chosen(PL.code); const rate = Math.max(0.5, Math.min(2, p.rate*S.rate)); const pitch = Math.max(0.5,Math.min(2,p.pitch));
     if(nativeTTS){
-      const lang = c ? (c.v.lang||L().speech[0]) : (VLANG().code==="ht"?"fr-FR":VLANG().speech[0]);
+      const lang = c ? (c.v.lang||PL.speech[0]) : (PL.code==="ht"?"fr-FR":PL.speech[0]);
       const o = {text:p.t, lang, rate, pitch, volume:1, category:"playback"}; if(c) o.voice=c.i;
       nativeTTS.speak(o).then(res,res); return;
     }
     if(!web) return res();
-    try{ const u=new SpeechSynthesisUtterance(p.t); if(c){u.voice=c.v;u.lang=c.v.lang}else{u.lang=VLANG().code==="ht"?"fr-FR":VLANG().speech[0]} u.rate=rate; u.pitch=pitch; u.onend=res; u.onerror=res; speechSynthesis.speak(u);
+    try{ const u=new SpeechSynthesisUtterance(p.t); if(c){u.voice=c.v;u.lang=c.v.lang}else{u.lang=PL.code==="ht"?"fr-FR":PL.speech[0]} u.rate=rate; u.pitch=pitch; u.onend=res; u.onerror=res; speechSynthesis.speak(u);
       // iOS Safari occasionally drops onend; a time-based fallback keeps the queue moving.
       setTimeout(res, 1500 + p.t.length*95/rate);
     }catch(e){res()}
@@ -695,7 +695,7 @@ const VI = {
 };
 const vicon = n => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="${VI[n]||VI.doc}"/></svg>`;
 S.read = S.read || {}; S.watched = S.watched || {}; S.exams = S.exams || [];
-function speakGuide(parts, done){ Voice_langOverride = guideLang()!==S.lang ? guideLang() : null; speak(parts, ()=>{ Voice_langOverride=null; if(done) done(); }); }
+function speakGuide(parts, done){ const gl=guideLang(); parts.forEach(x=>x.vl=gl); speak(parts, done); }
 
 /* ---------- Learn tab ---------- */
 let learnView = "chapters";
@@ -805,7 +805,7 @@ function playScene(){
   paintCtl();
   const advance=()=>{ if(!vidState||vidState!==st||!st.playing) return; if(st.i<st.v.scenes.length-1){st.i++;playScene()} else endVideo(); };
   if(!st.playing) return;
-  if(st.sound&&Voice.available){ Voice_langOverride=st.v===((window.SECPREP_VIDEOS||{})[S.lang]||[]).find(x=>x.id===st.v.id)?null:"en"; Voice.play(Voice.chunk(sc.say,{pitch:sc.k==="title"?1.04:0.99,rate:0.97}),()=>{Voice_langOverride=null;st.timer=setTimeout(advance,900)}); }
+  if(st.sound&&Voice.available){ const vlang=((window.SECPREP_VIDEOS||{})[S.lang]||[]).some(x=>x===st.v)?S.lang:"en"; Voice.play(Voice.chunk(sc.say,{lang:vlang,rate:0.97}),()=>{st.timer=setTimeout(advance,900)}); }
   else st.timer=setTimeout(advance,est);
 }
 function endVideo(){
