@@ -7,7 +7,7 @@
     "sync": "npx cap sync",
     "build:web": "node scripts/build-single.js",
     "check": "node scripts/check-data.js",
-    "assets": "npx @capacitor/assets generate --iconBackgroundColor '#0f6e7a' --iconBackgroundColorDark '#0c131b' --splashBackgroundColor '#0f6e7a' --splashBackgroundColorDark '#0c131b'",
+    "assets": "npx @capacitor/assets generate --iconBackgroundColor \"#0d1f57\" --iconBackgroundColorDark \"#050a1c\" --splashBackgroundColor \"#0d1f57\" --splashBackgroundColorDark \"#050a1c\" && node scripts/ios-icon-appearances.js",
     "vendor:ionic": "rm -rf www/lib/ionic && mkdir -p www/lib/ionic && cp -r node_modules/@ionic/core/dist/ionic/. www/lib/ionic/ && cp node_modules/@ionic/core/css/ionic.bundle.css node_modules/@ionic/core/css/palettes/dark.class.css www/lib/ionic/",
     "build:content": "node scripts/check-data.js && node scripts/build-content.js",
     "audio": "node scripts/generate-audio.js"

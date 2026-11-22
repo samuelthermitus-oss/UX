@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d1f57"/><stop offset="1" stop-color="#071233"/></linearGradient></defs><clipPath id="r"><rect width="1024" height="1024" rx="230"/></clipPath><g clip-path="url(#r)"><rect width="1024" height="1024" fill="url(#bg)"/><g opacity="1"><path d="M-40 724 L1064 170 L1064 300 L-40 854 Z" fill="#e3202c"/><path d="M-40 854 L1064 300 L1064 380 L-40 934 Z" fill="#1d3f9f"/></g><g transform="translate(512 512) scale(0.88) translate(-512 -512)">
+  <path d="M512 96 L792 196 V430 C792 590 676 704 512 766 C348 704 232 590 232 430 V196 Z" fill="#ffffff" transform="translate(512 431) scale(1.12) translate(-512 -431)"/>
+  <path d="M512 96 L792 196 V430 C792 590 676 704 512 766 C348 704 232 590 232 430 V196 Z" fill="#e3202c" transform="translate(512 431) scale(1.04) translate(-512 -431)"/>
+  <path d="M512 96 L792 196 V430 C792 590 676 704 512 766 C348 704 232 590 232 430 V196 Z" fill="#0b1a49"/>
+  <path d="M388 430 L478 520 L650 340" fill="none" stroke="#ffffff" stroke-width="66" stroke-linecap="square" stroke-linejoin="miter"/>
+  <text x="512" y="938" text-anchor="middle" font-family="Inter, 'Inter Display', sans-serif" font-weight="900" font-style="italic" font-size="196" letter-spacing="-6">
+    <tspan fill="#ffffff">Sec</tspan><tspan fill="#e3202c">Prep</tspan></text></g></g></svg>
