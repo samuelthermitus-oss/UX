@@ -60,7 +60,14 @@ const Voice = (function(){
   function list(){ const prefs=VLANG().speech; const src = nativeTTS ? nativeVoices : voices; return src.map((v,i)=>({v,i,s:score(v,prefs)})).filter(x=>x.s>=0).sort((a,b)=>b.s-a.s); }
   function chosen(){ const l=list(); const want=Voice_langOverride?null:S.voice[S.lang]; if(want){ const f=l.find(x=>x.v.name===want); if(f) return f; } return l[0]||null; }
   // Split text into speakable chunks, keeping each sentence's own pause.
-  function chunk(text, opt){ opt=opt||{}; const parts=[]; String(text).replace(/\s+/g," ").split(/(?<=[.!?…:;])\s+/).forEach(s=>{ s=s.trim(); if(!s) return; const isQ=/\?$/.test(s); const ell=/(\.\.\.|…)$/.test(s); parts.push({t:s, pause: ell?650 : isQ?520 : /[:;]$/.test(s)?380 : 420, pitch:(opt.pitch||1)+(Math.random()*0.08-0.04)+(isQ?0.04:0), rate:(opt.rate||1)*(1+(Math.random()*0.06-0.03))}); }); if(parts.length&&opt.after!=null) parts[parts.length-1].pause=opt.after; return parts; }
+  // Natural delivery: steady pitch, normal pace, sentences grouped into flowing phrases (about 240 characters),
+  // with short breaths between phrases and a longer pause between paragraphs.
+  function chunk(text, opt){ opt=opt||{}; const parts=[]; const rate=Math.max(.9,Math.min(1.08,opt.rate||1));
+    String(text).split(/\n\s*\n/).forEach(par=>{ const sents=par.replace(/\s+/g," ").trim().split(/(?<=[.!?])\s+/).filter(Boolean); let buf="";
+      const flush=()=>{ if(buf){ parts.push({t:buf.replace(/\.\.\.|…/g,","), pause:280, pitch:1, rate}); buf=""; } };
+      sents.forEach(x=>{ if((buf+" "+x).length>240) flush(); buf=buf?buf+" "+x:x; }); flush();
+      if(parts.length) parts[parts.length-1].pause=560; });
+    if(parts.length&&opt.after!=null) parts[parts.length-1].pause=Math.max(250,Math.min(700,opt.after)); return parts; }
   function sayOne(p, my){ return new Promise(res=>{
     if(my!==token) return res();
     const c = chosen(); const rate = Math.max(0.5, Math.min(2, p.rate*S.rate)); const pitch = Math.max(0.5,Math.min(2,p.pitch));
