@@ -581,7 +581,7 @@ const Onboard = {
       `<div class="ob-bar"><button class="icon-btn press" type="button" id="obback" aria-label="${esc(t("back"))}">${icon("back")}</button><div class="segs"><i style="width:${this.i/total*100}%"></i></div><span class="timer">${this.i}/${total}</span></div>`;
     const choice=(name,val,title,sub,cur)=>`<button type="button" class="choice press" data-${name}="${val}" aria-pressed="${String(cur)===String(val)}"><b>${esc(title)}</b><span>${esc(sub)}</span></button>`;
     let body="", next=true;
-    if(s==="welcome"){ next=false; body=`<div class="auth-hero welcome"><img class="logo-img" src="img/logo.svg" alt="SecPrep" width="104" height="104"><h1>SecPrep Daily</h1><p class="muted">${esc(t("welcomeBody"))}</p></div>
+    if(s==="welcome"){ next=false; body=`<div class="auth-hero welcome"><img class="logo-img" src="img/logo.png" alt="SecPrep" width="104" height="104"><h1>SecPrep Daily</h1><p class="muted">${esc(t("welcomeBody"))}</p></div>
       <div class="ob-actions"><button class="btn block press" id="obstart">${esc(t("createProfile"))}</button><p class="fine" style="text-align:center">${esc(t("privacy"))}</p></div>`; }
     if(s==="name") body=`<h1>${esc(t("nameTitle"))}</h1><p class="muted">${esc(t("nameHint"))}</p><input class="field" id="obname" type="text" autocomplete="given-name" maxlength="30" placeholder="${esc(t("namePh"))}" value="${esc(d.name)}">`;
     if(s==="birth"){ const months=[...Array(12)].map((_,k)=>new Date(2000,k,1).toLocaleDateString(S.lang,{month:"long"}));
