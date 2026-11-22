@@ -46,13 +46,20 @@ if (DRY) process.exit(0);
 if (!REGION) { console.error("Give the Azure region, for example --region francecentral"); process.exit(1); }
 
 const xml = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
-function tts(text) { return new Promise((resolve, reject) => {
+// Uses curl so requests go through the system's HTTPS proxy settings (Node's https module ignores them).
+const { spawn } = require("child_process");
+function tts(text, outFile) { return new Promise((resolve, reject) => {
   const ssml = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="${VOICE.slice(0, 5)}"><voice name="${VOICE}">${xml(text)}</voice></speak>`;
-  const req = https.request({ host: `${REGION}.tts.speech.microsoft.com`, path: "/cognitiveservices/v1", method: "POST",
-    headers: { "Ocp-Apim-Subscription-Key": process.env.AZURE_SPEECH_KEY || "placeholder-key", "Content-Type": "application/ssml+xml",
-      "X-Microsoft-OutputFormat": "audio-24khz-48kbitrate-mono-mp3", "User-Agent": "secprep-audio-builder" } }, res => {
-    const chunks = []; res.on("data", c => chunks.push(c)); res.on("end", () => res.statusCode === 200 ? resolve(Buffer.concat(chunks)) : reject(new Error(res.statusCode + " " + Buffer.concat(chunks).toString().slice(0, 200)))); });
-  req.on("error", reject); req.end(ssml); }); }
+  const tmp = outFile + ".part";
+  const c = spawn("curl", ["-s", "-o", tmp, "-w", "%{http_code}", "--max-time", "60", "-X", "POST",
+    `https://${REGION}.tts.speech.microsoft.com/cognitiveservices/v1`,
+    "-H", "Ocp-Apim-Subscription-Key: " + (process.env.AZURE_SPEECH_KEY || "placeholder-key"),
+    "-H", "Content-Type: application/ssml+xml", "-H", "X-Microsoft-OutputFormat: audio-24khz-48kbitrate-mono-mp3",
+    "-H", "User-Agent: secprep-audio-builder", "--data-binary", "@-"]);
+  let code = ""; c.stdout.on("data", d => code += d); c.on("error", reject);
+  c.on("close", () => { if (code === "200" && fs.existsSync(tmp) && fs.statSync(tmp).size > 0) { fs.renameSync(tmp, outFile); resolve(); }
+    else { try { fs.unlinkSync(tmp); } catch (e) {} reject(new Error(code || "network error")); } });
+  c.stdin.end(ssml); }); }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function writeManifest() {
@@ -65,7 +72,7 @@ function writeManifest() {
   let done = 0, failed = 0;
   for (const text of todo) {
     for (let attempt = 1; attempt <= 4; attempt++) {
-      try { fs.writeFileSync(path.join(outDir, keyOf(text) + ".mp3"), await tts(text)); done++; break; }
+      try { await tts(text, path.join(outDir, keyOf(text) + ".mp3")); done++; break; }
       catch (e) { if (attempt === 4 || !/^(429|5\d\d)/.test(e.message)) { failed++; console.error("✗", e.message, "·", text.slice(0, 60)); break; } await sleep(1500 * attempt); }
     }
     if (done % 25 === 0 && done) { console.log(`  ${done}/${todo.length}`); writeManifest(); }
