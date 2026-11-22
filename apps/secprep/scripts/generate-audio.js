@@ -9,11 +9,11 @@
 const fs = require("fs"), path = require("path"), vm = require("vm"), https = require("https");
 const arg = (n, d) => { const i = process.argv.indexOf("--" + n); return i > 0 ? process.argv[i + 1] : d; };
 const LANG = arg("lang", "fr"), REGION = arg("region", process.env.AZURE_SPEECH_REGION || ""), DRY = process.argv.includes("--dry-run");
-const ONLY = (arg("only", "videos,coach,quiz,lessons,scenarios")).split(",");
+const ONLY = (arg("only", "videos,coach,quiz,lessons,scenarios,chapters")).split(",");
 const www = path.join(__dirname, "../www");
 
 const ctx = { window: {} }; vm.createContext(ctx);
-for (const f of ["config.js", "data/en.js", "data/fr.js", "data/videos-en.js", "data/videos-fr.js"]) {
+for (const f of ["config.js", "data/en.js", "data/fr.js", "data/videos-en.js", "data/videos-fr.js", "data/guide-en-d1.js", "data/guide-en-d2.js", "data/guide-en-d3.js", "data/guide-en-d4.js", "data/guide-en-d5.js"]) {
   const p = path.join(www, f); if (fs.existsSync(p)) vm.runInContext(fs.readFileSync(p, "utf8"), ctx);
 }
 const W = ctx.window, cfg = W.SECPREP_CONFIG || {}, L = W.SECPREP_LANGS[LANG];
@@ -38,6 +38,14 @@ if (ONLY.includes("quiz")) L.q.forEach(q => { add(q[1]); add(q[2]); q[3].forEach
 if (ONLY.includes("lessons")) Object.values(L.lessons).forEach(ls => ls.forEach(l => { add(l[0]); l[1].split("|").forEach(add); add(l[2]); }));
 if (ONLY.includes("scenarios")) (L.scen || []).forEach(s => { add(s.intro); s.steps.forEach(st => { add(st.say); st.choices.forEach(c => add(c[c.length - 1])); }); });
 
+// Study guide chapters, split exactly like the app's "listen" button (www/app.js: openChapter).
+const guideLang = W.SECPREP_GUIDE_LANG || "en";
+if (ONLY.includes("chapters") && LANG === guideLang) (W.SECPREP_GUIDE || { chapters: [] }).chapters.forEach(c => {
+  const plain = s => String(s).replace(/\*\*/g, "");
+  add(c.t + "."); add(plain(c.intro));
+  c.s.forEach(([h, txt, bul]) => { add(h + "."); add(plain(txt)); (bul || []).forEach(b => add(plain(b) + ".")); });
+  if (c.ex) add(c.ex); if (c.tip) add(c.tip);
+});
 const outDir = path.join(www, "audio", LANG); fs.mkdirSync(outDir, { recursive: true });
 const list = [...units], todo = list.filter(t => !fs.existsSync(path.join(outDir, keyOf(t) + ".mp3")));
 const chars = todo.reduce((a, t) => a + t.length, 0);
