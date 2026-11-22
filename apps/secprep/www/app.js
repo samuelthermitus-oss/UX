@@ -193,6 +193,9 @@ S.daily = S.daily || {d:"", n:0};
 let GOAL = 25;
 const todayCount = () => S.daily.d===today() ? S.daily.n : 0;
 const app = document.getElementById("app");
+function countUp(el){ if(matchMedia("(prefers-reduced-motion: reduce)").matches) return; const m=el.textContent.match(/^(\D*)(\d+)(\D*)$/); if(!m) return; const to=+m[2]; if(to<2) return;
+  const t0=performance.now(), d=900; const step=now=>{ const p=Math.min(1,(now-t0)/d), e=1-Math.pow(1-p,3); el.textContent=m[1]+Math.round(to*e)+m[3]; if(p<1) requestAnimationFrame(step); }; el.textContent=m[1]+"0"+m[3]; requestAnimationFrame(step); }
+new MutationObserver(()=>requestAnimationFrame(()=>{ app.querySelectorAll(".screen.enter .stat b, .screen.enter .ready-top .num, .screen.enter .hero .ring-wrap b.num, .screen.enter .score .ring-wrap b").forEach(countUp); })).observe(app,{childList:true});
 new MutationObserver(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>app.querySelectorAll("circle[data-target]").forEach(c=>{c.setAttribute("stroke-dashoffset",c.dataset.target);c.removeAttribute("data-target")})))).observe(app,{childList:true});
 const tabsEl = document.getElementById("tabs");
 let tab = "practice", quiz = null, timerId = null, scenTimers = [], shownTab = null;
@@ -207,7 +210,7 @@ function chrome(){
   tabsEl.querySelectorAll("button").forEach(b=>b.onclick=()=>{Haptic.tap();go(b.dataset.tab)});
 }
 function focusMode(on){ document.body.classList.toggle("focus", !!on); }
-function go(x){ if(typeof stopVid==="function") stopVid(); Voice.stop(); Player.hide(); clearInterval(timerId); clearScen(); closeSheet(); quiz=null; focusMode(false); tab=x; chrome(); window.scrollTo(0,0); ({practice:viewPractice,learn:viewLearn,scenarios:viewScenarios,progress:viewProgress})[x](); }
+function go(x){ const di=TABS.findIndex(q=>q[0]===x)-TABS.findIndex(q=>q[0]===tab); app.dataset.dir=di>0?"next":di<0?"prev":""; if(typeof stopVid==="function") stopVid(); Voice.stop(); Player.hide(); clearInterval(timerId); clearScen(); closeSheet(); quiz=null; focusMode(false); tab=x; chrome(); window.scrollTo(0,0); ({practice:viewPractice,learn:viewLearn,scenarios:viewScenarios,progress:viewProgress})[x](); }
 const langPill = (noGear) => `<div class="head-actions"><button class="pill-btn press" id="langbtn" type="button" aria-label="${esc(t("chooseLanguage"))}">${icon("globe")}${esc(L().short)}</button>${noGear?"":`<button class="pill-btn round press" id="setbtn" type="button" aria-label="${esc(t("openSettings"))}">${icon("gear")}</button>`}</div>`;
 function bindLang(){ const b=document.getElementById("langbtn"); if(b) b.onclick=openLangSheet; const g=document.getElementById("setbtn"); if(g) g.onclick=openSettings; }
 
@@ -275,6 +278,12 @@ function viewPractice(){
   app.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>startQuiz(shuffle(ALL.filter(i=>EN.q[i][0]==b.dataset.d)),"quizDomain",false,{d:b.dataset.d}));
 }
 
+/* ---------- celebration burst ---------- */
+function burst(x,y,n){ if(matchMedia("(prefers-reduced-motion: reduce)").matches) return; const cols=["#e3202c","#1d3f9f","#3dd68c","#ffb400","#7b9bff","#ff6b9a"];
+  for(let i=0;i<n;i++){ const s=document.createElement("i"); s.className="confetti"; const a=Math.random()*Math.PI*2, v=60+Math.random()*(n>30?220:110);
+    s.style.cssText=`left:${x}px;top:${y}px;background:${cols[i%cols.length]};--dx:${Math.cos(a)*v}px;--dy:${Math.sin(a)*v-40}px;--r:${Math.random()*540-270}deg;animation-delay:${Math.random()*60}ms`;
+    document.body.appendChild(s); setTimeout(()=>s.remove(),1100); } }
+
 /* ---------- quiz ---------- */
 function startQuiz(list,label,exam,lv){
   Voice.stop(); Player.hide(); clearInterval(timerId); Haptic.tap();
@@ -302,7 +311,7 @@ function renderQ(fresh, justAnswered){
   ${shown?`<div class="dock fb ${ok?"ok":"no"}"><div class="dock-in"><div class="fb-title"><span class="dot">${icon(ok?"check":"x")}</span>${esc(ok?pick(V().correct).replace(/\.\.\./g,"…"):t("notQuite").split("·")[0].trim())}</div><div class="fb-body">${ok?"":`<p style="margin-bottom:6px"><b>${esc(t("answer"))}: ${esc(q.opts[0])}</b></p>`}<p>${esc(q.exp)}</p></div><button class="btn block press ${ok?"go-ok":"go-no"}" id="next">${esc(quiz.i===quiz.list.length-1?t("finish"):t("continueBtn"))}</button></div></div>`
   : `<div class="dock"><div class="dock-in"><div class="duo"><button class="btn soft press" id="prev" ${quiz.i===0?"disabled":""}>${esc(t("back"))}</button><button class="btn press" id="next" ${(ans===undefined&&!quiz.exam)||(quiz.exam&&ans===undefined)?"disabled":""}>${esc(quiz.i===quiz.list.length-1?t("finish"):t("next"))}</button></div></div></div>`}`;
   app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const oi=+b.dataset.o;quiz.answers[quiz.i]=oi;
-    if(!quiz.exam){record(qi,oi===0);(oi===0?Haptic.ok:Haptic.no)();renderQ(false,true);if(S.autoRead)speak(Coach.feedback(q,oi===0))}else{Haptic.tap();renderQ()}});
+    if(!quiz.exam){record(qi,oi===0);(oi===0?Haptic.ok:Haptic.no)();renderQ(false,true); if(oi===0){ const r=app.querySelector(".opt.right"); if(r){ const b=r.getBoundingClientRect(); burst(b.left+30,b.top+b.height/2,18); } } if(todayCount()===GOAL){ burst(innerWidth/2,innerHeight*0.35,60); toast(t("goalDone")); }if(S.autoRead)speak(Coach.feedback(q,oi===0))}else{Haptic.tap();renderQ()}});
   const ql=document.getElementById("ql"); if(ql) ql.onclick=()=>speak(shown?Coach.feedback(q,ok):Coach.question(q,order));
   const pv=document.getElementById("prev"); if(pv) pv.onclick=()=>{quiz.i--;Voice.stop();renderQ(true)};
   document.getElementById("next").onclick=()=>{Voice.stop();Haptic.tap();if(quiz.i===quiz.list.length-1)finishQuiz();else{quiz.i++;renderQ(true);window.scrollTo(0,0)}};
@@ -429,7 +438,7 @@ function viewProgress(){
 }
 
 /* ---------- settings panel (top-right gear) ---------- */
-const THEMES=[["original","themeOriginal","#eef1f6","#5ec8d4","#a48cff","#ffb27a"],["ocean","themeOcean","#e9f2ff","#2f7dff","#22c3e6","#4f6bff"],["glacier","themeGlacier","#f3f4ff","#8cc8ff","#b9a8ff","#6fa9ff"]];
+const THEMES=[["original","themeOriginal","#eef1f6","#5ec8d4","#a48cff","#ffb27a"],["ocean","themeOcean","#e9f2ff","#2f7dff","#22c3e6","#4f6bff"],["glacier","themeGlacier","#f3f4ff","#8cc8ff","#b9a8ff","#6fa9ff"],["brand","themeBrand","#f2f4fb","#ff8f96","#6f8ff5","#1d3f9f"],["aurora","themeAurora","#effaf6","#5fe3b8","#7fd1e8","#b49cff"],["sunrise","themeSunrise","#fff6ef","#ffb48a","#ff8fa3","#ffd66e"]];
 function settingsBody(){
   const vl=Voice.list(), cur=Voice.chosen();
   const sw=(base,a,b,c)=>`background:radial-gradient(circle at 25% 30%,${a},transparent 62%),radial-gradient(circle at 78% 65%,${b},transparent 60%),radial-gradient(circle at 40% 95%,${c},transparent 55%),${base}`;

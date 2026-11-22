@@ -599,3 +599,48 @@ nav.tabs{background:rgba(250,251,255,.93)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) nav.tabs{background:rgba(24,27,33,.94)}}
 :root[data-theme="dark"] nav.tabs{background:rgba(24,27,33,.94)}
 .logo-img{width:104px;height:104px;border-radius:0;box-shadow:0 16px 36px rgba(7,18,51,.35),0 0 0 1px rgba(255,255,255,.08)}
+
+/* ---- three more backgrounds: SecPrep (logo colors), Aurora, Sunrise ---- */
+:root[data-bg="brand"]{--stage:#f2f4fb;--blob1:#ff8f96;--blob2:#6f8ff5;--blob3:#b9c8ff;--blob4:#ff5a66}
+:root[data-bg="aurora"]{--stage:#effaf6;--blob1:#5fe3b8;--blob2:#7fd1e8;--blob3:#b49cff;--blob4:#9ff0d0}
+:root[data-bg="sunrise"]{--stage:#fff6ef;--blob1:#ffb48a;--blob2:#ff8fa3;--blob3:#ffd66e;--blob4:#ffc9a8}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"])[data-bg="brand"]{--stage:#050b22;--blob1:#b3121f;--blob2:#1d3f9f;--blob3:#0d1f57;--blob4:#7a0f1a}
+  :root:not([data-theme="light"])[data-bg="aurora"]{--stage:#03110f;--blob1:#0f8f6a;--blob2:#0d5f7a;--blob3:#4b2fa0;--blob4:#0a6b55}
+  :root:not([data-theme="light"])[data-bg="sunrise"]{--stage:#140806;--blob1:#a8431f;--blob2:#8f2848;--blob3:#8a6a10;--blob4:#5a2412}
+}
+:root[data-theme="dark"][data-bg="brand"]{--stage:#050b22;--blob1:#b3121f;--blob2:#1d3f9f;--blob3:#0d1f57;--blob4:#7a0f1a}
+:root[data-theme="dark"][data-bg="aurora"]{--stage:#03110f;--blob1:#0f8f6a;--blob2:#0d5f7a;--blob3:#4b2fa0;--blob4:#0a6b55}
+:root[data-theme="dark"][data-bg="sunrise"]{--stage:#140806;--blob1:#a8431f;--blob2:#8f2848;--blob3:#8a6a10;--blob4:#5a2412}
+.themes{grid-template-columns:repeat(3,1fr)}
+
+/* ---- more motion ---- */
+/* tab switch: content slides in from the side of the tab you tapped */
+#app[data-dir="next"] .screen.enter > *{animation-name:inFromRight}
+#app[data-dir="prev"] .screen.enter > *{animation-name:inFromLeft}
+@keyframes inFromRight{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:none}}
+@keyframes inFromLeft{from{opacity:0;transform:translateX(-36px)}to{opacity:1;transform:none}}
+/* list rows cascade in */
+.screen.enter .list > .row,.screen.enter .list > ion-item{animation:rowIn .55s cubic-bezier(.34,1.56,.64,1) both}
+.screen.enter .list > :nth-child(1){animation-delay:.18s}.screen.enter .list > :nth-child(2){animation-delay:.24s}.screen.enter .list > :nth-child(3){animation-delay:.3s}
+.screen.enter .list > :nth-child(4){animation-delay:.36s}.screen.enter .list > :nth-child(5){animation-delay:.42s}.screen.enter .list > :nth-child(n+6){animation-delay:.48s}
+@keyframes rowIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+/* progress bars grow from zero */
+.screen.enter .bar i,.screen.enter .stack-bar i{transform-origin:left center;animation:growX .9s cubic-bezier(.2,.8,.2,1) .35s both}
+@keyframes growX{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+/* streak flame flickers */
+.flame .ico{transform-origin:50% 90%;animation:flicker 1.8s ease-in-out infinite}
+@keyframes flicker{0%,100%{transform:scale(1) rotate(0)}25%{transform:scale(1.1,.94) rotate(-4deg)}50%{transform:scale(.95,1.08) rotate(3deg)}75%{transform:scale(1.06) rotate(-2deg)}}
+.week i.on.today{animation:pulseDot 2.4s ease-in-out infinite}
+@keyframes pulseDot{0%,100%{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--flame)}50%{box-shadow:0 0 0 2px var(--surface),0 0 0 8px color-mix(in srgb,var(--flame) 35%,transparent)}}
+/* primary buttons: gentle light sweep */
+.btn.block:not(:disabled)::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.28) 50%,transparent 70%);background-size:250% 100%;animation:sweep 3.6s ease-in-out infinite}
+.btn.block{position:relative;overflow:hidden}
+@keyframes sweep{0%,55%{background-position:120% 0}100%{background-position:-120% 0}}
+/* confetti */
+.confetti{position:fixed;z-index:80;width:8px;height:12px;border-radius:2px;pointer-events:none;animation:confetti 1s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes confetti{0%{transform:translate(-50%,-50%) rotate(0);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy) + 90px)) rotate(var(--r));opacity:0}}
+/* tab icon bounce */
+nav.tabs button[aria-current="true"] .ico{animation:tabPop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes tabPop{0%{transform:scale(.85)}60%{transform:scale(1.22)}100%{transform:scale(1.12)}}
+@media (prefers-reduced-motion: reduce){#app .screen.enter > *,.screen.enter .list > *,.screen.enter .bar i,.screen.enter .stack-bar i,.flame .ico,.week i.on.today,.btn.block::after,nav.tabs button .ico{animation:none!important}}

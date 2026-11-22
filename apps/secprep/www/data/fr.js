@@ -335,3 +335,4 @@ scoreReport:"Rapport de score",scaled:"Score estimé",passEst:"Réussi (estimati
 scoreNote:"CompTIA ne publie pas sa méthode de calcul. Ce simulateur estime le score de façon linéaire de 100 à 900, avec des points partiels pour les questions pratiques.",
 timeUsed:"{m} min utilisées",yourAnswer:"Votre réponse",correctAnswer:"Bonne réponse",pbqScore:"{c} sur {t} correctes"});
 Object.assign(window.SECPREP_LANGS.fr.voice,{intro:["Question suivante.","Voici la suivante.","Regardons celle-ci.","Bien, on continue."],correct:["C'est juste.","Bonne réponse, bien joué.","Oui, c'est ça.","Exact, c'est la bonne réponse."],wrong:["Pas tout à fait.","Presque, mais ce n'est pas celle-ci.","Ce n'est pas la bonne."],scenStart:["Voici la situation.","Voyons ce qui se passe."]});
+Object.assign(window.SECPREP_LANGS.fr.ui,{themeBrand:"SecPrep",themeAurora:"Aurore",themeSunrise:"Lever du soleil"});
