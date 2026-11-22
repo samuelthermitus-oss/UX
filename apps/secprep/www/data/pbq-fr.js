@@ -1,0 +1,33 @@
+// Questions pratiques (français). Mêmes questions que pbq-en.js. Pour le pare-feu, "Allow"/"Deny" restent des codes internes.
+window.SECPREP_PBQ = window.SECPREP_PBQ || {};
+window.SECPREP_PBQ.fr = [
+{id:"p-controls",d:1,type:"match",t:"Classer les contrôles de sécurité",prompt:"Un nouveau responsable sécurité documente les contrôles. Associez chaque contrôle à sa catégorie.",
+ cats:["Technique","Managérial","Opérationnel","Physique"],
+ items:[["Chiffrement complet du disque des portables","Technique"],["Évaluation annuelle des risques","Managérial"],["Séances de sensibilisation à la sécurité","Opérationnel"],["Clôture et éclairage du périmètre","Physique"],["Authentification multifacteur","Technique"],["Politique de sécurité de l'information","Managérial"]],
+ exp:"Les contrôles techniques sont appliqués par la technologie, les managériaux sont des décisions et documents de la direction, les opérationnels sont réalisés par des personnes, et les physiques protègent les lieux."},
+{id:"p-ir",d:4,type:"order",t:"L'ordre de la réponse aux incidents",prompt:"Un rançongiciel vient d'être détecté sur un poste. Remettez les phases de la réponse aux incidents dans le bon ordre.",
+ items:["Préparation","Détection","Analyse","Confinement","Éradication","Restauration","Retour d'expérience"],
+ exp:"Préparer, détecter, analyser, contenir, éradiquer, restaurer, puis tirer les leçons. Le confinement passe toujours avant l'éradication."},
+{id:"p-fw",d:3,type:"firewall",t:"Configurer le pare-feu de la zone web",prompt:"Configurez le pare-feu devant le sous-réseau filtré. Exigences : le serveur web public (10.0.5.10) doit accepter le trafic web sécurisé de tout le monde. Les administrateurs (10.0.1.0/24 uniquement) le gèrent en SSH. Le serveur web peut interroger la base de données (10.0.9.20) sur le port 1433. Bloquez tous les protocoles d'administration non sécurisés et tout le reste.",
+ rules:[{src:"Tous",dst:"10.0.5.10",port:"443",proto:"TCP",ans:"Allow"},{src:"Tous",dst:"10.0.5.10",port:"80",proto:"TCP",ans:"Deny"},{src:"10.0.1.0/24",dst:"10.0.5.10",port:"22",proto:"TCP",ans:"Allow"},{src:"Tous",dst:"10.0.5.10",port:"22",proto:"TCP",ans:"Deny"},{src:"Tous",dst:"10.0.5.10",port:"23",proto:"TCP",ans:"Deny"},{src:"10.0.5.10",dst:"10.0.9.20",port:"1433",proto:"TCP",ans:"Allow"},{src:"Tous",dst:"Tous",port:"Tous",proto:"Tous",ans:"Deny"}],
+ exp:"Autorisez HTTPS (443) depuis tout le monde, SSH (22) uniquement depuis le sous-réseau d'administration, et le port du serveur web vers la base. Refusez HTTP en clair, Telnet (23) et SSH depuis ailleurs, et terminez par un refus implicite de tout le reste."},
+{id:"p-ports",d:4,type:"match",t:"Protocoles sécurisés et ports",prompt:"Associez chaque protocole sécurisé à son port par défaut.",
+ cats:["22","443","636","3389","53","993"],
+ items:[["SSH / SFTP","22"],["HTTPS","443"],["LDAPS","636"],["RDP","3389"],["DNS","53"],["IMAPS","993"]],
+ exp:"SSH et SFTP utilisent le 22, HTTPS le 443, LDAPS le 636, RDP le 3389, DNS le 53 et IMAPS le 993."},
+{id:"p-mitigate",d:2,type:"match",t:"Attaque et meilleure atténuation",prompt:"Associez chaque attaque à l'atténuation la plus adaptée.",
+ cats:["Requêtes paramétrées","Encodage des sorties","MFA","Inspection ARP dynamique","Verrouillage de compte","Jetons anti-CSRF"],
+ items:[["Injection SQL","Requêtes paramétrées"],["Cross-site scripting stocké","Encodage des sorties"],["Bourrage d'identifiants","MFA"],["Empoisonnement ARP","Inspection ARP dynamique"],["Force brute en ligne sur un compte","Verrouillage de compte"],["Falsification de requête intersite","Jetons anti-CSRF"]],
+ exp:"Chaque atténuation vise le mécanisme de l'attaque : les paramètres empêchent la saisie de devenir du SQL, l'encodage empêche les scripts de s'exécuter, la MFA rend un mot de passe volé insuffisant, l'inspection ARP valide l'ARP, le verrouillage stoppe les devinettes, et les jetons prouvent que la requête vient du vrai site."},
+{id:"p-volatility",d:4,type:"order",t:"L'ordre de volatilité",prompt:"Vous collectez des preuves sur un serveur compromis. Classez les sources de la plus volatile (à collecter en premier) à la moins volatile.",
+ items:["Registres et cache du processeur","Mémoire vive","Fichiers d'échange et temporaires","Disque","Journaux distants","Sauvegardes archivées"],
+ exp:"Collectez d'abord les preuves les plus éphémères : registres et cache, mémoire vive, fichier d'échange, disque, journaux distants, puis archives."},
+{id:"p-email",d:4,type:"match",t:"L'authentification des e-mails",prompt:"Associez chaque technologie de sécurité de la messagerie à son rôle.",
+ cats:["SPF","DKIM","DMARC","Passerelle de messagerie"],
+ items:[["Liste les serveurs autorisés à envoyer des e-mails pour un domaine","SPF"],["Ajoute une signature que les destinataires peuvent vérifier","DKIM"],["Indique quoi faire quand les vérifications échouent, et envoie des rapports","DMARC"],["Filtre le spam et les logiciels malveillants avant la livraison","Passerelle de messagerie"]],
+ exp:"SPF liste les expéditeurs, DKIM signe, DMARC fixe la règle et les rapports, et une passerelle filtre le contenu."},
+{id:"p-risk",d:5,type:"match",t:"Le traitement du risque",prompt:"Associez chaque action au traitement du risque qu'elle représente.",
+ cats:["Transférer","Éviter","Accepter","Atténuer"],
+ items:[["Souscrire une cyberassurance","Transférer"],["Arrêter un ancien service risqué","Éviter"],["Documenter qu'un risque faible reste dans l'appétit pour le risque","Accepter"],["Déployer un EDR sur tous les portables","Atténuer"]],
+ exp:"L'assurance transfère, arrêter l'activité évite, une décision documentée accepte, et ajouter des contrôles atténue."}
+];

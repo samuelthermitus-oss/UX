@@ -13,7 +13,7 @@ const ONLY = (arg("only", "videos,coach,quiz,lessons,scenarios,chapters")).split
 const www = path.join(__dirname, "../www");
 
 const ctx = { window: {} }; vm.createContext(ctx);
-for (const f of ["config.js", "data/en.js", "data/fr.js", "data/videos-en.js", "data/videos-fr.js", "data/guide-en-d1.js", "data/guide-en-d2.js", "data/guide-en-d3.js", "data/guide-en-d4.js", "data/guide-en-d5.js"]) {
+for (const f of ["config.js", "data/en.js", "data/fr.js", "data/videos-en.js", "data/videos-fr.js", "data/guide-en-d1.js", "data/guide-en-d2.js", "data/guide-en-d3.js", "data/guide-en-d4.js", "data/guide-en-d5.js", "data/guide-fr-d1.js", "data/guide-fr-d2.js", "data/guide-fr-d3.js", "data/guide-fr-d4.js", "data/guide-fr-d5.js"]) {
   const p = path.join(www, f); if (fs.existsSync(p)) vm.runInContext(fs.readFileSync(p, "utf8"), ctx);
 }
 const W = ctx.window, cfg = W.SECPREP_CONFIG || {}, L = W.SECPREP_LANGS[LANG];
@@ -39,13 +39,21 @@ if (ONLY.includes("lessons")) Object.values(L.lessons).forEach(ls => ls.forEach(
 if (ONLY.includes("scenarios")) (L.scen || []).forEach(s => { add(s.intro); s.steps.forEach(st => { add(st.say); st.choices.forEach(c => add(c[c.length - 1])); }); });
 
 // Study guide chapters, split exactly like the app's "listen" button (www/app.js: openChapter).
-const guideLang = W.SECPREP_GUIDE_LANG || "en";
-if (ONLY.includes("chapters") && LANG === guideLang) (W.SECPREP_GUIDE || { chapters: [] }).chapters.forEach(c => {
+// Each language uses its own chapters (SECPREP_GUIDES[lang]); English also lives in SECPREP_GUIDE.
+const guideFor = l => ((W.SECPREP_GUIDES || {})[l] && W.SECPREP_GUIDES[l].chapters.length) ? W.SECPREP_GUIDES[l] : (l === "en" ? W.SECPREP_GUIDE : null);
+if (ONLY.includes("chapters") && guideFor(LANG)) guideFor(LANG).chapters.forEach(c => {
   const plain = s => String(s).replace(/\*\*/g, "");
   add(c.t + "."); add(plain(c.intro));
   c.s.forEach(([h, txt, bul]) => { add(h + "."); add(plain(txt)); (bul || []).forEach(b => add(plain(b) + ".")); });
   if (c.ex) add(c.ex); if (c.tip) add(c.tip);
 });
+// Spoken results: scenario debriefs and end-of-quiz summaries (same wording as the app).
+if (ONLY.includes("coach")) {
+  const v = L.voice, fill = (s, o) => Object.keys(o).reduce((a, k) => a.split("{" + k + "}").join(o[k]), s);
+  [...new Set((L.scen || []).map(s => s.steps.length))].forEach(n => { for (let s = 0; s <= n; s++) add(fill(v.score, { s, t: n }) + " " + (s === n ? v.great : v.keep)); });
+  const sizes = new Set([10, 25, 50]); [1, 2, 3, 4, 5].forEach(d => sizes.add(L.q.filter(q => q[0] === d).length));
+  sizes.forEach(n => { for (let c = 0; c <= n; c++) add(fill(L.ui.ofCorrect, { c, t: n }) + ". " + (Math.round(c / n * 100) >= 85 ? v.great : v.keep)); });
+}
 const outDir = path.join(www, "audio", LANG); fs.mkdirSync(outDir, { recursive: true });
 const list = [...units], todo = list.filter(t => !fs.existsSync(path.join(outDir, keyOf(t) + ".mp3")));
 const chars = todo.reduce((a, t) => a + t.length, 0);

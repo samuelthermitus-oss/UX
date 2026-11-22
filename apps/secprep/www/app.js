@@ -534,7 +534,7 @@ function confirmBox(title, message, okText, onOk){
 function closeSettingsPanel(){ const host=settingsHost; settingsHost=null; if(host){ if(host.dismiss) host.dismiss().then(()=>host.isConnected&&host.remove()); else closeSheet(); } }
 
 /* PIN keypad shared by sign-up and login */
-function keypad(onDigit){ return `<div class="keypad" role="group">${[1,2,3,4,5,6,7,8,9,"",0,"del"].map(k=>k===""?"<span></span>":`<button type="button" class="key press" data-k="${k}" aria-label="${k==="del"?"Delete":k}">${k==="del"?icon("back"):k}</button>`).join("")}</div>`; }
+function keypad(onDigit){ return `<div class="keypad" role="group">${[1,2,3,4,5,6,7,8,9,"",0,"del"].map(k=>k===""?"<span></span>":`<button type="button" class="key press" data-k="${k}" aria-label="${k==="del"?esc(t("pinDelete")):k}">${k==="del"?icon("back"):k}</button>`).join("")}</div>`; }
 function bindKeypad(root, get, set, done){
   root.querySelectorAll(".key").forEach(b=>b.onclick=()=>{ let v=get(); if(b.dataset.k==="del") v=v.slice(0,-1); else if(v.length<PIN_LEN) v+=b.dataset.k; Haptic.tap(); set(v); paintDots(root,v); if(v.length===PIN_LEN) setTimeout(()=>done(v),120); });
 }
@@ -670,10 +670,11 @@ Voice.onVoices = () => { refreshSettings(); };
 /* =====================================================================
    STUDY GUIDE · VIDEO LESSONS · EXAM SIMULATOR
    ===================================================================== */
-const GUIDE = () => (window.SECPREP_GUIDE||{chapters:[]}).chapters.slice().sort((a,b)=>a.id.localeCompare(b.id,undefined,{numeric:true}));
+const GUIDE_SRC = () => { const g=(window.SECPREP_GUIDES||{})[S.lang]; return (g&&g.chapters.length) ? g : (window.SECPREP_GUIDE||{chapters:[]}); };
+const GUIDE = () => GUIDE_SRC().chapters.slice().sort((a,b)=>a.id.localeCompare(b.id,undefined,{numeric:true}));
 const VIDEOS = () => (window.SECPREP_VIDEOS||{})[S.lang] || (window.SECPREP_VIDEOS||{}).en || [];
 const PBQS = () => (window.SECPREP_PBQ||{})[S.lang] || (window.SECPREP_PBQ||{}).en || [];
-const guideLang = () => (window.SECPREP_GUIDE_LANG||"en");
+const guideLang = () => { const g=(window.SECPREP_GUIDES||{})[S.lang]; return (g&&g.chapters.length) ? S.lang : "en"; };
 const md = s => esc(s).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
 const VI = {
   user:"M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4.5 20.5a7.5 7.5 0 0 1 15 0",
@@ -763,7 +764,7 @@ function stageScene(sc){
       return `<g class="vlink ${bad?"bad":""}" style="--dl:${dl}s"><line x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}" pathLength="1"/><circle r="1.6" class="pkt"><animateMotion dur="1.8s" begin="${dl}s" repeatCount="indefinite" path="M${ax},${ay} L${bx},${by}"/></circle>${l.l?`<text x="${mx}" y="${my-3}" text-anchor="middle">${esc(l.l)}</text>`:""}</g>`}).join("");
     return `<div class="vs vs-flow"><svg viewBox="0 0 160 90" aria-hidden="true">${links}</svg>${sc.nodes.map((n,i)=>`<div class="vnode ${n.tone==="bad"?"bad":""}" style="left:${n.x}%;top:${n.y}%;--dl:${(i*0.25).toFixed(2)}s"><span class="vni">${vicon(n.i)}</span><span class="vnl">${esc(n.l)}</span></div>`).join("")}</div>`; }
   if(sc.k==="list"||sc.k==="steps") return `<div class="vs vs-list ${sc.k}"><h3>${esc(sc.h)}</h3><ol>${sc.items.map((it,i)=>`<li style="--dl:${(0.6+i*1.1).toFixed(2)}s"><span class="n">${sc.k==="steps"?i+1:icon("check")}</span>${esc(it)}</li>`).join("")}</ol></div>`;
-  if(sc.k==="email") return `<div class="vs vs-email"><div class="mailbox"><div class="mrow" data-at="from"><small>From</small>${esc(sc.from)}</div><div class="mrow" data-at="subj"><small>Subject</small><b>${esc(sc.subj)}</b></div><div class="mrow body" data-at="body">${esc(sc.body)}</div></div><div class="flags">${(sc.flags||[]).map((f,i)=>`<div class="flag" data-for="${f.at}" style="--dl:${(1.2+i*2.2).toFixed(2)}s"><span>!</span>${esc(f.note)}</div>`).join("")}</div></div>`;
+  if(sc.k==="email") return `<div class="vs vs-email"><div class="mailbox"><div class="mrow" data-at="from"><small>${esc(t("mailFrom"))}</small>${esc(sc.from)}</div><div class="mrow" data-at="subj"><small>${esc(t("mailSubject"))}</small><b>${esc(sc.subj)}</b></div><div class="mrow body" data-at="body">${esc(sc.body)}</div></div><div class="flags">${(sc.flags||[]).map((f,i)=>`<div class="flag" data-for="${f.at}" style="--dl:${(1.2+i*2.2).toFixed(2)}s"><span>!</span>${esc(f.note)}</div>`).join("")}</div></div>`;
   if(sc.k==="terminal") return `<div class="vs vs-term"><div class="tbar"><i></i><i></i><i></i></div>${sc.lines.map((l,i)=>`<div class="tl ${/alert|ALL rows/i.test(l)?"alert":/warn/i.test(l)?"warn":""}" style="--dl:${(0.4+i*1.4).toFixed(2)}s">${esc(l)}</div>`).join("")}</div>`;
   if(sc.k==="compare") return `<div class="vs vs-compare"><div class="cl bad"><h3>${esc(sc.l.h)}</h3><ul>${sc.l.items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></div><div class="cr good"><h3>${esc(sc.r.h)}</h3><ul>${sc.r.items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></div></div>`;
   return "";
@@ -774,7 +775,7 @@ function openVideo(id, fromChapter){
   Voice.stop(); Player.hide(); focusMode(true); window.scrollTo(0,0);
   vidState={v,i:0,playing:true,sound:Voice.available,cc:true,timer:null,from:fromChapter};
   app.innerHTML=`<div class="screen enter vplayer" style="--c:${dc(v.d)}">
-   <div class="qbar"><button class="icon-btn press" id="vclose" type="button" aria-label="${esc(t("close"))}">${icon("x")}</button><span class="rtitle">${esc(v.t)}</span><button class="icon-btn press" id="vcc" type="button" aria-pressed="true" aria-label="${esc(t("captions"))}">CC</button></div>
+   <div class="qbar"><button class="icon-btn press" id="vclose" type="button" aria-label="${esc(t("close"))}">${icon("x")}</button><span class="rtitle">${esc(v.t)}</span><button class="icon-btn press" id="vcc" type="button" aria-pressed="true" aria-label="${esc(t("captions"))}">${esc(t("ccShort"))}</button></div>
    <div class="vstage" id="vstage" aria-live="polite"></div>
    <p class="vcap" id="vcap"></p>
    <div class="vsegs" id="vsegs">${v.scenes.map((_,i)=>`<button type="button" data-sc="${i}" aria-label="${i+1}"><i></i></button>`).join("")}</div>
@@ -881,7 +882,7 @@ function renderReview(){
    <header class="xbar"><div><b>${esc(t("simTitle"))}</b><span>${esc(t("review"))}</span></div><span class="timer" id="xtimer">${fmt(ex.end-Date.now())}</span></header>
    <main class="xbody"><p class="xq">${esc(t("reviewHelp"))}</p>
     <div class="xlegend"><span class="a">${esc(t("answeredL"))}</span><span class="u">${esc(t("unansweredLbl"))} · ${un}</span><span class="f">${esc(t("flagged"))} · ${fl}</span></div>
-    <div class="xgrid">${ex.items.map((it,k)=>`<button type="button" data-go="${k}" class="${isAnswered(k)?"a":"u"} ${ex.flag[k]?"f":""}">${k+1}${it.type==="pbq"?"<small>PBQ</small>":""}</button>`).join("")}</div></main>
+    <div class="xgrid">${ex.items.map((it,k)=>`<button type="button" data-go="${k}" class="${isAnswered(k)?"a":"u"} ${ex.flag[k]?"f":""}">${k+1}${it.type==="pbq"?"<small>"+esc(t("pbqShort"))+"</small>":""}</button>`).join("")}</div></main>
    <footer class="xfoot"><button class="xbtn" id="xret">${esc(t("back"))}</button><button class="xbtn danger" id="xend">${esc(t("endExam"))}</button></footer>
   </div>`;
   app.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{ex.i=+b.dataset.go;renderExam();window.scrollTo(0,0)});

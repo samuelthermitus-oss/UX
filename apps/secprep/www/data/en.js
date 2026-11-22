@@ -285,3 +285,5 @@ scoreNote:"CompTIA doesn't publish how it scales scores. This simulator estimate
 timeUsed:"{m} min used",yourAnswer:"Your answer",correctAnswer:"Correct answer",pbqScore:"{c} of {t} correct"});
 Object.assign(window.SECPREP_LANGS.en.voice,{intro:["Next question.","Here's the next one.","Let's look at this one.","Okay, next."],correct:["That's right.","Correct, nice work.","Yes, that's it.","Good, that's correct."],wrong:["Not quite.","Close, but not this one.","That one's not right."],scenStart:["Here's the situation.","Let's see what's happening."]});
 Object.assign(window.SECPREP_LANGS.en.ui,{themeBrand:"SecPrep",themeAurora:"Aurora",themeSunrise:"Sunrise"});
+Object.assign(window.SECPREP_LANGS.en.ui,{mailFrom:"From",mailSubject:"Subject",pinDelete:"Delete"});
+Object.assign(window.SECPREP_LANGS.en.ui,{ccShort:"CC",pbqShort:"PBQ"});
