@@ -6,5 +6,7 @@ window.SECPREP_CONFIG = {
   // Version of the questions built into this app release. Live content must have a higher version.
   builtInVersion: "2026.11.16.1",
   // How often the app checks for new content (it also checks at every launch).
-  checkEveryHours: 6
+  checkEveryHours: 6,
+  // Azure voices used to record narration (scripts/generate-audio.js). Changing a voice means regenerating its audio.
+  azureVoices: { fr: "fr-FR-DeniseNeural", en: "en-US-AvaNeural" }
 };

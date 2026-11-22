@@ -44,6 +44,9 @@ function streak(){ let n=0; const d=new Date(); if(!S.days.includes(dayKey(d))) 
    WebView has no speechSynthesis) and the Web Speech API in browsers.
    ===================================================================== */
 let Voice_langOverride = null;
+function audioKey(str){ let h1=0xdeadbeef, h2=0x41c6ce57; for(let i=0;i<str.length;i++){ const ch=str.charCodeAt(i); h1=Math.imul(h1^ch,2654435761); h2=Math.imul(h2^ch,1597334677); }
+  h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909); h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);
+  return (4294967296*(2097151&h2)+(h1>>>0)).toString(36); }
 const VLANG = () => (Voice_langOverride && LANGS[Voice_langOverride]) || L();
 const Voice = (function(){
   const web = "speechSynthesis" in window;
@@ -67,7 +70,8 @@ const Voice = (function(){
       const flush=()=>{ if(buf){ parts.push({t:buf.replace(/\.\.\.|…/g,","), pause:280, pitch:1, rate}); buf=""; } };
       sents.forEach(x=>{ if((buf+" "+x).length>240) flush(); buf=buf?buf+" "+x:x; }); flush();
       if(parts.length) parts[parts.length-1].pause=560; });
-    if(parts.length&&opt.after!=null) parts[parts.length-1].pause=Math.max(250,Math.min(700,opt.after)); return parts; }
+    if(parts.length&&opt.after!=null) parts[parts.length-1].pause=Math.max(250,Math.min(700,opt.after));
+    const src=String(text).replace(/\s+/g," ").trim(), vl=VLANG().code, gid=++gidSeq; parts.forEach(x=>{x.src=src;x.vl=vl;x.gid=gid;}); return parts; }
   function sayOne(p, my){ return new Promise(res=>{
     if(my!==token) return res();
     const c = chosen(); const rate = Math.max(0.5, Math.min(2, p.rate*S.rate)); const pitch = Math.max(0.5,Math.min(2,p.pitch));
@@ -82,8 +86,18 @@ const Voice = (function(){
       setTimeout(res, 1500 + p.t.length*95/rate);
     }catch(e){res()}
   }); }
-  async function play(parts, onDone){ stop(); const my=++token; for(const p of parts){ if(my!==token) return; await sayOne(p,my); if(my!==token) return; await new Promise(r=>setTimeout(r,p.pause||0)); } if(my===token&&onDone) onDone(); }
-  function stop(){ token++; try{ if(nativeTTS) nativeTTS.stop(); else if(web) speechSynthesis.cancel(); }catch(e){} }
+  // Recorded narration (Azure voices) stored in www/audio/<lang>/<key>.mp3, listed in audio/manifest.js.
+  let gidSeq=0, endAudio=null; const A=new Audio(); A.preload="auto";
+  const unlock=()=>{ try{ A.src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="; const pr=A.play(); if(pr) pr.then(()=>A.pause()).catch(()=>{}); }catch(e){} document.removeEventListener("pointerdown",unlock,true); };
+  document.addEventListener("pointerdown",unlock,true);
+  function recorded(p){ if(!p.src) return null; const voice=((window.SECPREP_CONFIG||{}).azureVoices||{})[p.vl]; const have=(window.SECPREP_AUDIO||{})[p.vl]; if(!voice||!have) return null; const k=audioKey(voice+"|"+p.src); return have[k]?`audio/${p.vl}/${k}.mp3`:null; }
+  function playFile(url){ return new Promise(res=>{ let fin=false; const done=()=>{ if(fin) return; fin=true; endAudio=null; A.onended=A.onerror=null; res(); }; endAudio=done; A.onended=done; A.onerror=done; A.src=url; A.playbackRate=Math.max(.75,Math.min(1.5,S.rate||1)); const pr=A.play(); if(pr) pr.catch(done); }); }
+  async function play(parts, onDone){ stop(); const my=++token;
+    for(let k=0;k<parts.length;k++){ const p=parts[k]; if(my!==token) return; const url=recorded(p);
+      if(url){ let j=k; while(j+1<parts.length&&parts[j+1].gid===p.gid) j++; await playFile(url); if(my!==token) return; await new Promise(r=>setTimeout(r,parts[j].pause||0)); k=j; continue; }
+      await sayOne(p,my); if(my!==token) return; await new Promise(r=>setTimeout(r,p.pause||0)); }
+    if(my===token&&onDone) onDone(); }
+  function stop(){ token++; try{ A.pause(); if(endAudio) endAudio(); }catch(e){} try{ if(nativeTTS) nativeTTS.stop(); else if(web) speechSynthesis.cancel(); }catch(e){} }
   return { available: web||!!nativeTTS, play, stop, chunk, list, chosen, set onVoices(f){onVoices=f} };
 })();
 
@@ -93,14 +107,14 @@ const Coach = {
     parts=parts.concat(Voice.chunk(pick(v.intro),{after:500,pitch:1.03}));
     parts=parts.concat(Voice.chunk(q.q,{after:750}));
     parts=parts.concat(Voice.chunk(v.options,{after:350}));
-    order.forEach((oi,j)=>parts.push({t:v.option+" "+"ABCD"[j]+"... "+q.opts[oi]+".",pause:450,pitch:1+(Math.random()*0.06-0.03),rate:0.97}));
+    order.forEach((oi,j)=>{ parts=parts.concat(Voice.chunk(v.option+" "+"ABCD"[j],{after:250}),Voice.chunk(q.opts[oi],{after:450})); });
     return parts; },
   feedback(q, ok){ const v=V(); let parts=[];
     if(ok) parts=parts.concat(Voice.chunk(pick(v.correct),{pitch:1.12,rate:1.04,after:420}));
-    else { parts=parts.concat(Voice.chunk(pick(v.wrong),{pitch:0.96,rate:0.92,after:500})); parts=parts.concat(Voice.chunk(v.answerIs+"... "+q.opts[0]+".",{rate:0.95,after:550})); }
+    else { parts=parts.concat(Voice.chunk(pick(v.wrong),{pitch:0.96,rate:0.92,after:500})); parts=parts.concat(Voice.chunk(v.answerIs,{after:250}),Voice.chunk(q.opts[0],{after:550})); }
     return parts.concat(Voice.chunk(q.exp,{rate:0.98})); },
   lesson(l, first){ const v=V(); let parts=[];
-    parts=parts.concat(Voice.chunk((first?v.lessonStart:pick(v.nextTopic))+" "+l[0]+".",{pitch:1.05,after:700}));
+    parts=parts.concat(Voice.chunk(first?v.lessonStart:pick(v.nextTopic),{after:250}),Voice.chunk(l[0],{after:700}));
     l[1].split("|").forEach(b=>{ parts=parts.concat(Voice.chunk(b,{after:600})); });
     parts=parts.concat(Voice.chunk(v.tip,{pitch:1.08,after:400})); parts=parts.concat(Voice.chunk(l[2],{rate:0.95,after:900}));
     return parts; }
