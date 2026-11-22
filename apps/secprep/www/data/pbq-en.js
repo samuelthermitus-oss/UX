@@ -1,0 +1,33 @@
+// Performance-based questions (English, original). Types: match, order, firewall.
+window.SECPREP_PBQ = window.SECPREP_PBQ || {};
+window.SECPREP_PBQ.en = [
+{id:"p-controls",d:1,type:"match",t:"Classify security controls",prompt:"A new security manager is documenting controls. Assign each control to its category.",
+ cats:["Technical","Managerial","Operational","Physical"],
+ items:[["Full-disk encryption on laptops","Technical"],["Annual risk assessment","Managerial"],["Security awareness training sessions","Operational"],["Perimeter fencing and lighting","Physical"],["Multifactor authentication","Technical"],["Information security policy","Managerial"]],
+ exp:"Technical controls are enforced by technology, managerial controls are leadership decisions and documents, operational controls are carried out by people, and physical controls protect the space."},
+{id:"p-ir",d:4,type:"order",t:"Incident response order",prompt:"Ransomware was just detected on a workstation. Put the incident response phases in the correct order.",
+ items:["Preparation","Detection","Analysis","Containment","Eradication","Recovery","Lessons learned"],
+ exp:"Prepare, detect, analyze, contain, eradicate, recover, then learn. Containment always comes before eradication."},
+{id:"p-fw",d:3,type:"firewall",t:"Configure the web zone firewall",prompt:"Configure the firewall in front of the screened subnet. Requirements: the public web server (10.0.5.10) must accept secure web traffic from anyone. Administrators (10.0.1.0/24 only) manage it with SSH. The web server may query the database (10.0.9.20) on port 1433. Block all insecure management protocols and everything else.",
+ rules:[{src:"Any",dst:"10.0.5.10",port:"443",proto:"TCP",ans:"Allow"},{src:"Any",dst:"10.0.5.10",port:"80",proto:"TCP",ans:"Deny"},{src:"10.0.1.0/24",dst:"10.0.5.10",port:"22",proto:"TCP",ans:"Allow"},{src:"Any",dst:"10.0.5.10",port:"22",proto:"TCP",ans:"Deny"},{src:"Any",dst:"10.0.5.10",port:"23",proto:"TCP",ans:"Deny"},{src:"10.0.5.10",dst:"10.0.9.20",port:"1433",proto:"TCP",ans:"Allow"},{src:"Any",dst:"Any",port:"Any",proto:"Any",ans:"Deny"}],
+ exp:"Allow HTTPS (443) from anyone, SSH (22) only from the admin subnet, and the web-to-database port. Deny plain HTTP, Telnet (23) and SSH from anywhere else, and end with an implicit deny-all."},
+{id:"p-ports",d:4,type:"match",t:"Secure protocols and ports",prompt:"Match each secure protocol to its default port.",
+ cats:["22","443","636","3389","53","993"],
+ items:[["SSH / SFTP","22"],["HTTPS","443"],["LDAPS","636"],["RDP","3389"],["DNS","53"],["IMAPS","993"]],
+ exp:"SSH and SFTP use 22, HTTPS 443, LDAPS 636, RDP 3389, DNS 53 and IMAPS 993."},
+{id:"p-mitigate",d:2,type:"match",t:"Attack and best mitigation",prompt:"Match each attack to the mitigation that best addresses it.",
+ cats:["Parameterized queries","Output encoding","MFA","Dynamic ARP inspection","Account lockout","Anti-CSRF tokens"],
+ items:[["SQL injection","Parameterized queries"],["Stored cross-site scripting","Output encoding"],["Credential stuffing","MFA"],["ARP poisoning","Dynamic ARP inspection"],["Online brute force on one account","Account lockout"],["Cross-site request forgery","Anti-CSRF tokens"]],
+ exp:"Each mitigation targets the mechanism of the attack: parameters stop input becoming SQL, encoding stops scripts running, MFA makes stolen passwords insufficient, DAI validates ARP, lockout stops guessing, and tokens prove requests came from the real site."},
+{id:"p-volatility",d:4,type:"order",t:"Order of volatility",prompt:"You are collecting evidence from a compromised server. Order the sources from most volatile (collect first) to least volatile.",
+ items:["CPU registers and cache","RAM","Swap and temporary files","Disk","Remote logs","Archived backups"],
+ exp:"Collect the most short-lived evidence first: registers and cache, memory, swap, disk, remote logs, then archives."},
+{id:"p-email",d:4,type:"match",t:"Email authentication",prompt:"Match each email security technology to what it does.",
+ cats:["SPF","DKIM","DMARC","Email gateway"],
+ items:[["Lists servers allowed to send mail for a domain","SPF"],["Adds a signature receivers can verify","DKIM"],["Tells receivers what to do when checks fail, and sends reports","DMARC"],["Filters spam and malware before delivery","Email gateway"]],
+ exp:"SPF lists senders, DKIM signs, DMARC sets the policy and reporting, and a gateway filters content."},
+{id:"p-risk",d:5,type:"match",t:"Risk treatment",prompt:"Match each action to the risk treatment it represents.",
+ cats:["Transfer","Avoid","Accept","Mitigate"],
+ items:[["Buying cyber insurance","Transfer"],["Shutting down a risky legacy service","Avoid"],["Documenting that a low risk is within appetite","Accept"],["Deploying EDR on all laptops","Mitigate"]],
+ exp:"Insurance transfers, stopping the activity avoids, a documented decision accepts, and adding controls mitigates."}
+];

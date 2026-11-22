@@ -270,3 +270,16 @@ beginnerTip:"New to IT? Start with the Domain 1 lessons, then come back for your
 contentUpdated:"New study content downloaded.",contentUpdatedN:"{n} new questions added.",
 privacy:"Privacy: your profile and progress stay on this device. The app only downloads new study content. Nothing about you is sent."});
 Object.assign(window.SECPREP_LANGS.en.ui,{startDaily:"Start today's {n} questions",quizDaily:"Daily practice",daily:"Daily practice",contentUpdated1:"1 new question added."});
+Object.assign(window.SECPREP_LANGS.en.ui,{
+learnChapters:"Chapters",learnVideos:"Videos",learnReview:"Quick review",studyGuide:"Study guide",chaptersRead:"{n} of {t} chapters read",continueCh:"Continue with chapter {id}",
+minRead:"{n} min read",hasVideo:"video",chapterN:"Chapter {id}",watch:"Watch the video lesson",keyTerms:"Key terms",realWorld:"Real-world example",checkYourself:"Check yourself",
+markRead:"Mark as read",readDone:"Read ✓",nextChapter:"Next chapter",videoMin:"{n} min",captions:"Captions",sound:"Sound",play:"Play",pause:"Pause",videoEnd:"Video complete",
+guideEnOnly:"This study guide is in English for now. The French version is coming soon.",
+simTitle:"Exam simulator",simDesc:"90 questions · 90 minutes · performance-based questions",simIntroTitle:"Before you begin",
+simR1:"Up to 90 questions in 90 minutes. The timer can't be paused.",simR2:"Performance-based questions come first: matching, ordering and firewall rules.",simR3:"You get no feedback until you end the exam, just like the real test.",simR4:"Flag any question to come back to it. Use Review to see unanswered and flagged questions.",simR5:"At the end you get an estimated score on the 100–900 scale. Passing is 750.",
+startExam:"Start exam",qOfN:"Question {i} of {n}",flag:"Flag for review",flagged:"Flagged",review:"Review",reviewHelp:"Tap a number to go back to that question. Gray means unanswered, orange means flagged.",answeredL:"Answered",
+endExam:"End exam",endTitle:"End the exam?",endMsg:"You have {u} unanswered and {f} flagged questions. You can't go back after ending.",timeUp:"Time is up. Your exam was submitted.",
+pbqLabel:"Performance-based question",chooseCat:"Choose…",moveUp:"Move up",moveDown:"Move down",allow:"Allow",deny:"Deny",fwSrc:"Source",fwDst:"Destination",fwPort:"Port",fwProto:"Protocol",fwAction:"Action",
+scoreReport:"Score report",scaled:"Estimated score",passEst:"Pass (estimated)",failEst:"Below passing (estimated)",passing:"Passing score: 750 on a 100–900 scale",
+scoreNote:"CompTIA doesn't publish how it scales scores. This simulator estimates a score with a straight line from 100 to 900, and gives partial credit on performance-based questions.",
+timeUsed:"{m} min used",yourAnswer:"Your answer",correctAnswer:"Correct answer",pbqScore:"{c} of {t} correct"});

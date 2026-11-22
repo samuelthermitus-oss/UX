@@ -43,6 +43,8 @@ function streak(){ let n=0; const d=new Date(); if(!S.days.includes(dayKey(d))) 
    Uses the native TTS plugin inside the iOS/Android app (Android's
    WebView has no speechSynthesis) and the Web Speech API in browsers.
    ===================================================================== */
+let Voice_langOverride = null;
+const VLANG = () => (Voice_langOverride && LANGS[Voice_langOverride]) || L();
 const Voice = (function(){
   const web = "speechSynthesis" in window;
   const nativeTTS = NATIVE && PLUG.TextToSpeech;
@@ -55,20 +57,20 @@ const Voice = (function(){
   let onVoices = null;
   function langMatch(vlang, prefs){ vlang=(vlang||"").toLowerCase().replace("_","-"); for(let i=0;i<prefs.length;i++){ const p=prefs[i].toLowerCase(); if(vlang===p) return 100-i*10; if(vlang.split("-")[0]===p.split("-")[0]) return 90-i*10; } return -1; }
   function score(v, prefs){ const lm=langMatch(v.lang, prefs); if(lm<0) return -1; let s=lm; if(QUALITY.test(v.name)) s+=40; if(GOOD_NAMES.test(v.name)) s+=15; if(v.localService===false) s+=5; if(/compact|eloquence|espeak/i.test(v.name)) s-=30; return s; }
-  function list(){ const prefs=L().speech; const src = nativeTTS ? nativeVoices : voices; return src.map((v,i)=>({v,i,s:score(v,prefs)})).filter(x=>x.s>=0).sort((a,b)=>b.s-a.s); }
-  function chosen(){ const l=list(); const want=S.voice[S.lang]; if(want){ const f=l.find(x=>x.v.name===want); if(f) return f; } return l[0]||null; }
+  function list(){ const prefs=VLANG().speech; const src = nativeTTS ? nativeVoices : voices; return src.map((v,i)=>({v,i,s:score(v,prefs)})).filter(x=>x.s>=0).sort((a,b)=>b.s-a.s); }
+  function chosen(){ const l=list(); const want=Voice_langOverride?null:S.voice[S.lang]; if(want){ const f=l.find(x=>x.v.name===want); if(f) return f; } return l[0]||null; }
   // Split text into speakable chunks, keeping each sentence's own pause.
   function chunk(text, opt){ opt=opt||{}; const parts=[]; String(text).replace(/\s+/g," ").split(/(?<=[.!?…:;])\s+/).forEach(s=>{ s=s.trim(); if(!s) return; const isQ=/\?$/.test(s); const ell=/(\.\.\.|…)$/.test(s); parts.push({t:s, pause: ell?650 : isQ?520 : /[:;]$/.test(s)?380 : 420, pitch:(opt.pitch||1)+(Math.random()*0.08-0.04)+(isQ?0.04:0), rate:(opt.rate||1)*(1+(Math.random()*0.06-0.03))}); }); if(parts.length&&opt.after!=null) parts[parts.length-1].pause=opt.after; return parts; }
   function sayOne(p, my){ return new Promise(res=>{
     if(my!==token) return res();
     const c = chosen(); const rate = Math.max(0.5, Math.min(2, p.rate*S.rate)); const pitch = Math.max(0.5,Math.min(2,p.pitch));
     if(nativeTTS){
-      const lang = c ? (c.v.lang||L().speech[0]) : (L().code==="ht"?"fr-FR":L().speech[0]);
+      const lang = c ? (c.v.lang||L().speech[0]) : (VLANG().code==="ht"?"fr-FR":VLANG().speech[0]);
       const o = {text:p.t, lang, rate, pitch, volume:1, category:"playback"}; if(c) o.voice=c.i;
       nativeTTS.speak(o).then(res,res); return;
     }
     if(!web) return res();
-    try{ const u=new SpeechSynthesisUtterance(p.t); if(c){u.voice=c.v;u.lang=c.v.lang}else{u.lang=L().code==="ht"?"fr-FR":L().speech[0]} u.rate=rate; u.pitch=pitch; u.onend=res; u.onerror=res; speechSynthesis.speak(u);
+    try{ const u=new SpeechSynthesisUtterance(p.t); if(c){u.voice=c.v;u.lang=c.v.lang}else{u.lang=VLANG().code==="ht"?"fr-FR":VLANG().speech[0]} u.rate=rate; u.pitch=pitch; u.onend=res; u.onerror=res; speechSynthesis.speak(u);
       // iOS Safari occasionally drops onend; a time-based fallback keeps the queue moving.
       setTimeout(res, 1500 + p.t.length*95/rate);
     }catch(e){res()}
@@ -184,7 +186,7 @@ function chrome(){
   tabsEl.querySelectorAll("button").forEach(b=>b.onclick=()=>{Haptic.tap();go(b.dataset.tab)});
 }
 function focusMode(on){ document.body.classList.toggle("focus", !!on); }
-function go(x){ Voice.stop(); Player.hide(); clearInterval(timerId); clearScen(); closeSheet(); quiz=null; focusMode(false); tab=x; chrome(); window.scrollTo(0,0); ({practice:viewPractice,learn:viewLearn,scenarios:viewScenarios,progress:viewProgress})[x](); }
+function go(x){ if(typeof stopVid==="function") stopVid(); Voice.stop(); Player.hide(); clearInterval(timerId); clearScen(); closeSheet(); quiz=null; focusMode(false); tab=x; chrome(); window.scrollTo(0,0); ({practice:viewPractice,learn:viewLearn,scenarios:viewScenarios,progress:viewProgress})[x](); }
 const langPill = (noGear) => `<div class="head-actions"><button class="pill-btn press" id="langbtn" type="button" aria-label="${esc(t("chooseLanguage"))}">${icon("globe")}${esc(L().short)}</button>${noGear?"":`<button class="pill-btn round press" id="setbtn" type="button" aria-label="${esc(t("openSettings"))}">${icon("gear")}</button>`}</div>`;
 function bindLang(){ const b=document.getElementById("langbtn"); if(b) b.onclick=openLangSheet; const g=document.getElementById("setbtn"); if(g) g.onclick=openSettings; }
 
@@ -236,7 +238,7 @@ function viewPractice(){
     <p class="fine">${esc(rd==null?t("readinessEmpty"):t("readinessBody"))}</p>
    </section>
    <div><div class="group-label">${esc(t("more"))}</div><div class="list">
-    <button class="row" id="m-exam"><span class="tile" style="background-color:#3a4150">${icon("clock")}</span><span class="txt"><b>${esc(t("exam"))}</b><span>${esc(t("examDesc"))}</span></span><span class="end">${icon("chev")}</span></button>
+    <button class="row" id="m-exam"><span class="tile" style="background-color:#3a4150">${icon("clock")}</span><span class="txt"><b>${esc(t("simTitle"))}</b><span>${esc(t("simDesc"))}</span></span><span class="end">${icon("chev")}</span></button>
     <button class="row" id="m-missed" ${missedN?"":"disabled"} style="${missedN?"":"opacity:.5"}"><span class="tile" style="background-color:var(--bad)">${icon("redo")}</span><span class="txt"><b>${esc(t("missed"))}</b><span>${esc(t("missedDesc",{n:missedN}))}</span></span><span class="end">${missedN?`<span class="badge">${missedN}</span>`:""}${icon("chev")}</span></button>
     <button class="row" id="m-all"><span class="tile" style="background-color:var(--brand)">${icon("list")}</span><span class="txt"><b>${esc(t("all",{n:EN.q.length}))}</b><span>${esc(t("allDesc"))}</span></span><span class="end">${icon("chev")}</span></button>
    </div></div>
@@ -246,7 +248,7 @@ function viewPractice(){
   bindLang();
   document.getElementById("m-daily").onclick=()=>{const missed=shuffle(Object.keys(S.missed).map(Number)).slice(0,Math.ceil(GOAL/3));const rest=shuffle(ALL.filter(i=>!missed.includes(i)));startQuiz(shuffle(missed.concat(rest).slice(0,GOAL)),"quizDaily",false)};
   const ml=document.getElementById("m-learn"); if(ml) ml.onclick=()=>{lessonDomain=1;go("learn")};
-  document.getElementById("m-exam").onclick=()=>startQuiz(shuffle(ALL).slice(0,90),"quizExam",true);
+  document.getElementById("m-exam").onclick=examIntro;
   document.getElementById("m-missed").onclick=()=>startQuiz(shuffle(Object.keys(S.missed).map(Number)),"quizMissed",false);
   document.getElementById("m-all").onclick=()=>startQuiz(shuffle(ALL),"quizAll",false);
   app.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>startQuiz(shuffle(ALL.filter(i=>EN.q[i][0]==b.dataset.d)),"quizDomain",false,{d:b.dataset.d}));
@@ -313,10 +315,10 @@ function finishQuiz(){
 
 /* ---------- lessons ---------- */
 let lessonDomain=1;
-function viewLearn(){
+function viewQuickReview(){
   const ls=L().lessons[lessonDomain], c=dc(lessonDomain);
   app.innerHTML=`<div class="screen enter">
-   <div class="head"><div><div class="over">${esc(t("lessonsEyebrow"))}</div><h1>${esc(t("lessonsTitle"))}</h1></div>${langPill()}</div>
+   <div class="head"><div><div class="over">${esc(t("lessonsEyebrow"))}</div><h1>${esc(t("lessonsTitle"))}</h1></div>${langPill()}</div>${learnTabs()}
    <div class="scroller" role="group">${[1,2,3,4,5].map(k=>`<button class="dchip press" type="button" data-ld="${k}" style="--c:${dc(k)}" aria-pressed="${k===lessonDomain}"><i></i>D${k}</button>`).join("")}</div>
    <section class="lesson-hero" style="--c:${c}"><span class="over">${esc(t("domain"))} ${lessonDomain} · ${WEIGHTS[lessonDomain]} · ${esc(t("topics",{n:ls.length}))}</span><h2>${esc(DN(lessonDomain))}</h2>
     ${Voice.available?`<button class="btn small press" id="playall" type="button">${fillIcon("play")}${esc(t("listenDomain"))}</button>`:""}</section>
@@ -324,7 +326,7 @@ function viewLearn(){
    <button class="btn block press" id="drill" style="background:${c};color:#fff">${esc(t("drill",{d:lessonDomain}))}</button>
    ${Voice.available?"":`<p class="fine">${esc(t("audioNA"))}</p>`}
   </div>`;
-  bindLang();
+  bindLang(); bindLearnTabs();
   app.querySelectorAll("[data-ld]").forEach(b=>b.onclick=()=>{Voice.stop();Player.hide();Haptic.tap();lessonDomain=+b.dataset.ld;viewLearn()});
   const mark=i=>{app.querySelectorAll(".topic").forEach(x=>x.classList.remove("playing"));const el=document.getElementById("lc"+i);if(el){el.classList.add("playing");el.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"center"})}};
   const done=()=>{mark(-1);Player.hide()};
@@ -634,6 +636,252 @@ const Content = {
 document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") Content.check(); });
 
 Voice.onVoices = () => { refreshSettings(); };
+
+/* =====================================================================
+   STUDY GUIDE · VIDEO LESSONS · EXAM SIMULATOR
+   ===================================================================== */
+const GUIDE = () => (window.SECPREP_GUIDE||{chapters:[]}).chapters.slice().sort((a,b)=>a.id.localeCompare(b.id,undefined,{numeric:true}));
+const VIDEOS = () => (window.SECPREP_VIDEOS||{})[S.lang] || (window.SECPREP_VIDEOS||{}).en || [];
+const PBQS = () => (window.SECPREP_PBQ||{})[S.lang] || (window.SECPREP_PBQ||{}).en || [];
+const guideLang = () => (window.SECPREP_GUIDE_LANG||"en");
+const md = s => esc(s).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
+const VI = {
+  user:"M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4.5 20.5a7.5 7.5 0 0 1 15 0",
+  attacker:"M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4.5 20.5a7.5 7.5 0 0 1 15 0M8 7.5h8",
+  server:"M4.5 4h15v6.5h-15zM4.5 13.5h15V20h-15zM8 7.2h.01M8 16.8h.01",
+  laptop:"M5 5h14v10H5zM3 18.5h18",
+  cloud:"M7 18.5a4.5 4.5 0 0 1-.6-9A6 6 0 0 1 18 9.5a4.5 4.5 0 0 1-.5 9z",
+  firewall:"M3.5 5h17v14h-17zM3.5 9.7h17M3.5 14.3h17M9 5v4.7M15 9.7v4.6M9 14.3V19",
+  db:"M12 8c4.1 0 7.5-1.3 7.5-3S16.1 2 12 2 4.5 3.3 4.5 5 7.9 8 12 8zM4.5 5v14c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3V5M4.5 12c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3",
+  lock:"M6 10.5h12v10H6zM8.5 10.5V7a3.5 3.5 0 0 1 7 0v3.5",
+  key:"M14.5 9.5a4 4 0 1 0-3.4 3.95L8 16.5V20h3.5v-2h2v-2h2l.5-.5",
+  mail:"M3.5 5.5h17v13h-17zM3.5 6l8.5 7 8.5-7",
+  shield:"M12 3l7.5 3v6c0 4.4-3.2 7.8-7.5 9-4.3-1.2-7.5-4.6-7.5-9V6z",
+  phone:"M8 2.5h8a1.5 1.5 0 0 1 1.5 1.5v16a1.5 1.5 0 0 1-1.5 1.5H8A1.5 1.5 0 0 1 6.5 20V4A1.5 1.5 0 0 1 8 2.5zM11 18.5h2",
+  router:"M3.5 13h17v6h-17zM7 16h.01M10 16h.01M8 13l-2-6M16 13l2-6",
+  globe:"M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c2.4 2.5 3.5 5.5 3.5 9s-1.1 6.5-3.5 9c-2.4-2.5-3.5-5.5-3.5-9S9.6 5.5 12 3z",
+  doc:"M6 2.5h8.5L19 7v14.5H6zM14 2.5V7h5M9 12h6M9 16h6",
+  clock:"M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7.5V12l3 2"
+};
+const vicon = n => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="${VI[n]||VI.doc}"/></svg>`;
+S.read = S.read || {}; S.watched = S.watched || {}; S.exams = S.exams || [];
+function speakGuide(parts, done){ Voice_langOverride = guideLang()!==S.lang ? guideLang() : null; speak(parts, ()=>{ Voice_langOverride=null; if(done) done(); }); }
+
+/* ---------- Learn tab ---------- */
+let learnView = "chapters";
+const learnTabs = () => `<div class="segtabs" role="tablist">${[["chapters","learnChapters"],["videos","learnVideos"],["review","learnReview"]].map(([id,k])=>`<button type="button" role="tab" data-lv="${id}" aria-selected="${learnView===id}">${esc(t(k))}</button>`).join("")}</div>`;
+function bindLearnTabs(){ app.querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>{ learnView=b.dataset.lv; Haptic.tap(); Voice.stop(); Player.hide(); viewLearn(); }); }
+function viewLearn(){
+  if(learnView==="review") return viewQuickReview();
+  const ch=GUIDE(), done=ch.filter(c=>S.read[c.id]).length, note=guideLang()!==S.lang?`<div class="notice">${esc(t("guideEnOnly"))}</div>`:"";
+  let body="";
+  if(learnView==="chapters"){
+    body=`<section class="card guide-hero"><div class="hero">${ring(ch.length?done/ch.length:0,84,9,"var(--brand)",`<b class="num" style="font-size:22px">${done}</b><small>/ ${ch.length}</small>`)}<div class="meta"><span class="muted" style="font-size:14px;font-weight:600">${esc(t("studyGuide"))}</span><span class="big">${esc(t("chaptersRead",{n:done,t:ch.length}))}</span></div></div>
+      ${(()=>{const nx=ch.find(c=>!S.read[c.id]);return nx?`<button class="btn block press" id="continue" data-ch="${nx.id}" style="margin-top:16px">${esc(t("continueCh",{id:nx.id}))}</button>`:""})()}</section>${note}
+      ${[1,2,3,4,5].map(d=>{const cs=ch.filter(c=>c.d===d);if(!cs.length)return"";return `<div><div class="group-label">D${d} · ${esc(DN(d))} · ${WEIGHTS[d]}</div><div class="list">${cs.map(c=>`<button class="row" data-ch="${c.id}"><span class="tile chnum" style="background-color:${dc(d)}">${esc(c.id)}</span><span class="txt"><b>${esc(c.t)}</b><span>${esc(t("minRead",{n:c.min}))}${c.vid?" · "+esc(t("hasVideo")):""}</span></span><span class="end">${S.read[c.id]?`<span class="donechk">${icon("check")}</span>`:""}${icon("chev")}</span></button>`).join("")}</div></div>`}).join("")}`;
+  } else {
+    const vs=VIDEOS();
+    body=`${note}<div class="vgrid">${vs.map(v=>`<button class="vcard press" data-vid="${v.id}" style="--c:${dc(v.d)}"><span class="poster"><span class="pico">${vicon(v.scenes.find(s=>s.k==="flow")?.nodes?.[0]?.i||"shield")}</span><span class="pplay">${fillIcon("play")}</span>${S.watched[v.id]?`<span class="pdone">${icon("check")}</span>`:""}</span><b>${esc(v.t)}</b><span>D${v.d} · ${esc(t("chapterN",{id:v.ch}))} · ${esc(t("videoMin",{n:Math.max(1,Math.round(v.scenes.reduce((a,s)=>a+s.say.split(" ").length,0)/150))}))}</span></button>`).join("")}</div>`;
+  }
+  app.innerHTML=`<div class="screen enter"><div class="head"><div><div class="over">${esc(t("lessonsEyebrow"))}</div><h1>${esc(t("lessonsTitle"))}</h1></div>${langPill()}</div>${learnTabs()}${body}</div>`;
+  bindLang(); bindLearnTabs();
+  app.querySelectorAll("[data-ch]").forEach(b=>b.onclick=()=>openChapter(b.dataset.ch));
+  app.querySelectorAll("[data-vid]").forEach(b=>b.onclick=()=>openVideo(b.dataset.vid));
+}
+
+/* ---------- Chapter reader ---------- */
+function checkQuestions(c){ const keys=(c.ck||[]).map(k=>k.toLowerCase()), out=[];
+  for(const k of keys){ const i=EN.q.findIndex((q,ix)=>q[0]===c.d&&!out.includes(ix)&&(q[1]+" "+q[2]).toLowerCase().includes(k)); if(i>=0) out.push(i); if(out.length>=3) break; }
+  return out; }
+function openChapter(id){
+  const list=GUIDE(), c=list.find(x=>x.id===id); if(!c) return;
+  const idx=list.indexOf(c), next=list[idx+1], vid=c.vid&&VIDEOS().find(v=>v.id===c.vid), cq=checkQuestions(c);
+  Voice.stop(); Player.hide(); focusMode(true); window.scrollTo(0,0);
+  app.innerHTML=`<div class="screen enter reader" style="--c:${dc(c.d)}">
+   <div class="qbar"><button class="icon-btn press" id="rback" type="button" aria-label="${esc(t("back"))}">${icon("back")}</button><span class="rtitle">${esc(t("chapterN",{id:c.id}))}</span>${Voice.available?`<button class="icon-btn press" id="rlisten" type="button" aria-label="${esc(t("listen"))}">${icon("speaker")}</button>`:"<span></span>"}</div>
+   <div class="rhead"><span class="chip" style="--c:${dc(c.d)}">${icon("d"+c.d)}D${c.d} · ${esc(DN(c.d))}</span><h1>${esc(c.t)}</h1><p class="muted">${esc(t("minRead",{n:c.min}))}</p></div>
+   ${guideLang()!==S.lang?`<div class="notice">${esc(t("guideEnOnly"))}</div>`:""}
+   <p class="lead">${md(c.intro)}</p>
+   ${vid?`<button class="vinline press" id="rvid" type="button" style="--c:${dc(c.d)}"><span class="pplay">${fillIcon("play")}</span><span class="txt"><small>${esc(t("watch"))}</small><b>${esc(vid.t)}</b></span></button>`:""}
+   ${c.s.map(([h,txt,bul],k)=>`<section class="rsec"><h2><span class="secn">${k+1}</span>${esc(h)}</h2>${txt.split("\n\n").map(p=>`<p>${md(p)}</p>`).join("")}${bul?`<ul>${bul.map(b=>`<li>${md(b)}</li>`).join("")}</ul>`:""}</section>`).join("")}
+   ${c.terms&&c.terms.length?`<section class="card"><h3>${esc(t("keyTerms"))}</h3><dl class="terms">${c.terms.map(([a,b])=>`<div><dt>${esc(a)}</dt><dd>${esc(b)}</dd></div>`).join("")}</dl></section>`:""}
+   ${c.ex?`<section class="card example"><h3>${icon("d"+c.d)} ${esc(t("realWorld"))}</h3><p>${md(c.ex)}</p></section>`:""}
+   ${c.tip?`<div class="tip" style="--c:${dc(c.d)}"><b>${esc(t("examTip"))}</b>${md(c.tip)}</div>`:""}
+   ${cq.length?`<section class="checkq"><h2>${esc(t("checkYourself"))}</h2>${cq.map((qi,n)=>{const q=Q(qi),order=shuffle([0,1,2,3]);return `<div class="card mini" data-cq="${qi}"><p class="qtext small">${n+1}. ${esc(q.q)}</p><div class="opts">${order.map((oi,j)=>`<button class="opt" data-o="${oi}"><span class="k">${"ABCD"[j]}</span><span>${esc(q.opts[oi])}</span></button>`).join("")}</div><p class="choice-fb" hidden></p></div>`}).join("")}</section>`:""}
+   <div class="rfoot"><button class="btn block press" id="rdone">${esc(S.read[c.id]?t("readDone"):t("markRead"))}</button>${next?`<button class="btn soft block press" id="rnext">${esc(t("nextChapter"))}: ${esc(next.id)} ${esc(next.t)}</button>`:""}</div>
+  </div>`;
+  const $=s=>app.querySelector(s);
+  $("#rback").onclick=()=>{Voice.stop();Player.hide();focusMode(false);go("learn")};
+  if($("#rvid")) $("#rvid").onclick=()=>openVideo(vid.id,c.id);
+  $("#rdone").onclick=()=>{S.read[c.id]=true;save();Haptic.ok();$("#rdone").textContent=t("readDone");if(next)openChapter(next.id);else{focusMode(false);go("learn")}};
+  if($("#rnext")) $("#rnext").onclick=()=>openChapter(next.id);
+  if($("#rlisten")) $("#rlisten").onclick=()=>{ const parts=[].concat(Voice.chunk(c.t+".",{pitch:1.05,after:700}),Voice.chunk(c.intro.replace(/\*\*/g,""),{after:800}));
+    c.s.forEach(([h,txt,bul])=>{parts.push(...Voice.chunk(h+".",{pitch:1.05,after:600}),...Voice.chunk(txt.replace(/\*\*/g,""),{after:600})); if(bul) bul.forEach(b=>parts.push(...Voice.chunk(b.replace(/\*\*/g,"")+".",{after:350})));});
+    if(c.ex) parts.push(...Voice.chunk(c.ex,{after:600})); if(c.tip) parts.push(...Voice.chunk(c.tip,{pitch:1.06}));
+    Player.show(c.t,()=>{}); speakGuide(parts,()=>Player.hide()); };
+  app.querySelectorAll("[data-cq]").forEach(box=>{ const qi=+box.dataset.cq, q=Q(qi);
+    box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{ const oi=+b.dataset.o, ok=oi===0; record(qi,ok); (ok?Haptic.ok:Haptic.no)();
+      box.querySelectorAll(".opt").forEach(x=>{x.disabled=true;const o=+x.dataset.o;if(o===0){x.classList.add("right");x.querySelector(".k").innerHTML=icon("check")}else if(x===b){x.classList.add("wrong","shake");x.querySelector(".k").innerHTML=icon("x")}else x.classList.add("dim")});
+      const fb=box.querySelector(".choice-fb"); fb.hidden=false; fb.className="choice-fb "+(ok?"ok":"no"); fb.textContent=(ok?t("correct")+". ":t("answer")+": "+q.opts[0]+". ")+q.exp; }); });
+}
+
+/* ---------- Video player ---------- */
+function stageScene(sc){
+  if(sc.k==="title") return `<div class="vs vs-title"><span class="vlogo">${vicon("shield")}</span><h2>${esc(sc.h)}</h2>${sc.sub?`<p>${esc(sc.sub)}</p>`:""}</div>`;
+  if(sc.k==="flow"){ const P2=n=>({x:n.x*1.6,y:n.y*0.9}), byId=Object.fromEntries(sc.nodes.map(n=>[n.id,n]));
+    const links=(sc.links||[]).map((l,i)=>{const a=P2(byId[l.a]),b=P2(byId[l.b]),dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy)||1,r=11,ax=a.x+dx/len*r,ay=a.y+dy/len*r,bx=b.x-dx/len*r,by=b.y-dy/len*r,mx=(ax+bx)/2,my=(ay+by)/2,bad=l.tone==="bad",dl=(0.5+i*0.9).toFixed(2);
+      return `<g class="vlink ${bad?"bad":""}" style="--dl:${dl}s"><line x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}" pathLength="1"/><circle r="1.6" class="pkt"><animateMotion dur="1.8s" begin="${dl}s" repeatCount="indefinite" path="M${ax},${ay} L${bx},${by}"/></circle>${l.l?`<text x="${mx}" y="${my-3}" text-anchor="middle">${esc(l.l)}</text>`:""}</g>`}).join("");
+    return `<div class="vs vs-flow"><svg viewBox="0 0 160 90" aria-hidden="true">${links}</svg>${sc.nodes.map((n,i)=>`<div class="vnode ${n.tone==="bad"?"bad":""}" style="left:${n.x}%;top:${n.y}%;--dl:${(i*0.25).toFixed(2)}s"><span class="vni">${vicon(n.i)}</span><span class="vnl">${esc(n.l)}</span></div>`).join("")}</div>`; }
+  if(sc.k==="list"||sc.k==="steps") return `<div class="vs vs-list ${sc.k}"><h3>${esc(sc.h)}</h3><ol>${sc.items.map((it,i)=>`<li style="--dl:${(0.6+i*1.1).toFixed(2)}s"><span class="n">${sc.k==="steps"?i+1:icon("check")}</span>${esc(it)}</li>`).join("")}</ol></div>`;
+  if(sc.k==="email") return `<div class="vs vs-email"><div class="mailbox"><div class="mrow" data-at="from"><small>From</small>${esc(sc.from)}</div><div class="mrow" data-at="subj"><small>Subject</small><b>${esc(sc.subj)}</b></div><div class="mrow body" data-at="body">${esc(sc.body)}</div></div><div class="flags">${(sc.flags||[]).map((f,i)=>`<div class="flag" data-for="${f.at}" style="--dl:${(1.2+i*2.2).toFixed(2)}s"><span>!</span>${esc(f.note)}</div>`).join("")}</div></div>`;
+  if(sc.k==="terminal") return `<div class="vs vs-term"><div class="tbar"><i></i><i></i><i></i></div>${sc.lines.map((l,i)=>`<div class="tl ${/alert|ALL rows/i.test(l)?"alert":/warn/i.test(l)?"warn":""}" style="--dl:${(0.4+i*1.4).toFixed(2)}s">${esc(l)}</div>`).join("")}</div>`;
+  if(sc.k==="compare") return `<div class="vs vs-compare"><div class="cl bad"><h3>${esc(sc.l.h)}</h3><ul>${sc.l.items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></div><div class="cr good"><h3>${esc(sc.r.h)}</h3><ul>${sc.r.items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></div></div>`;
+  return "";
+}
+let vidState=null;
+function openVideo(id, fromChapter){
+  const v=VIDEOS().find(x=>x.id===id); if(!v) return;
+  Voice.stop(); Player.hide(); focusMode(true); window.scrollTo(0,0);
+  vidState={v,i:0,playing:true,sound:Voice.available,cc:true,timer:null,from:fromChapter};
+  app.innerHTML=`<div class="screen enter vplayer" style="--c:${dc(v.d)}">
+   <div class="qbar"><button class="icon-btn press" id="vclose" type="button" aria-label="${esc(t("close"))}">${icon("x")}</button><span class="rtitle">${esc(v.t)}</span><button class="icon-btn press" id="vcc" type="button" aria-pressed="true" aria-label="${esc(t("captions"))}">CC</button></div>
+   <div class="vstage" id="vstage" aria-live="polite"></div>
+   <p class="vcap" id="vcap"></p>
+   <div class="vsegs" id="vsegs">${v.scenes.map((_,i)=>`<button type="button" data-sc="${i}" aria-label="${i+1}"><i></i></button>`).join("")}</div>
+   <div class="vctl"><button class="icon-btn press" id="vprev" type="button" aria-label="${esc(t("back"))}">${icon("back")}</button><button class="vbig press" id="vplay" type="button" aria-label="${esc(t("pause"))}"></button><button class="icon-btn press" id="vnext" type="button" aria-label="${esc(t("next"))}">${icon("chev")}</button><button class="icon-btn press" id="vsound" type="button" aria-label="${esc(t("sound"))}">${icon("speaker")}</button></div>
+   <div class="vend" id="vend" hidden></div>
+  </div>`;
+  const $=s=>app.querySelector(s);
+  $("#vclose").onclick=()=>{stopVid();focusMode(false);if(vidState&&vidState.from)openChapter(vidState.from);else go("learn")};
+  $("#vcc").onclick=()=>{vidState.cc=!vidState.cc;$("#vcc").setAttribute("aria-pressed",vidState.cc);$("#vcap").hidden=!vidState.cc};
+  $("#vplay").onclick=()=>{vidState.playing=!vidState.playing;if(vidState.playing)playScene();else stopVid(true);paintCtl()};
+  $("#vprev").onclick=()=>{if(vidState.i>0){vidState.i--;vidState.playing=true;playScene()}};
+  $("#vnext").onclick=()=>{if(vidState.i<v.scenes.length-1){vidState.i++;vidState.playing=true;playScene()}else endVideo()};
+  $("#vsound").onclick=()=>{vidState.sound=!vidState.sound;$("#vsound").style.opacity=vidState.sound?1:.45;if(vidState.playing)playScene()};
+  app.querySelectorAll("[data-sc]").forEach(b=>b.onclick=()=>{vidState.i=+b.dataset.sc;vidState.playing=true;playScene()});
+  playScene();
+}
+function paintCtl(){ const b=app.querySelector("#vplay"); if(!b||!vidState) return; b.innerHTML=fillIcon(vidState.playing?"stop":"play"); b.setAttribute("aria-label",t(vidState.playing?"pause":"play"));
+  app.querySelectorAll("#vsegs button").forEach((s,k)=>{s.classList.toggle("done",k<vidState.i);s.classList.toggle("on",k===vidState.i);s.classList.toggle("run",k===vidState.i&&vidState.playing)}); }
+function stopVid(keep){ if(!vidState) return; clearTimeout(vidState.timer); Voice.stop(); if(!keep) vidState.playing=false; }
+function playScene(){
+  const st=vidState; if(!st) return; clearTimeout(st.timer); Voice.stop();
+  const sc=st.v.scenes[st.i], stage=app.querySelector("#vstage"), cap=app.querySelector("#vcap"); if(!stage) return;
+  app.querySelector("#vend").hidden=true; stage.hidden=false;
+  stage.innerHTML=stageScene(sc); cap.textContent=sc.say; cap.hidden=!st.cc;
+  if(sc.k==="email") (sc.flags||[]).forEach((f,i)=>setTimeout(()=>{const r=stage.querySelector(`[data-at="${f.at}"]`);if(r)r.classList.add("hit")},(1200+i*2200)));
+  const est=1500+sc.say.split(/\s+/).length*400/(S.rate||1);
+  stage.querySelectorAll(".vs-list li").forEach((li,k,all)=>li.style.setProperty("--dl",(0.4+k*(est/1000-1)/Math.max(1,all.length)).toFixed(2)+"s"));
+  paintCtl();
+  const advance=()=>{ if(!vidState||vidState!==st||!st.playing) return; if(st.i<st.v.scenes.length-1){st.i++;playScene()} else endVideo(); };
+  if(!st.playing) return;
+  if(st.sound&&Voice.available){ Voice_langOverride=st.v===((window.SECPREP_VIDEOS||{})[S.lang]||[]).find(x=>x.id===st.v.id)?null:"en"; Voice.play(Voice.chunk(sc.say,{pitch:sc.k==="title"?1.04:0.99,rate:0.97}),()=>{Voice_langOverride=null;st.timer=setTimeout(advance,900)}); }
+  else st.timer=setTimeout(advance,est);
+}
+function endVideo(){
+  const st=vidState; if(!st) return; stopVid(); S.watched[st.v.id]=true; save(); Haptic.ok();
+  const ch=GUIDE().find(c=>c.id===st.v.ch), e=app.querySelector("#vend"), stage=app.querySelector("#vstage");
+  stage.hidden=true; app.querySelector("#vcap").textContent=""; paintCtl();
+  e.hidden=false; e.innerHTML=`<div class="card vendc"><span class="donebig">${icon("check")}</span><h2>${esc(t("videoEnd"))}</h2><button class="btn block press" id="vre">${esc(t("replay"))}</button>${ch?`<button class="btn soft block press" id="vch">${esc(t("chapterN",{id:ch.id}))}: ${esc(ch.t)}</button>`:""}<button class="btn soft block press" id="vdrill">${esc(t("drill",{d:st.v.d}))}</button></div>`;
+  e.querySelector("#vre").onclick=()=>{st.i=0;st.playing=true;e.hidden=true;playScene()};
+  if(e.querySelector("#vch")) e.querySelector("#vch").onclick=()=>openChapter(ch.id);
+  e.querySelector("#vdrill").onclick=()=>{focusMode(false);startQuiz(shuffle(ALL.filter(i=>EN.q[i][0]==st.v.d)),"quizDomain",false,{d:st.v.d})};
+}
+
+/* ---------- Exam simulator ---------- */
+const EXAM_MIX={1:10,2:19,3:15,4:24,5:18}, EXAM_PBQ=4, EXAM_MIN=90;
+let ex=null;
+function examIntro(){
+  Voice.stop(); Player.hide(); focusMode(true); window.scrollTo(0,0);
+  app.innerHTML=`<div class="screen enter exam-intro">
+   <div class="qbar"><button class="icon-btn press" id="xback" type="button" aria-label="${esc(t("back"))}">${icon("x")}</button><span class="rtitle">${esc(t("simTitle"))}</span><span></span></div>
+   <div class="rhead"><h1>${esc(t("simIntroTitle"))}</h1></div>
+   <section class="card"><ul class="rules">${["simR1","simR2","simR3","simR4","simR5"].map(k=>`<li>${esc(t(k))}</li>`).join("")}</ul></section>
+   <p class="fine">${esc(t("scoreNote"))}</p>
+   <button class="btn block press" id="xstart">${esc(t("startExam"))}</button>
+  </div>`;
+  app.querySelector("#xback").onclick=()=>{focusMode(false);go("practice")};
+  app.querySelector("#xstart").onclick=startExam;
+}
+function startExam(){
+  const items=[]; shuffle(PBQS()).slice(0,EXAM_PBQ).forEach(p=>items.push({type:"pbq",p,state:initPbq(p)}));
+  for(const d of [1,2,3,4,5]) shuffle(ALL.filter(i=>EN.q[i][0]===d)).slice(0,EXAM_MIX[d]).forEach(qi=>items.push({type:"q",qi,order:shuffle([0,1,2,3])}));
+  const pb=items.filter(x=>x.type==="pbq"), mc=shuffle(items.filter(x=>x.type==="q"));
+  ex={items:pb.concat(mc),i:0,ans:{},flag:{},start:Date.now(),end:Date.now()+EXAM_MIN*60000,done:false};
+  clearInterval(timerId); timerId=setInterval(()=>{ if(!ex||ex.done) return; const left=ex.end-Date.now(), el=document.getElementById("xtimer"); if(el){el.textContent=fmt(left);el.classList.toggle("low",left<600000)} if(left<=0){clearInterval(timerId);toast(t("timeUp"));finishExam()} },1000);
+  Haptic.tap(); renderExam();
+}
+function initPbq(p){ if(p.type==="match") return {map:{}}; if(p.type==="order"){ let o=shuffle(p.items.map((_,i)=>i)); while(o.length>1&&o.every((v,i)=>v===i)) o=shuffle(o); return {order:o}; } if(p.type==="firewall") return {act:{}}; return {}; }
+function pbqAnswered(it){ const p=it.p,s=it.state; if(p.type==="match") return Object.keys(s.map).length===p.items.length; if(p.type==="firewall") return Object.keys(s.act).length===p.rules.length; return !!s.touched; }
+function isAnswered(k){ const it=ex.items[k]; return it.type==="pbq"?pbqAnswered(it):ex.ans[k]!==undefined; }
+function pbqScore(it){ const p=it.p,s=it.state; let c=0,tot=0;
+  if(p.type==="match"){ p.items.forEach(([txt,cat],i)=>{tot++; if(s.map[i]===cat) c++;}); }
+  if(p.type==="order"){ s.order.forEach((v,i)=>{tot++; if(v===i) c++;}); }
+  if(p.type==="firewall"){ p.rules.forEach((r,i)=>{tot++; if(s.act[i]===r.ans) c++;}); }
+  return {c,tot}; }
+function renderExam(){
+  const k=ex.i, it=ex.items[k], n=ex.items.length;
+  let body="";
+  if(it.type==="q"){ const q=Q(it.qi); body=`<p class="xq">${esc(q.q)}</p><div class="xopts" role="radiogroup">${it.order.map((oi,j)=>`<button type="button" class="xopt ${ex.ans[k]===oi?"sel":""}" role="radio" aria-checked="${ex.ans[k]===oi}" data-o="${oi}"><span class="xr"></span><span class="k">${"ABCD"[j]}.</span><span>${esc(q.opts[oi])}</span></button>`).join("")}</div>`; }
+  else { const p=it.p, s=it.state;
+    body=`<span class="pbqtag">${esc(t("pbqLabel"))}</span><h2 class="xh">${esc(p.t)}</h2><p class="xq">${esc(p.prompt)}</p>`;
+    if(p.type==="match") body+=`<div class="pbq-match">${p.items.map(([txt],i)=>`<label class="pm-row"><span>${esc(txt)}</span><select data-mi="${i}"><option value="">${esc(t("chooseCat"))}</option>${p.cats.map(c=>`<option ${s.map[i]===c?"selected":""}>${esc(c)}</option>`).join("")}</select></label>`).join("")}</div>`;
+    if(p.type==="order") body+=`<ol class="pbq-order">${s.order.map((v,pos)=>`<li><span class="on">${pos+1}</span><span class="ot">${esc(p.items[v])}</span><button type="button" class="icon-btn" data-up="${pos}" ${pos===0?"disabled":""} aria-label="${esc(t("moveUp"))}">▲</button><button type="button" class="icon-btn" data-dn="${pos}" ${pos===s.order.length-1?"disabled":""} aria-label="${esc(t("moveDown"))}">▼</button></li>`).join("")}</ol>`;
+    if(p.type==="firewall") body+=`<div class="fwrap"><table class="fw"><thead><tr><th>#</th><th>${esc(t("fwSrc"))}</th><th>${esc(t("fwDst"))}</th><th>${esc(t("fwPort"))}</th><th>${esc(t("fwProto"))}</th><th>${esc(t("fwAction"))}</th></tr></thead><tbody>${p.rules.map((r,i)=>`<tr><td data-l="#">${i+1}</td><td data-l="${esc(t("fwSrc"))}">${esc(r.src)}</td><td data-l="${esc(t("fwDst"))}">${esc(r.dst)}</td><td data-l="${esc(t("fwPort"))}">${esc(r.port)}</td><td data-l="${esc(t("fwProto"))}">${esc(r.proto)}</td><td data-l="${esc(t("fwAction"))}"><div class="ad">${["Allow","Deny"].map(a=>`<button type="button" data-fr="${i}" data-a="${a}" aria-pressed="${s.act[i]===a}">${esc(t(a==="Allow"?"allow":"deny"))}</button>`).join("")}</div></td></tr>`).join("")}</tbody></table></div>`;
+  }
+  app.innerHTML=`<div class="exam-ui">
+   <header class="xbar"><div><b>${esc(t("simTitle"))}</b><span>${esc(t("qOfN",{i:k+1,n}))}</span></div><span class="timer" id="xtimer">${fmt(ex.end-Date.now())}</span></header>
+   <div class="xtools"><label class="xflag"><input type="checkbox" id="xflag" ${ex.flag[k]?"checked":""}> ${esc(t("flag"))}</label><button type="button" class="xlink" id="xreview">${esc(t("review"))}</button></div>
+   <main class="xbody">${body}</main>
+   <footer class="xfoot"><button class="xbtn" id="xprev" ${k===0?"disabled":""}>${esc(t("back"))}</button><button class="xbtn primary" id="xnext">${esc(k===n-1?t("review"):t("next"))}</button></footer>
+  </div>`;
+  const $=s=>app.querySelector(s);
+  $("#xflag").onchange=e=>{ex.flag[k]=e.target.checked};
+  $("#xreview").onclick=renderReview;
+  $("#xprev").onclick=()=>{ex.i--;renderExam();window.scrollTo(0,0)};
+  $("#xnext").onclick=()=>{if(k===n-1)renderReview();else{ex.i++;renderExam();window.scrollTo(0,0)}};
+  app.querySelectorAll(".xopt").forEach(b=>b.onclick=()=>{ex.ans[k]=+b.dataset.o;Haptic.tap();app.querySelectorAll(".xopt").forEach(x=>{const on=x===b;x.classList.toggle("sel",on);x.setAttribute("aria-checked",on)})});
+  app.querySelectorAll("[data-mi]").forEach(sel=>sel.onchange=()=>{const s=it.state; if(sel.value) s.map[sel.dataset.mi]=sel.value; else delete s.map[sel.dataset.mi];});
+  app.querySelectorAll("[data-up],[data-dn]").forEach(b=>b.onclick=()=>{const s=it.state,pos=+(b.dataset.up??b.dataset.dn),to=b.dataset.up!==undefined?pos-1:pos+1;[s.order[pos],s.order[to]]=[s.order[to],s.order[pos]];s.touched=true;Haptic.tap();renderExam()});
+  app.querySelectorAll("[data-fr]").forEach(b=>b.onclick=()=>{it.state.act[b.dataset.fr]=b.dataset.a;Haptic.tap();app.querySelectorAll(`[data-fr="${b.dataset.fr}"]`).forEach(x=>x.setAttribute("aria-pressed",x===b))});
+}
+function renderReview(){
+  const n=ex.items.length, un=ex.items.filter((_,k)=>!isAnswered(k)).length, fl=Object.values(ex.flag).filter(Boolean).length;
+  app.innerHTML=`<div class="exam-ui">
+   <header class="xbar"><div><b>${esc(t("simTitle"))}</b><span>${esc(t("review"))}</span></div><span class="timer" id="xtimer">${fmt(ex.end-Date.now())}</span></header>
+   <main class="xbody"><p class="xq">${esc(t("reviewHelp"))}</p>
+    <div class="xlegend"><span class="a">${esc(t("answeredL"))}</span><span class="u">${esc(t("unansweredLbl"))} · ${un}</span><span class="f">${esc(t("flagged"))} · ${fl}</span></div>
+    <div class="xgrid">${ex.items.map((it,k)=>`<button type="button" data-go="${k}" class="${isAnswered(k)?"a":"u"} ${ex.flag[k]?"f":""}">${k+1}${it.type==="pbq"?"<small>PBQ</small>":""}</button>`).join("")}</div></main>
+   <footer class="xfoot"><button class="xbtn" id="xret">${esc(t("back"))}</button><button class="xbtn danger" id="xend">${esc(t("endExam"))}</button></footer>
+  </div>`;
+  app.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{ex.i=+b.dataset.go;renderExam();window.scrollTo(0,0)});
+  app.querySelector("#xret").onclick=()=>renderExam();
+  app.querySelector("#xend").onclick=()=>confirmBox(t("endTitle"),t("endMsg",{u:un,f:fl}),t("endExam"),finishExam);
+}
+function finishExam(){
+  if(!ex||ex.done) return; ex.done=true; clearInterval(timerId);
+  const dom={}; let pts=0, max=0; const pb=[];
+  ex.items.forEach((it,k)=>{ if(it.type==="q"){ const d=EN.q[it.qi][0], ok=ex.ans[k]===0; dom[d]=dom[d]||{c:0,t:0}; dom[d].t++; max++; if(ok){pts++;dom[d].c++;} if(ex.ans[k]!==undefined) record(it.qi,ok); else S.missed[it.qi]=1; }
+    else { const r=pbqScore(it); max+=3; pts+=3*r.c/r.tot; pb.push({p:it.p,r,state:it.state}); } });
+  const pct=pts/max, scaled=Math.round(100+800*pct), pass=scaled>=750, used=Math.min(EXAM_MIN,Math.round((Date.now()-ex.start)/60000));
+  S.exams.unshift({d:today(),scaled,pass}); S.exams=S.exams.slice(0,20); S.history.unshift({d:today(),label:"simTitle",lv:{},c:Math.round(pct*100),t:100}); S.history=S.history.slice(0,60); markDay(); save();
+  const result={dom,pb,scaled,pass,used,items:ex.items,ans:ex.ans}; focusMode(false); quiz=null; tab="practice"; chrome();
+  showReport(result); (pass?Haptic.ok:Haptic.no)();
+}
+function showReport(r){
+  const wrong=r.items.map((it,k)=>({it,k})).filter(x=>x.it.type==="q"&&r.ans[x.k]!==0);
+  app.innerHTML=`<div class="screen enter">
+   <div class="head"><div><div class="over">${esc(t("simTitle"))}</div><h1>${esc(t("scoreReport"))}</h1></div></div>
+   <section class="card score">${ring((r.scaled-100)/800,176,14,r.pass?"var(--good)":"var(--bad)",`<b style="font-size:42px">${r.scaled}</b><small>${esc(t("scaled"))}</small>`)}
+    <span class="chip" style="--c:${r.pass?"var(--good)":"var(--bad)"};font-size:15px">${esc(r.pass?t("passEst"):t("failEst"))}</span>
+    <p class="muted">${esc(t("passing"))} · ${esc(t("timeUsed",{m:r.used}))}</p></section>
+   <div><div class="group-label">${esc(t("byDomainRes"))}</div><div class="list">${[1,2,3,4,5].filter(d=>r.dom[d]).map(d=>{const x=r.dom[d];return `<div class="row"><span class="tile" style="background-color:${dc(d)}">${icon("d"+d)}</span><span class="txt"><b>${esc(DN(d))}</b><span class="bar"><i style="width:${x.c/x.t*100}%;background:${dc(d)}"></i></span></span><span class="end num">${x.c}/${x.t}</span></div>`}).join("")}</div></div>
+   <div><div class="group-label">${esc(t("pbqLabel"))}</div><div class="stack" style="display:flex;flex-direction:column;gap:10px">${r.pb.map(({p,r:s,state})=>`<div class="card" style="display:flex;flex-direction:column;gap:8px"><b>${esc(p.t)}</b><span class="chip" style="--c:${s.c===s.tot?"var(--good)":"var(--d4)"}">${esc(t("pbqScore",{c:s.c,t:s.tot}))}</span>${p.type==="order"?`<p class="fine">${esc(t("correctAnswer"))}: ${p.items.map(esc).join(" → ")}</p>`:p.type==="match"?`<ul class="fine">${p.items.map(([a,b],i)=>`<li>${esc(a)} → <b>${esc(b)}</b>${state.map[i]&&state.map[i]!==b?` <span style="color:var(--bad)">(${esc(state.map[i])})</span>`:""}</li>`).join("")}</ul>`:`<ul class="fine">${p.rules.map((x,i)=>`<li>${i+1}. ${esc(x.src)} → ${esc(x.dst)}:${esc(x.port)} = <b>${esc(t(x.ans==="Allow"?"allow":"deny"))}</b>${state.act[i]&&state.act[i]!==x.ans?` <span style="color:var(--bad)">(${esc(t(state.act[i]==="Allow"?"allow":"deny"))})</span>`:""}</li>`).join("")}</ul>`}<p class="fine">${esc(p.exp)}</p></div>`).join("")}</div></div>
+   ${wrong.length?`<div><div class="group-label">${esc(t("reviewMisses"))} · ${wrong.length}</div><div class="stack" style="display:flex;flex-direction:column;gap:10px">${wrong.map(({it,k})=>{const q=Q(it.qi),a=r.ans[k];return `<div class="card" style="display:flex;flex-direction:column;gap:8px"><span class="chip" style="--c:${dc(q.d)}">D${q.d}</span><p class="qtext small">${esc(q.q)}</p>${a===undefined?`<p class="fine">${esc(t("unansweredLbl"))}</p>`:`<p class="choice-fb no">${esc(t("yourAnswer"))}: ${esc(q.opts[a])}</p>`}<p class="choice-fb ok"><b>${esc(q.opts[0])}</b><br><span style="color:var(--fg-2)">${esc(q.exp)}</span></p></div>`}).join("")}</div></div>`:""}
+   <button class="btn block press" id="xagain">${esc(t("backPractice"))}</button>
+  </div>`;
+  app.querySelector("#xagain").onclick=()=>go("practice"); bindLang(); window.scrollTo(0,0);
+}
 
 Content.applyCached(); Auth.boot(); Content.check(true);
 })();

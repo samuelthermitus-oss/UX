@@ -321,3 +321,16 @@ beginnerTip:"Débutant en informatique ? Commencez par les leçons du domaine 1,
 contentUpdated:"Nouveau contenu téléchargé.",contentUpdatedN:"{n} nouvelles questions ajoutées.",
 privacy:"Confidentialité : votre profil et vos progrès restent sur cet appareil. L'application télécharge seulement du nouveau contenu d'étude. Rien sur vous n'est envoyé."});
 Object.assign(window.SECPREP_LANGS.fr.ui,{startDaily:"Lancer les {n} questions du jour",quizDaily:"Pratique du jour",daily:"Pratique du jour",contentUpdated1:"1 nouvelle question ajoutée."});
+Object.assign(window.SECPREP_LANGS.fr.ui,{
+learnChapters:"Chapitres",learnVideos:"Vidéos",learnReview:"Révision rapide",studyGuide:"Guide d'étude",chaptersRead:"{n} chapitres lus sur {t}",continueCh:"Continuer avec le chapitre {id}",
+minRead:"{n} min de lecture",hasVideo:"vidéo",chapterN:"Chapitre {id}",watch:"Regarder la leçon vidéo",keyTerms:"Termes clés",realWorld:"Exemple concret",checkYourself:"Vérifiez vos acquis",
+markRead:"Marquer comme lu",readDone:"Lu ✓",nextChapter:"Chapitre suivant",videoMin:"{n} min",captions:"Sous-titres",sound:"Son",play:"Lecture",pause:"Pause",videoEnd:"Vidéo terminée",
+guideEnOnly:"Ce guide d'étude est en anglais pour le moment. La version française arrive bientôt.",
+simTitle:"Simulateur d'examen",simDesc:"90 questions · 90 minutes · questions pratiques",simIntroTitle:"Avant de commencer",
+simR1:"Jusqu'à 90 questions en 90 minutes. Le chronomètre ne peut pas être mis en pause.",simR2:"Les questions pratiques viennent d'abord : association, ordre et règles de pare-feu.",simR3:"Aucune correction avant la fin, comme à l'examen réel.",simR4:"Marquez une question pour y revenir. Utilisez Révision pour voir les questions sans réponse et marquées.",simR5:"À la fin, vous obtenez un score estimé sur l'échelle de 100 à 900. Il faut 750 pour réussir.",
+startExam:"Commencer l'examen",qOfN:"Question {i} sur {n}",flag:"Marquer pour révision",flagged:"Marquées",review:"Révision",reviewHelp:"Touchez un numéro pour revenir à la question. Gris = sans réponse, orange = marquée.",answeredL:"Répondues",
+endExam:"Terminer l'examen",endTitle:"Terminer l'examen ?",endMsg:"Il vous reste {u} questions sans réponse et {f} marquées. Impossible de revenir après.",timeUp:"Temps écoulé. Votre examen a été envoyé.",
+pbqLabel:"Question pratique",chooseCat:"Choisir…",moveUp:"Monter",moveDown:"Descendre",allow:"Autoriser",deny:"Refuser",fwSrc:"Source",fwDst:"Destination",fwPort:"Port",fwProto:"Protocole",fwAction:"Action",
+scoreReport:"Rapport de score",scaled:"Score estimé",passEst:"Réussi (estimation)",failEst:"Sous le seuil (estimation)",passing:"Score de réussite : 750 sur une échelle de 100 à 900",
+scoreNote:"CompTIA ne publie pas sa méthode de calcul. Ce simulateur estime le score de façon linéaire de 100 à 900, avec des points partiels pour les questions pratiques.",
+timeUsed:"{m} min utilisées",yourAnswer:"Votre réponse",correctAnswer:"Bonne réponse",pbqScore:"{c} sur {t} correctes"});
