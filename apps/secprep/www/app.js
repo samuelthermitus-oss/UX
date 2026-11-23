@@ -86,11 +86,11 @@ const Voice = (function(){
       setTimeout(res, 1500 + p.t.length*95/rate);
     }catch(e){res()}
   }); }
-  // Recorded narration (Azure voices) stored in www/audio/<lang>/<key>.mp3, listed in audio/manifest.js.
+  // Recorded narration (Azure voices) stored in www/audio/<lang>/<key>.m4a (AAC), listed in audio/manifest.js.
   let gidSeq=0, endAudio=null; const A=new Audio(); A.preload="auto";
   const unlock=()=>{ try{ A.src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="; const pr=A.play(); if(pr) pr.then(()=>A.pause()).catch(()=>{}); }catch(e){} document.removeEventListener("pointerdown",unlock,true); };
   document.addEventListener("pointerdown",unlock,true);
-  function recorded(p){ if(!p.src) return null; const voice=((window.SECPREP_CONFIG||{}).azureVoices||{})[p.vl]; const have=(window.SECPREP_AUDIO||{})[p.vl]; if(!voice||!have) return null; const k=audioKey(voice+"|"+p.src); return have[k]?`audio/${p.vl}/${k}.mp3`:null; }
+  function recorded(p){ if(!p.src) return null; const voice=((window.SECPREP_CONFIG||{}).azureVoices||{})[p.vl]; const have=(window.SECPREP_AUDIO||{})[p.vl]; if(!voice||!have) return null; const k=audioKey(voice+"|"+p.src); return have[k]?`audio/${p.vl}/${k}.m4a`:null; }
   function playFile(url){ return new Promise(res=>{ let fin=false; const done=()=>{ if(fin) return; fin=true; endAudio=null; A.onended=A.onerror=null; res(); }; endAudio=done; A.onended=done; A.onerror=done; A.src=url; A.playbackRate=Math.max(.75,Math.min(1.5,S.rate||1)); const pr=A.play(); if(pr) pr.catch(done); }); }
   async function play(parts, onDone){ stop(); const my=++token;
     for(let k=0;k<parts.length;k++){ const p=parts[k]; if(my!==token) return; const url=recorded(p);

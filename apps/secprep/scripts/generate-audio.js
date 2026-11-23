@@ -1,4 +1,5 @@
-// Generates natural narration with Azure Speech and saves it in www/audio/<lang>/.
+// Generates natural narration with Azure Speech and saves it in www/audio/<lang>/ as AAC 32 kbps (.m4a).
+// Requires ffmpeg on the machine that runs it.
 // The app plays these files and falls back to the phone's voice for anything missing.
 //
 //   node scripts/generate-audio.js --lang fr --region francecentral --dry-run   (count characters, no calls)
@@ -60,7 +61,7 @@ const outDir = path.join(www, "audio", LANG); fs.mkdirSync(outDir, { recursive: 
 if (PRUNE) { const keep = new Set([...units].map(keyOf)); let n = 0;
   for (const f of fs.readdirSync(outDir)) { const k = f.replace(/\.(mp3|m4a)$/, ""); if (k !== f && !keep.has(k)) { fs.unlinkSync(path.join(outDir, f)); n++; } }
   writeManifest(); console.log(`${LANG}: removed ${n} unused files, ${keep.size} pieces in use.`); process.exit(0); }
-const list = [...units], todo = list.filter(t => !fs.existsSync(path.join(outDir, keyOf(t) + ".mp3")));
+const list = [...units], todo = list.filter(t => !fs.existsSync(path.join(outDir, keyOf(t) + ".m4a")));
 const chars = todo.reduce((a, t) => a + t.length, 0);
 console.log(`${LANG} · ${VOICE}: ${list.length} narration pieces, ${todo.length} to generate, about ${chars.toLocaleString()} characters.`);
 if (DRY) process.exit(0);
@@ -78,14 +79,17 @@ function tts(text, outFile) { return new Promise((resolve, reject) => {
     "-H", "Content-Type: application/ssml+xml", "-H", "X-Microsoft-OutputFormat: audio-24khz-48kbitrate-mono-mp3",
     "-H", "User-Agent: secprep-audio-builder", "--data-binary", "@-"]);
   let code = ""; c.stdout.on("data", d => code += d); c.on("error", reject);
-  c.on("close", () => { if (code === "200" && fs.existsSync(tmp) && fs.statSync(tmp).size > 0) { fs.renameSync(tmp, outFile); resolve(); }
+  c.on("close", () => { if (code === "200" && fs.existsSync(tmp) && fs.statSync(tmp).size > 0) { const m4a = outFile.replace(/\.mp3$/, ".m4a");
+      // Compress to AAC 32 kbps mono (needs ffmpeg), then drop the downloaded MP3
+      const f = spawn("ffmpeg", ["-v", "error", "-y", "-f", "mp3", "-i", tmp, "-ac", "1", "-ar", "24000", "-c:a", "aac", "-b:a", "32k", "-movflags", "+faststart", m4a]);
+      f.on("error", reject); f.on("close", c2 => { try { fs.unlinkSync(tmp); } catch (e) {} c2 === 0 ? resolve() : reject(new Error("ffmpeg failed")); }); }
     else { try { fs.unlinkSync(tmp); } catch (e) {} reject(new Error(code || "network error")); } });
   c.stdin.end(ssml); }); }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function writeManifest() {
   const manifest = {}; for (const l of fs.readdirSync(path.join(www, "audio")).filter(d => fs.statSync(path.join(www, "audio", d)).isDirectory()))
-    manifest[l] = Object.fromEntries(fs.readdirSync(path.join(www, "audio", l)).filter(f => f.endsWith(".mp3")).map(f => [f.slice(0, -4), 1]));
+    manifest[l] = Object.fromEntries(fs.readdirSync(path.join(www, "audio", l)).filter(f => f.endsWith(".m4a")).map(f => [f.slice(0, -4), 1]));
   fs.writeFileSync(path.join(www, "audio", "manifest.js"), "window.SECPREP_AUDIO=" + JSON.stringify(manifest) + ";\n");
 }
 
