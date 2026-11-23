@@ -2,7 +2,7 @@
 const fs=require("fs"),vm=require("vm"),path=require("path");
 const ctx={window:{}};vm.createContext(ctx);
 for(const l of ["en","fr","ht"])vm.runInContext(fs.readFileSync(path.join(__dirname,"../www/data/"+l+".js"),"utf8"),ctx);
-for(const f of fs.readdirSync(path.join(__dirname,"../www/data")).filter(f=>/^(guide|videos|pbq)-/.test(f))) vm.runInContext(fs.readFileSync(path.join(__dirname,"../www/data",f),"utf8"),ctx);
+for(const f of fs.readdirSync(path.join(__dirname,"../www/data")).filter(f=>/^(guide|stories|pbq)-/.test(f))) vm.runInContext(fs.readFileSync(path.join(__dirname,"../www/data",f),"utf8"),ctx);
 const L=ctx.window.SECPREP_LANGS,en=L.en;let bad=0;
 const err=m=>{bad++;console.error("✗ "+m)};
 for(const code of ["fr","ht"]){const d=L[code];
@@ -21,8 +21,9 @@ for(const code of ["fr","ht"]){const d=L[code];
   enG.forEach(c=>{const f=frG.find(x=>x.id===c.id); if(!f){err(`fr guide: missing chapter ${c.id}`);return}
     if(f.s.length!==c.s.length) err(`fr chapter ${c.id}: ${f.s.length} sections vs ${c.s.length}`);
     if(f.vid!==c.vid) err(`fr chapter ${c.id}: video link differs`); if((f.terms||[]).length!==(c.terms||[]).length) err(`fr chapter ${c.id}: key terms count`);});
-  const ev=W.SECPREP_VIDEOS.en, fv=W.SECPREP_VIDEOS.fr||[];
-  ev.forEach(v=>{const f=fv.find(x=>x.id===v.id); if(!f){err(`fr videos: missing ${v.id}`);return} if(f.scenes.length!==v.scenes.length) err(`fr video ${v.id}: scenes`); f.scenes.forEach((sc,i)=>{ if(sc.k!==v.scenes[i].k) err(`fr video ${v.id} scene ${i}: kind`); });});
+  const ST=W.SECPREP_STORIES||[]; if(ST.length!==11) err(`stories: expected 11, got ${ST.length}`);
+  const chk=(v,where)=>{ if(v==null) return; if(typeof v==="object"&&!Array.isArray(v)&&("en" in v||"fr" in v)){ if(!v.en||!v.fr) err(`${where}: missing en/fr`); return; } if(Array.isArray(v)) v.forEach((x,i)=>chk(x,where)); else if(typeof v==="object") for(const k in v) if(!["f","show","type","pos","kind","d","k","tone"].includes(k)) chk(v[k],where+"."+k); };
+  ST.forEach(st=>{ chk(st.t,st.id+".t"); st.shots.forEach((s,i)=>{ if(!s.say||!s.say.en||!s.say.fr) err(`story ${st.id} shot ${i}: narration`); chk(s.ov,`${st.id}#${i}`); }); chk(st.cast,st.id+".cast"); });
   const ep=W.SECPREP_PBQ.en, fp=W.SECPREP_PBQ.fr||[];
   ep.forEach(q=>{const f=fp.find(x=>x.id===q.id); if(!f){err(`fr PBQ: missing ${q.id}`);return} if(f.type!==q.type) err(`fr PBQ ${q.id}: type`);
     const n=x=>(x.items||x.rules).length; if(n(f)!==n(q)) err(`fr PBQ ${q.id}: item count`);

@@ -672,7 +672,8 @@ Voice.onVoices = () => { refreshSettings(); };
    ===================================================================== */
 const GUIDE_SRC = () => { const g=(window.SECPREP_GUIDES||{})[S.lang]; return (g&&g.chapters.length) ? g : (window.SECPREP_GUIDE||{chapters:[]}); };
 const GUIDE = () => GUIDE_SRC().chapters.slice().sort((a,b)=>a.id.localeCompare(b.id,undefined,{numeric:true}));
-const VIDEOS = () => (window.SECPREP_VIDEOS||{})[S.lang] || (window.SECPREP_VIDEOS||{}).en || [];
+const storyLang = () => S.lang==="fr" ? "fr" : "en";
+const VIDEOS = () => { const L=storyLang(), SS=window.SecPrepStory; return (window.SECPREP_STORIES||[]).map(ep=>({id:ep.id,d:ep.d,ch:ep.ch,poster:ep.poster,story:ep,t:SS.tx(ep.t,L),scenes:ep.shots.map(sh=>({k:"story",shot:sh,say:SS.say(sh,L)}))})); };
 const PBQS = () => (window.SECPREP_PBQ||{})[S.lang] || (window.SECPREP_PBQ||{}).en || [];
 const guideLang = () => { const g=(window.SECPREP_GUIDES||{})[S.lang]; return (g&&g.chapters.length) ? S.lang : "en"; };
 const md = s => esc(s).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
@@ -692,7 +693,9 @@ const VI = {
   router:"M3.5 13h17v6h-17zM7 16h.01M10 16h.01M8 13l-2-6M16 13l2-6",
   globe:"M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c2.4 2.5 3.5 5.5 3.5 9s-1.1 6.5-3.5 9c-2.4-2.5-3.5-5.5-3.5-9S9.6 5.5 12 3z",
   doc:"M6 2.5h8.5L19 7v14.5H6zM14 2.5V7h5M9 12h6M9 16h6",
-  clock:"M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7.5V12l3 2"
+  clock:"M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7.5V12l3 2",
+  alert:"M12 3.5l9 16H3zM12 10v4.5M12 17.2h.01",
+  chart:"M4 20h16M7 16.5V11M12 16.5V6.5M17 16.5v-3.5"
 };
 const vicon = n => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="${VI[n]||VI.doc}"/></svg>`;
 S.read = S.read || {}; S.watched = S.watched || {}; S.exams = S.exams || [];
@@ -712,7 +715,7 @@ function viewLearn(){
       ${[1,2,3,4,5].map(d=>{const cs=ch.filter(c=>c.d===d);if(!cs.length)return"";return `<div><div class="group-label">D${d} · ${esc(DN(d))} · ${WEIGHTS[d]}</div><div class="list">${cs.map(c=>`<button class="row" data-ch="${c.id}"><span class="tile chnum" style="background-color:${dc(d)}">${esc(c.id)}</span><span class="txt"><b>${esc(c.t)}</b><span>${esc(t("minRead",{n:c.min}))}${c.vid?" · "+esc(t("hasVideo")):""}</span></span><span class="end">${S.read[c.id]?`<span class="donechk">${icon("check")}</span>`:""}${icon("chev")}</span></button>`).join("")}</div></div>`}).join("")}`;
   } else {
     const vs=VIDEOS();
-    body=`${note}<div class="vgrid">${vs.map(v=>`<button class="vcard press" data-vid="${v.id}" style="--c:${dc(v.d)}"><span class="poster"><span class="pico">${vicon(v.scenes.find(s=>s.k==="flow")?.nodes?.[0]?.i||"shield")}</span><span class="pplay">${fillIcon("play")}</span>${S.watched[v.id]?`<span class="pdone">${icon("check")}</span>`:""}</span><b>${esc(v.t)}</b><span>D${v.d} · ${esc(t("chapterN",{id:v.ch}))} · ${esc(t("videoMin",{n:Math.max(1,Math.round(v.scenes.reduce((a,s)=>a+s.say.split(" ").length,0)/150))}))}</span></button>`).join("")}</div>`;
+    body=`${note}<div class="vgrid">${vs.map(v=>`<button class="vcard press" data-vid="${v.id}" style="--c:${dc(v.d)}"><span class="poster"><span class="pico">${vicon(v.poster||"shield")}</span><span class="pplay">${fillIcon("play")}</span>${S.watched[v.id]?`<span class="pdone">${icon("check")}</span>`:""}</span><b>${esc(v.t)}</b><span>D${v.d} · ${esc(t("chapterN",{id:v.ch}))} · ${esc(t("videoMin",{n:Math.max(1,Math.round(v.scenes.reduce((a,s)=>a+s.say.split(" ").length,0)/150))}))}</span></button>`).join("")}</div>`;
   }
   app.innerHTML=`<div class="screen enter"><div class="head"><div><div class="over">${esc(t("lessonsEyebrow"))}</div><h1>${esc(t("lessonsTitle"))}</h1></div>${langPill()}</div>${learnTabs()}${body}</div>`;
   bindLang(); bindLearnTabs();
@@ -799,14 +802,16 @@ function playScene(){
   const st=vidState; if(!st) return; clearTimeout(st.timer); Voice.stop();
   const sc=st.v.scenes[st.i], stage=app.querySelector("#vstage"), cap=app.querySelector("#vcap"); if(!stage) return;
   app.querySelector("#vend").hidden=true; stage.hidden=false;
-  stage.innerHTML=stageScene(sc); cap.textContent=sc.say; cap.hidden=!st.cc;
+  if(sc.k==="story"){ window.SecPrepStory.mount(stage,st.v.story,storyLang()); window.SecPrepStory.shot(stage,sc.shot,storyLang()); }
+  else { stage.dataset.story=""; stage.innerHTML=stageScene(sc); }
+  cap.textContent=sc.say; cap.hidden=!st.cc;
   if(sc.k==="email") (sc.flags||[]).forEach((f,i)=>setTimeout(()=>{const r=stage.querySelector(`[data-at="${f.at}"]`);if(r)r.classList.add("hit")},(1200+i*2200)));
   const est=1500+sc.say.split(/\s+/).length*400/(S.rate||1);
   stage.querySelectorAll(".vs-list li").forEach((li,k,all)=>li.style.setProperty("--dl",(0.4+k*(est/1000-1)/Math.max(1,all.length)).toFixed(2)+"s"));
   paintCtl();
   const advance=()=>{ if(!vidState||vidState!==st||!st.playing) return; if(st.i<st.v.scenes.length-1){st.i++;playScene()} else endVideo(); };
   if(!st.playing) return;
-  if(st.sound&&Voice.available){ const vlang=((window.SECPREP_VIDEOS||{})[S.lang]||[]).some(x=>x===st.v)?S.lang:"en"; Voice.play(Voice.chunk(sc.say,{lang:vlang,rate:0.97}),()=>{st.timer=setTimeout(advance,900)}); }
+  if(st.sound&&Voice.available){ const vlang=sc.k==="story"?storyLang():"en"; Voice.play(Voice.chunk(sc.say,{lang:vlang,rate:0.97}),()=>{st.timer=setTimeout(advance,900)}); }
   else st.timer=setTimeout(advance,est);
 }
 function endVideo(){

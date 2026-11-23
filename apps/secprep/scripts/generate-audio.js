@@ -3,17 +3,19 @@
 //
 //   node scripts/generate-audio.js --lang fr --region francecentral --dry-run   (count characters, no calls)
 //   node scripts/generate-audio.js --lang fr --region francecentral             (generate missing files)
+//   node scripts/generate-audio.js --lang fr --prune                            (delete files no longer used)
 //
 // The Azure key is read from AZURE_SPEECH_KEY. In this project's cloud environment the key is
 // added to requests automatically, so a placeholder value is used when the variable is empty.
 const fs = require("fs"), path = require("path"), vm = require("vm"), https = require("https");
 const arg = (n, d) => { const i = process.argv.indexOf("--" + n); return i > 0 ? process.argv[i + 1] : d; };
 const LANG = arg("lang", "fr"), REGION = arg("region", process.env.AZURE_SPEECH_REGION || ""), DRY = process.argv.includes("--dry-run");
-const ONLY = (arg("only", "videos,coach,quiz,lessons,scenarios,chapters")).split(",");
+const PRUNE = process.argv.includes("--prune");
+const ONLY = PRUNE ? ["videos","coach","quiz","lessons","scenarios","chapters"] : (arg("only", "videos,coach,quiz,lessons,scenarios,chapters")).split(",");
 const www = path.join(__dirname, "../www");
 
 const ctx = { window: {} }; vm.createContext(ctx);
-for (const f of ["config.js", "data/en.js", "data/fr.js", "data/videos-en.js", "data/videos-fr.js", "data/guide-en-d1.js", "data/guide-en-d2.js", "data/guide-en-d3.js", "data/guide-en-d4.js", "data/guide-en-d5.js", "data/guide-fr-d1.js", "data/guide-fr-d2.js", "data/guide-fr-d3.js", "data/guide-fr-d4.js", "data/guide-fr-d5.js"]) {
+for (const f of ["config.js", "data/en.js", "data/fr.js", "story.js", "data/stories-1.js", "data/stories-2.js", "data/guide-en-d1.js", "data/guide-en-d2.js", "data/guide-en-d3.js", "data/guide-en-d4.js", "data/guide-en-d5.js", "data/guide-fr-d1.js", "data/guide-fr-d2.js", "data/guide-fr-d3.js", "data/guide-fr-d4.js", "data/guide-fr-d5.js"]) {
   const p = path.join(www, f); if (fs.existsSync(p)) vm.runInContext(fs.readFileSync(p, "utf8"), ctx);
 }
 const W = ctx.window, cfg = W.SECPREP_CONFIG || {}, L = W.SECPREP_LANGS[LANG];
@@ -31,7 +33,7 @@ const keyOf = text => cyrb53(VOICE + "|" + norm(text));
 
 // Collect every narration unit the app speaks in this language.
 const units = new Set(), add = s => { if (s && norm(s)) units.add(norm(s)); };
-if (ONLY.includes("videos")) (W.SECPREP_VIDEOS[LANG] || []).forEach(v => v.scenes.forEach(s => add(s.say)));
+if (ONLY.includes("videos")) (W.SECPREP_STORIES || []).forEach(v => v.shots.forEach(s => add(s.say[LANG] || s.say.en)));
 if (ONLY.includes("coach")) { const v = L.voice; [v.intro, v.correct, v.wrong, v.nextTopic, v.scenStart].forEach(a => (a || []).forEach(add));
   [v.options, v.answerIs, v.tip, v.lessonStart, v.great, v.keep].forEach(add); ["A", "B", "C", "D"].forEach(k => add(v.option + " " + k)); add(L.ui.voiceSample); }
 if (ONLY.includes("quiz")) L.q.forEach(q => { add(q[1]); add(q[2]); q[3].forEach(add); add(q[4]); });
@@ -55,6 +57,9 @@ if (ONLY.includes("coach")) {
   sizes.forEach(n => { for (let c = 0; c <= n; c++) add(fill(L.ui.ofCorrect, { c, t: n }) + ". " + (Math.round(c / n * 100) >= 85 ? v.great : v.keep)); });
 }
 const outDir = path.join(www, "audio", LANG); fs.mkdirSync(outDir, { recursive: true });
+if (PRUNE) { const keep = new Set([...units].map(keyOf)); let n = 0;
+  for (const f of fs.readdirSync(outDir)) { const k = f.replace(/\.(mp3|m4a)$/, ""); if (k !== f && !keep.has(k)) { fs.unlinkSync(path.join(outDir, f)); n++; } }
+  writeManifest(); console.log(`${LANG}: removed ${n} unused files, ${keep.size} pieces in use.`); process.exit(0); }
 const list = [...units], todo = list.filter(t => !fs.existsSync(path.join(outDir, keyOf(t) + ".mp3")));
 const chars = todo.reduce((a, t) => a + t.length, 0);
 console.log(`${LANG} · ${VOICE}: ${list.length} narration pieces, ${todo.length} to generate, about ${chars.toLocaleString()} characters.`);
