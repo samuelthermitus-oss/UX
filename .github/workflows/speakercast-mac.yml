@@ -1,0 +1,52 @@
+name: SpeakerCast Pro (macOS .dmg)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'apps/speakercast-pro/**'
+      - '.github/workflows/speakercast-mac.yml'
+
+defaults:
+  run:
+    working-directory: apps/speakercast-pro
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/speakercast-pro/package-lock.json
+      - run: npm ci
+      - name: Engine unit tests
+        run: npm test
+      - name: Desktop app end-to-end (virtual display)
+        run: xvfb-run -a node test/e2e.electron.cjs
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+  dmg:
+    needs: test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/speakercast-pro/package-lock.json
+      - run: npm ci
+      - name: Build universal .dmg (Apple Silicon + Intel)
+        run: npm run dist:mac
+        env:
+          # Unsigned build. Add CSC_LINK / CSC_KEY_PASSWORD and APPLE_ID secrets to sign and notarize.
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SpeakerCast-Pro-macOS
+          path: apps/speakercast-pro/dist/*.dmg
+          if-no-files-found: error

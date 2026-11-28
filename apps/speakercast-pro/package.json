@@ -1,0 +1,78 @@
+{
+  "name": "speakercast-pro",
+  "productName": "SpeakerCast Pro",
+  "version": "2.0.0",
+  "description": "Play one source on 5+ speakers at once, in sync and without dropouts.",
+  "type": "module",
+  "main": "src/main/main.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.mjs",
+    "preview": "node scripts/preview-server.mjs",
+    "dist:mac": "electron-builder --mac dmg --universal",
+    "dist:win": "electron-builder --win nsis",
+    "dist:linux": "electron-builder --linux AppImage",
+    "test:e2e": "node test/e2e.electron.cjs",
+    "test:browser": "node test/e2e.browser.mjs"
+  },
+  "devDependencies": {
+    "electron": "45.4.1",
+    "electron-builder": "26.17.0",
+    "playwright": "^1.63.0"
+  },
+  "build": {
+    "appId": "pro.speakercast.app",
+    "productName": "SpeakerCast Pro",
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "mac": {
+      "category": "public.app-category.music",
+      "icon": "build/icon.png",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "SpeakerCast uses the microphone to time each speaker for Sync all, and for Mic & Voice.",
+        "NSAudioCaptureUsageDescription": "SpeakerCast can capture your Mac's system audio to play it on all speakers."
+      }
+    },
+    "dmg": {
+      "title": "SpeakerCast Pro",
+      "contents": [
+        {
+          "x": 150,
+          "y": 200
+        },
+        {
+          "x": 450,
+          "y": 200,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "width": 600,
+        "height": 400
+      }
+    },
+    "win": {
+      "icon": "build/icon.png"
+    },
+    "linux": {
+      "icon": "build/icon.png",
+      "category": "Audio"
+    }
+  }
+}
